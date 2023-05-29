@@ -4,11 +4,16 @@ enum ComponentType {
     TEXT = 3
 }
 
+interface Position {
+    x: number;
+    y: number;
+}
+
 interface CanvasComponent {
-    id: number;
-    name: String;
-    type: ComponentType;
-    position: number|Array<number>;
+    id: number; // Identificador numérico
+    name: String; // ?
+    type: ComponentType; // Tipo de elemento a ser adicionado
+    position: Position; // Posição do elemento
 }
 
 interface NodeComponent extends CanvasComponent {
@@ -16,15 +21,15 @@ interface NodeComponent extends CanvasComponent {
     name: String;
     type: ComponentType;
     className: String;
-    position: number;
+    position: Position;
 }
 
 interface LineComponent extends CanvasComponent {
     id: number;
     name: String;
     type: ComponentType;
-    connectedTo: Array<number>; // ComponentId - only the first two elements must be considered
-    position: Array<number>;
+    connectedTo: Array<Position>; // ComponentId - only the first two elements must be considered
+    position: Position;
 }
 
 interface TextComponent extends CanvasComponent {
@@ -32,7 +37,7 @@ interface TextComponent extends CanvasComponent {
     name: String;
     type: ComponentType;
     content: String;
-    position: number;
+    position: Position;
 }
 
 interface ComponentsList {
