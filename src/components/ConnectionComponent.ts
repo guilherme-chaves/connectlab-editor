@@ -16,7 +16,11 @@ class ConnectionComponent extends Component {
         this.connectedTo.start = connection1
         this.connectedTo.end = connection2
     }
-
+    // TODO - Refatorar o código da função draw e a classe Line
+    /*
+        A linha intermediária deve estar conectada a linha anterior (end -> start)
+        As linhas devem ser desenhadas como um único path (path2d?)
+    */
     draw(ctx: CanvasRenderingContext2D): void {
         this.lines.forEach(line => {
             line.draw(ctx)
@@ -54,8 +58,10 @@ class ConnectionComponent extends Component {
     }
 
     changeConnection(newNode: NodeComponent, end: boolean = false) {
-        if (end)
+        if (end) {
             this.connectedTo.end = newNode
+            return
+        }
         this.connectedTo.start = newNode
     }
 }

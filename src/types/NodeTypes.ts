@@ -9,7 +9,7 @@ const ADDNode: NodeType = {
         {name: "B", in: true, localPos: new Position(-8, 8)},
         {name: "C", in: false, localPos: new Position(8, 0)}
     ],
-    op(inA: boolean, inB?: boolean) { // Operação envolvendo o valor atual do
+    op(inA: boolean, inB?: boolean) {
         if (inB != undefined)
             return inA && inB
         else return false
@@ -24,7 +24,7 @@ const ORNode: NodeType = {
         {name: "B", in: true, localPos: new Position(-8, 8)},
         {name: "C", in: false, localPos: new Position(8, 0)}
     ],
-    op(inA: boolean, inB?: boolean) { // Operação envolvendo o valor atual do
+    op(inA: boolean, inB?: boolean) {
         if (inB != undefined)
             return inA || inB
         else return false

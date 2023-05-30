@@ -34,9 +34,8 @@ bgTexture.src = bgTexturePath
 
 /* Carrega contexto do canvas principal */
 const canvasCtx = canvas.getContext("2d") ?? new CanvasRenderingContext2D()
-// canvasCtx.moveTo(0, 0)
-// canvasCtx.lineTo(400,500)
-// canvasCtx.stroke()
+// Mover código de criação de objetos para nova classe
+// Adicionar eventos de colisão com objetos dentro do canvas
 let newLine = new ConnectionComponent(list.getLastComponentId(), new Line(new Position(0, 0), new Position(200, 200)))
 list.addComponent(newLine)
 let newText = new TextComponent(list.getLastComponentId(), new Position(350, 200), "Olá mundo", "32px sans-serif")
