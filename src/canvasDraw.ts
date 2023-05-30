@@ -1,4 +1,4 @@
-function updateAll(_canvas : HTMLCanvasElement, ctx : CanvasRenderingContext2D, elements : Array<CanvasComponent|NodeComponent|LineComponent|TextComponent>) : any {
+function updateAll(_canvas : HTMLCanvasElement, ctx : CanvasRenderingContext2D, elements : Array<Component|NodeComponent|ConnectionComponent|TextComponent>) : any {
     // TODO
     /*
         - Escolher, determinado o tipo do elemento, o que deve ser adicionado a tela
@@ -7,22 +7,8 @@ function updateAll(_canvas : HTMLCanvasElement, ctx : CanvasRenderingContext2D, 
             percorrer o array de posições para desenhar o caminho (beginPath, moveTo, lineTo, lineStroke)
     */
     elements.forEach(element => {
-        switch (element.type) {
-            case ComponentType.LINE:
-                drawLine(ctx, <LineComponent> element);
-        }
+        element.draw(ctx)
     });
-}
-
-function drawLine(ctx : CanvasRenderingContext2D, element : LineComponent) {
-    ctx.beginPath();
-    // .moveTo() deve conter a posição local?
-    // Isso necessitaria obter a posição do elemento antes de realizar a movimentação
-    ctx.moveTo(element.position.x, element.position.y)
-    element.connectedTo.forEach(pos => {
-        ctx.lineTo(pos.x, pos.y);
-    });
-    ctx.stroke();
 }
 
 export default updateAll

@@ -1,14 +1,13 @@
 import './style.css'
 import bgTexturePath from './assets/bg-texture.svg'
-import './types.ts'
+import './types'
 import updateAll from './canvasDraw.ts'
-import './ComponentsList.class.ts'
+import './ComponentsList.ts'
 
 /* Objeto contendo todos os elementos a serem desenhados dentro do canvas,
     o identificador do documento e o último identificador indexado
 */
-const list = new ComponentsListClass()
-list.setDocumentId("teste")
+const list = new ComponentsList("teste")
 
 /* Obtem os elementos DOM dos dois canvas sobrepostos */
 const canvas = <HTMLCanvasElement> document.getElementById("editor-canvas")
