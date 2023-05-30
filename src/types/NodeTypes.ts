@@ -1,3 +1,6 @@
+import NodeType from "./NodeType"
+import Position from "./Position"
+
 const ADDNode: NodeType = {
     name: "add",
     imgPath: "",

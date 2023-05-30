@@ -1,3 +1,9 @@
+import ComponentType from "../types"
+import Position from "../types/Position"
+import Component from "./Component"
+import Line from "./Line"
+import NodeComponent from "./NodeComponent"
+
 class ConnectionComponent extends Component {
     public lines: Array<Line>
     public connectedTo: {start?: NodeComponent, end?: NodeComponent}
@@ -53,3 +59,5 @@ class ConnectionComponent extends Component {
         this.connectedTo.start = newNode
     }
 }
+
+export default ConnectionComponent

@@ -1,3 +1,7 @@
+import ComponentType from "../types";
+import Position from "../types/Position";
+import Component from "./Component";
+
 class TextComponent extends Component {
     public text: string
     public parentNode?: Component
@@ -13,3 +17,5 @@ class TextComponent extends Component {
         ctx.fillText(this.text, this.position.x, this.position.y)
     }
 }
+
+export default TextComponent

@@ -1,3 +1,5 @@
+import Position from "./Position";
+
 interface NodeType {
     readonly name: string,
     readonly imgPath: string,
@@ -8,3 +10,5 @@ interface NodeType {
     }>,
     readonly op: (inA: boolean, inB?: boolean, inC?: boolean) => boolean
 }
+
+export default NodeType

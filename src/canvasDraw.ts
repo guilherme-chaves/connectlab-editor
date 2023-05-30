@@ -1,3 +1,8 @@
+import Component from "./components/Component";
+import ConnectionComponent from "./components/ConnectionComponent";
+import NodeComponent from "./components/NodeComponent";
+import TextComponent from "./components/TextComponent";
+
 function updateAll(_canvas : HTMLCanvasElement, ctx : CanvasRenderingContext2D, elements : Array<Component|NodeComponent|ConnectionComponent|TextComponent>) : any {
     // TODO
     /*

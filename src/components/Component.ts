@@ -1,3 +1,6 @@
+import ComponentType from "../types"
+import Position from "../types/Position"
+
 class Component {
     public readonly id: number
     public position: Position
@@ -18,3 +21,5 @@ class Component {
         return
     }
 }
+
+export default Component

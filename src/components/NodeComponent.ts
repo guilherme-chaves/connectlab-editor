@@ -1,3 +1,7 @@
+import NodeType from "../types/NodeType"
+import Position from "../types/Position"
+import Component from "./Component"
+
 class NodeComponent extends Component {
     public readonly nodeType: NodeType
     private slotsStatus: Array<boolean>
@@ -10,7 +14,9 @@ class NodeComponent extends Component {
         })
     }
 
-    draw(ctx: CanvasRenderingContext2D) {
-        const nodeImg = new Image()
+    draw(_ctx: CanvasRenderingContext2D) {
+        // const nodeImg = new Image()
     }
 }
+
+export default NodeComponent

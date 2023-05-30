@@ -1,8 +1,13 @@
+import Component from "./Component"
+import ConnectionComponent from "./ConnectionComponent"
+import NodeComponent from "./NodeComponent"
+import TextComponent from "./TextComponent"
+
 class ComponentsList {
     public readonly documentId: string
     public lastComponentId: number
-    private componentsList: Array<Component|NodeComponent|ConnectionComponent>
-    constructor(documentId: string, lastComponentId: number = -1, componentsList: Array<Component|NodeComponent|ConnectionComponent> = []) {
+    private componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent>
+    constructor(documentId: string, lastComponentId: number = 0, componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent> = []) {
         this.documentId = documentId
         this.lastComponentId = lastComponentId
         this.componentsList = componentsList
@@ -41,3 +46,4 @@ class ComponentsList {
                 this.componentsList.splice(i, 1)
     }
 }
+ export default ComponentsList

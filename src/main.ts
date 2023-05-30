@@ -2,7 +2,10 @@ import './style.css'
 import bgTexturePath from './assets/bg-texture.svg'
 import './types'
 import updateAll from './canvasDraw.ts'
-import './ComponentsList.ts'
+import ComponentsList from './components/ComponentsList.ts'
+import ConnectionComponent from './components/ConnectionComponent.ts'
+import Line from './components/Line.ts'
+import Position from './types/Position.ts'
 
 /* Objeto contendo todos os elementos a serem desenhados dentro do canvas,
     o identificador do documento e o último identificador indexado
@@ -31,7 +34,8 @@ const canvasCtx = canvas.getContext("2d") ?? new CanvasRenderingContext2D()
 // canvasCtx.moveTo(0, 0)
 // canvasCtx.lineTo(400,500)
 // canvasCtx.stroke()
-list.addComponent()
+let newLine = new ConnectionComponent(list.getLastComponentId(), new Line(new Position(0, 0), new Position(200, 200)))
+list.addComponent(newLine)
 
 // Define o tamanho do canvas como a área em pixels da área interna do navegador
 canvas.width = window.innerWidth

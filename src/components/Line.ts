@@ -1,3 +1,5 @@
+import Position from "../types/Position"
+
 class Line {
     public start : Position
     public end : Position
@@ -17,3 +19,5 @@ class Line {
         ctx.stroke()
     }
 }
+
+export default Line
