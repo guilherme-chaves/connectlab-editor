@@ -1,5 +1,6 @@
 import Position from "./Position";
 
+// Modelo para criação de objetos do tipo NODE
 interface NodeType {
     readonly name: string,
     readonly imgPath: string,
