@@ -1,7 +1,7 @@
-import Component from "./components/Component";
-import ConnectionComponent from "./components/ConnectionComponent";
-import NodeComponent from "./components/NodeComponent";
-import TextComponent from "./components/TextComponent";
+import Component from "../components/Component";
+import ConnectionComponent from "../components/ConnectionComponent";
+import NodeComponent from "../components/NodeComponent";
+import TextComponent from "../components/TextComponent";
 
 function clearFrame(ctx: CanvasRenderingContext2D) {
     ctx.save();

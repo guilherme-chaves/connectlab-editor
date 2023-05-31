@@ -1,15 +1,17 @@
-import Position from "./Position";
+import Position from "./Position"
+import { nodeTypes } from "../types"
 
 // Modelo para criação de objetos do tipo NODE
 interface NodeType {
-    readonly name: string,
+    readonly id: nodeTypes,
     readonly imgPath: string,
     readonly connectionSlots: Array<{
-        name: string, // Identificador do slot (adiciona textNode?)
+        id: number, // Identificador do slot (0 => inA, 1 => inB, ...)
+        name: string, // Nome do slot (adiciona textNode?)
         localPos: Position, // Posição do slot, relativo ao elemento-pai
-        in: boolean, // Recebe informação de outro elemento (true), ou apenas envia (false)
+        in: boolean, // Recebe informação de outro elemento (true)
     }>,
-    readonly op: (inA: boolean, inB?: boolean, inC?: boolean) => boolean // Operação booleana envolvendo o valor atual dos slots
+    readonly op: (slotsState: Array<boolean>) => boolean // Operação booleana envolvendo o valor atual dos slots
 }
 
 export default NodeType

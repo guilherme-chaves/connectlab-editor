@@ -17,3 +17,8 @@ addEventListener("resize", () => {
     editor.resize()
     editor.draw(true, true)
 })
+
+addEventListener("click", (ev) => {
+    var rect = canvas.getBoundingClientRect()
+    editor.node(ev.clientX - rect.top, ev.clientY - rect.left)
+})

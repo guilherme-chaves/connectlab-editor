@@ -1,6 +1,6 @@
 import './types'
 import bgTexturePath from './assets/bg-texture.svg'
-import updateAll, { updateBackground, updateCanvas } from './canvasDraw'
+import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
 import ComponentsList from './components/ComponentsList'
 import ConnectionComponent from './components/ConnectionComponent'
 import TextComponent from './components/TextComponent'
@@ -8,6 +8,7 @@ import NodeComponent from './components/NodeComponent'
 import Line from './components/Line'
 import Position from './types/Position'
 import Component from './components/Component'
+import { nodeTypes } from './types'
 
 export default class Editor {
     private editorEnv: ComponentsList
@@ -17,19 +18,25 @@ export default class Editor {
     private backgroundPattern: CanvasPattern|null
     constructor(documentId: string, canvasDOM: HTMLCanvasElement, backgroundDOM: HTMLCanvasElement) {
         this.editorEnv = new ComponentsList(documentId)
-        this.canvasCtx = this.getContext(canvasDOM)
-        this.backgroundCtx = this.getContext(backgroundDOM)
+        this.canvasCtx = this.createContext(canvasDOM)
+        this.backgroundCtx = this.createContext(backgroundDOM)
         this.backgroundPattern = null
 
         this.loadPattern(bgTexturePath)
     }
 
-    getContext(domElement: HTMLCanvasElement): CanvasRenderingContext2D {
+    private createContext(domElement: HTMLCanvasElement): CanvasRenderingContext2D {
         return (domElement.getContext('2d')!)
     }
 
+    getContext(canvas: boolean = true): CanvasRenderingContext2D {
+        if (canvas)
+            return this.canvasCtx
+        return this.backgroundCtx
+    }
+
     loadPattern(bgPath: string) {
-        let backgroundImg = new Image();
+        let backgroundImg = new Image()
         backgroundImg.onload = () => {
             this.backgroundPattern = this.backgroundCtx.createPattern(backgroundImg, 'repeat')
         }
@@ -37,13 +44,10 @@ export default class Editor {
     }
 
     draw(canvas: boolean = true, background: boolean = false) {
-        if (canvas && background) {
-            updateAll(this.canvasCtx, this.editorEnv.getComponents(), this.backgroundCtx, this.backgroundPattern)
-        } else if (background) {
+        if (background) 
             updateBackground(this.backgroundCtx, this.backgroundPattern)
-        } else if (canvas) {
+        if (canvas)
             updateCanvas(this.canvasCtx, this.editorEnv.getComponents())
-        }
     }
 
     resize() {
@@ -54,8 +58,9 @@ export default class Editor {
         requestAnimationFrame.bind(updateAll(this.canvasCtx, this.editorEnv.getComponents(), this.backgroundCtx, this.backgroundPattern))
     }
 
-    node() {
-        return
+    node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type)
+        this.editorEnv.addComponent(newNode)
     }
 
     line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
