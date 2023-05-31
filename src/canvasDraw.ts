@@ -3,26 +3,32 @@ import ConnectionComponent from "./components/ConnectionComponent";
 import NodeComponent from "./components/NodeComponent";
 import TextComponent from "./components/TextComponent";
 
-function updateCanvas(ctx: CanvasRenderingContext2D, elements: Array<Component|NodeComponent|ConnectionComponent|TextComponent>): any {
+function clearFrame(ctx: CanvasRenderingContext2D) {
+    ctx.save();
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.restore();
+}
+
+export function updateCanvas(ctx: CanvasRenderingContext2D, elements: Array<Component|NodeComponent|ConnectionComponent|TextComponent>): any {
+    clearFrame(ctx)
     elements.forEach(element => {
         element.draw(ctx)
     });
 }
 
-function updateBackground(bgCanvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, bgTexture: HTMLImageElement): any {
-    if (ctx != null) {
-        var bgPattern = ctx.createPattern(bgTexture, "repeat")
-        ctx.rect(0, 0, bgCanvas.width, bgCanvas.height)
-        ctx.fillStyle = bgPattern ?? "#F0F0F0"
-        ctx.fill()
-    }
+export function updateBackground(ctx: CanvasRenderingContext2D, bgPattern: CanvasPattern|null): any {
+    clearFrame(ctx)
+    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    ctx.fillStyle = bgPattern ?? "#ff0000"
+    ctx.fill()
 }
 
 function updateAll(canvasCtx: CanvasRenderingContext2D, elements: Array<Component|NodeComponent|ConnectionComponent|TextComponent>,
-        bgCanvas: HTMLCanvasElement, bgCtx: CanvasRenderingContext2D|null, bgTexture: HTMLImageElement): any {
+        bgCtx: CanvasRenderingContext2D|null, bgPattern: CanvasPattern|null): any {
     updateCanvas(canvasCtx, elements)
     if (bgCtx != null) {
-        updateBackground(bgCanvas, bgCtx, bgTexture)
+        updateBackground(bgCtx, bgPattern)
     }
 }
 
