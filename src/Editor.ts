@@ -1,4 +1,4 @@
-import './types'
+import './types/types'
 import bgTexturePath from './assets/bg-texture.svg'
 import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
 import ComponentsList from './components/ComponentsList'
@@ -8,7 +8,7 @@ import NodeComponent from './components/NodeComponent'
 import Line from './components/Line'
 import Position from './types/Position'
 import Component from './components/Component'
-import { nodeTypes } from './types'
+import { nodeTypes } from './types/types'
 
 export default class Editor {
     private editorEnv: ComponentsList
@@ -59,7 +59,7 @@ export default class Editor {
     }
 
     node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type)
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx)
         this.editorEnv.addComponent(newNode)
     }
 

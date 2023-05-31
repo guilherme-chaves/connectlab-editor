@@ -1,5 +1,5 @@
 import NodeType from "./NodeType"
-import { nodeTypes } from "../types"
+import { nodeTypes } from "./types"
 import Position from "./Position"
 import NOTPath from "../assets/gates/NOT_S.svg"
 

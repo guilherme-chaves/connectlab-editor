@@ -1,4 +1,4 @@
-import ComponentType from "../types"
+import ComponentType from "../types/types"
 import Position from "../types/Position"
 import Component from "./Component"
 import Line from "./Line"

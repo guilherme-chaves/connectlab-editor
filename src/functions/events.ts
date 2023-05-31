@@ -1,5 +1,5 @@
 import Editor from "../Editor";
-import ComponentType, { nodeTypes } from "../types";
+import ComponentType, { nodeTypes } from "../types/types";
 import Position from "../types/Position";
 
 export default class EditorEvents {

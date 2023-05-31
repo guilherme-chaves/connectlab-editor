@@ -1,7 +1,8 @@
 enum ComponentType {
     LINE = 1,
     NODE = 2,
-    TEXT = 3
+    TEXT = 3,
+    SLOT = 4
 }
 
 enum nodeTypes {

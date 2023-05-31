@@ -1,5 +1,5 @@
 import Position from "./Position"
-import { nodeTypes } from "../types"
+import { nodeTypes } from "./types"
 
 // Modelo para criação de objetos do tipo NODE
 interface NodeType {
