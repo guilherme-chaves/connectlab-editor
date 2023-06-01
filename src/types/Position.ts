@@ -4,10 +4,15 @@ interface Position {
 }
 
 class Position {
-    constructor(xOrPosition: number|Position, y: number) {
+    constructor(xOrPosition: number|Position, y: number, forceFloat: boolean = false) {
         if(typeof xOrPosition == "number") {
-            this.x = xOrPosition
-            this.y = y
+            if (forceFloat) {
+                this.x = xOrPosition
+                this.y = y
+            } else {
+                this.x = Math.floor(xOrPosition)
+                this.y = Math.floor(y)
+            }
         } else {
             this.x = xOrPosition.x
             this.y = xOrPosition.y

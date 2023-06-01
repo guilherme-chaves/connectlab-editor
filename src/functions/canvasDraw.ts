@@ -1,8 +1,4 @@
-import Component from "../components/Component";
-import ConnectionComponent from "../components/ConnectionComponent";
-import NodeComponent from "../components/NodeComponent";
-import { SlotComponent } from "../components/SlotComponent";
-import TextComponent from "../components/TextComponent";
+import { componentListInterface } from "../types/types";
 
 export function clearFrame(ctx: CanvasRenderingContext2D) {
     ctx.save();
@@ -11,11 +7,13 @@ export function clearFrame(ctx: CanvasRenderingContext2D) {
     ctx.restore();
 }
 
-export function updateCanvas(ctx: CanvasRenderingContext2D, elements: Array<Component|NodeComponent|ConnectionComponent|TextComponent|SlotComponent>): any {
+export function updateCanvas(ctx: CanvasRenderingContext2D, elements: componentListInterface): any {
     clearFrame(ctx)
-    elements.forEach(element => {
-        element.draw(ctx)
-    });
+    Object.keys(elements).forEach(keyCateg => {
+        Object.keys(elements[keyCateg]).forEach(element => {
+            elements[keyCateg][parseInt(element)].draw(ctx)
+        })
+    })
 }
 
 export function updateBackground(ctx: CanvasRenderingContext2D, bgPattern: CanvasPattern|null): any {
@@ -25,7 +23,7 @@ export function updateBackground(ctx: CanvasRenderingContext2D, bgPattern: Canva
     ctx.fill()
 }
 
-function updateAll(canvasCtx: CanvasRenderingContext2D, elements: Array<Component|NodeComponent|ConnectionComponent|TextComponent|SlotComponent>,
+function updateAll(canvasCtx: CanvasRenderingContext2D, elements: componentListInterface,
         bgCtx: CanvasRenderingContext2D|null, bgPattern: CanvasPattern|null): any {
     updateCanvas(canvasCtx, elements)
     if (bgCtx != null) {

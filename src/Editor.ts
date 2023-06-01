@@ -1,4 +1,4 @@
-import './types/types'
+import { nodeTypes } from './types/types'
 import bgTexturePath from './assets/bg-texture.svg'
 import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
 import ComponentsList from './components/ComponentsList'
@@ -7,8 +7,7 @@ import TextComponent from './components/TextComponent'
 import NodeComponent from './components/NodeComponent'
 import Position from './types/Position'
 import Component from './components/Component'
-import { nodeTypes } from './types/types'
-import { SlotComponent } from './components/SlotComponent'
+import SlotComponent from './components/SlotComponent'
 
 export default class Editor {
     private editorEnv: ComponentsList
@@ -22,7 +21,7 @@ export default class Editor {
         this.canvasCtx = this.createContext(canvasDOM)
         this.backgroundCtx = this.createContext(backgroundDOM)
         this.backgroundPattern = null
-        this.canvasArea = new Position(canvasVw, canvasVh)
+        this.canvasArea = new Position(canvasVw, canvasVh, true)
         this.loadPattern(bgTexturePath)
     }
 
@@ -62,7 +61,7 @@ export default class Editor {
         this.draw(true)
         // To-Do -> Adicionar as seguintes partes:
         // eventos e adição de componentes
-        // colisão
+        // colisão(this.editorEnv)
     }
 
     resize = () => {
@@ -74,23 +73,30 @@ export default class Editor {
     }
 
     node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height)
-        this.editorEnv.addComponent(newNode)
+        let slotKeys: Array<number> = []
+        NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
+            let key = this.slot(slot.localPos.x, slot.localPos.y, new Position(x, y), slot.in)
+            slotKeys.push(key)
+        })
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height, slotKeys)
+        return this.editorEnv.addComponent(newNode)
     }
 
     line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
         let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
         newLine.changePosition(Position.minus(new Position(x2, y2), newLine.position), 1)
-        this.editorEnv.addComponent(newLine)
+        return this.editorEnv.addComponent(newLine)
     }
 
     text(text: string, x: number, y: number, style?: string, parent?: Component) {
         let newText = new TextComponent(this.editorEnv.getLastComponentId(), new Position(x, y), text, style, parent)
-        this.editorEnv.addComponent(newText)
+        return this.editorEnv.addComponent(newText)
     }
 
-    slot(x: number, y: number, parent: Component, inSlot?: boolean, color?: string, colorActive?: string) {
-        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parent, inSlot, color, colorActive)
-        this.editorEnv.addComponent(newSlot)
+    slot(x: number, y: number, parentPosition: Position, inSlot?: boolean, radius?: number,
+            attractionRadius?: number, color?: string, colorActive?: string) {
+        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentPosition,
+            inSlot, radius, attractionRadius, color, colorActive)
+        return this.editorEnv.addComponent(newSlot)
     }
 }

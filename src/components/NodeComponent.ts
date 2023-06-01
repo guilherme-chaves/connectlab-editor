@@ -3,38 +3,31 @@ import NodeType from "../types/NodeType"
 import { ADDNode, NOTNode, ORNode } from "../types/NodeTypes"
 import Position from "../types/Position"
 import Component from "./Component"
-import { SlotComponent } from "./SlotComponent"
 
 class NodeComponent extends Component {
     public readonly nodeType: NodeType
     private imageLoaded: boolean
     private nodeImage: HTMLImageElement
-    private slotComponents: Array<SlotComponent>
-    private slotsStatus: Array<boolean>
-    constructor(id: number, position: Position, nodeType: nodeTypes, canvasWidth: number, canvasHeight: number) {
+    private slotComponents: Array<number>
+    constructor(id: number, position: Position, nodeType: nodeTypes, canvasWidth: number, canvasHeight: number, slotKeys: Array<number>) {
         super(id, position)
-        this.nodeType = this.getNodeTypeObject(nodeType)
-        this.slotComponents = []
-        this.slotsStatus = []
+        this.nodeType = NodeComponent.getNodeTypeObject(nodeType)
+        this.slotComponents = slotKeys
         this.nodeImage = new Image()
         this.imageLoaded= false
         this.nodeImage.addEventListener('load', () => {
-            // Centraliza a imagem no mouse
-            let halfImgPos = new Position(this.nodeImage.width/2, this.nodeImage.height/2)
-            this.position.minus(halfImgPos)
+            // Centraliza a imagem no mouse - bug relacionado ao posicionamento dos slots
+            // let halfImgPos = new Position(this.nodeImage.width/2, this.nodeImage.height/2)
+            // this.position.minus(halfImgPos)
             let canvasBound = new Position(canvasWidth, canvasHeight)
-            canvasBound.minus(halfImgPos)
+            canvasBound.minus(new Position(this.nodeImage.width, this.nodeImage.height))
             this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
             this.imageLoaded = true
         })
         this.nodeImage.src = this.nodeType.imgPath
-        this.nodeType.connectionSlots.forEach((slot) => {
-            this.slotsStatus[slot.id] = false
-            this.setSlotComponent(slot.id, slot.localPos, slot.in)
-        })
     }
 
-    getNodeTypeObject(type: nodeTypes): NodeType {
+    static getNodeTypeObject(type: nodeTypes): NodeType {
         switch (type) {
             case nodeTypes.ADD:
                 return ADDNode
@@ -47,20 +40,29 @@ class NodeComponent extends Component {
         }
     }
 
-    setSlotComponent(id: number, localPos: Position, inSlot: boolean = true, color?: string, colorActive?: string): void {
-        this.slotComponents.push(new SlotComponent(id, localPos, this, inSlot, color, colorActive))
+    addSlotComponents(slotKeys: Array<number>) {
+        this.slotComponents = slotKeys
+    }
+
+    changePosition(delta: Position): void {
+        super.changePosition(delta)
     }
 
     getNodeImage() {
         return this.nodeImage
     }
 
+    getNodeType() {
+        return this.nodeType
+    }
+
+    getSlotComponents() {
+        return this.slotComponents
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
         if (this.imageLoaded) {
             ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
-            this.slotComponents.forEach((slot) => {
-                slot.draw(ctx)
-            })
         }
     }
 }
