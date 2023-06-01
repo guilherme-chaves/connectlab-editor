@@ -12,16 +12,15 @@ editor.text("Olá mundo", 500, 200, "32px sans-serif")
 
 addEventListener("load", () => {
     editor.resize()
-    editor.draw(true, true)
+    editor.update()
 })
 
 /* Atualizar tamanho do canvas caso tamanho do navegador se altere */
 addEventListener("resize", () => {
     editor.resize()
-    editor.draw(true, true)
 })
 
-canvas.addEventListener("click", (ev) => {
+canvas.addEventListener("click", ({clientX, clientY}) => {
     var rect = canvas.getBoundingClientRect()
-    editor.node(ev.clientX - rect.top, ev.clientY - rect.left)
+    editor.node(clientX - rect.top, clientY - rect.left)
 })

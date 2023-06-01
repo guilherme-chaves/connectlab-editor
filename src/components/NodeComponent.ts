@@ -3,24 +3,30 @@ import NodeType from "../types/NodeType"
 import { ADDNode, NOTNode, ORNode } from "../types/NodeTypes"
 import Position from "../types/Position"
 import Component from "./Component"
+import { SlotComponent } from "./SlotComponent"
 
 class NodeComponent extends Component {
     public readonly nodeType: NodeType
+    private imageLoaded: boolean
     private nodeImage: HTMLImageElement
+    private slotComponents: Array<SlotComponent>
     private slotsStatus: Array<boolean>
-    constructor(id: number, position: Position, nodeType: nodeTypes, ctx: CanvasRenderingContext2D) {
+    constructor(id: number, position: Position, nodeType: nodeTypes) {
         super(id, position)
         this.nodeType = this.getNodeTypeObject(nodeType)
+        this.slotComponents = []
         this.slotsStatus = []
         this.nodeImage = new Image()
+        this.imageLoaded= false
         this.nodeImage.addEventListener('load', () => {
-            // Centraliza a imagem no mouse e a desenha no canvas; Necessário devido a falta de um loop de renderização
+            // Centraliza a imagem no mouse
             this.position.minus(new Position(this.nodeImage.width/2, this.nodeImage.height/2))
-            ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
+            this.imageLoaded = true
         })
         this.nodeImage.src = this.nodeType.imgPath
         this.nodeType.connectionSlots.forEach((slot) => {
             this.slotsStatus[slot.id] = false
+            this.setSlotComponent(slot.id, slot.localPos, slot.in)
         })
     }
 
@@ -37,8 +43,17 @@ class NodeComponent extends Component {
         }
     }
 
+    setSlotComponent(id: number, localPos: Position, inSlot: boolean = true, color?: string, colorActive?: string): void {
+        this.slotComponents.push(new SlotComponent(id, localPos, this, inSlot, color, colorActive))
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
-        ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
+        if (this.imageLoaded) {
+            ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
+            this.slotComponents.forEach((slot) => {
+                slot.draw(ctx)
+            })
+        }
     }
 }
 

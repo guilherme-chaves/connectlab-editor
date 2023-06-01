@@ -9,6 +9,7 @@ import Line from './components/Line'
 import Position from './types/Position'
 import Component from './components/Component'
 import { nodeTypes } from './types/types'
+import { SlotComponent } from './components/SlotComponent'
 
 export default class Editor {
     private editorEnv: ComponentsList
@@ -50,7 +51,12 @@ export default class Editor {
             updateCanvas(this.canvasCtx, this.editorEnv.getComponents())
     }
 
-    resize() {
+    update = () => {
+        requestAnimationFrame(this.update)
+        this.draw(true)
+    }
+
+    resize = () => {
         this.canvasCtx.canvas.width = window.innerWidth * 0.75
         this.canvasCtx.canvas.height = window.innerHeight * 0.75
         this.backgroundCtx.canvas.width = window.innerWidth * 0.75
@@ -59,7 +65,7 @@ export default class Editor {
     }
 
     node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx)
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type)
         this.editorEnv.addComponent(newNode)
     }
 
@@ -71,5 +77,10 @@ export default class Editor {
     text(text: string, x: number, y: number, style?: string, parent?: Component) {
         let newText = new TextComponent(this.editorEnv.getLastComponentId(), new Position(x, y), text, style, parent)
         this.editorEnv.addComponent(newText)
+    }
+
+    slot(x: number, y: number, parent: Component, inSlot?: boolean, color?: string, colorActive?: string) {
+        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parent, inSlot, color, colorActive)
+        this.editorEnv.addComponent(newSlot)
     }
 }

@@ -1,13 +1,14 @@
 import Component from "./Component"
 import ConnectionComponent from "./ConnectionComponent"
 import NodeComponent from "./NodeComponent"
+import { SlotComponent } from "./SlotComponent"
 import TextComponent from "./TextComponent"
 
 class ComponentsList {
     public readonly documentId: string
     public lastComponentId: number
-    private componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent>
-    constructor(documentId: string, lastComponentId: number = 0, componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent> = []) {
+    private componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent|SlotComponent>
+    constructor(documentId: string, lastComponentId: number = 0, componentsList: Array<Component|NodeComponent|ConnectionComponent|TextComponent|SlotComponent> = []) {
         this.documentId = documentId
         this.lastComponentId = lastComponentId
         this.componentsList = componentsList
