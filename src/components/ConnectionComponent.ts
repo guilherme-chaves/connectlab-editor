@@ -5,16 +5,20 @@ import Line from "./Line"
 import NodeComponent from "./NodeComponent"
 
 class ConnectionComponent extends Component {
-    public lines: Array<Line>
-    public connectedTo: {start?: NodeComponent, end?: NodeComponent}
+    private points: Array<Position>
+    private connectedTo: {start?: NodeComponent, end?: NodeComponent}
+    private attractionBias: number // Tendência de um ponto a assumir uma das coordenadas de seu antecessor
 
-    constructor(id: number, line: Line, connection1?: NodeComponent, connection2?: NodeComponent) {
-        super(id, new Position(line.start.x, line.start.y), ComponentType.LINE)
-        this.lines = []
-        this.lines.push(line)
+    constructor(id: number, position: Position, connection1?: NodeComponent, connection2?: NodeComponent) {
+        super(id, position, ComponentType.LINE)
+        this.points = []
+        // Os pontos funcionam com coordenadas locais, relacionadas a variável position
+        this.points.push(new Position(0, 0))
+        this.points.push(new Position(0, 0)) // Segundo ponto que será editado para gerar a linha
         this.connectedTo = {}
         this.connectedTo.start = connection1
         this.connectedTo.end = connection2
+        this.attractionBias = 32
     }
     // TODO - Refatorar o código da função draw e a classe Line
     /*
@@ -22,39 +26,37 @@ class ConnectionComponent extends Component {
         As linhas devem ser desenhadas como um único path (path2d?)
     */
     draw(ctx: CanvasRenderingContext2D): void {
-        this.lines.forEach(line => {
-            line.draw(ctx)
+        ctx.beginPath()
+        ctx.moveTo(this.points[0].x, this.points[0].y)
+        this.points.forEach(point => {
+            let globalPos = Position.add(this.position, point)
+            ctx.lineTo(globalPos.x, globalPos.y)
         })
+        ctx.strokeStyle = "#000000"
+        ctx.stroke()
+        ctx.closePath()
     }
 
-    addLine(line: Line, position: number = this.lines.length): void {
-        this.lines.splice(position, 0, line)
+    addPoint(point: Position, position: number = this.points.length): void {
+        let len = this.points.length
+        if (point.x > this.points[len-1].x - this.attractionBias && point.x < this.points[len-1].x + this.attractionBias)
+            point.x = this.points[len-1].x
+        if (point.y > this.points[len-1].y - this.attractionBias && point.y < this.points[len-1].y + this.attractionBias)
+            point.y = this.points[len-1].y
+        this.points.splice(position, 0, point)
     }
 
-    removeLine(position: number = this.lines.length - 1) {
-        this.lines.splice(position, 1)
+    removePoint(position: number = this.points.length - 1) {
+        this.points.splice(position, 1)
     }
 
-    // Recebe um delta da posição anterior e a atual, atualiza todas as linhas a partir disso
+    // Recebe um delta entre a posição anterior e a atual
     changePositions(delta: Position) {
-        this.lines.forEach(line => {
-            line.start.x += delta.x
-            line.start.y += delta.y
-            line.end.x += delta.x
-            line.end.y += delta.y
-        })
+        this.position.add(delta)
     }
 
-    changePosition(delta: Position, lineIndex: number = this.lines.length - 1, lineChange: number = 2): void {
-        // lineChange = (0 - start, 1 - end, 2 - both)
-        if (lineChange != 1) {
-            this.lines[lineIndex].start.x += delta.x
-            this.lines[lineIndex].start.y += delta.y
-        }
-        if (lineChange != 0) {
-            this.lines[lineIndex].end.x += delta.x
-            this.lines[lineIndex].end.y += delta.y
-        }
+    changePosition(delta: Position, positionIndex: number = this.points.length - 1): void {
+        this.points[positionIndex].add(delta)
     }
 
     changeConnection(newNode: NodeComponent, end: boolean = false) {

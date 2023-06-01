@@ -5,7 +5,6 @@ import ComponentsList from './components/ComponentsList'
 import ConnectionComponent from './components/ConnectionComponent'
 import TextComponent from './components/TextComponent'
 import NodeComponent from './components/NodeComponent'
-import Line from './components/Line'
 import Position from './types/Position'
 import Component from './components/Component'
 import { nodeTypes } from './types/types'
@@ -15,16 +14,23 @@ export default class Editor {
     private editorEnv: ComponentsList
     private canvasCtx: CanvasRenderingContext2D
     private backgroundCtx: CanvasRenderingContext2D
+    private canvasArea: Position // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
 
     private backgroundPattern: CanvasPattern|null
-    constructor(documentId: string, canvasDOM: HTMLCanvasElement, backgroundDOM: HTMLCanvasElement) {
+    constructor(documentId: string, canvasDOM: HTMLCanvasElement, backgroundDOM: HTMLCanvasElement, canvasVw: number, canvasVh: number) {
         this.editorEnv = new ComponentsList(documentId)
         this.canvasCtx = this.createContext(canvasDOM)
         this.backgroundCtx = this.createContext(backgroundDOM)
         this.backgroundPattern = null
-
+        this.canvasArea = new Position(canvasVw, canvasVh)
         this.loadPattern(bgTexturePath)
     }
+
+    // loadFile(jsonData)
+
+    // createEnviroment(constructor args) ?
+
+    // saveToFile()
 
     private createContext(domElement: HTMLCanvasElement): CanvasRenderingContext2D {
         return (domElement.getContext('2d')!)
@@ -54,23 +60,27 @@ export default class Editor {
     update = () => {
         requestAnimationFrame(this.update)
         this.draw(true)
+        // To-Do -> Adicionar as seguintes partes:
+        // eventos e adição de componentes
+        // colisão
     }
 
     resize = () => {
-        this.canvasCtx.canvas.width = window.innerWidth * 0.75
-        this.canvasCtx.canvas.height = window.innerHeight * 0.75
-        this.backgroundCtx.canvas.width = window.innerWidth * 0.75
-        this.backgroundCtx.canvas.height = window.innerHeight * 0.75
+        this.canvasCtx.canvas.width = window.innerWidth * this.canvasArea.x
+        this.canvasCtx.canvas.height = window.innerHeight * this.canvasArea.y
+        this.backgroundCtx.canvas.width = window.innerWidth * this.canvasArea.x
+        this.backgroundCtx.canvas.height = window.innerHeight * this.canvasArea.y
         requestAnimationFrame.bind(updateAll(this.canvasCtx, this.editorEnv.getComponents(), this.backgroundCtx, this.backgroundPattern))
     }
 
     node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type)
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height)
         this.editorEnv.addComponent(newNode)
     }
 
     line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
-        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Line(new Position(x1, y1), new Position(x2, y2)), from, to)
+        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
+        newLine.changePosition(Position.minus(new Position(x2, y2), newLine.position), 1)
         this.editorEnv.addComponent(newLine)
     }
 

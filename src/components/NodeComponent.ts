@@ -11,7 +11,7 @@ class NodeComponent extends Component {
     private nodeImage: HTMLImageElement
     private slotComponents: Array<SlotComponent>
     private slotsStatus: Array<boolean>
-    constructor(id: number, position: Position, nodeType: nodeTypes) {
+    constructor(id: number, position: Position, nodeType: nodeTypes, canvasWidth: number, canvasHeight: number) {
         super(id, position)
         this.nodeType = this.getNodeTypeObject(nodeType)
         this.slotComponents = []
@@ -20,7 +20,11 @@ class NodeComponent extends Component {
         this.imageLoaded= false
         this.nodeImage.addEventListener('load', () => {
             // Centraliza a imagem no mouse
-            this.position.minus(new Position(this.nodeImage.width/2, this.nodeImage.height/2))
+            let halfImgPos = new Position(this.nodeImage.width/2, this.nodeImage.height/2)
+            this.position.minus(halfImgPos)
+            let canvasBound = new Position(canvasWidth, canvasHeight)
+            canvasBound.minus(halfImgPos)
+            this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
             this.imageLoaded = true
         })
         this.nodeImage.src = this.nodeType.imgPath
@@ -45,6 +49,10 @@ class NodeComponent extends Component {
 
     setSlotComponent(id: number, localPos: Position, inSlot: boolean = true, color?: string, colorActive?: string): void {
         this.slotComponents.push(new SlotComponent(id, localPos, this, inSlot, color, colorActive))
+    }
+
+    getNodeImage() {
+        return this.nodeImage
     }
 
     draw(ctx: CanvasRenderingContext2D) {

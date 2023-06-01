@@ -1,12 +1,11 @@
 import './style.css'
-import './types/types.ts'
-import Editor from './Editor.ts'
+import Editor from './Editor'
 
 /* Obtem os elementos DOM dos dois canvas sobrepostos */
 const canvas = <HTMLCanvasElement> document.getElementById("editor-canvas")
 const bg = <HTMLCanvasElement> document.getElementById("editor-background")
 
-const editor = new Editor("teste", canvas, bg)
+const editor = new Editor("teste", canvas, bg, 0.75, 0.8)
 editor.line(0, 0, 300, 400)
 editor.text("Olá mundo", 500, 200, "32px sans-serif")
 

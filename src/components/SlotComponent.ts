@@ -8,6 +8,7 @@ export class SlotComponent extends Component {
     private inSlot: boolean
     private color: string
     private colorActive: string
+    private attractionBias: number // Área de atração do slot para linhas a serem conectadas
     constructor(id: number, position: Position, parent: Component, inSlot: boolean = true, color: string = "#0880FF", colorActive: string = "#FF0000") {
         super(id, position, ComponentType.SLOT)
         this.parentNode = parent
@@ -15,6 +16,7 @@ export class SlotComponent extends Component {
         this.colorActive = colorActive
         this.state = false
         this.inSlot = inSlot
+        this.attractionBias = 24
     }
 
     getState() {
@@ -36,5 +38,6 @@ export class SlotComponent extends Component {
         ctx.fillStyle = (this.state ? this.colorActive : this.color)
         ctx.fill()
         ctx.fillStyle = oldFillStyle
+        ctx.closePath()
     }
 }

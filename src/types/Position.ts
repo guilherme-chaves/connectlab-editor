@@ -24,12 +24,22 @@ class Position {
         this.y -= other.y
     }
 
+    inBounds(top: number, left: number, bottom: number, right: number) {
+        this.x = Math.min(Math.max(this.x, left), right)
+        this.y = Math.min(Math.max(this.y, top), bottom)
+    }
+
     static add(pos1: Position, pos2: Position) {
         return new Position(pos1.x + pos2.x, pos1.y + pos2.y)
     }
 
     static minus(pos1: Position, pos2: Position) {
         return new Position(pos1.x - pos2.x, pos1.y - pos2.y)
+    }
+
+    static inBounds(pos: Position, top: number, left: number, bottom: number, right: number) {
+        pos.x = Math.min(Math.max(pos.x, left), right)
+        pos.y = Math.min(Math.max(pos.y, top), bottom)
     }
 }
 
