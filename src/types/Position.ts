@@ -27,6 +27,14 @@ class Position {
         return new Position(this.x - other.x, this.y - other.y)
     }
 
+    multS(s: number): Position {
+        return new Position(this.x * s, this.y * s)
+    }
+
+    mult(other: Position) {
+        return new Position(this.x * other.x, this.y * other.y)
+    }
+
     dot(other: Position): number {
         return this.x * other.x + this.y * other.y
     }
@@ -41,28 +49,6 @@ class Position {
             Math.min(Math.max(this.y, top), bottom)
         )
     }
-
-    // static add(pos1: Position, pos2: Position): Position {
-    //     return new Position(pos1.x + pos2.x, pos1.y + pos2.y)
-    // }
-
-    // static minus(pos1: Position, pos2: Position): Position {
-    //     return new Position(pos1.x - pos2.x, pos1.y - pos2.y)
-    // }
-
-    // static dot(pos1: Position, pos2: Position): number {
-    //     return pos1.x * pos2.x + pos1.y * pos2.y
-    // }
-
-    // static magSq(pos: Position) {
-    //     return Position.dot(pos, pos)
-    // }
-
-    // static inBounds(pos: Position, top: number, left: number, bottom: number, right: number): Position {
-    //     pos.x = Math.min(Math.max(pos.x, left), right)
-    //     pos.y = Math.min(Math.max(pos.y, top), bottom)
-    //     return pos
-    // }
 }
 
 export default Position

@@ -11,10 +11,14 @@ import SlotComponent from './components/SlotComponent'
 import EditorEvents from './functions/events'
 
 export default class Editor {
+    // Lista de componentes
     private editorEnv: ComponentsList
+    // Controle de eventos do canvas
     private editorEvents: EditorEvents
+    // Contextos dos canvas
     private canvasCtx: CanvasRenderingContext2D
     private backgroundCtx: CanvasRenderingContext2D
+    // Propriedades dos canvas
     private canvasArea: Position // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
     private backgroundPattern: CanvasPattern|null
     
@@ -28,9 +32,7 @@ export default class Editor {
         this.loadPattern(bgTexturePath)
     }
 
-    // loadFile(jsonData)
-
-    // createEnviroment(constructor args) ?
+    // static loadFile(jsonData): Editor
 
     // saveToFile()
 
@@ -107,6 +109,7 @@ export default class Editor {
     line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
         let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
         newLine.changePosition(new Position(x2, y2).minus(newLine.position), 1)
+        newLine.addPoint(new Position(320, 100).minus(newLine.position))
         return this.editorEnv.addComponent(newLine)
     }
 

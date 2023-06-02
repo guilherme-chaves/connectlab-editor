@@ -2,7 +2,7 @@ import Position from "./Position"
 import { nodeTypes } from "./types"
 
 // Modelo para criação de objetos do tipo NODE
-interface NodeType {
+export default interface NodeTypeInterface {
     readonly id: nodeTypes,
     readonly imgPath: string,
     readonly connectionSlots: Array<{
@@ -13,5 +13,3 @@ interface NodeType {
     }>,
     readonly op: (slotsState: Array<boolean>) => boolean // Operação booleana envolvendo o valor atual dos slots
 }
-
-export default NodeType

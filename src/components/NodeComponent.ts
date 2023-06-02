@@ -4,7 +4,6 @@ import { ADDNode, NOTNode, ORNode } from "../types/NodeTypes"
 import Position from "../types/Position"
 import Component from "./Component"
 import BBCollision from "../collision/BBCollision"
-import CollisionShape from "../collision/CollisionShape"
 
 class NodeComponent extends Component {
     public readonly nodeType: NodeType
@@ -12,12 +11,14 @@ class NodeComponent extends Component {
     private nodeImage: HTMLImageElement
     private slotComponents: Array<number>
     declare protected collisionShape: BBCollision
+
     constructor(id: number, position: Position, nodeType: nodeTypes, canvasWidth: number, canvasHeight: number, slotKeys: Array<number>) {
         super(id, position)
         this.nodeType = NodeComponent.getNodeTypeObject(nodeType)
         this.slotComponents = slotKeys
         this.nodeImage = new Image()
         this.imageLoaded= false
+        // Ideia/Workaround -> Mover a atribuição do src para o Editor, então seria possível atualizar os slots também?
         this.nodeImage.addEventListener('load', () => {
             // Centraliza a imagem no mouse - bug relacionado ao posicionamento dos slots
             // let halfImgPos = new Position(this.nodeImage.width/2, this.nodeImage.height/2)
@@ -32,6 +33,7 @@ class NodeComponent extends Component {
     }
 
     static getNodeTypeObject(type: nodeTypes): NodeType {
+        // Carrega o objeto do tipo de Node solicitado
         switch (type) {
             case nodeTypes.ADD:
                 return ADDNode
@@ -48,6 +50,10 @@ class NodeComponent extends Component {
         this.slotComponents = slotKeys
     }
 
+    getSlotComponents() {
+        return this.slotComponents
+    }
+
     changePosition(delta: Position): void {
         super.changePosition(delta)
     }
@@ -58,10 +64,6 @@ class NodeComponent extends Component {
 
     getNodeType() {
         return this.nodeType
-    }
-
-    getSlotComponents() {
-        return this.slotComponents
     }
 
     getCollisionShape(): BBCollision {

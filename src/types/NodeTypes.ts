@@ -1,9 +1,9 @@
-import NodeType from "./NodeType"
+import NodeTypeInterface from "./NodeType"
 import { nodeTypes } from "./types"
 import Position from "./Position"
 import NOTPath from "../assets/gates/NOT_S.svg"
 
-const ADDNode: NodeType = {
+const ADDNode: NodeTypeInterface = {
     id: nodeTypes.ADD,
     imgPath: "",
     connectionSlots: [
@@ -16,7 +16,7 @@ const ADDNode: NodeType = {
     }
 }
 
-const ORNode: NodeType = {
+const ORNode: NodeTypeInterface = {
     id: nodeTypes.OR,
     imgPath: "",
     connectionSlots: [
@@ -29,7 +29,7 @@ const ORNode: NodeType = {
     }
 }
 
-const NOTNode: NodeType = {
+const NOTNode: NodeTypeInterface = {
     id: nodeTypes.NOT,
     imgPath: NOTPath,
     connectionSlots: [

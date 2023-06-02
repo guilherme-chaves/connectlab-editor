@@ -22,7 +22,7 @@ export default class SlotComponent extends Component {
         this.inSlot = inSlot
         this.radius = radius
         this.attractionBias = attractionRadius
-        this.collisionShape = new CircleCollision(this.position.add(this.parentPosition), attractionRadius)
+        this.collisionShape = new CircleCollision(this.position.add(this.parentPosition), this.attractionBias)
         // Buscar como ler os parâmetros do Node após as mudanças realizadas - centralizar no mouse e colisão com os limites do canvas
         this.componentPath = this.generatePath()
     }
@@ -47,6 +47,7 @@ export default class SlotComponent extends Component {
         return this.collisionShape
     }
 
+    // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
     protected generatePath(): Path2D {
         let path = new Path2D()
         path.arc(this.parentPosition.x+this.position.x, this.parentPosition.y+this.position.y, this.radius, 0, Math.PI*2)
@@ -54,12 +55,10 @@ export default class SlotComponent extends Component {
     }
 
     draw(ctx: CanvasRenderingContext2D, ): void {
-        ctx.beginPath()
         let oldFillStyle = ctx.fillStyle
         ctx.fillStyle = (this.state ? this.colorActive : this.color)
         ctx.fill(this.componentPath)
         ctx.fillStyle = oldFillStyle
-        ctx.closePath()
         this.collisionShape.draw(ctx, true)
     }
 }

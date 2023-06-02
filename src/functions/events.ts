@@ -64,6 +64,7 @@ export default class EditorEvents {
     }
 
     mouseClick(componentsList: ComponentsList) {
+        // Obtêm uma lista com todas as colisões encontradas
         let collisions: collisionListInterface = {
             "nodes": this.checkNodeClick(componentsList),
             "slots": this.checkSlotClick(componentsList),
@@ -71,6 +72,7 @@ export default class EditorEvents {
             "texts": undefined
         }
 
+        // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
         if(collisions.slots) {
             collisions.slots.forEach(slot => {
                 componentsList.getComponents().slots[slot].setState(true)
@@ -80,6 +82,7 @@ export default class EditorEvents {
         this.collisionList = collisions
     }
 
+    // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
     checkNodeClick(componentsList: ComponentsList): number[] | undefined {
         let collided = false
         let collidedWith = new Array<number>
@@ -93,6 +96,7 @@ export default class EditorEvents {
         return collided ? collidedWith : undefined
     }
 
+    // Busca na lista de slots quais possuem uma colisão com o ponto do mouse
     checkSlotClick(componentsList: ComponentsList): number[] | undefined {
         let collided = false
         let collidedWith = new Array<number>
@@ -106,10 +110,12 @@ export default class EditorEvents {
         return collided ? collidedWith : undefined
     }
 
+    // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
     checkConnectionClick(editor: Editor) {
-
+        // Cada linha da conexão possui um BB ou OBB, então precisa passar por um loop no array de malhas de colisão
     }
 
+    // Busca na lista de textos quais possuem uma colisão com o ponto do mouse
     checkTextClick(editor: Editor) {
 
     }
@@ -122,6 +128,7 @@ export default class EditorEvents {
         this.editingLine = state
     }
 
+    // Define a posição da linha flutuante (no processo de criação de linhas), caso o usuário clique no canvas, finaliza o processo
     setLinePoint(componentsList: ComponentsList, clickEv: boolean) {
         if (this.editingLine) {
             componentsList.getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition))
@@ -130,6 +137,7 @@ export default class EditorEvents {
         }
     }
 
+    // Procura na lista anterior de colisões as que não estão presentes na atual, removendo seu estado de selecionado/ativo
     clearUnselectedComponents = (componentsList: ComponentsList, newCollisionList: Object): void => {
         if(this.collisionList["slots"]) {
             this.collisionList["slots"].forEach(slot => {

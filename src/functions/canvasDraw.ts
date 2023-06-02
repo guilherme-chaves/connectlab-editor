@@ -1,5 +1,6 @@
 import { componentListInterface } from "../types/types";
 
+// Limpa o canvas antes de desenhar um novo quadro
 export function clearFrame(ctx: CanvasRenderingContext2D) {
     ctx.save();
     ctx.setTransform(1, 0, 0, 1, 0, 0);

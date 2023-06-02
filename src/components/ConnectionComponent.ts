@@ -15,7 +15,7 @@ class ConnectionComponent extends Component {
         this.points = []
         // Os pontos funcionam com coordenadas locais, relacionadas a variável position
         this.points.push(new Position(0, 0))
-        this.points.push(new Position(0, 0)) // Segundo ponto que será editado para gerar a linha
+        this.points.push(new Position(0, 0)) // Segundo ponto, necessário para criar a linha
         this.connectedTo = {}
         this.connectedTo.start = connection1
         this.connectedTo.end = connection2
@@ -24,24 +24,23 @@ class ConnectionComponent extends Component {
         this.regenConnectionPath = false
     }
 
+    // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
     generatePath() {
         let path = new Path2D()
-        path.moveTo(this.points[0].x, this.points[0].y)
+        path.moveTo(this.position.x, this.position.y)
         this.points.forEach(point => {
             let globalPos = this.position.add(point)
             path.lineTo(globalPos.x, globalPos.y)
         })
         return path
     }
-    // TODO - Refatorar o código da função draw e a classe Line
-    /*
-        A linha intermediária deve estar conectada a linha anterior (end -> start)
-        As linhas devem ser desenhadas como um único path (path2d?)
-    */
+
     draw(ctx: CanvasRenderingContext2D): void {
         if (this.regenConnectionPath)
             this.connectionPath = this.generatePath()
         ctx.strokeStyle = "#000000"
+        ctx.lineWidth = 2
+        ctx.lineJoin = "round"
         ctx.stroke(this.connectionPath)
     }
 

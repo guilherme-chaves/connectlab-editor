@@ -5,11 +5,6 @@ export default class CollisionShape {
     public b: Position = new Position(0,0)
     public color: string = "#FF8008"
     protected drawPath: Path2D = this.generatePath()
-    // constructor(position: Position, width: number, height: number, color: string = "#FF8008") {
-    //     this.a = position
-    //     this.b = Position.add(this.a, new Position(width, height))
-    //     this.color = color
-    // }
 
     protected generatePath(): Path2D {
         let path = new Path2D()
