@@ -18,7 +18,7 @@ class TextComponent extends Component {
         ctx.font = style ?? (this.style ?? ctx.font)
         // Caso possua um nó-pai, deve usar a posição relativa a ele
         if(this.parentNode != null){
-            let pos = Position.add(this.parentNode.position, this.position)
+            let pos = this.parentNode.position.add(this.position)
             ctx.fillText(this.text, pos.x, pos.y) 
         } else {
             ctx.fillText(this.text, this.position.x, this.position.y) 

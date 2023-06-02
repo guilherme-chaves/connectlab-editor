@@ -8,16 +8,19 @@ import NodeComponent from './components/NodeComponent'
 import Position from './types/Position'
 import Component from './components/Component'
 import SlotComponent from './components/SlotComponent'
+import EditorEvents from './functions/events'
 
 export default class Editor {
     private editorEnv: ComponentsList
+    private editorEvents: EditorEvents
     private canvasCtx: CanvasRenderingContext2D
     private backgroundCtx: CanvasRenderingContext2D
     private canvasArea: Position // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
-
     private backgroundPattern: CanvasPattern|null
+    
     constructor(documentId: string, canvasDOM: HTMLCanvasElement, backgroundDOM: HTMLCanvasElement, canvasVw: number, canvasVh: number) {
         this.editorEnv = new ComponentsList(documentId)
+        this.editorEvents = new EditorEvents()
         this.canvasCtx = this.createContext(canvasDOM)
         this.backgroundCtx = this.createContext(backgroundDOM)
         this.backgroundPattern = null
@@ -33,6 +36,10 @@ export default class Editor {
 
     private createContext(domElement: HTMLCanvasElement): CanvasRenderingContext2D {
         return (domElement.getContext('2d')!)
+    }
+
+    getEnviroment(): ComponentsList {
+        return this.editorEnv
     }
 
     getContext(canvas: boolean = true): CanvasRenderingContext2D {
@@ -59,9 +66,24 @@ export default class Editor {
     update = () => {
         requestAnimationFrame(this.update)
         this.draw(true)
+        // this.move()
+        // this.checkConnections()
+        // this.checkCollisions()
         // To-Do -> Adicionar as seguintes partes:
         // eventos e adição de componentes
         // colisão(this.editorEnv)
+    }
+
+    move = () => {
+        //EditorEvents.
+    }
+
+    onclick = () => {
+        this.editorEvents.mouseClick(this.editorEnv)
+    }
+
+    ondrag = () => {
+        
     }
 
     resize = () => {
@@ -72,7 +94,7 @@ export default class Editor {
         requestAnimationFrame.bind(updateAll(this.canvasCtx, this.editorEnv.getComponents(), this.backgroundCtx, this.backgroundPattern))
     }
 
-    node(x: number, y: number, type: nodeTypes= nodeTypes.NOT) {
+    node(x: number = this.editorEvents.getMousePosition().x, y: number = this.editorEvents.getMousePosition().y, type: nodeTypes= nodeTypes.NOT) {
         let slotKeys: Array<number> = []
         NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
             let key = this.slot(slot.localPos.x, slot.localPos.y, new Position(x, y), slot.in)
@@ -84,7 +106,7 @@ export default class Editor {
 
     line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
         let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
-        newLine.changePosition(Position.minus(new Position(x2, y2), newLine.position), 1)
+        newLine.changePosition(new Position(x2, y2).minus(newLine.position), 1)
         return this.editorEnv.addComponent(newLine)
     }
 
@@ -98,5 +120,14 @@ export default class Editor {
         let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentPosition,
             inSlot, radius, attractionRadius, color, colorActive)
         return this.editorEnv.addComponent(newSlot)
+    }
+
+    setMousePosition(clientX: number, clientY: number) {
+        let rect = this.canvasCtx.canvas.getBoundingClientRect()
+        this.editorEvents.setMousePosition(new Position(clientX - rect.left, clientY - rect.top))
+    }
+
+    getMousePosition() {
+        return this.editorEvents.getMousePosition()
     }
 }

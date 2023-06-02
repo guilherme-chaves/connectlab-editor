@@ -19,7 +19,16 @@ addEventListener("resize", () => {
     editor.resize()
 })
 
-canvas.addEventListener("click", ({clientX, clientY}) => {
-    var rect = canvas.getBoundingClientRect()
-    editor.node(clientX - rect.top, clientY - rect.left)
+addEventListener("mousemove", ({clientX, clientY}) => {
+    editor.setMousePosition(clientX, clientY)
+})
+
+canvas.addEventListener("click", () => {
+    // var rect = canvas.getBoundingClientRect()
+    // editor.node(clientX - rect.top, clientY - rect.left)
+    editor.onclick()
+})
+
+addEventListener('keypress', () => {
+    editor.node()
 })

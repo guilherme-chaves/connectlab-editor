@@ -3,12 +3,15 @@ import NodeType from "../types/NodeType"
 import { ADDNode, NOTNode, ORNode } from "../types/NodeTypes"
 import Position from "../types/Position"
 import Component from "./Component"
+import BBCollision from "../collision/BBCollision"
+import CollisionShape from "../collision/CollisionShape"
 
 class NodeComponent extends Component {
     public readonly nodeType: NodeType
     private imageLoaded: boolean
     private nodeImage: HTMLImageElement
     private slotComponents: Array<number>
+    declare protected collisionShape: BBCollision
     constructor(id: number, position: Position, nodeType: nodeTypes, canvasWidth: number, canvasHeight: number, slotKeys: Array<number>) {
         super(id, position)
         this.nodeType = NodeComponent.getNodeTypeObject(nodeType)
@@ -21,8 +24,9 @@ class NodeComponent extends Component {
             // this.position.minus(halfImgPos)
             let canvasBound = new Position(canvasWidth, canvasHeight)
             canvasBound.minus(new Position(this.nodeImage.width, this.nodeImage.height))
-            this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
+            this.position = this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
             this.imageLoaded = true
+            this.collisionShape = new BBCollision(this.position, this.nodeImage.width, this.nodeImage.height)
         })
         this.nodeImage.src = this.nodeType.imgPath
     }
@@ -60,9 +64,14 @@ class NodeComponent extends Component {
         return this.slotComponents
     }
 
+    getCollisionShape(): BBCollision {
+        return this.collisionShape
+    }
+
     draw(ctx: CanvasRenderingContext2D) {
         if (this.imageLoaded) {
             ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
+            this.collisionShape.draw(ctx, true)
         }
     }
 }

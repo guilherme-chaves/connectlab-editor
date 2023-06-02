@@ -28,7 +28,7 @@ class ConnectionComponent extends Component {
         let path = new Path2D()
         path.moveTo(this.points[0].x, this.points[0].y)
         this.points.forEach(point => {
-            let globalPos = Position.add(this.position, point)
+            let globalPos = this.position.add(point)
             path.lineTo(globalPos.x, globalPos.y)
         })
         return path
@@ -62,12 +62,12 @@ class ConnectionComponent extends Component {
 
     // Recebe um delta entre a posição anterior e a atual
     changePositions(delta: Position) {
-        this.position.add(delta)
+        this.position = this.position.add(delta)
         this.regenConnectionPath = true
     }
 
     changePosition(delta: Position, positionIndex: number = this.points.length - 1): void {
-        this.points[positionIndex].add(delta)
+        this.points[positionIndex] = this.points[positionIndex].add(delta)
         this.regenConnectionPath = true
     }
 

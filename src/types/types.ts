@@ -16,6 +16,13 @@ export enum nodeTypes {
     NOT = 2
 }
 
+export enum EditorMode {
+    ADD = 0,
+    MOVE = 1,
+    SELECT = 2,
+    PROP = 3
+}
+
 export interface nodeListInterface {
     [index: number]: NodeComponent
 }
