@@ -47,10 +47,17 @@ class ConnectionComponent extends Component {
 
     addPoint(point: Position, position: number = this.points.length): void {
         let len = this.points.length
-        if (point.x > this.points[len-1].x - this.attractionBias && point.x < this.points[len-1].x + this.attractionBias)
-            point.x = this.points[len-1].x
-        if (point.y > this.points[len-1].y - this.attractionBias && point.y < this.points[len-1].y + this.attractionBias)
-            point.y = this.points[len-1].y
+        if (len > 1 && position === len) {
+            if (point.x > this.points[len-1].x - this.attractionBias && point.x < this.points[len-1].x + this.attractionBias)
+                point.x = this.points[len-1].x
+            if (point.y > this.points[len-1].y - this.attractionBias && point.y < this.points[len-1].y + this.attractionBias)
+                point.y = this.points[len-1].y
+        } else if (len > 1 && (position > 0 && position)) {
+            if (point.x > this.points[position-1].x - this.attractionBias && point.x < this.points[position-1].x + this.attractionBias)
+                point.x = this.points[position-1].x
+            if (point.y > this.points[position-1].y - this.attractionBias && point.y < this.points[position-1].y + this.attractionBias)
+                point.y = this.points[position-1].y
+        }
         this.points.splice(position, 0, point)
         this.regenConnectionPath = true
     }
@@ -61,13 +68,19 @@ class ConnectionComponent extends Component {
     }
 
     // Recebe um delta entre a posição anterior e a atual
-    changePositions(delta: Position) {
-        this.position = this.position.add(delta)
+    changePositions(delta: Position, useDelta: boolean = true) {
+        if (useDelta)
+            this.position = this.position.add(delta)
+        else
+            this.position = delta
         this.regenConnectionPath = true
     }
 
-    changePosition(delta: Position, positionIndex: number = this.points.length - 1): void {
-        this.points[positionIndex] = this.points[positionIndex].add(delta)
+    changePosition(delta: Position, positionIndex: number = this.points.length - 1, useDelta: boolean = true): void {
+        if (useDelta)
+            this.points[positionIndex] = this.points[positionIndex].add(delta)
+        else
+            this.points[positionIndex] = delta
         this.regenConnectionPath = true
     }
 

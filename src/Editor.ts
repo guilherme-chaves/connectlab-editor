@@ -1,4 +1,4 @@
-import { nodeTypes } from './types/types'
+import ComponentType, { nodeTypes } from './types/types'
 import bgTexturePath from './assets/bg-texture.svg'
 import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
 import ComponentsList from './components/ComponentsList'
@@ -97,12 +97,14 @@ export default class Editor {
 
     node(x: number = this.editorEvents.getMousePosition().x, y: number = this.editorEvents.getMousePosition().y, type: nodeTypes= nodeTypes.NOT) {
         let slotKeys: Array<number> = []
+        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height, slotKeys)
+        let newNodeId = this.editorEnv.addComponent(newNode)
         NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
-            let key = this.slot(slot.localPos.x, slot.localPos.y, new Position(x, y), slot.in)
+            let key = this.slot(slot.localPos.x, slot.localPos.y, ComponentType.NODE, newNodeId, new Position(x, y), slot.in)
             slotKeys.push(key)
         })
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height, slotKeys)
-        return this.editorEnv.addComponent(newNode)
+        this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys)
+        return newNodeId
     }
 
     line(x1: number, y1: number, from?: NodeComponent, to?: NodeComponent) {
@@ -115,9 +117,9 @@ export default class Editor {
         return this.editorEnv.addComponent(newText)
     }
 
-    slot(x: number, y: number, parentPosition: Position, inSlot?: boolean, radius?: number,
+    slot(x: number, y: number, parentType: ComponentType, parentId: number, parentPosition: Position, inSlot?: boolean, radius?: number,
             attractionRadius?: number, color?: string, colorActive?: string) {
-        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentPosition,
+        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentType, parentId, parentPosition,
             inSlot, radius, attractionRadius, color, colorActive)
         return this.editorEnv.addComponent(newSlot)
     }

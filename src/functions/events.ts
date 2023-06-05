@@ -129,13 +129,14 @@ export default class EditorEvents {
     }
 
     mouseDrag(editor: Editor, componentsList: ComponentsList) {
+        if (this.editingLine) {
+            let linePos = editor.getEnviroment().getComponents().connections[this.editingLineId].position
+            editor.getEnviroment().getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(linePos), undefined, false)
+        }
+
         if (this.mouseClicked) {
             this.addLine(editor) ? true :
             this.moveNode(componentsList, this.mousePosition.minus(this.oldMousePosition))
-            
-        }
-        if (this.editingLine) {
-            editor.getEnviroment().getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition))
         }
     }
 
@@ -159,8 +160,10 @@ export default class EditorEvents {
         if (this.collisionList.slots != undefined) {
             let key = Object.values(this.collisionList.slots)[0]
             let slotPos = editor.getEnviroment().getComponents().slots[key].position.add(editor.getEnviroment().getComponents().slots[key].getParentPosition())
+            let parentId = editor.getEnviroment().getComponents().slots[key].getParentId()
             this.editingLine = true
-            this.editingLineId = editor.line(slotPos.x, slotPos.y)
+            this.editingLineId = editor.line(slotPos.x, slotPos.y, editor.getEnviroment().getComponents().nodes[parentId])
+            editor.getEnviroment().getComponents().connections[this.editingLineId].addPoint(new Position(0, 0))
             console.log(this.editingLineId)
             return true
         }

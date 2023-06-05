@@ -4,6 +4,8 @@ import ComponentType from "../types/types";
 import Component from "./Component";
 
 export default class SlotComponent extends Component {
+    private parentType: ComponentType
+    private parentId: number
     private parentPosition: Position
     private state: boolean
     private inSlot: boolean
@@ -13,8 +15,10 @@ export default class SlotComponent extends Component {
     private attractionBias: number // Área de atração do slot para linhas a serem conectadas
     declare protected collisionShape: CircleCollision;
 
-    constructor(id: number, position: Position, parentPosition: Position, inSlot: boolean = true, radius: number = 4, attractionRadius: number = 12, color: string = "#0880FF", colorActive: string = "#FF0000") {
+    constructor(id: number, position: Position, parentType: ComponentType, parentId: number, parentPosition: Position, inSlot: boolean = true, radius: number = 4, attractionRadius: number = 12, color: string = "#0880FF", colorActive: string = "#FF0000") {
         super(id, position, ComponentType.SLOT)
+        this.parentType = parentType
+        this.parentId = parentId
         this.parentPosition = parentPosition
         this.color = color
         this.colorActive = colorActive
@@ -37,6 +41,10 @@ export default class SlotComponent extends Component {
     
     getInSlot(): boolean {
         return this.inSlot
+    }
+
+    getParentId() {
+        return this.parentId
     }
 
     getParentPosition() {

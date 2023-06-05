@@ -27,7 +27,6 @@ class NodeComponent extends Component {
             canvasBound.minus(new Position(this.nodeImage.width, this.nodeImage.height))
             this.position = this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
             this.collisionShape = new BBCollision(this.position, this.nodeImage.width, this.nodeImage.height)
-            console.log(this.collisionShape)
             this.imageLoaded = true
         })
         this.nodeImage.src = this.nodeType.imgPath
