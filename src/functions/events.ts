@@ -19,6 +19,7 @@ export default class EditorEvents {
     private collisionList: collisionListInterface
     private mousePosition: Position // Posição dentro do canvas, não global
     private oldMousePosition: Position
+    private mouseClicked: boolean
 
     constructor() {
         // this.currentComponentType = ComponentType.NODE
@@ -33,6 +34,7 @@ export default class EditorEvents {
         }
         this.mousePosition = new Position(0, 0)
         this.oldMousePosition = this.mousePosition
+        this.mouseClicked = false
     }
 
     // addComponent(editor: Editor, clientX?: number, clientY?: number): void {
@@ -71,12 +73,18 @@ export default class EditorEvents {
             "connections": undefined,
             "texts": undefined
         }
+        //console.log(collisions)
 
         // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
         if(collisions.slots) {
             collisions.slots.forEach(slot => {
                 componentsList.getComponents().slots[slot].setState(true)
             })
+        }
+
+        if(this.editingLine) {
+            componentsList.getComponents().connections[this.editingLineId].position
+            this.editingLine = false
         }
         this.clearUnselectedComponents(componentsList, collisions)
         this.collisionList = collisions
@@ -120,6 +128,45 @@ export default class EditorEvents {
 
     }
 
+    mouseDrag(editor: Editor, componentsList: ComponentsList) {
+        if (this.mouseClicked) {
+            this.addLine(editor) ? true :
+            this.moveNode(componentsList, this.mousePosition.minus(this.oldMousePosition))
+            
+        }
+        if (this.editingLine) {
+            editor.getEnviroment().getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition))
+        }
+    }
+
+    moveNode(componentsList: ComponentsList, delta: Position): boolean {
+        if(this.collisionList.nodes != undefined) {
+            let key = Object.values(this.collisionList.nodes)[0]
+            componentsList.getComponents().nodes[key].changePosition(delta)
+            componentsList.getComponents().nodes[key].getCollisionShape().moveShape(delta)
+            componentsList.getComponents().nodes[key].getSlotComponents().forEach(slotKey => {
+                componentsList.getComponents().slots[slotKey].setParentPosition(componentsList.getComponents().nodes[key].position)
+                componentsList.getComponents().slots[slotKey].getCollisionShape().moveShape(delta)
+            });
+            return true
+        }
+        return false
+    }
+
+    addLine(editor: Editor): boolean {
+        if (this.editingLine)
+            return true
+        if (this.collisionList.slots != undefined) {
+            let key = Object.values(this.collisionList.slots)[0]
+            let slotPos = editor.getEnviroment().getComponents().slots[key].position.add(editor.getEnviroment().getComponents().slots[key].getParentPosition())
+            this.editingLine = true
+            this.editingLineId = editor.line(slotPos.x, slotPos.y)
+            console.log(this.editingLineId)
+            return true
+        }
+        return false
+    }
+
     getEditingLine() {
         return this.editingLine
     }
@@ -129,11 +176,9 @@ export default class EditorEvents {
     }
 
     // Define a posição da linha flutuante (no processo de criação de linhas), caso o usuário clique no canvas, finaliza o processo
-    setLinePoint(componentsList: ComponentsList, clickEv: boolean) {
+    setLinePoint(componentsList: ComponentsList) {
         if (this.editingLine) {
             componentsList.getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition))
-                if(clickEv)
-                    this.editingLine = false
         }
     }
 
@@ -146,5 +191,18 @@ export default class EditorEvents {
                 }
             })
         }
+    }
+
+    clearDragCollisions = () => {
+        this.collisionList = {
+            "nodes": undefined,
+            "slots": this.collisionList.slots,
+            "connections": this.collisionList.connections,
+            "texts": this.collisionList.texts
+        }
+    }
+
+    setMouseClicked(state: boolean = false) {
+        this.mouseClicked = state
     }
 }

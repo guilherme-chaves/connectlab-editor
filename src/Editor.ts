@@ -68,7 +68,6 @@ export default class Editor {
     update = () => {
         requestAnimationFrame(this.update)
         this.draw(true)
-        // this.move()
         // this.checkConnections()
         // this.checkCollisions()
         // To-Do -> Adicionar as seguintes partes:
@@ -77,7 +76,7 @@ export default class Editor {
     }
 
     move = () => {
-        //EditorEvents.
+        this.editorEvents.mouseDrag(this, this.editorEnv)
     }
 
     onclick = () => {
@@ -106,10 +105,8 @@ export default class Editor {
         return this.editorEnv.addComponent(newNode)
     }
 
-    line(x1: number, y1: number, x2: number, y2: number, from?: NodeComponent, to?: NodeComponent) {
+    line(x1: number, y1: number, from?: NodeComponent, to?: NodeComponent) {
         let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
-        newLine.changePosition(new Position(x2, y2).minus(newLine.position), 1)
-        newLine.addPoint(new Position(320, 100).minus(newLine.position))
         return this.editorEnv.addComponent(newLine)
     }
 
@@ -132,5 +129,14 @@ export default class Editor {
 
     getMousePosition() {
         return this.editorEvents.getMousePosition()
+    }
+
+    setMouseClicked(state: boolean) {
+        this.editorEvents.setMouseClicked(state)
+    }
+
+    clearCollision(onlyDragCollisions: boolean = true) {
+        if (onlyDragCollisions) 
+            this.editorEvents.clearDragCollisions()
     }
 }

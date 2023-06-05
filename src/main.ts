@@ -6,7 +6,6 @@ const canvas = <HTMLCanvasElement> document.getElementById("editor-canvas")
 const bg = <HTMLCanvasElement> document.getElementById("editor-background")
 
 const editor = new Editor("teste", canvas, bg, 0.75, 0.8)
-editor.line(0, 0, 300, 400)
 editor.text("Olá mundo", 500, 200, "32px sans-serif")
 
 addEventListener("load", () => {
@@ -19,13 +18,25 @@ addEventListener("resize", () => {
     editor.resize()
 })
 
+canvas.addEventListener("mousedown", () => {
+    editor.setMouseClicked(true)
+})
+
+canvas.addEventListener("mouseup", () => {
+    editor.setMouseClicked(false)
+    editor.clearCollision()
+})
+
+canvas.addEventListener("mouseout", () => {
+    editor.setMouseClicked(false)
+})
+
 addEventListener("mousemove", ({clientX, clientY}) => {
+    editor.move()
     editor.setMousePosition(clientX, clientY)
 })
 
 canvas.addEventListener("click", () => {
-    // var rect = canvas.getBoundingClientRect()
-    // editor.node(clientX - rect.top, clientY - rect.left)
     editor.onclick()
 })
 

@@ -32,6 +32,11 @@ export default class CircleCollision extends CollisionShape {
         ctx.closePath()
     }
 
+    moveShape(delta: Position): void {
+        this.a = this.a.add(delta)
+        this.drawPath = this.generatePath()
+    }
+
     collisionWithPoint(point: Position): boolean {
         return (this.a.minus(point).magSq() < this.radiusSq)
     }

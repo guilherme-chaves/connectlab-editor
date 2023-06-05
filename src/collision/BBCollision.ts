@@ -5,9 +5,15 @@ export default class BBCollision extends CollisionShape {
     constructor(position: Position, width: number, height: number, color?: string) {
         super()
         this.a = position
-        this.b = this.a.add(new Position(width, height))
+        this.b = new Position(width, height)
         this.color = color ?? this.color
         this.drawPath = this.generatePath()
+    }
+
+    protected generatePath(): Path2D {
+        let path = new Path2D()
+        path.rect(this.a.x, this.a.y, this.b.x, this.b.y)
+        return path
     }
 
     draw(ctx: CanvasRenderingContext2D, selected: boolean) {
@@ -15,10 +21,12 @@ export default class BBCollision extends CollisionShape {
     }
 
     moveShape(delta: Position): void {
-        super.moveShape(delta)
+        this.a = this.a.add(delta)
+        this.drawPath = this.generatePath()
     }
 
     collisionWithPoint(point: Position): boolean {
-        return (point.x > this.a.x && point.x < this.b.x && point.y > this.a.y && point.y < this.b.y)
+        let b = this.b.add(this.a)
+        return (point.x > this.a.x && point.x < b.x && point.y > this.a.y && point.y < b.y)
     }
 }

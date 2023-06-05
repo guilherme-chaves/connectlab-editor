@@ -39,8 +39,13 @@ export default class SlotComponent extends Component {
         return this.inSlot
     }
 
+    getParentPosition() {
+        return this.parentPosition
+    }
+
     setParentPosition(position: Position) {
         this.parentPosition = position
+        this.componentPath = this.generatePath()
     }
 
     getCollisionShape(): CircleCollision {

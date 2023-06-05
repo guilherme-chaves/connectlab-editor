@@ -26,8 +26,9 @@ class NodeComponent extends Component {
             let canvasBound = new Position(canvasWidth, canvasHeight)
             canvasBound.minus(new Position(this.nodeImage.width, this.nodeImage.height))
             this.position = this.position.inBounds(0, 0, canvasBound.y, canvasBound.x)
-            this.imageLoaded = true
             this.collisionShape = new BBCollision(this.position, this.nodeImage.width, this.nodeImage.height)
+            console.log(this.collisionShape)
+            this.imageLoaded = true
         })
         this.nodeImage.src = this.nodeType.imgPath
     }
@@ -73,7 +74,8 @@ class NodeComponent extends Component {
     draw(ctx: CanvasRenderingContext2D) {
         if (this.imageLoaded) {
             ctx.drawImage(this.nodeImage, this.position.x, this.position.y)
-            this.collisionShape.draw(ctx, true)
+            if(this.collisionShape != undefined)
+                this.collisionShape.draw(ctx, true)
         }
     }
 }

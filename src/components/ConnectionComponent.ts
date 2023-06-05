@@ -15,7 +15,6 @@ class ConnectionComponent extends Component {
         this.points = []
         // Os pontos funcionam com coordenadas locais, relacionadas a variável position
         this.points.push(new Position(0, 0))
-        this.points.push(new Position(0, 0)) // Segundo ponto, necessário para criar a linha
         this.connectedTo = {}
         this.connectedTo.start = connection1
         this.connectedTo.end = connection2
@@ -36,6 +35,8 @@ class ConnectionComponent extends Component {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        if (this.points.length == 1)
+            return
         if (this.regenConnectionPath)
             this.connectionPath = this.generatePath()
         ctx.strokeStyle = "#000000"

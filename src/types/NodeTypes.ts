@@ -1,7 +1,7 @@
 import NodeTypeInterface from "./NodeType"
 import { nodeTypes } from "./types"
 import Position from "./Position"
-import NOTPath from "../assets/gates/NOT_S.svg"
+import NOTPath from "../assets/gates/NOT.svg"
 
 const ADDNode: NodeTypeInterface = {
     id: nodeTypes.ADD,

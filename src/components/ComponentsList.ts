@@ -56,7 +56,7 @@ class ComponentsList {
                 break
         }
         this.lastComponentId += 1
-        return this.lastComponentId
+        return this.lastComponentId-1
     }
 
     removeComponent(componentId: number = this.lastComponentId, type?: ComponentType): void {
