@@ -107,8 +107,14 @@ export default class Editor {
         return newNodeId
     }
 
-    line(x1: number, y1: number, from?: NodeComponent, to?: NodeComponent) {
-        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), from, to)
+    line(x1: number, y1: number, from?: SlotComponent|TextComponent, to?: SlotComponent|TextComponent) {
+        let start = undefined
+        let end = undefined
+        if (from != undefined)
+            start = {type: from.type, id: from.id}
+        if (to != undefined)
+            end = {type: to.type, id: to.id}
+        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), new Position(x1, y1), {start, end})
         return this.editorEnv.addComponent(newLine)
     }
 

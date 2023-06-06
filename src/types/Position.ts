@@ -19,20 +19,28 @@ class Position {
         }
     }
 
-    add(other: Position): Position {
-        return new Position(this.x + other.x, this.y + other.y)
+    add(other: Position, forceFloat: boolean = false): Position {
+        return new Position(this.x + other.x, this.y + other.y, forceFloat)
     }
 
-    minus(other: Position): Position {
-        return new Position(this.x - other.x, this.y - other.y)
+    minus(other: Position, forceFloat: boolean = false): Position {
+        return new Position(this.x - other.x, this.y - other.y, forceFloat)
     }
 
-    multS(s: number): Position {
-        return new Position(this.x * s, this.y * s)
+    multS(s: number, forceFloat: boolean = false): Position {
+        return new Position(this.x * s, this.y * s, forceFloat)
     }
 
-    mult(other: Position) {
-        return new Position(this.x * other.x, this.y * other.y)
+    mult(other: Position, forceFloat: boolean = false) {
+        return new Position(this.x * other.x, this.y * other.y, forceFloat)
+    }
+
+    div(other: Position, forceFloat: boolean = false) {
+        return new Position(this.x / other.x, this.y / other.y, forceFloat)
+    }
+
+    divS(s: number, forceFloat: boolean = false) {
+        return new Position(this.x / s, this.y / s, forceFloat)
     }
 
     dot(other: Position): number {
@@ -43,10 +51,33 @@ class Position {
         return this.dot(this)
     }
 
-    inBounds(top: number, left: number, bottom: number, right: number): Position {
+    madd(other: Position, s: number, forceFloat: boolean = false) {
+        return new Position(this.x + s * other.x, this.y + s * other.y, forceFloat)
+    }
+
+    // Interpolação linear
+    lerp(other: Position, t: number, forceFloat: boolean = false) {
+        return this.madd(other.minus(this), t, forceFloat)
+    }
+
+    // Interpolação bilinear
+    bilinear(other: Position, bt: Position, forceFloat: boolean = false) {
+        return new Position(
+            this.lerp(other, bt.x, forceFloat).x,
+            this.lerp(other, bt.y, forceFloat).y,
+            forceFloat
+        )
+    }
+
+    equals(other: Position): boolean {
+        return (this.x == other.x) && (this.y == other.y)
+    }
+
+    inBounds(top: number, left: number, bottom: number, right: number, forceFloat: boolean = false): Position {
         return new Position(
             Math.min(Math.max(this.x, left), right),
-            Math.min(Math.max(this.y, top), bottom)
+            Math.min(Math.max(this.y, top), bottom),
+            forceFloat
         )
     }
 }

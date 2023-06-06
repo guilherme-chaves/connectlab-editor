@@ -6,6 +6,7 @@ import Component from "./Component";
 export default class SlotComponent extends Component {
     private parentType: ComponentType
     private parentId: number
+    private connectionId: number
     private parentPosition: Position
     private state: boolean
     private inSlot: boolean
@@ -15,11 +16,12 @@ export default class SlotComponent extends Component {
     private attractionBias: number // Área de atração do slot para linhas a serem conectadas
     declare protected collisionShape: CircleCollision;
 
-    constructor(id: number, position: Position, parentType: ComponentType, parentId: number, parentPosition: Position, inSlot: boolean = true, radius: number = 4, attractionRadius: number = 12, color: string = "#0880FF", colorActive: string = "#FF0000") {
+    constructor(id: number, position: Position, parentType: ComponentType, parentId: number, parentPosition: Position, connectionId: number = -1, inSlot: boolean = true, radius: number = 4, attractionRadius: number = 12, color: string = "#0880FF", colorActive: string = "#FF0000") {
         super(id, position, ComponentType.SLOT)
         this.parentType = parentType
         this.parentId = parentId
         this.parentPosition = parentPosition
+        this.connectionId = connectionId
         this.color = color
         this.colorActive = colorActive
         this.state = false
@@ -58,6 +60,14 @@ export default class SlotComponent extends Component {
 
     getCollisionShape(): CircleCollision {
         return this.collisionShape
+    }
+
+    getConnectionId() {
+        return this.connectionId
+    }
+
+    setConnectionId(id: number) {
+        this.connectionId = id
     }
 
     // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
