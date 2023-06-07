@@ -2,6 +2,7 @@ import Editor from "../Editor";
 import ComponentType from "../types/types";
 import Position from "../types/Position";
 import ComponentsList from "../components/ComponentsList";
+import connectionEvents from "./connectionEvents";
 
 interface collisionListInterface {
     [index: string]: Array<number>|undefined,
@@ -41,35 +42,12 @@ export default class EditorEvents {
         this.mouseClicked = false
     }
 
-    // addComponent(editor: Editor, clientX?: number, clientY?: number): void {
-    //     if (this.editingLine)
-    //         return
-    //     switch (this.currentComponentType) {
-    //         case ComponentType.LINE:
-    //             editor.line(this.mousePosition.x, this.mousePosition.y, this.mousePosition.x, this.mousePosition.y+200)
-    //             this.editingLine = true
-    //             break
-    //         case ComponentType.NODE:
-    //             editor.node(this.mousePosition.x, this.mousePosition.y, this.currentNodeType)
-    //             break
-    //         case ComponentType.TEXT:
-    //             editor.text("Teste", this.mousePosition.x, this.mousePosition.y,)
-    //             break
-    //         default:
-    //             break
-    //     }
-    // }
-
-    getMousePosition(): Position {
-        return this.mousePosition
-    }
-
     mouseClick(componentsList: ComponentsList) {
         // Obtêm uma lista com todas as colisões encontradas
         let collisions: collisionListInterface = {
             "nodes": this.checkNodeClick(componentsList),
             "slots": this.checkSlotClick(componentsList),
-            "connections": undefined,
+            "connections": connectionEvents.checkConnectionClick(componentsList),
             "texts": undefined
         }
         // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
@@ -79,11 +57,6 @@ export default class EditorEvents {
             })
         }
 
-        if(this.editingLine) {
-            if (componentsList.getComponents().connections[this.editingLineId].connectedTo.end == undefined)
-                delete componentsList.getComponents().connections[this.editingLineId]
-            this.editingLine = false
-        }
         this.clearUnselectedComponents(componentsList, collisions)
         this.collisionList = collisions
     }
@@ -116,50 +89,80 @@ export default class EditorEvents {
         return collided ? collidedWith : undefined
     }
 
-    // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
-    checkConnectionClick(editor: Editor) {
-        // Cada linha da conexão possui um BB ou OBB, então precisa passar por um loop no array de malhas de colisão
-    }
-
     // Busca na lista de textos quais possuem uma colisão com o ponto do mouse
     checkTextClick(editor: Editor) {
 
     }
 
+    mouseRelease(componentsList: ComponentsList) {
+        connectionEvents.fixLine(componentsList, this)
+        // if (this.editingLine) {
+        //     let res = this.bindConnection(componentsList)
+        //     if (componentsList.getComponents().connections[this.editingLineId].connectedTo.end == undefined)
+        //         delete componentsList.getComponents().connections[this.editingLineId]
+        //     else if (componentsList.getComponents().connections[this.editingLineId].connectedTo.end?.id != null) {
+        //         if (componentsList.getComponents().slots[componentsList.getComponents().connections[this.editingLineId].connectedTo.end?.id ?? 1].getConnectionId() != this.editingLineId) {
+        //             delete componentsList.getComponents().connections[this.editingLineId]
+        //         }
+        //     }
+        //     // if (componentsList.getComponents()["slots"][res.slotCollided].getConnectionId() != -1 && componentsList.getComponents()["slots"][res.slotCollided].getConnectionId() != this.editingLineId)
+        //     //     delete componentsList.getComponents()["connections"][componentsList.getComponents()["slots"][res.slotCollided].getConnectionId()]
+        //     // if (!res.collisionPos.equals(new Position(-1, -1))) {
+        //     //     componentsList.getComponents()["connections"][this.editingLineId].changePosition(res.collisionPos, 1, false)
+        //     //     componentsList.getComponents()["slots"][res.slotCollided].setConnectionId(this.editingLineId)
+        //     // }
+        //     this.editingLine = false
+        //     this.editingLineId = -1
+        // }
+    }
+
     mouseDrag(editor: Editor, componentsList: ComponentsList) {
-        if (this.editingLine && this.editingLineId != -1) {
-            editor.getEnviroment().getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition), 1, true)
-            this.bindConnection(componentsList)
+        if (connectionEvents.lineDrag(componentsList, this, this.mousePosition.minus(this.oldMousePosition)))
             return true
-        }
+        // if (this.editingLine && this.editingLineId != -1) {
+        //     editor.getEnviroment().getComponents().connections[this.editingLineId].changePosition(this.mousePosition.minus(this.oldMousePosition), 1, true)
+        //     this.bindConnection(componentsList)
+        //     return true
+        // }
 
         if (this.mouseClicked) {
-            return this.addLine(editor) ? true :
+            return connectionEvents.addLine(editor, this) ? true :
             this.moveNode(componentsList, this.mousePosition.minus(this.oldMousePosition))
         }
         return false
     }
 
     bindConnection(componentsList: ComponentsList) {
-        let collisionEl
+        let collisionPos = new Position(-1, -1)
+        let oldConnection = -1
+        let slotCollided = -1
         if (this.editingLine && this.editingLineId != -1) {
             for (let key in componentsList.getComponents()["slots"]) {
                 let nKey = parseInt(key)
                 if (nKey != componentsList.getComponents()["connections"][this.editingLineId].connectedTo.start?.id) {
                     if (componentsList.getComponents()["slots"][nKey].getCollisionShape().collisionWithPoint(this.mousePosition)) {
-                        collisionEl = componentsList.getComponents()["slots"][nKey]
+                        collisionPos = componentsList.getComponents()["slots"][nKey].position.add(componentsList.getComponents()["slots"][nKey].getParentPosition())
                         componentsList.getComponents()["connections"][this.editingLineId].changeConnection(nKey, ComponentType.SLOT, true)
-                        componentsList.getComponents()["slots"][nKey].setConnectionId(this.editingLineId)
+                        slotCollided = nKey
+                        oldConnection = componentsList.getComponents()["slots"][nKey].getConnectionId()
+                        // componentsList.getComponents()["slots"][nKey].setConnectionId(this.editingLineId)
                         break
                     }
                 }
-                // .position.add(componentsList.getComponents()["slots"][nKey].getParentPosition())
+                //
                 componentsList.getComponents()["connections"][this.editingLineId].changeConnection(undefined, undefined, true)
-                componentsList.getComponents()["slots"][nKey].setConnectionId(-1)
+                let currentConnection = componentsList.getComponents()["slots"][nKey].getConnectionId()
+                if (currentConnection == this.editingLineId)
+                    componentsList.getComponents()["slots"][nKey].setConnectionId(-1)
             }
         }
-        if (!collisionPos.equals(new Position(-1, -1)))
+        if (!collisionPos.equals(new Position(-1, -1))) {
+            if (componentsList.getComponents()["slots"][slotCollided].getConnectionId() != -1 && componentsList.getComponents()["slots"][slotCollided].getConnectionId() != this.editingLineId)
+                delete componentsList.getComponents()["connections"][componentsList.getComponents()["slots"][slotCollided].getConnectionId()]
             componentsList.getComponents()["connections"][this.editingLineId].changePosition(collisionPos, 1, false)
+            componentsList.getComponents()["slots"][slotCollided].setConnectionId(this.editingLineId)
+        }
+        return {slotCollided, collisionPos}
     }
 
     moveNode(componentsList: ComponentsList, delta: Position): boolean {
@@ -215,6 +218,10 @@ export default class EditorEvents {
         }
     }
 
+    getCollisionList() {
+        return this.collisionList
+    }
+
     clearDragCollisions = () => {
         this.collisionList = {
             "nodes": undefined,
@@ -224,12 +231,16 @@ export default class EditorEvents {
         }
     }
 
-    setMouseClicked(state: boolean = false) {
-        this.mouseClicked = state           
+    getMousePosition(): Position {
+        return this.mousePosition
     }
 
     setMousePosition(position: Position) {
         this.oldMousePosition = this.mousePosition
         this.mousePosition = position
+    }
+
+    setMouseClicked(state: boolean = false) {
+        this.mouseClicked = state           
     }
 }

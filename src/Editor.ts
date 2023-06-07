@@ -1,4 +1,4 @@
-import ComponentType, { nodeTypes } from './types/types'
+import ComponentType, { componentAssocInterface, nodeTypes } from './types/types'
 import bgTexturePath from './assets/bg-texture.svg'
 import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
 import ComponentsList from './components/ComponentsList'
@@ -99,22 +99,17 @@ export default class Editor {
         let slotKeys: Array<number> = []
         let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height, slotKeys)
         let newNodeId = this.editorEnv.addComponent(newNode)
-        NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
+        NodeComponent.getNodeTypeObject(type).connectionSlots.forEach((slot, index) => {
             let key = this.slot(slot.localPos.x, slot.localPos.y, ComponentType.NODE, newNodeId, new Position(x, y), slot.in)
+            NodeComponent.getNodeTypeObject(type).connectionSlots[index].slotId = key
             slotKeys.push(key)
         })
         this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys)
         return newNodeId
     }
 
-    line(x1: number, y1: number, from?: SlotComponent|TextComponent, to?: SlotComponent|TextComponent) {
-        let start = undefined
-        let end = undefined
-        if (from != undefined)
-            start = {type: from.type, id: from.id}
-        if (to != undefined)
-            end = {type: to.type, id: to.id}
-        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), new Position(x1, y1), {start, end})
+    line(x1: number, y1: number, from?: componentAssocInterface, to?: componentAssocInterface) {
+        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), new Position(x1, y1), {start: from, end: to})
         return this.editorEnv.addComponent(newLine)
     }
 
@@ -125,7 +120,7 @@ export default class Editor {
 
     slot(x: number, y: number, parentType: ComponentType, parentId: number, parentPosition: Position, inSlot?: boolean, radius?: number,
             attractionRadius?: number, color?: string, colorActive?: string) {
-        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentType, parentId, parentPosition,
+        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentType, parentId, parentPosition, undefined,
             inSlot, radius, attractionRadius, color, colorActive)
         return this.editorEnv.addComponent(newSlot)
     }
@@ -141,6 +136,10 @@ export default class Editor {
 
     setMouseClicked(state: boolean) {
         this.editorEvents.setMouseClicked(state)
+    }
+
+    mouseReleased() {
+        this.editorEvents.mouseRelease(this.editorEnv)
     }
 
     clearCollision(onlyDragCollisions: boolean = true) {

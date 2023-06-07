@@ -10,7 +10,8 @@ export function clearFrame(ctx: CanvasRenderingContext2D) {
 
 export function updateCanvas(ctx: CanvasRenderingContext2D, elements: componentListInterface): any {
     clearFrame(ctx)
-    Object.keys(elements).forEach(keyCateg => {
+    let drawOrder = ["connections", "nodes", "slots", "texts"]
+    drawOrder.forEach(keyCateg => {
         Object.keys(elements[keyCateg]).forEach(element => {
             elements[keyCateg][parseInt(element)].draw(ctx)
         })

@@ -24,6 +24,7 @@ canvas.addEventListener("mousedown", () => {
 
 canvas.addEventListener("mouseup", () => {
     editor.setMouseClicked(false)
+    editor.mouseReleased()
     editor.clearCollision()
 })
 

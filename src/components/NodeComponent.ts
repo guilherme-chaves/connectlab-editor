@@ -66,6 +66,14 @@ class NodeComponent extends Component {
         return this.nodeType
     }
 
+    setSlotId(slotId: number, index: number) {
+        this.nodeType.connectionSlots[index].slotId = slotId
+    }
+
+    getConnectionSlots() {
+        return this.nodeType.connectionSlots
+    }
+    
     getCollisionShape(): BBCollision {
         return this.collisionShape
     }

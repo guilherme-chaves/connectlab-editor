@@ -48,9 +48,15 @@ export interface componentListInterface {
     "texts": textListInterface
 }
 
+export interface componentAssocInterface {
+    type: ComponentType,
+    id: number
+}
+
 export interface connectionSlotsInterface {
-    start: {type: ComponentType, id: number}|undefined,
-    end: {type: ComponentType, id: number}|undefined
+    [index: symbol]: componentAssocInterface | undefined
+    start: componentAssocInterface | undefined,
+    end: componentAssocInterface | undefined
 }
 
 export default ComponentType
