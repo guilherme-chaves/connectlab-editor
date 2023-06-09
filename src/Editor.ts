@@ -1,149 +1,225 @@
-import ComponentType, { componentAssocInterface, nodeTypes } from './types/types'
-import bgTexturePath from './assets/bg-texture.svg'
-import updateAll, { updateBackground, updateCanvas } from './functions/canvasDraw'
-import ComponentsList from './components/ComponentsList'
-import ConnectionComponent from './components/ConnectionComponent'
-import TextComponent from './components/TextComponent'
-import NodeComponent from './components/NodeComponent'
-import Position from './types/Position'
-import Component from './components/Component'
-import SlotComponent from './components/SlotComponent'
-import EditorEvents from './functions/events'
+import ComponentType, {componentAssocInterface, nodeTypes} from './types/types';
+import bgTexturePath from './assets/bg-texture.svg';
+import updateAll, {
+  updateBackground,
+  updateCanvas,
+} from './functions/canvasDraw';
+import ComponentsList from './components/ComponentsList';
+import ConnectionComponent from './components/ConnectionComponent';
+import TextComponent from './components/TextComponent';
+import NodeComponent from './components/NodeComponent';
+import Position from './types/Position';
+import Component from './components/Component';
+import SlotComponent from './components/SlotComponent';
+import EditorEvents from './functions/events';
 
 export default class Editor {
-    // Lista de componentes
-    private editorEnv: ComponentsList
-    // Controle de eventos do canvas
-    private editorEvents: EditorEvents
-    // Contextos dos canvas
-    private canvasCtx: CanvasRenderingContext2D
-    private backgroundCtx: CanvasRenderingContext2D
-    // Propriedades dos canvas
-    private canvasArea: Position // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
-    private backgroundPattern: CanvasPattern|null
-    
-    constructor(documentId: string, canvasDOM: HTMLCanvasElement, backgroundDOM: HTMLCanvasElement, canvasVw: number, canvasVh: number) {
-        this.editorEnv = new ComponentsList(documentId)
-        this.editorEvents = new EditorEvents()
-        this.canvasCtx = this.createContext(canvasDOM)
-        this.backgroundCtx = this.createContext(backgroundDOM)
-        this.backgroundPattern = null
-        this.canvasArea = new Position(canvasVw, canvasVh, true)
-        this.loadPattern(bgTexturePath)
-    }
+  // Lista de componentes
+  private editorEnv: ComponentsList;
+  // Controle de eventos do canvas
+  private editorEvents: EditorEvents;
+  // Contextos dos canvas
+  private canvasCtx: CanvasRenderingContext2D;
+  private backgroundCtx: CanvasRenderingContext2D;
+  // Propriedades dos canvas
+  private canvasArea: Position; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private backgroundPattern: CanvasPattern | null;
 
-    // static loadFile(jsonData): Editor
+  constructor(
+    documentId: string,
+    canvasDOM: HTMLCanvasElement,
+    backgroundDOM: HTMLCanvasElement,
+    canvasVw: number,
+    canvasVh: number
+  ) {
+    this.editorEnv = new ComponentsList(documentId);
+    this.editorEvents = new EditorEvents();
+    this.canvasCtx = this.createContext(canvasDOM);
+    this.backgroundCtx = this.createContext(backgroundDOM);
+    this.backgroundPattern = null;
+    this.canvasArea = new Position(canvasVw, canvasVh, true);
+    this.loadPattern(bgTexturePath);
+  }
 
-    // saveToFile()
+  // static loadFile(jsonData): Editor
 
-    private createContext(domElement: HTMLCanvasElement): CanvasRenderingContext2D {
-        return (domElement.getContext('2d')!)
-    }
+  // saveToFile()
 
-    getEnviroment(): ComponentsList {
-        return this.editorEnv
-    }
+  private createContext(
+    domElement: HTMLCanvasElement
+  ): CanvasRenderingContext2D {
+    return domElement.getContext('2d')!;
+  }
 
-    getContext(canvas: boolean = true): CanvasRenderingContext2D {
-        if (canvas)
-            return this.canvasCtx
-        return this.backgroundCtx
-    }
+  getEnviroment(): ComponentsList {
+    return this.editorEnv;
+  }
 
-    loadPattern(bgPath: string) {
-        let backgroundImg = new Image()
-        backgroundImg.onload = () => {
-            this.backgroundPattern = this.backgroundCtx.createPattern(backgroundImg, 'repeat')
-        }
-        backgroundImg.src = bgPath
-    }
+  getContext(canvas = true): CanvasRenderingContext2D {
+    if (canvas) return this.canvasCtx;
+    return this.backgroundCtx;
+  }
 
-    draw(canvas: boolean = true, background: boolean = false) {
-        if (background) 
-            updateBackground(this.backgroundCtx, this.backgroundPattern)
-        if (canvas)
-            updateCanvas(this.canvasCtx, this.editorEnv.getComponents())
-    }
+  loadPattern(bgPath: string) {
+    const backgroundImg = new Image();
+    backgroundImg.onload = () => {
+      this.backgroundPattern = this.backgroundCtx.createPattern(
+        backgroundImg,
+        'repeat'
+      );
+    };
+    backgroundImg.src = bgPath;
+  }
 
-    update = () => {
-        requestAnimationFrame(this.update)
-        this.draw(true)
-        // this.checkConnections()
-        // this.checkCollisions()
-        // To-Do -> Adicionar as seguintes partes:
-        // eventos e adição de componentes
-        // colisão(this.editorEnv)
-    }
+  draw(canvas = true, background = false) {
+    if (background)
+      updateBackground(this.backgroundCtx, this.backgroundPattern);
+    if (canvas) updateCanvas(this.canvasCtx, this.editorEnv.getComponents());
+  }
 
-    move = () => {
-        this.editorEvents.mouseDrag(this, this.editorEnv)
-    }
+  update = () => {
+    requestAnimationFrame(this.update);
+    this.draw(true);
+    // this.checkConnections()
+    // this.checkCollisions()
+    // To-Do -> Adicionar as seguintes partes:
+    // eventos e adição de componentes
+    // colisão(this.editorEnv)
+  };
 
-    onclick = () => {
-        this.editorEvents.mouseClick(this.editorEnv)
-    }
+  move = () => {
+    this.editorEvents.mouseDrag(this, this.editorEnv);
+  };
 
-    ondrag = () => {
-        
-    }
+  onclick = () => {
+    this.editorEvents.mouseClick(this.editorEnv);
+  };
 
-    resize = () => {
-        this.canvasCtx.canvas.width = window.innerWidth * this.canvasArea.x
-        this.canvasCtx.canvas.height = window.innerHeight * this.canvasArea.y
-        this.backgroundCtx.canvas.width = window.innerWidth * this.canvasArea.x
-        this.backgroundCtx.canvas.height = window.innerHeight * this.canvasArea.y
-        requestAnimationFrame.bind(updateAll(this.canvasCtx, this.editorEnv.getComponents(), this.backgroundCtx, this.backgroundPattern))
-    }
+  ondrag = () => {};
 
-    node(x: number = this.editorEvents.getMousePosition().x, y: number = this.editorEvents.getMousePosition().y, type: nodeTypes= nodeTypes.NOT) {
-        let slotKeys: Array<number> = []
-        let newNode = new NodeComponent(this.editorEnv.getLastComponentId(), new Position(x, y), type, this.canvasCtx.canvas.width, this.canvasCtx.canvas.height, slotKeys)
-        let newNodeId = this.editorEnv.addComponent(newNode)
-        NodeComponent.getNodeTypeObject(type).connectionSlots.forEach((slot, index) => {
-            let key = this.slot(slot.localPos.x, slot.localPos.y, ComponentType.NODE, newNodeId, new Position(x, y), slot.in)
-            NodeComponent.getNodeTypeObject(type).connectionSlots[index].slotId = key
-            slotKeys.push(key)
-        })
-        this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys)
-        return newNodeId
-    }
+  resize = () => {
+    this.canvasCtx.canvas.width = window.innerWidth * this.canvasArea.x;
+    this.canvasCtx.canvas.height = window.innerHeight * this.canvasArea.y;
+    this.backgroundCtx.canvas.width = window.innerWidth * this.canvasArea.x;
+    this.backgroundCtx.canvas.height = window.innerHeight * this.canvasArea.y;
+    requestAnimationFrame.bind(
+      updateAll(
+        this.canvasCtx,
+        this.editorEnv.getComponents(),
+        this.backgroundCtx,
+        this.backgroundPattern
+      )
+    );
+  };
 
-    line(x1: number, y1: number, from?: componentAssocInterface, to?: componentAssocInterface) {
-        let newLine = new ConnectionComponent(this.editorEnv.getLastComponentId(), new Position(x1, y1), new Position(x1, y1), {start: from, end: to})
-        return this.editorEnv.addComponent(newLine)
-    }
+  node(
+    x: number = this.editorEvents.getMousePosition().x,
+    y: number = this.editorEvents.getMousePosition().y,
+    type: nodeTypes = nodeTypes.NOT
+  ) {
+    const slotKeys: Array<number> = [];
+    const newNode = new NodeComponent(
+      this.editorEnv.getLastComponentId(),
+      new Position(x, y),
+      type,
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      slotKeys
+    );
+    const newNodeId = this.editorEnv.addComponent(newNode);
+    NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
+      (slot, index) => {
+        const key = this.slot(
+          slot.localPos.x,
+          slot.localPos.y,
+          ComponentType.NODE,
+          newNodeId,
+          new Position(x, y),
+          slot.in
+        );
+        NodeComponent.getNodeTypeObject(type).connectionSlots[index].slotId =
+          key;
+        slotKeys.push(key);
+      }
+    );
+    this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys);
+    return newNodeId;
+  }
 
-    text(text: string, x: number, y: number, style?: string, parent?: Component) {
-        let newText = new TextComponent(this.editorEnv.getLastComponentId(), new Position(x, y), text, style, parent)
-        return this.editorEnv.addComponent(newText)
-    }
+  line(
+    x1: number,
+    y1: number,
+    from?: componentAssocInterface,
+    to?: componentAssocInterface
+  ) {
+    const newLine = new ConnectionComponent(
+      this.editorEnv.getLastComponentId(),
+      new Position(x1, y1),
+      new Position(x1, y1),
+      {start: from, end: to}
+    );
+    return this.editorEnv.addComponent(newLine);
+  }
 
-    slot(x: number, y: number, parentType: ComponentType, parentId: number, parentPosition: Position, inSlot?: boolean, radius?: number,
-            attractionRadius?: number, color?: string, colorActive?: string) {
-        let newSlot = new SlotComponent(this.editorEnv.getLastComponentId(), new Position(x, y), parentType, parentId, parentPosition, undefined,
-            inSlot, radius, attractionRadius, color, colorActive)
-        return this.editorEnv.addComponent(newSlot)
-    }
+  text(text: string, x: number, y: number, style?: string, parent?: Component) {
+    const newText = new TextComponent(
+      this.editorEnv.getLastComponentId(),
+      new Position(x, y),
+      text,
+      style,
+      parent
+    );
+    return this.editorEnv.addComponent(newText);
+  }
 
-    setMousePosition(clientX: number, clientY: number) {
-        let rect = this.canvasCtx.canvas.getBoundingClientRect()
-        this.editorEvents.setMousePosition(new Position(clientX - rect.left, clientY - rect.top))
-    }
+  slot(
+    x: number,
+    y: number,
+    parentType: ComponentType,
+    parentId: number,
+    parentPosition: Position,
+    inSlot?: boolean,
+    radius?: number,
+    attractionRadius?: number,
+    color?: string,
+    colorActive?: string
+  ) {
+    const newSlot = new SlotComponent(
+      this.editorEnv.getLastComponentId(),
+      new Position(x, y),
+      parentType,
+      parentId,
+      parentPosition,
+      undefined,
+      inSlot,
+      radius,
+      attractionRadius,
+      color,
+      colorActive
+    );
+    return this.editorEnv.addComponent(newSlot);
+  }
 
-    getMousePosition() {
-        return this.editorEvents.getMousePosition()
-    }
+  setMousePosition(clientX: number, clientY: number) {
+    const rect = this.canvasCtx.canvas.getBoundingClientRect();
+    this.editorEvents.setMousePosition(
+      new Position(clientX - rect.left, clientY - rect.top)
+    );
+  }
 
-    setMouseClicked(state: boolean) {
-        this.editorEvents.setMouseClicked(state)
-    }
+  getMousePosition() {
+    return this.editorEvents.getMousePosition();
+  }
 
-    mouseReleased() {
-        this.editorEvents.mouseRelease(this.editorEnv)
-    }
+  setMouseClicked(state: boolean) {
+    this.editorEvents.setMouseClicked(state);
+  }
 
-    clearCollision(onlyDragCollisions: boolean = true) {
-        if (onlyDragCollisions) 
-            this.editorEvents.clearDragCollisions()
-    }
+  mouseReleased() {
+    this.editorEvents.mouseRelease(this.editorEnv);
+  }
+
+  clearCollision(onlyDragCollisions = true) {
+    if (onlyDragCollisions) this.editorEvents.clearDragCollisions();
+  }
 }
