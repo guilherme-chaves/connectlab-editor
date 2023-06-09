@@ -112,6 +112,13 @@ export default class EditorEvents {
             componentsList.getComponents().nodes[key].getSlotComponents().forEach(slotKey => {
                 componentsList.getComponents().slots[slotKey].setParentPosition(componentsList.getComponents().nodes[key].position)
                 componentsList.getComponents().slots[slotKey].getCollisionShape().moveShape(delta)
+                if (componentsList.getComponents().slots[slotKey].getConnectionId() != -1) {
+                    let connectionKey = componentsList.getComponents().slots[slotKey].getConnectionId()
+                    if (componentsList.getComponents().connections[connectionKey].connectedTo.start?.id == slotKey)
+                        componentsList.getComponents().connections[connectionKey].changePosition(delta, 0, true)
+                    else if (componentsList.getComponents().connections[connectionKey].connectedTo.end?.id == slotKey)
+                        componentsList.getComponents().connections[connectionKey].changePosition(delta, 1, true)
+                }
             });
             return true
         }
