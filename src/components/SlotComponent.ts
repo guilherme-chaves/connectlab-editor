@@ -48,6 +48,12 @@ export default class SlotComponent extends Component {
     this.componentPath = this.generatePath();
   }
 
+  getPosition(globalPos: boolean = false) {
+    if (globalPos)
+      return this.position.add(this.parentPosition)
+    return this.position
+  }
+
   getState(): boolean {
     return this.state;
   }

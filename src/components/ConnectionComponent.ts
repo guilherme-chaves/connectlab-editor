@@ -139,16 +139,16 @@ class ConnectionComponent extends Component {
   }
 
   changeConnection(
-    nodeId: number | undefined,
-    nodeType: ComponentType | undefined,
+    componentId: number | undefined,
+    componentType: ComponentType | undefined,
     end = false
   ) {
-    if (nodeId !== undefined && nodeType !== undefined) {
+    if (componentId !== undefined && componentType !== undefined) {
       if (end) {
-        this.connectedTo.end = {type: nodeType, id: nodeId};
+        this.connectedTo.end = {type: componentType, id: componentId};
         return;
       }
-      this.connectedTo.start = {type: nodeType, id: nodeId};
+      this.connectedTo.start = {type: componentType, id: componentId};
     }
   }
 }

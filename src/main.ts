@@ -20,6 +20,7 @@ addEventListener('resize', () => {
 
 canvas.addEventListener('mousedown', () => {
   editor.setMouseClicked(true);
+  editor.onclick();
 });
 
 canvas.addEventListener('mouseup', () => {
@@ -35,10 +36,6 @@ canvas.addEventListener('mouseout', () => {
 addEventListener('mousemove', ({clientX, clientY}) => {
   editor.move();
   editor.setMousePosition(clientX, clientY);
-});
-
-canvas.addEventListener('click', () => {
-  editor.onclick();
 });
 
 addEventListener('keypress', () => {
