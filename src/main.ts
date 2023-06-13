@@ -20,13 +20,10 @@ addEventListener('resize', () => {
 
 canvas.addEventListener('mousedown', () => {
   editor.setMouseClicked(true);
-  editor.onclick();
 });
 
 canvas.addEventListener('mouseup', () => {
   editor.setMouseClicked(false);
-  editor.mouseReleased();
-  editor.clearCollision();
 });
 
 canvas.addEventListener('mouseout', () => {
@@ -34,7 +31,6 @@ canvas.addEventListener('mouseout', () => {
 });
 
 addEventListener('mousemove', ({clientX, clientY}) => {
-  editor.move();
   editor.setMousePosition(clientX, clientY);
 });
 

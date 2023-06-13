@@ -80,6 +80,9 @@ export default class Editor {
   update = () => {
     requestAnimationFrame(this.update);
     this.draw(true);
+    this.onclick();
+    this.move();
+    this.mouseReleased();
     // this.checkConnections()
     // this.checkCollisions()
     // To-Do -> Adicionar as seguintes partes:

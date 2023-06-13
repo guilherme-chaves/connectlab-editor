@@ -20,6 +20,8 @@ export default class EditorEvents {
   private mousePosition: Position; // Posição dentro do canvas, não global
   private oldMousePosition: Position;
   private mouseClicked: boolean;
+  private mouseChangedState: boolean;
+  private mouseChangedPosition: boolean;
 
   constructor() {
     // this.currentComponentType = ComponentType.NODE
@@ -35,25 +37,30 @@ export default class EditorEvents {
     this.mousePosition = new Position(0, 0);
     this.oldMousePosition = this.mousePosition;
     this.mouseClicked = false;
+    this.mouseChangedState = true;
+    this.mouseChangedPosition = false;
   }
 
   mouseClick(componentsList: ComponentsList) {
-    // Obtêm uma lista com todas as colisões encontradas
-    const nodeId = this.checkNodeClick(componentsList);
-    const slotId = this.checkSlotClick(componentsList);
-    const connectionId = connectionEvents.checkConnectionClick(componentsList);
-    const textId = undefined;
-    
-    // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-    if (slotId != undefined)
-      componentsList.getComponents().slots[slotId[0]].setState(true);
-    this.clearUnselectedComponents(componentsList, undefined, slotId);
-    
-    this.collisionList = {
-      nodes: nodeId,
-      slots: slotId,
-      connections: connectionId,
-      texts: textId
+    if (this.mouseClicked && this.mouseChangedState) {
+      // Obtêm uma lista com todas as colisões encontradas
+      const nodeId = this.checkNodeClick(componentsList);
+      const slotId = this.checkSlotClick(componentsList);
+      const connectionId = connectionEvents.checkConnectionClick(componentsList);
+      const textId = undefined;
+      
+      // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
+      if (slotId != undefined)
+        componentsList.getComponents().slots[slotId[0]].setState(true);
+      this.clearUnselectedComponents(componentsList, undefined, slotId);
+      
+      this.collisionList = {
+        nodes: nodeId,
+        slots: slotId,
+        connections: connectionId,
+        texts: textId
+      }
+      this.mouseChangedState = false;
     }
   }
 
@@ -93,34 +100,46 @@ export default class EditorEvents {
   checkTextClick(editor: Editor) {}
 
   mouseRelease(componentsList: ComponentsList) {
-    if (!connectionEvents.fixLine(componentsList, this)) {
-      this.clearDragCollisions()
+    if (!this.mouseClicked && this.mouseChangedState) {
+      if (!connectionEvents.fixLine(componentsList, this)) {
+        this.clearDragCollisions()
+      }
+      this.mouseChangedState = false;
     }
   }
 
   mouseDrag(editor: Editor, componentsList: ComponentsList) {
-    if (
-      connectionEvents.lineDrag(
-        componentsList,
-        this,
-        this.mousePosition.minus(this.oldMousePosition)
-      )
-    )
-      return true;
-
     if (this.mouseClicked) {
-      return connectionEvents.addLine(editor, this)
-        ? true
-        : this.moveNode(
+      if (
+        connectionEvents.lineDrag(
+          componentsList,
+          this,
+          this.mousePosition.minus(this.oldMousePosition)
+        )
+      ) {
+        this.mouseChangedPosition = false;
+        return true;
+      }
+        
+        
+      if (connectionEvents.addLine(editor, this)) {
+        this.mouseChangedPosition = false;
+        return true;
+      }
+      if (this.moveNode(
             componentsList,
             this.mousePosition.minus(this.oldMousePosition)
-          );
+          )
+        ) {
+        this.mouseChangedPosition = false;
+        return true;
+        }
     }
     return false;
   }
 
   moveNode(componentsList: ComponentsList, delta: Position): boolean {
-    if (this.collisionList.nodes !== undefined) {
+    if (this.collisionList.nodes !== undefined && this.mouseChangedPosition) {
       const key = Object.values(this.collisionList.nodes)[0];
       componentsList.getComponents().nodes[key].changePosition(delta);
       componentsList
@@ -208,6 +227,15 @@ export default class EditorEvents {
   setMousePosition(position: Position) {
     this.oldMousePosition = this.mousePosition;
     this.mousePosition = position;
+    this.mouseChangedPosition = true;
+  }
+
+  getMouseChangedState = () => {
+    return this.mouseChangedState
+  }
+
+  getMouseChangedPosition = () => {
+    return this.mouseChangedPosition
   }
 
   getMouseClicked = () => {
@@ -216,5 +244,6 @@ export default class EditorEvents {
 
   setMouseClicked(state = false) {
     this.mouseClicked = state;
+    this.mouseChangedState = true;
   }
 }

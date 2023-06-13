@@ -16,7 +16,7 @@ export default {
     return undefined;
   },
   addLine(editor: Editor, eventsObject: EditorEvents) {
-    if (this.editingLine) return true;
+    if (this.editingLine && this.editingLineId != -1) return true;
     const slotCollisions = eventsObject.checkSlotClick(editor.getEnviroment());
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
@@ -42,7 +42,7 @@ export default {
     eventsObject: EditorEvents,
     mouseDelta: Position
   ) {
-    if (this.editingLine && this.editingLineId !== -1) {
+    if (this.editingLine && this.editingLineId !== -1 && eventsObject.getMouseChangedPosition()) {
       componentsList
         .getComponents()
         .connections[this.editingLineId].changePosition(mouseDelta, 1, true);
