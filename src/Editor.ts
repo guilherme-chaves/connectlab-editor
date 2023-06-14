@@ -99,7 +99,7 @@ export default class Editor {
   };
 
   move = () => {
-    this.editorEvents.mouseDrag(this, this.editorEnv);
+    this.editorEvents.mouseMove(this, this.editorEnv);
   };
 
   onclick = () => {

@@ -108,15 +108,15 @@ export default class EditorEvents {
     }
   }
 
-  mouseDrag(editor: Editor, componentsList: ComponentsList) {
+  mouseMove(editor: Editor, componentsList: ComponentsList) {
     if (this.mouseClicked) {
-      connectionEvents.lineDrag(
+      connectionEvents.lineMove(
         componentsList,
         this,
         this.mousePosition.minus(this.oldMousePosition)
       )
       connectionEvents.addLine(editor, this)
-      this.moveNode(
+      this.nodeMove(
         componentsList,
         this.mousePosition.minus(this.oldMousePosition)
       )
@@ -126,7 +126,7 @@ export default class EditorEvents {
     return false;
   }
 
-  moveNode(componentsList: ComponentsList, delta: Position): boolean {
+  nodeMove(componentsList: ComponentsList, delta: Position): boolean {
     if (this.collisionList.nodes !== undefined && this.mouseChangedPosition && !connectionEvents.editingLine) {
       const key = Object.values(this.collisionList.nodes)[0];
       componentsList.getComponents().nodes[key].changePosition(delta);

@@ -37,7 +37,7 @@ export default {
     }
     return false;
   },
-  lineDrag(
+  lineMove(
     componentsList: ComponentsList,
     eventsObject: EditorEvents,
     mouseDelta: Position
