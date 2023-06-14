@@ -127,7 +127,8 @@ export default class Editor {
       type,
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
-      slotKeys
+      slotKeys,
+      this.editorEnv
     );
     const newNodeId = this.editorEnv.addComponent(newNode);
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(

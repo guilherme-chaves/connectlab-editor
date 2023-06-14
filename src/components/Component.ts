@@ -23,8 +23,7 @@ class Component {
   }
 
   changePosition(delta: Position) {
-    this.position.x += delta.x;
-    this.position.y += delta.y;
+    this.position = this.position.add(delta)
     this.generatePath();
   }
 
@@ -39,7 +38,7 @@ class Component {
   }
 
   protected generatePath() {
-    //console.error("Função não implementada na classe-pai, utilize uma das subclasses!")
+    console.error("Função não implementada na classe-pai, utilize uma das subclasses!")
     return new Path2D();
   }
 }

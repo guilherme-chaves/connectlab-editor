@@ -4,6 +4,7 @@ import {ADDNode, NOTNode, ORNode} from '../types/NodeTypes';
 import Position from '../types/Position';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
+import ComponentsList from './ComponentsList';
 
 class NodeComponent extends Component {
   public readonly nodeType: NodeType;
@@ -18,18 +19,17 @@ class NodeComponent extends Component {
     nodeType: nodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slotKeys: Array<number>
+    slotKeys: Array<number>,
+    componentsList: ComponentsList
   ) {
     super(id, position);
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slotKeys;
     this.nodeImage = new Image();
     this.imageLoaded = false;
-    // Ideia/Workaround -> Mover a atribuição do src para o Editor, então seria possível atualizar os slots também?
     this.nodeImage.addEventListener('load', () => {
-      // Centraliza a imagem no mouse - bug relacionado ao posicionamento dos slots
-      // let halfImgPos = new Position(this.nodeImage.width/2, this.nodeImage.height/2)
-      // this.position.minus(halfImgPos)
+      let halfImgPos = new Position(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
+      this.position = this.position.add(halfImgPos)
       const canvasBound = new Position(canvasWidth, canvasHeight);
       canvasBound.minus(
         new Position(this.nodeImage.width, this.nodeImage.height)
@@ -42,9 +42,13 @@ class NodeComponent extends Component {
       );
       this.collisionShape = new BBCollision(
         this.position,
+        new Position(0, 0),
         this.nodeImage.width,
         this.nodeImage.height
       );
+      for (let i = 0; i < slotKeys.length; i++) {
+        componentsList.getComponents().slots[slotKeys[i]].setParentPosition(this.position)
+      }
       this.imageLoaded = true;
     });
     this.nodeImage.src = this.nodeType.imgPath;
@@ -73,7 +77,8 @@ class NodeComponent extends Component {
   }
 
   changePosition(delta: Position): void {
-    super.changePosition(delta);
+    this.position = this.position.add(delta)
+    this.collisionShape.moveShape(delta, true)
   }
 
   getNodeImage() {

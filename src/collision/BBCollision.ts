@@ -4,12 +4,14 @@ import CollisionShape from './CollisionShape';
 export default class BBCollision extends CollisionShape {
   constructor(
     position: Position,
+    offset: Position,
     width: number,
     height: number,
     color?: string
   ) {
     super();
-    this.a = position;
+    this.parentPosition = position
+    this.a = offset;
     this.b = new Position(width, height);
     this.color = color ?? this.color;
     this.drawPath = this.generatePath();
@@ -17,7 +19,8 @@ export default class BBCollision extends CollisionShape {
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    path.rect(this.a.x, this.a.y, this.b.x, this.b.y);
+    const pos = this.a.add(this.parentPosition)
+    path.rect(pos.x, pos.y, this.b.x, this.b.y);
     return path;
   }
 
@@ -25,15 +28,17 @@ export default class BBCollision extends CollisionShape {
     super.draw(ctx, selected);
   }
 
-  moveShape(delta: Position): void {
-    this.a = this.a.add(delta);
+  moveShape(delta: Position, useDelta: boolean = true): void {
+    if (useDelta) this.parentPosition = this.parentPosition.add(delta);
+    else this.parentPosition = delta
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Position): boolean {
-    const b = this.b.add(this.a);
+    const pos = this.parentPosition.add(this.a)
+    const b = this.b.add(pos);
     return (
-      point.x > this.a.x && point.x < b.x && point.y > this.a.y && point.y < b.y
+      point.x > pos.x && point.x < b.x && point.y > pos.y && point.y < b.y
     );
   }
 }

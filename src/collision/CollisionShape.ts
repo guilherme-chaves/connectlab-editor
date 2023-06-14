@@ -1,6 +1,7 @@
 import Position from '../types/Position';
 
 export default class CollisionShape {
+  public parentPosition: Position = new Position(0, 0);
   public a: Position = new Position(0, 0);
   public b: Position = new Position(0, 0);
   public color = '#FF8008';
@@ -8,8 +9,8 @@ export default class CollisionShape {
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    const size = this.b.minus(this.a);
-    path.rect(this.a.x, this.a.y, size.x, size.y);
+    const pos = this.a.add(this.parentPosition)
+    path.rect(pos.x, pos.y, this.b.x, this.b.y);
     return path;
   }
 
@@ -21,9 +22,10 @@ export default class CollisionShape {
     ctx.strokeStyle = oldStrokeStyle;
   }
 
-  moveShape(delta: Position) {
-    this.a.add(delta);
-    this.b.add(delta);
+  moveShape(delta: Position, useDelta: boolean = true) {
+    if (useDelta) this.parentPosition.add(delta);
+    else this.parentPosition = delta
+    this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Position) {

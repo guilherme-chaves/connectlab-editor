@@ -36,10 +36,10 @@ class ConnectionComponent extends Component {
   generatePath() {
     const path = new Path2D();
     path.moveTo(this.position.x, this.position.y);
-    this.anchors.forEach(anchor => {
-      const globalPos = this.position.bilinear(this.endPosition, anchor);
-      path.lineTo(globalPos.x, globalPos.y);
-    });
+    for (let i = 0; i < this.anchors.length; i++) {
+      const globalPos = this.position.bilinear(this.endPosition, this.anchors[i])
+      path.lineTo(globalPos.x, globalPos.y)
+    }
     path.lineTo(this.endPosition.x, this.endPosition.y);
     this.regenConnectionPath = false;
     return path;
@@ -48,52 +48,14 @@ class ConnectionComponent extends Component {
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
     if (this.regenConnectionPath) this.connectionPath = this.generatePath();
-    ctx.strokeStyle = '#000000';
+    ctx.strokeStyle = '#101010';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke(this.connectionPath);
   }
 
-  anchorAttractionBias(
-    point: Position,
-    arrIndex: number = this.anchors.length
-  ): Position {
-    const len = this.anchors.length;
-    if (len > 1 && arrIndex >= 0 && arrIndex <= this.anchors.length) {
-      if (arrIndex > 0) {
-        if (
-          point.x > this.anchors[arrIndex - 1].x - this.attractionBias &&
-          point.x < this.anchors[arrIndex - 1].x + this.attractionBias
-        )
-          point.x = this.anchors[arrIndex - 1].x;
-        if (
-          point.y > this.anchors[arrIndex - 1].y - this.attractionBias &&
-          point.y < this.anchors[arrIndex - 1].y + this.attractionBias
-        )
-          point.y = this.anchors[arrIndex - 1].y;
-      }
-      if (arrIndex < len - 1) {
-        if (
-          point.x > this.anchors[arrIndex + 1].x - this.attractionBias &&
-          point.x < this.anchors[arrIndex + 1].x + this.attractionBias
-        )
-          point.x = this.anchors[arrIndex + 1].x;
-        if (
-          point.y > this.anchors[arrIndex + 1].y - this.attractionBias &&
-          point.y < this.anchors[arrIndex + 1].y + this.attractionBias
-        )
-          point.y = this.anchors[arrIndex + 1].y;
-      }
-    }
-    return point;
-  }
-
   addAnchor(point: Position, arrIndex: number = this.anchors.length): void {
-    const npoint = this.anchorAttractionBias(
-      point.div(this.position, true),
-      arrIndex
-    );
-    this.anchors.splice(arrIndex, 0, npoint);
+    this.anchors.splice(arrIndex, 0, point);
     this.regenConnectionPath = true;
   }
 
@@ -131,10 +93,7 @@ class ConnectionComponent extends Component {
       );
       return;
     }
-    this.anchors[index] = this.anchorAttractionBias(
-      position.div(this.position, true),
-      index
-    );
+    this.anchors[index] = (position.minus(this.position)).div(this.endPosition.minus(this.position), true)
     this.regenConnectionPath = true;
   }
 

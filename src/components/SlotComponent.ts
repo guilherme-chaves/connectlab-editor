@@ -42,6 +42,7 @@ export default class SlotComponent extends Component {
     this.attractionBias = attractionRadius;
     this.collisionShape = new CircleCollision(
       this.position.add(this.parentPosition),
+      new Position(0, 0),
       this.attractionBias
     );
     // Buscar como ler os parâmetros do Node após as mudanças realizadas - centralizar no mouse e colisão com os limites do canvas
@@ -76,6 +77,7 @@ export default class SlotComponent extends Component {
 
   setParentPosition(position: Position) {
     this.parentPosition = position;
+    this.collisionShape.moveShape(this.position.add(this.parentPosition), false)
     this.componentPath = this.generatePath();
   }
 

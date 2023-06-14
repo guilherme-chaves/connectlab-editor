@@ -132,10 +132,6 @@ export default class EditorEvents {
       componentsList.getComponents().nodes[key].changePosition(delta);
       componentsList
         .getComponents()
-        .nodes[key].getCollisionShape()
-        .moveShape(delta);
-      componentsList
-        .getComponents()
         .nodes[key].getSlotComponents()
         .forEach(slotKey => {
           componentsList
