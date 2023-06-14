@@ -47,6 +47,10 @@ class Position {
     return this.x * other.x + this.y * other.y;
   }
 
+  cross(other: Position): number {
+    return this.x * other.y - this.y * other.x;
+  }
+
   magSq(): number {
     return this.dot(this);
   }
@@ -85,6 +89,12 @@ class Position {
       Math.min(Math.max(this.y, top), bottom),
       forceFloat
     );
+  }
+
+  rotateZ(angle: number): Position {
+    const sin = Math.sin(angle)
+    const cos = Math.cos(angle)
+    return new Position(this.x * cos - this.y * sin, this.x * sin + this.y * cos)
   }
 }
 
