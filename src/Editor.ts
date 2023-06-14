@@ -24,6 +24,7 @@ export default class Editor {
   // Propriedades dos canvas
   private canvasArea: Position; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
+  public readonly frameRate: number;
 
   constructor(
     documentId: string,
@@ -39,6 +40,8 @@ export default class Editor {
     this.backgroundPattern = null;
     this.canvasArea = new Position(canvasVw, canvasVh, true);
     this.loadPattern(bgTexturePath);
+    this.frameRate = 60.0;
+    this.compute();
   }
 
   // static loadFile(jsonData): Editor
@@ -80,14 +83,19 @@ export default class Editor {
   update = () => {
     requestAnimationFrame(this.update);
     this.draw(true);
-    this.onclick();
     this.move();
-    this.mouseReleased();
     // this.checkConnections()
     // this.checkCollisions()
     // To-Do -> Adicionar as seguintes partes:
     // eventos e adição de componentes
     // colisão(this.editorEnv)
+  };
+
+  compute = () => {
+    setInterval(() => {
+      this.onclick();
+      this.mouseReleased();
+    }, 1000.0/this.frameRate)
   };
 
   move = () => {

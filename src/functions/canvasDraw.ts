@@ -14,11 +14,12 @@ export function updateCanvas(
 ) {
   clearFrame(ctx);
   const drawOrder = ['connections', 'nodes', 'slots', 'texts'];
-  drawOrder.forEach(keyCateg => {
-    Object.keys(elements[keyCateg]).forEach(element => {
-      elements[keyCateg][parseInt(element)].draw(ctx);
-    });
-  });
+  for(let i = 0; i < drawOrder.length; i++) {
+    let elementKeys = Object.keys(elements[drawOrder[i]])
+    for (let j = 0; j < elementKeys.length; j++) {
+      elements[drawOrder[i]][parseInt(elementKeys[j])].draw(ctx);
+    }
+  }
 }
 
 export function updateBackground(
