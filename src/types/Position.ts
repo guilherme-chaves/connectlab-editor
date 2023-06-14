@@ -4,7 +4,7 @@ interface Position {
 }
 
 class Position {
-  constructor(xOrPosition: number | Position, y: number, forceFloat = false) {
+  constructor(xOrPosition: number | Position, y: number = 0, forceFloat = false) {
     if (typeof xOrPosition === 'number') {
       if (forceFloat) {
         this.x = xOrPosition;

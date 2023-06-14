@@ -123,7 +123,7 @@ export default class Editor {
     );
   };
 
-  node(
+  async node(
     x: number = this.editorEvents.getMousePosition().x,
     y: number = this.editorEvents.getMousePosition().y,
     type: nodeTypes = nodeTypes.NOT
@@ -139,6 +139,7 @@ export default class Editor {
       this.editorEnv
     );
     const newNodeId = this.editorEnv.addComponent(newNode);
+    await newNode.ready
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
       (slot, index) => {
         const key = this.slot(
@@ -146,7 +147,7 @@ export default class Editor {
           slot.localPos.y,
           ComponentType.NODE,
           newNodeId,
-          new Position(x, y),
+          newNode.position,
           slot.in
         );
         NodeComponent.getNodeTypeObject(type).connectionSlots[index].slotId =
@@ -155,6 +156,7 @@ export default class Editor {
       }
     );
     this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys);
+    this.draw(true, false);
     return newNodeId;
   }
 

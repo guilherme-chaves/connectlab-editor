@@ -8,10 +8,10 @@ import ComponentsList from './ComponentsList';
 
 class NodeComponent extends Component {
   public readonly nodeType: NodeType;
-  private imageLoaded: boolean;
   private nodeImage: HTMLImageElement;
   private slotComponents: Array<number>;
   protected declare collisionShape: BBCollision;
+  public ready: Promise<any>;
 
   constructor(
     id: number,
@@ -26,32 +26,33 @@ class NodeComponent extends Component {
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slotKeys;
     this.nodeImage = new Image();
-    this.imageLoaded = false;
-    this.nodeImage.addEventListener('load', () => {
-      let halfImgPos = new Position(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
-      this.position = this.position.add(halfImgPos)
-      const canvasBound = new Position(canvasWidth, canvasHeight);
-      canvasBound.minus(
-        new Position(this.nodeImage.width, this.nodeImage.height)
-      );
-      this.position = this.position.inBounds(
-        0,
-        0,
-        canvasBound.y,
-        canvasBound.x
-      );
-      this.collisionShape = new BBCollision(
-        this.position,
-        new Position(0, 0),
-        this.nodeImage.width,
-        this.nodeImage.height
-      );
-      for (let i = 0; i < slotKeys.length; i++) {
-        componentsList.getComponents().slots[slotKeys[i]].setParentPosition(this.position)
-      }
-      this.imageLoaded = true;
+    this.ready = new Promise((resolve, reject) => {
+      this.nodeImage.addEventListener('load', () => {
+        let halfImgPos = new Position(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
+        this.position = this.position.add(halfImgPos)
+        const canvasBound = new Position(canvasWidth, canvasHeight);
+        canvasBound.minus(
+          new Position(this.nodeImage.width, this.nodeImage.height)
+        );
+        this.position = this.position.inBounds(
+          0,
+          0,
+          canvasBound.y,
+          canvasBound.x
+        );
+        this.collisionShape = new BBCollision(
+          this.position,
+          new Position(0, 0),
+          this.nodeImage.width,
+          this.nodeImage.height
+        );
+        for (let i = 0; i < slotKeys.length; i++) {
+          componentsList.getComponents().slots[slotKeys[i]].setParentPosition(this.position)
+        }
+        resolve(undefined);
+      });
+      this.nodeImage.src = this.nodeType.imgPath;
     });
-    this.nodeImage.src = this.nodeType.imgPath;
   }
 
   static getNodeTypeObject(type: nodeTypes): NodeType {
@@ -102,11 +103,9 @@ class NodeComponent extends Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.imageLoaded) {
-      ctx.drawImage(this.nodeImage, this.position.x, this.position.y);
-      if (this.collisionShape !== undefined)
-        this.collisionShape.draw(ctx, true);
-    }
+    ctx.drawImage(this.nodeImage, this.position.x, this.position.y);
+    if (this.collisionShape !== undefined)
+      this.collisionShape.draw(ctx, true);
   }
 }
 
