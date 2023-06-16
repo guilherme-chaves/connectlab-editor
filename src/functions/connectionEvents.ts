@@ -3,6 +3,7 @@ import ComponentsList from '../components/ComponentsList';
 import Position from '../types/Position';
 import ComponentType from '../types/types';
 import EditorEvents from './events';
+import slotEvents from './slotEvents';
 
 export default {
   editingLineId: -1,
@@ -11,13 +12,23 @@ export default {
   oldSlotCollision: -1,
   slotCollision: -1,
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
-  checkConnectionClick(componentsList: ComponentsList) : number[] | undefined {
-    // Cada linha da conexão possui um BB ou OBB, então precisa passar por um loop no array de malhas de colisão
-    return undefined;
+  checkConnectionClick(componentsList: ComponentsList, eventsObject: EditorEvents) : number[] | undefined {
+    let collided = false;
+    const collidedWith = new Array<number>();
+    Object.keys(componentsList.getComponents()['connections']).forEach(key => {
+      const keyN = parseInt(key);
+      const collision = componentsList
+        .getComponents()
+        ['connections'][keyN].getCollisionShape()
+        .collisionWithPoint(eventsObject.getMousePosition());
+      if (collision) collidedWith.push(keyN);
+      collided = collided || collision;
+    });
+    return collided ? collidedWith : undefined;
   },
   addLine(editor: Editor, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId != -1) return true;
-    const slotCollisions = eventsObject.checkSlotClick(editor.getEnviroment());
+    const slotCollisions = slotEvents.checkSlotClick(editor.getEnviroment(), eventsObject);
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
       const slot = editor.getEnviroment().getComponents().slots[key];
@@ -54,7 +65,7 @@ export default {
   fixLine(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
-      const currentSlotCollision = eventsObject.checkSlotClick(componentsList);
+      const currentSlotCollision = slotEvents.checkSlotClick(componentsList, eventsObject);
       if (
         this.slotCollision !== -1 &&
         currentSlotCollision !== undefined &&
@@ -66,8 +77,8 @@ export default {
             delete componentsList.getComponents().connections[this.editingLineId];
             this.resetConnEventParams();
             return false
-        } else if (componentsList.getComponents().slots[currentSlotCollision[0]].getInSlot()) {
-            // Caso a conexão esteja sendo feita de forma inversa (out -> in), trocar o valor dos parâmetros
+        } else if (!componentsList.getComponents().slots[currentSlotCollision[0]].getInSlot()) {
+            // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
             let temp = this.lineStartSlot
             this.lineStartSlot = currentSlotCollision[0]
             currentSlotCollision[0] = temp
@@ -89,7 +100,12 @@ export default {
           componentsList.getComponents().slots[currentSlotCollision[0]].getPosition(true),
           this.lineStartSlot,
           currentSlotCollision[0]
-        )
+        );
+
+                
+        componentsList
+          .getComponents()
+          .connections[this.editingLineId].generateCollisionShape();
 
         this.resetConnEventParams();
         return true
@@ -104,7 +120,7 @@ export default {
   },
   bindConnection(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
-      const slotCollided = eventsObject.checkSlotClick(componentsList);
+      const slotCollided = slotEvents.checkSlotClick(componentsList, eventsObject);
       if (slotCollided !== undefined) {
         // Evitar colisões com o slot de onde a linha se origina
         if (

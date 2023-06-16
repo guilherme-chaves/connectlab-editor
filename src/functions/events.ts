@@ -2,6 +2,9 @@ import Editor from '../Editor';
 import Position from '../types/Position';
 import ComponentsList from '../components/ComponentsList';
 import connectionEvents from './connectionEvents';
+import nodeEvents from './nodeEvents';
+import slotEvents from './slotEvents';
+import textEvents from './textEvents';
 
 interface collisionListInterface {
   [index: string]: Array<number> | undefined;
@@ -44,10 +47,10 @@ export default class EditorEvents {
   mouseClick(componentsList: ComponentsList) {
     if (this.mouseClicked && this.mouseChangedState) {
       // Obtêm uma lista com todas as colisões encontradas
-      const nodeId = this.checkNodeClick(componentsList);
-      const slotId = this.checkSlotClick(componentsList);
-      const connectionId = connectionEvents.checkConnectionClick(componentsList);
-      const textId = undefined;
+      const nodeId = nodeEvents.checkNodeClick(componentsList, this);
+      const slotId = slotEvents.checkSlotClick(componentsList, this);
+      const connectionId = connectionEvents.checkConnectionClick(componentsList, this);
+      const textId = textEvents.checkTextClick(componentsList, this);
       
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId != undefined)
@@ -63,41 +66,6 @@ export default class EditorEvents {
       this.mouseChangedState = false;
     }
   }
-
-  // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(componentsList: ComponentsList): number[] | undefined {
-    let collided = false;
-    const collidedWith = new Array<number>();
-    Object.keys(componentsList.getComponents()['nodes']).forEach(key => {
-      const keyN = parseInt(key);
-      const collision = componentsList
-        .getComponents()
-        ['nodes'][keyN].getCollisionShape()
-        .collisionWithPoint(this.mousePosition);
-      if (collision) collidedWith.push(keyN);
-      collided = collided || collision;
-    });
-    return collided ? collidedWith : undefined;
-  }
-
-  // Busca na lista de slots quais possuem uma colisão com o ponto do mouse
-  checkSlotClick(componentsList: ComponentsList): number[] | undefined {
-    let collided = false;
-    const collidedWith = new Array<number>();
-    Object.keys(componentsList.getComponents()['slots']).forEach(key => {
-      const keyN = parseInt(key);
-      const collision = componentsList
-        .getComponents()
-        ['slots'][keyN].getCollisionShape()
-        .collisionWithPoint(this.mousePosition);
-      if (collision) collidedWith.push(keyN);
-      collided = collided || collision;
-    });
-    return collided ? collidedWith : undefined;
-  }
-
-  // Busca na lista de textos quais possuem uma colisão com o ponto do mouse
-  checkTextClick(editor: Editor) {}
 
   mouseRelease(componentsList: ComponentsList) {
     if (!this.mouseClicked && this.mouseChangedState) {
@@ -116,56 +84,12 @@ export default class EditorEvents {
         this.mousePosition.minus(this.oldMousePosition)
       )
       connectionEvents.addLine(editor, this)
-      this.nodeMove(
+      nodeEvents.nodeMove(
         componentsList,
+        this,
         this.mousePosition.minus(this.oldMousePosition)
       )
       this.mouseChangedPosition = false;
-      return true;
-    }
-    return false;
-  }
-
-  nodeMove(componentsList: ComponentsList, delta: Position): boolean {
-    if (this.collisionList.nodes !== undefined && this.mouseChangedPosition && !connectionEvents.editingLine) {
-      const key = Object.values(this.collisionList.nodes)[0];
-      componentsList.getComponents().nodes[key].changePosition(delta);
-      componentsList
-        .getComponents()
-        .nodes[key].getSlotComponents()
-        .forEach(slotKey => {
-          componentsList
-            .getComponents()
-            .slots[slotKey].setParentPosition(
-              componentsList.getComponents().nodes[key].position
-            );
-          componentsList
-            .getComponents()
-            .slots[slotKey].getCollisionShape()
-            .moveShape(delta);
-          if (
-            componentsList.getComponents().slots[slotKey].getConnectionId() !==
-            -1
-          ) {
-            const connectionKey = componentsList
-              .getComponents()
-              .slots[slotKey].getConnectionId();
-            if (
-              componentsList.getComponents().connections[connectionKey]
-                .connectedTo.start?.id === slotKey
-            )
-              componentsList
-                .getComponents()
-                .connections[connectionKey].changePosition(delta, 0, true);
-            else if (
-              componentsList.getComponents().connections[connectionKey]
-                .connectedTo.end?.id === slotKey
-            )
-              componentsList
-                .getComponents()
-                .connections[connectionKey].changePosition(delta, 1, true);
-          }
-        });
       return true;
     }
     return false;
