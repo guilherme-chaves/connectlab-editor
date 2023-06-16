@@ -17,7 +17,7 @@ export default class BBCollision extends CollisionShape {
     this.drawPath = this.generatePath();
   }
 
-  protected generatePath(): Path2D {
+  public generatePath(): Path2D {
     const path = new Path2D();
     const pos = this.a.add(this.parentPosition)
     path.rect(pos.x, pos.y, this.b.x, this.b.y);
@@ -37,8 +37,16 @@ export default class BBCollision extends CollisionShape {
   collisionWithPoint(point: Position): boolean {
     const pos = this.parentPosition.add(this.a)
     const b = this.b.add(pos);
+    const topLeft = new Position(
+      pos.x < b.x ? pos.x : b.x,
+      pos.y < b.y ? pos.y : b.y
+    )
+    const bottomRight = new Position(
+      b.x > pos.x ? b.x : pos.x,
+      b.y > pos.y ? b.y : pos.y
+    )
     return (
-      point.x > pos.x && point.x < b.x && point.y > pos.y && point.y < b.y
+      point.x > topLeft.x && point.x < bottomRight.x && point.y > topLeft.y && point.y < bottomRight.y
     );
   }
 }

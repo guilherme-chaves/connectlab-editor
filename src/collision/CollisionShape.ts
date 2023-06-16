@@ -5,7 +5,7 @@ export default class CollisionShape {
   public a: Position = new Position(0, 0);
   public b: Position = new Position(0, 0);
   public color = '#FF8008';
-  protected drawPath: Path2D = this.generatePath();
+  public drawPath: Path2D = this.generatePath();
 
   protected generatePath(): Path2D {
     const path = new Path2D();

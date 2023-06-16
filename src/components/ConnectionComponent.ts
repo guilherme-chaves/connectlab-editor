@@ -1,6 +1,7 @@
 import ComponentType, {connectionSlotsInterface} from '../types/types';
 import Position from '../types/Position';
 import Component from './Component';
+import BBCollision from '../collision/BBCollision';
 
 class ConnectionComponent extends Component {
   public endPosition: Position;
@@ -11,7 +12,9 @@ class ConnectionComponent extends Component {
   private regenConnectionPath: boolean;
   private attractionBias: number; // Tendência de um ponto a assumir uma das coordenadas de seu antecessor
   private slotComponents: Array<number>;
-  private minDistFromConnection: number; // Distância mínima em pixels que a conexão deve se manter do local onde se conecta
+  private minDistFromConnection: number;
+  declare protected collisionShape: BBCollision;
+  protected collisionShapes: BBCollision[];
 
   constructor(
     id: number,
@@ -23,13 +26,15 @@ class ConnectionComponent extends Component {
     super(id, startPoint, ComponentType.LINE);
     this.endPosition = endPosition;
     // As âncoras funcionam como porcentagens de interpolação entre os dois pontos
-    this.anchors = [new Position(0.5, 0, true), new Position(0.5, 1, true)];
+    this.anchors = [new Position(0.25, 0, true), new Position(0.25, 0.5, true), new Position(0.5, 0.5, true), new Position(0.5, 1, true)];
     this.connectedTo = connections;
     this.attractionBias = 0.075;
     this.slotComponents = [];
     this.minDistFromConnection = 64;
     this.connectionPath = this.generatePath();
     this.regenConnectionPath = false;
+    this.collisionShape = new BBCollision(new Position(0, 0), new Position(0, 0), 0, 0);
+    this.collisionShapes = this.generateCollisionShapes();
   }
 
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
@@ -45,6 +50,50 @@ class ConnectionComponent extends Component {
     return path;
   }
 
+  generateCollisionShape() {
+    this.collisionShape.b = this.endPosition.minus(this.position);
+    this.collisionShape.moveShape(this.position, false);
+  }
+
+  generateCollisionShapes() {
+    // Precisa refatorar esse método...
+    if (this.anchors.length < 1) return [];
+    let newCollisionSet = [];
+    let pPos = this.position.bilinear(this.endPosition, this.anchors[0]).minus(this.position);
+    newCollisionSet.push(new BBCollision(this.position, new Position(0, 0), pPos.x, 2));
+    for (let i = 1; i <= this.anchors.length; i++) {
+      let nPos = new Position(0, 0);
+      if (i < this.anchors.length)
+        nPos = this.position.bilinear(this.endPosition, this.anchors[i]).minus(this.position);
+      else
+        nPos = this.endPosition.minus(this.position)
+      const offset = new Position(
+        pPos.x === nPos.x ? pPos.x : -1+pPos.x,
+        pPos.y === nPos.y ? pPos.y : -1+pPos.y
+      );
+      const size = new Position(
+        pPos.x === nPos.x ? 2 : i === 1 ? nPos.x : nPos.x/2,
+        pPos.y === nPos.y ? 2 : i === 1 ? nPos.y : nPos.y/2
+      );
+      newCollisionSet.push(new BBCollision(this.position, offset, size.x, size.y));
+      pPos = nPos;
+    }
+    return newCollisionSet;
+  }
+
+  generateAnchors(): Position[] {
+
+    return []
+  }
+
+  getCollisionShape(): BBCollision {
+    return this.collisionShape
+  }
+
+  getCollisionShapes(): BBCollision[] {
+    return this.collisionShapes
+  }
+
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
     if (this.regenConnectionPath) this.connectionPath = this.generatePath();
@@ -52,6 +101,7 @@ class ConnectionComponent extends Component {
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke(this.connectionPath);
+    this.collisionShapes.forEach(shape => shape.draw(ctx, true));
   }
 
   addAnchor(point: Position, arrIndex: number = this.anchors.length): void {
@@ -80,6 +130,7 @@ class ConnectionComponent extends Component {
       if (movePoint !== 1) this.position = delta;
       if (movePoint !== 0) this.endPosition = delta;
     }
+    this.collisionShapes = this.generateCollisionShapes();
     this.regenConnectionPath = true;
   }
 
