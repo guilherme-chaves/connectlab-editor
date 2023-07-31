@@ -1,6 +1,6 @@
 import NodeTypeInterface from './NodeType';
 import {nodeTypes} from './types';
-import Position from './Position';
+import Vector2 from './Vector2';
 import NOTPath from '../assets/gates/NOT.svg';
 
 const ADDNode: NodeTypeInterface = {
@@ -11,7 +11,7 @@ const ADDNode: NodeTypeInterface = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Position(-8, -8),
+      localPos: new Vector2(-8, -8),
       slotId: -1,
       status: false,
     },
@@ -19,7 +19,7 @@ const ADDNode: NodeTypeInterface = {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Position(-8, 8),
+      localPos: new Vector2(-8, 8),
       slotId: -1,
       status: false,
     },
@@ -27,7 +27,7 @@ const ADDNode: NodeTypeInterface = {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Position(8, 0),
+      localPos: new Vector2(8, 0),
       slotId: -1,
       status: false,
     },
@@ -45,7 +45,7 @@ const ORNode: NodeTypeInterface = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Position(-8, -8),
+      localPos: new Vector2(-8, -8),
       slotId: -1,
       status: false,
     },
@@ -53,7 +53,7 @@ const ORNode: NodeTypeInterface = {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Position(-8, 8),
+      localPos: new Vector2(-8, 8),
       slotId: -1,
       status: false,
     },
@@ -61,7 +61,7 @@ const ORNode: NodeTypeInterface = {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Position(8, 0),
+      localPos: new Vector2(8, 0),
       slotId: -1,
       status: false,
     },
@@ -79,7 +79,7 @@ const NOTNode: NodeTypeInterface = {
       id: 0,
       name: 'In',
       in: true,
-      localPos: new Position(0, 25),
+      localPos: new Vector2(0, 25),
       slotId: -1,
       status: false,
     },
@@ -87,7 +87,7 @@ const NOTNode: NodeTypeInterface = {
       id: 1,
       name: 'Out',
       in: false,
-      localPos: new Position(88, 25),
+      localPos: new Vector2(88, 25),
       slotId: -1,
       status: false,
     },

@@ -1,9 +1,9 @@
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 
 export default class CollisionShape {
-  public parentPosition: Position = new Position(0, 0);
-  public a: Position = new Position(0, 0);
-  public b: Position = new Position(0, 0);
+  public parentPosition: Vector2 = new Vector2(0, 0);
+  public a: Vector2 = new Vector2(0, 0);
+  public b: Vector2 = new Vector2(0, 0);
   public color = '#FF8008';
   public drawPath: Path2D = this.generatePath();
 
@@ -22,13 +22,13 @@ export default class CollisionShape {
     ctx.strokeStyle = oldStrokeStyle;
   }
 
-  moveShape(delta: Position, useDelta: boolean = true) {
+  moveShape(delta: Vector2, useDelta: boolean = true) {
     if (useDelta) this.parentPosition.add(delta);
     else this.parentPosition = delta
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Position) {
+  collisionWithPoint(point: Vector2) {
     throw new Error('Função não implementada, utilize uma das classes-filhas');
   }
 }

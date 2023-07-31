@@ -1,5 +1,5 @@
 import ComponentsList from "../components/ComponentsList";
-import Position from "../types/Position";
+import Vector2 from "../types/Vector2";
 import EditorEvents from "./events";
 import connectionEvents from "./connectionEvents";
 
@@ -19,7 +19,7 @@ export default {
 		});
 		return collided ? collidedWith : undefined;
 	},
-	nodeMove(componentsList: ComponentsList, eventsObject: EditorEvents, delta: Position): boolean {
+	nodeMove(componentsList: ComponentsList, eventsObject: EditorEvents, delta: Vector2): boolean {
     if (eventsObject.getCollisionList().nodes !== undefined && eventsObject.getMouseChangedPosition() && !connectionEvents.editingLine) {
       const key = Object.values(eventsObject.getCollisionList().nodes as number[])[0];
       componentsList.getComponents().nodes[key].changePosition(delta);

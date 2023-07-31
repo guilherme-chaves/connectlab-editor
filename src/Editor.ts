@@ -8,7 +8,7 @@ import ComponentsList from './components/ComponentsList';
 import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
-import Position from './types/Position';
+import Vector2 from './types/Vector2';
 import Component from './components/Component';
 import SlotComponent from './components/SlotComponent';
 import EditorEvents from './functions/events';
@@ -22,7 +22,7 @@ export default class Editor {
   private canvasCtx: CanvasRenderingContext2D;
   private backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: Position; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private canvasArea: Vector2; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
   public readonly frameRate: number;
 
@@ -38,7 +38,7 @@ export default class Editor {
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
     this.backgroundPattern = null;
-    this.canvasArea = new Position(canvasVw, canvasVh, true);
+    this.canvasArea = new Vector2(canvasVw, canvasVh, true);
     this.loadPattern(bgTexturePath);
     this.frameRate = 60.0;
     this.compute();
@@ -131,7 +131,7 @@ export default class Editor {
     const slotKeys: Array<number> = [];
     const newNode = new NodeComponent(
       this.editorEnv.getLastComponentId(),
-      new Position(x, y),
+      new Vector2(x, y),
       type,
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
@@ -168,8 +168,8 @@ export default class Editor {
   ) {
     const newLine = new ConnectionComponent(
       this.editorEnv.getLastComponentId(),
-      new Position(x1, y1),
-      new Position(x1, y1),
+      new Vector2(x1, y1),
+      new Vector2(x1, y1),
       {start: from, end: to}
     );
     return this.editorEnv.addComponent(newLine);
@@ -178,7 +178,7 @@ export default class Editor {
   text(text: string, x: number, y: number, style?: string, parent?: Component) {
     const newText = new TextComponent(
       this.editorEnv.getLastComponentId(),
-      new Position(x, y),
+      new Vector2(x, y),
       text,
       style,
       parent
@@ -191,7 +191,7 @@ export default class Editor {
     y: number,
     parentType: ComponentType,
     parentId: number,
-    parentPosition: Position,
+    parentPosition: Vector2,
     inSlot?: boolean,
     radius?: number,
     attractionRadius?: number,
@@ -200,7 +200,7 @@ export default class Editor {
   ) {
     const newSlot = new SlotComponent(
       this.editorEnv.getLastComponentId(),
-      new Position(x, y),
+      new Vector2(x, y),
       parentType,
       parentId,
       parentPosition,
@@ -217,7 +217,7 @@ export default class Editor {
   setMousePosition(clientX: number, clientY: number) {
     const rect = this.canvasCtx.canvas.getBoundingClientRect();
     this.editorEvents.setMousePosition(
-      new Position(clientX - rect.left, clientY - rect.top)
+      new Vector2(clientX - rect.left, clientY - rect.top)
     );
   }
 

@@ -1,5 +1,5 @@
 import Editor from '../Editor';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import ComponentsList from '../components/ComponentsList';
 import connectionEvents from './connectionEvents';
 import nodeEvents from './nodeEvents';
@@ -20,8 +20,8 @@ export default class EditorEvents {
 
   private collisionList: collisionListInterface;
 
-  private mousePosition: Position; // Posição dentro do canvas, não global
-  private oldMousePosition: Position;
+  private mousePosition: Vector2; // Posição dentro do canvas, não global
+  private oldMousePosition: Vector2;
   private mouseClicked: boolean;
   private mouseChangedState: boolean;
   private mouseChangedPosition: boolean;
@@ -37,7 +37,7 @@ export default class EditorEvents {
       texts: undefined,
     };
 
-    this.mousePosition = new Position(0, 0);
+    this.mousePosition = new Vector2(0, 0);
     this.oldMousePosition = this.mousePosition;
     this.mouseClicked = false;
     this.mouseChangedState = true;
@@ -128,11 +128,11 @@ export default class EditorEvents {
     this.collisionList.texts = undefined;
   };
 
-  getMousePosition(): Position {
+  getMousePosition(): Vector2 {
     return this.mousePosition;
   }
 
-  setMousePosition(position: Position) {
+  setMousePosition(position: Vector2) {
     this.oldMousePosition = this.mousePosition;
     this.mousePosition = position;
     this.mouseChangedPosition = true;

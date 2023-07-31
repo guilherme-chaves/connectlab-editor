@@ -1,10 +1,10 @@
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import CollisionShape from './CollisionShape';
 
 export default class BBCollision extends CollisionShape {
   constructor(
-    position: Position,
-    offset: Position,
+    position: Vector2,
+    offset: Vector2,
     width: number,
     height: number,
     color?: string
@@ -12,7 +12,7 @@ export default class BBCollision extends CollisionShape {
     super();
     this.parentPosition = position
     this.a = offset;
-    this.b = new Position(width, height);
+    this.b = new Vector2(width, height);
     this.color = color ?? this.color;
     this.drawPath = this.generatePath();
   }
@@ -28,20 +28,20 @@ export default class BBCollision extends CollisionShape {
     super.draw(ctx, selected);
   }
 
-  moveShape(delta: Position, useDelta: boolean = true): void {
+  moveShape(delta: Vector2, useDelta: boolean = true): void {
     if (useDelta) this.parentPosition = this.parentPosition.add(delta);
     else this.parentPosition = delta
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Position): boolean {
+  collisionWithPoint(point: Vector2): boolean {
     const pos = this.parentPosition.add(this.a)
     const b = this.b.add(pos);
-    const topLeft = new Position(
+    const topLeft = new Vector2(
       pos.x < b.x ? pos.x : b.x,
       pos.y < b.y ? pos.y : b.y
     )
-    const bottomRight = new Position(
+    const bottomRight = new Vector2(
       b.x > pos.x ? b.x : pos.x,
       b.y > pos.y ? b.y : pos.y
     )

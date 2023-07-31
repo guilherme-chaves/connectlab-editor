@@ -1,5 +1,5 @@
 import CircleCollision from '../collision/CircleCollision';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import ComponentType from '../types/types';
 import Component from './Component';
 
@@ -7,7 +7,7 @@ export default class SlotComponent extends Component {
   private parentType: ComponentType;
   private parentId: number;
   private connectionId: number;
-  private parentPosition: Position;
+  private parentPosition: Vector2;
   private state: boolean;
   private inSlot: boolean;
   private color: string;
@@ -18,10 +18,10 @@ export default class SlotComponent extends Component {
 
   constructor(
     id: number,
-    position: Position,
+    position: Vector2,
     parentType: ComponentType,
     parentId: number,
-    parentPosition: Position,
+    parentPosition: Vector2,
     connectionId = -1,
     inSlot = true,
     radius = 4,
@@ -42,7 +42,7 @@ export default class SlotComponent extends Component {
     this.attractionBias = attractionRadius;
     this.collisionShape = new CircleCollision(
       this.position.add(this.parentPosition),
-      new Position(0, 0),
+      new Vector2(0, 0),
       this.attractionBias
     );
     // Buscar como ler os parâmetros do Node após as mudanças realizadas - centralizar no mouse e colisão com os limites do canvas
@@ -75,7 +75,7 @@ export default class SlotComponent extends Component {
     return this.parentPosition;
   }
 
-  setParentPosition(position: Position) {
+  setParentPosition(position: Vector2) {
     this.parentPosition = position;
     this.collisionShape.moveShape(this.position.add(this.parentPosition), false)
     this.componentPath = this.generatePath();

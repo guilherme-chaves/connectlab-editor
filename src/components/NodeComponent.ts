@@ -1,7 +1,7 @@
 import {nodeTypes} from '../types/types';
 import NodeType from '../types/NodeType';
 import {ADDNode, NOTNode, ORNode} from '../types/NodeTypes';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
 import ComponentsList from './ComponentsList';
@@ -15,7 +15,7 @@ class NodeComponent extends Component {
 
   constructor(
     id: number,
-    position: Position,
+    position: Vector2,
     nodeType: nodeTypes,
     canvasWidth: number,
     canvasHeight: number,
@@ -28,11 +28,11 @@ class NodeComponent extends Component {
     this.nodeImage = new Image();
     this.ready = new Promise((resolve, reject) => {
       this.nodeImage.addEventListener('load', () => {
-        let halfImgPos = new Position(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
+        let halfImgPos = new Vector2(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
         this.position = this.position.add(halfImgPos)
-        const canvasBound = new Position(canvasWidth, canvasHeight);
+        const canvasBound = new Vector2(canvasWidth, canvasHeight);
         canvasBound.minus(
-          new Position(this.nodeImage.width, this.nodeImage.height)
+          new Vector2(this.nodeImage.width, this.nodeImage.height)
         );
         this.position = this.position.inBounds(
           0,
@@ -42,7 +42,7 @@ class NodeComponent extends Component {
         );
         this.collisionShape = new BBCollision(
           this.position,
-          new Position(0, 0),
+          new Vector2(0, 0),
           this.nodeImage.width,
           this.nodeImage.height
         );
@@ -77,7 +77,7 @@ class NodeComponent extends Component {
     return this.slotComponents;
   }
 
-  changePosition(delta: Position): void {
+  changePosition(delta: Vector2): void {
     this.position = this.position.add(delta)
     this.collisionShape.moveShape(delta, true)
   }

@@ -1,6 +1,6 @@
 import Editor from '../Editor';
 import ComponentsList from '../components/ComponentsList';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import ComponentType from '../types/types';
 import EditorEvents from './events';
 import slotEvents from './slotEvents';
@@ -51,7 +51,7 @@ export default {
   lineMove(
     componentsList: ComponentsList,
     eventsObject: EditorEvents,
-    mouseDelta: Position
+    mouseDelta: Vector2
   ) {
     if (this.editingLine && this.editingLineId !== -1 && eventsObject.getMouseChangedPosition()) {
       componentsList
@@ -151,7 +151,7 @@ export default {
       }
     }
   },
-  setConnectionParams(componentsList: ComponentsList, startPos?: Position, endPos?: Position, startSlotId?: number, endSlotId?: number) {
+  setConnectionParams(componentsList: ComponentsList, startPos?: Vector2, endPos?: Vector2, startSlotId?: number, endSlotId?: number) {
     if (startPos !== undefined)
       componentsList.getComponents().connections[this.editingLineId].changePosition(startPos, 0, false)
     if (endPos !== undefined)

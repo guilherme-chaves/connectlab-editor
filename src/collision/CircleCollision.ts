@@ -1,12 +1,11 @@
 import CollisionShape from './CollisionShape';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 
 export default class CircleCollision extends CollisionShape {
   public radius: number;
   public radiusSq: number;
-  protected drawPath: Path2D;
 
-  constructor(position: Position, offset: Position, radius: number, color?: string) {
+  constructor(position: Vector2, offset: Vector2, radius: number, color?: string) {
     super();
     this.parentPosition = position;
     this.a = offset;
@@ -33,13 +32,13 @@ export default class CircleCollision extends CollisionShape {
     ctx.closePath();
   }
 
-  moveShape(delta: Position, useDelta: boolean = true): void {
+  moveShape(delta: Vector2, useDelta: boolean = true): void {
     if (useDelta) this.parentPosition.add(delta);
     else this.parentPosition = delta
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Position): boolean {
+  collisionWithPoint(point: Vector2): boolean {
     const pos = this.parentPosition.add(this.a)
     return pos.minus(point).magSq() < this.radiusSq;
   }

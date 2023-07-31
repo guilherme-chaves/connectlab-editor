@@ -1,5 +1,5 @@
 import ComponentType from '../types/types';
-import Position from '../types/Position';
+import Vector2 from '../types/Vector2';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
 
@@ -7,11 +7,11 @@ class TextComponent extends Component {
   public text: string;
   public parentNode: Component | null;
   public style: string;
-  private textSize: Position;
+  private textSize: Vector2;
   declare protected collisionShape: BBCollision;
   constructor(
     id: number,
-    position: Position,
+    position: Vector2,
     text = '',
     style = '12px sans-serif',
     parent: Component | null = null
@@ -20,9 +20,9 @@ class TextComponent extends Component {
     this.text = text;
     this.style = style;
     this.parentNode = parent;
-    this.textSize = new Position(0, 0);
+    this.textSize = new Vector2(0, 0);
     this.collisionShape = new BBCollision(
-      this.parentNode?.position ?? new Position(0, 0),
+      this.parentNode?.position ?? new Vector2(0, 0),
       this.position,
       this.textSize.x,
       this.textSize.y
