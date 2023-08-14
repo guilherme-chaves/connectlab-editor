@@ -11,7 +11,7 @@ class NodeComponent extends Component {
   private nodeImage: HTMLImageElement;
   private slotComponents: Array<number>;
   protected declare collisionShape: BBCollision;
-  public ready: Promise<any>;
+  public ready: Promise<unknown>;
 
   constructor(
     id: number,
@@ -28,8 +28,11 @@ class NodeComponent extends Component {
     this.nodeImage = new Image();
     this.ready = new Promise((resolve, reject) => {
       this.nodeImage.addEventListener('load', () => {
-        let halfImgPos = new Vector2(-this.nodeImage.width/2.0, -this.nodeImage.height/2.0)
-        this.position = this.position.add(halfImgPos)
+        const halfImgPos = new Vector2(
+          -this.nodeImage.width / 2.0,
+          -this.nodeImage.height / 2.0
+        );
+        this.position = this.position.add(halfImgPos);
         const canvasBound = new Vector2(canvasWidth, canvasHeight);
         canvasBound.minus(
           new Vector2(this.nodeImage.width, this.nodeImage.height)
@@ -47,7 +50,9 @@ class NodeComponent extends Component {
           this.nodeImage.height
         );
         for (let i = 0; i < slotKeys.length; i++) {
-          componentsList.getComponents().slots[slotKeys[i]].setParentPosition(this.position)
+          componentsList
+            .getComponents()
+            .slots[slotKeys[i]].setParentPosition(this.position);
         }
         resolve(undefined);
       });
@@ -78,8 +83,8 @@ class NodeComponent extends Component {
   }
 
   changePosition(delta: Vector2): void {
-    this.position = this.position.add(delta)
-    this.collisionShape.moveShape(delta, true)
+    this.position = this.position.add(delta);
+    this.collisionShape.moveShape(delta, true);
   }
 
   getNodeImage() {
@@ -104,8 +109,7 @@ class NodeComponent extends Component {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.drawImage(this.nodeImage, this.position.x, this.position.y);
-    if (this.collisionShape !== undefined)
-      this.collisionShape.draw(ctx, true);
+    if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
   }
 }
 

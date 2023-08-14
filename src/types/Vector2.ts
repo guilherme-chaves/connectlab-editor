@@ -4,7 +4,7 @@ interface Vector2 {
 }
 
 class Vector2 {
-  constructor(xOrVector2: number | Vector2, y: number = 0, forceFloat = false) {
+  constructor(xOrVector2: number | Vector2, y = 0, forceFloat = false) {
     if (typeof xOrVector2 === 'number') {
       if (forceFloat) {
         this.x = xOrVector2;
@@ -92,9 +92,12 @@ class Vector2 {
   }
 
   rotateZ(angle: number): Vector2 {
-    const sin = Math.sin(angle)
-    const cos = Math.cos(angle)
-    return new Vector2(this.x * cos - this.y * sin, this.x * sin + this.y * cos)
+    const sin = Math.sin(angle);
+    const cos = Math.cos(angle);
+    return new Vector2(
+      this.x * cos - this.y * sin,
+      this.x * sin + this.y * cos
+    );
   }
 }
 

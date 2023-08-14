@@ -13,7 +13,7 @@ class ConnectionComponent extends Component {
   private attractionBias: number; // Tendência de um ponto a assumir uma das coordenadas de seu antecessor
   private slotComponents: Array<number>;
   private minDistFromConnection: number;
-  declare protected collisionShape: BBCollision;
+  protected declare collisionShape: BBCollision;
   protected collisionShapes: BBCollision[];
 
   constructor(
@@ -26,14 +26,24 @@ class ConnectionComponent extends Component {
     super(id, startPoint, ComponentType.LINE);
     this.endPosition = endPosition;
     // As âncoras funcionam como porcentagens de interpolação entre os dois pontos
-    this.anchors = [new Vector2(0.25, 0, true), new Vector2(0.25, 0.5, true), new Vector2(0.5, 0.5, true), new Vector2(0.5, 1, true)];
+    this.anchors = [
+      new Vector2(0.25, 0, true),
+      new Vector2(0.25, 0.5, true),
+      new Vector2(0.5, 0.5, true),
+      new Vector2(0.5, 1, true),
+    ];
     this.connectedTo = connections;
     this.attractionBias = 0.075;
     this.slotComponents = [];
     this.minDistFromConnection = 64;
     this.connectionPath = this.generatePath();
     this.regenConnectionPath = false;
-    this.collisionShape = new BBCollision(new Vector2(0, 0), new Vector2(0, 0), 0, 0);
+    this.collisionShape = new BBCollision(
+      new Vector2(0, 0),
+      new Vector2(0, 0),
+      0,
+      0
+    );
     this.collisionShapes = this.generateCollisionShapes();
   }
 
@@ -42,8 +52,11 @@ class ConnectionComponent extends Component {
     const path = new Path2D();
     path.moveTo(this.position.x, this.position.y);
     for (let i = 0; i < this.anchors.length; i++) {
-      const globalPos = this.position.bilinear(this.endPosition, this.anchors[i])
-      path.lineTo(globalPos.x, globalPos.y)
+      const globalPos = this.position.bilinear(
+        this.endPosition,
+        this.anchors[i]
+      );
+      path.lineTo(globalPos.x, globalPos.y);
     }
     path.lineTo(this.endPosition.x, this.endPosition.y);
     this.regenConnectionPath = false;
@@ -58,40 +71,46 @@ class ConnectionComponent extends Component {
   generateCollisionShapes() {
     // Precisa refatorar esse método...
     if (this.anchors.length < 1) return [];
-    let newCollisionSet = [];
-    let pPos = this.position.bilinear(this.endPosition, this.anchors[0]).minus(this.position);
-    newCollisionSet.push(new BBCollision(this.position, new Vector2(0, 0), pPos.x, 2));
+    const newCollisionSet = [];
+    let pPos = this.position
+      .bilinear(this.endPosition, this.anchors[0])
+      .minus(this.position);
+    newCollisionSet.push(
+      new BBCollision(this.position, new Vector2(0, 0), pPos.x, 2)
+    );
     for (let i = 1; i <= this.anchors.length; i++) {
       let nPos = new Vector2(0, 0);
       if (i < this.anchors.length)
-        nPos = this.position.bilinear(this.endPosition, this.anchors[i]).minus(this.position);
-      else
-        nPos = this.endPosition.minus(this.position)
+        nPos = this.position
+          .bilinear(this.endPosition, this.anchors[i])
+          .minus(this.position);
+      else nPos = this.endPosition.minus(this.position);
       const offset = new Vector2(
-        pPos.x === nPos.x ? pPos.x : -1+pPos.x,
-        pPos.y === nPos.y ? pPos.y : -1+pPos.y
+        pPos.x === nPos.x ? pPos.x : -1 + pPos.x,
+        pPos.y === nPos.y ? pPos.y : -1 + pPos.y
       );
       const size = new Vector2(
-        pPos.x === nPos.x ? 2 : i === 1 ? nPos.x : nPos.x/2,
-        pPos.y === nPos.y ? 2 : i === 1 ? nPos.y : nPos.y/2
+        pPos.x === nPos.x ? 2 : i === 1 ? nPos.x : nPos.x / 2,
+        pPos.y === nPos.y ? 2 : i === 1 ? nPos.y : nPos.y / 2
       );
-      newCollisionSet.push(new BBCollision(this.position, offset, size.x, size.y));
+      newCollisionSet.push(
+        new BBCollision(this.position, offset, size.x, size.y)
+      );
       pPos = nPos;
     }
     return newCollisionSet;
   }
 
   generateAnchors(): Vector2[] {
-
-    return []
+    return [];
   }
 
   getCollisionShape(): BBCollision {
-    return this.collisionShape
+    return this.collisionShape;
   }
 
   getCollisionShapes(): BBCollision[] {
-    return this.collisionShapes
+    return this.collisionShapes;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -144,7 +163,9 @@ class ConnectionComponent extends Component {
       );
       return;
     }
-    this.anchors[index] = (position.minus(this.position)).div(this.endPosition.minus(this.position), true)
+    this.anchors[index] = position
+      .minus(this.position)
+      .div(this.endPosition.minus(this.position), true);
     this.regenConnectionPath = true;
   }
 

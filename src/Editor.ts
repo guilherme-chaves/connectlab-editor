@@ -95,7 +95,7 @@ export default class Editor {
     setInterval(() => {
       this.onclick();
       this.mouseReleased();
-    }, 1000.0/this.frameRate)
+    }, 1000.0 / this.frameRate);
   };
 
   move = () => {
@@ -139,7 +139,7 @@ export default class Editor {
       this.editorEnv
     );
     const newNodeId = this.editorEnv.addComponent(newNode);
-    await newNode.ready
+    await newNode.ready;
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
       (slot, index) => {
         const key = this.slot(

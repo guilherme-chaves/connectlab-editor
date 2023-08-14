@@ -49,20 +49,23 @@ export default class EditorEvents {
       // Obtêm uma lista com todas as colisões encontradas
       const nodeId = nodeEvents.checkNodeClick(componentsList, this);
       const slotId = slotEvents.checkSlotClick(componentsList, this);
-      const connectionId = connectionEvents.checkConnectionClick(componentsList, this);
+      const connectionId = connectionEvents.checkConnectionClick(
+        componentsList,
+        this
+      );
       const textId = textEvents.checkTextClick(componentsList, this);
-      
+
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      if (slotId != undefined)
+      if (slotId !== undefined)
         componentsList.getComponents().slots[slotId[0]].setState(true);
       this.clearUnselectedComponents(componentsList, undefined, slotId);
-      
+
       this.collisionList = {
         nodes: nodeId,
         slots: slotId,
         connections: connectionId,
-        texts: textId
-      }
+        texts: textId,
+      };
       this.mouseChangedState = false;
     }
   }
@@ -70,7 +73,7 @@ export default class EditorEvents {
   mouseRelease(componentsList: ComponentsList) {
     if (!this.mouseClicked && this.mouseChangedState) {
       if (!connectionEvents.fixLine(componentsList, this)) {
-        this.clearDragCollisions()
+        this.clearDragCollisions();
       }
       this.mouseChangedState = false;
     }
@@ -82,13 +85,13 @@ export default class EditorEvents {
         componentsList,
         this,
         this.mousePosition.minus(this.oldMousePosition)
-      )
-      connectionEvents.addLine(editor, this)
+      );
+      connectionEvents.addLine(editor, this);
       nodeEvents.nodeMove(
         componentsList,
         this,
         this.mousePosition.minus(this.oldMousePosition)
-      )
+      );
       this.mouseChangedPosition = false;
       return true;
     }
@@ -96,29 +99,29 @@ export default class EditorEvents {
   }
 
   // Procura na lista anterior de colisões as que não estão presentes na atual, removendo seu estado de selecionado/ativo
-  clearUnselectedComponents = (
+  clearUnselectedComponents(
     componentsList: ComponentsList,
     newNodeIds?: number[],
     newSlotIds?: number[],
     newConnectionIds?: number[],
     newTextIds?: number[]
-  ): void => {
-    if (this.collisionList.slots != undefined) {
+  ): void {
+    if (this.collisionList.slots !== undefined) {
       this.collisionList.slots.forEach(slot => {
         if (!newSlotIds?.includes(slot)) {
           componentsList.getComponents().slots[slot].setState(false);
         }
       });
     }
-  };
+  }
 
   getCollisionList() {
     return this.collisionList;
   }
 
-  clearDragCollisions = () => {
+  clearDragCollisions() {
     this.collisionList.nodes = undefined;
-  };
+  }
 
   clearAllCollisions(componentsList: ComponentsList) {
     this.clearUnselectedComponents(componentsList);
@@ -126,7 +129,7 @@ export default class EditorEvents {
     this.collisionList.slots = undefined;
     this.collisionList.connections = undefined;
     this.collisionList.texts = undefined;
-  };
+  }
 
   getMousePosition(): Vector2 {
     return this.mousePosition;
@@ -138,16 +141,16 @@ export default class EditorEvents {
     this.mouseChangedPosition = true;
   }
 
-  getMouseChangedState = () => {
-    return this.mouseChangedState
+  getMouseChangedState() {
+    return this.mouseChangedState;
   }
 
-  getMouseChangedPosition = () => {
-    return this.mouseChangedPosition
+  getMouseChangedPosition() {
+    return this.mouseChangedPosition;
   }
 
-  getMouseClicked = () => {
-    return this.mouseClicked
+  getMouseClicked() {
+    return this.mouseClicked;
   }
 
   setMouseClicked(state = false) {

@@ -1,27 +1,40 @@
-import ComponentsList from "../components/ComponentsList";
-import Vector2 from "../types/Vector2";
-import EditorEvents from "./events";
-import connectionEvents from "./connectionEvents";
+import ComponentsList from '../components/ComponentsList';
+import Vector2 from '../types/Vector2';
+import EditorEvents from './events';
+import connectionEvents from './connectionEvents';
 
 export default {
-	// Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-	checkNodeClick(componentsList: ComponentsList, eventsObject: EditorEvents): number[] | undefined {
-		let collided = false;
-		const collidedWith = new Array<number>();
-		Object.keys(componentsList.getComponents()['nodes']).forEach(key => {
-			const keyN = parseInt(key);
-			const collision = componentsList
-				.getComponents()
-				['nodes'][keyN].getCollisionShape()
-				.collisionWithPoint(eventsObject.getMousePosition());
-			if (collision) collidedWith.push(keyN);
-			collided = collided || collision;
-		});
-		return collided ? collidedWith : undefined;
-	},
-	nodeMove(componentsList: ComponentsList, eventsObject: EditorEvents, delta: Vector2): boolean {
-    if (eventsObject.getCollisionList().nodes !== undefined && eventsObject.getMouseChangedPosition() && !connectionEvents.editingLine) {
-      const key = Object.values(eventsObject.getCollisionList().nodes as number[])[0];
+  // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
+  checkNodeClick(
+    componentsList: ComponentsList,
+    eventsObject: EditorEvents
+  ): number[] | undefined {
+    let collided = false;
+    const collidedWith = new Array<number>();
+    Object.keys(componentsList.getComponents()['nodes']).forEach(key => {
+      const keyN = parseInt(key);
+      const collision = componentsList
+        .getComponents()
+        ['nodes'][keyN].getCollisionShape()
+        .collisionWithPoint(eventsObject.getMousePosition());
+      if (collision) collidedWith.push(keyN);
+      collided = collided || collision;
+    });
+    return collided ? collidedWith : undefined;
+  },
+  nodeMove(
+    componentsList: ComponentsList,
+    eventsObject: EditorEvents,
+    delta: Vector2
+  ): boolean {
+    if (
+      eventsObject.getCollisionList().nodes !== undefined &&
+      eventsObject.getMouseChangedPosition() &&
+      !connectionEvents.editingLine
+    ) {
+      const key = Object.values(
+        eventsObject.getCollisionList().nodes as number[]
+      )[0];
       componentsList.getComponents().nodes[key].changePosition(delta);
       componentsList
         .getComponents()
@@ -62,5 +75,5 @@ export default {
       return true;
     }
     return false;
-  }
+  },
 };

@@ -49,10 +49,9 @@ export default class SlotComponent extends Component {
     this.componentPath = this.generatePath();
   }
 
-  getPosition(globalPos: boolean = false) {
-    if (globalPos)
-      return this.position.add(this.parentPosition)
-    return this.position
+  getPosition(globalPos = false) {
+    if (globalPos) return this.position.add(this.parentPosition);
+    return this.position;
   }
 
   getState(): boolean {
@@ -77,7 +76,10 @@ export default class SlotComponent extends Component {
 
   setParentPosition(position: Vector2) {
     this.parentPosition = position;
-    this.collisionShape.moveShape(this.position.add(this.parentPosition), false)
+    this.collisionShape.moveShape(
+      this.position.add(this.parentPosition),
+      false
+    );
     this.componentPath = this.generatePath();
   }
 

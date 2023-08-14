@@ -12,7 +12,10 @@ export default {
   oldSlotCollision: -1,
   slotCollision: -1,
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
-  checkConnectionClick(componentsList: ComponentsList, eventsObject: EditorEvents) : number[] | undefined {
+  checkConnectionClick(
+    componentsList: ComponentsList,
+    eventsObject: EditorEvents
+  ): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
     Object.keys(componentsList.getComponents()['connections']).forEach(key => {
@@ -27,8 +30,11 @@ export default {
     return collided ? collidedWith : undefined;
   },
   addLine(editor: Editor, eventsObject: EditorEvents) {
-    if (this.editingLine && this.editingLineId != -1) return true;
-    const slotCollisions = slotEvents.checkSlotClick(editor.getEnviroment(), eventsObject);
+    if (this.editingLine && this.editingLineId !== -1) return true;
+    const slotCollisions = slotEvents.checkSlotClick(
+      editor.getEnviroment(),
+      eventsObject
+    );
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
       const slot = editor.getEnviroment().getComponents().slots[key];
@@ -53,7 +59,11 @@ export default {
     eventsObject: EditorEvents,
     mouseDelta: Vector2
   ) {
-    if (this.editingLine && this.editingLineId !== -1 && eventsObject.getMouseChangedPosition()) {
+    if (
+      this.editingLine &&
+      this.editingLineId !== -1 &&
+      eventsObject.getMouseChangedPosition()
+    ) {
       componentsList
         .getComponents()
         .connections[this.editingLineId].changePosition(mouseDelta, 1, true);
@@ -65,23 +75,36 @@ export default {
   fixLine(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
-      const currentSlotCollision = slotEvents.checkSlotClick(componentsList, eventsObject);
+      const currentSlotCollision = slotEvents.checkSlotClick(
+        componentsList,
+        eventsObject
+      );
       if (
         this.slotCollision !== -1 &&
         currentSlotCollision !== undefined &&
         currentSlotCollision[0] !== this.lineStartSlot
       ) {
-        if (componentsList.getComponents().slots[this.lineStartSlot].getInSlot() ===
-          componentsList.getComponents().slots[currentSlotCollision[0]].getInSlot()) {
-            // Impede conexões entre slots do mesmo tipo
-            delete componentsList.getComponents().connections[this.editingLineId];
-            this.resetConnEventParams();
-            return false
-        } else if (!componentsList.getComponents().slots[currentSlotCollision[0]].getInSlot()) {
-            // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
-            let temp = this.lineStartSlot
-            this.lineStartSlot = currentSlotCollision[0]
-            currentSlotCollision[0] = temp
+        if (
+          componentsList
+            .getComponents()
+            .slots[this.lineStartSlot].getInSlot() ===
+          componentsList
+            .getComponents()
+            .slots[currentSlotCollision[0]].getInSlot()
+        ) {
+          // Impede conexões entre slots do mesmo tipo
+          delete componentsList.getComponents().connections[this.editingLineId];
+          this.resetConnEventParams();
+          return false;
+        } else if (
+          !componentsList
+            .getComponents()
+            .slots[currentSlotCollision[0]].getInSlot()
+        ) {
+          // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
+          const temp = this.lineStartSlot;
+          this.lineStartSlot = currentSlotCollision[0];
+          currentSlotCollision[0] = temp;
         }
 
         // Remove uma antiga conexão nos slots inicial e final, se existir, e atribui a nova conexão
@@ -93,34 +116,40 @@ export default {
         componentsList
           .getComponents()
           .slots[currentSlotCollision[0]].setConnectionId(this.editingLineId);
-       
+
         this.setConnectionParams(
           componentsList,
-          componentsList.getComponents().slots[this.lineStartSlot].getPosition(true),
-          componentsList.getComponents().slots[currentSlotCollision[0]].getPosition(true),
+          componentsList
+            .getComponents()
+            .slots[this.lineStartSlot].getPosition(true),
+          componentsList
+            .getComponents()
+            .slots[currentSlotCollision[0]].getPosition(true),
           this.lineStartSlot,
           currentSlotCollision[0]
         );
 
-                
         componentsList
           .getComponents()
           .connections[this.editingLineId].generateCollisionShape();
 
         this.resetConnEventParams();
-        return true
+        return true;
       } else {
         delete componentsList.getComponents().connections[this.editingLineId];
-        this.resetConnEventParams()
-        return false
+        this.resetConnEventParams();
+        return false;
       }
     }
-    this.resetConnEventParams()
-    return false
+    this.resetConnEventParams();
+    return false;
   },
   bindConnection(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
-      const slotCollided = slotEvents.checkSlotClick(componentsList, eventsObject);
+      const slotCollided = slotEvents.checkSlotClick(
+        componentsList,
+        eventsObject
+      );
       if (slotCollided !== undefined) {
         // Evitar colisões com o slot de onde a linha se origina
         if (
@@ -151,28 +180,55 @@ export default {
       }
     }
   },
-  setConnectionParams(componentsList: ComponentsList, startPos?: Vector2, endPos?: Vector2, startSlotId?: number, endSlotId?: number) {
+  setConnectionParams(
+    componentsList: ComponentsList,
+    startPos?: Vector2,
+    endPos?: Vector2,
+    startSlotId?: number,
+    endSlotId?: number
+  ) {
     if (startPos !== undefined)
-      componentsList.getComponents().connections[this.editingLineId].changePosition(startPos, 0, false)
+      componentsList
+        .getComponents()
+        .connections[this.editingLineId].changePosition(startPos, 0, false);
     if (endPos !== undefined)
-      componentsList.getComponents().connections[this.editingLineId].changePosition(endPos, 1, false)
+      componentsList
+        .getComponents()
+        .connections[this.editingLineId].changePosition(endPos, 1, false);
     if (startSlotId !== undefined)
-      componentsList.getComponents().connections[this.editingLineId].changeConnection(startSlotId, ComponentType.SLOT, false)
+      componentsList
+        .getComponents()
+        .connections[this.editingLineId].changeConnection(
+          startSlotId,
+          ComponentType.SLOT,
+          false
+        );
     if (endSlotId !== undefined)
-      componentsList.getComponents().connections[this.editingLineId].changeConnection(endSlotId, ComponentType.SLOT, true)
+      componentsList
+        .getComponents()
+        .connections[this.editingLineId].changeConnection(
+          endSlotId,
+          ComponentType.SLOT,
+          true
+        );
   },
   removeOldConnection(componentsList: ComponentsList, slotId: number) {
     const oldConnectionId = componentsList
-        .getComponents()
-        .slots[slotId].getConnectionId();
-    if (oldConnectionId != -1) {
-      const oldConnection = componentsList.getComponents().connections[oldConnectionId]
-      componentsList.getComponents().slots[slotId].setConnectionId(-1)
+      .getComponents()
+      .slots[slotId].getConnectionId();
+    if (oldConnectionId !== -1) {
+      const oldConnection =
+        componentsList.getComponents().connections[oldConnectionId];
+      componentsList.getComponents().slots[slotId].setConnectionId(-1);
       if (oldConnection.connectedTo.start)
-        componentsList.getComponents().slots[oldConnection.connectedTo.start.id].setConnectionId(-1)
+        componentsList
+          .getComponents()
+          .slots[oldConnection.connectedTo.start.id].setConnectionId(-1);
       if (oldConnection.connectedTo.end)
-        componentsList.getComponents().slots[oldConnection.connectedTo.end.id].setConnectionId(-1)
-      delete componentsList.getComponents().connections[oldConnectionId]
+        componentsList
+          .getComponents()
+          .slots[oldConnection.connectedTo.end.id].setConnectionId(-1);
+      delete componentsList.getComponents().connections[oldConnectionId];
     }
   },
   resetConnEventParams() {
@@ -182,5 +238,5 @@ export default {
     this.slotCollision = -1;
     this.oldSlotCollision = -1;
     this.lineStartSlot = -1;
-  }
+  },
 };

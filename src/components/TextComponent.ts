@@ -8,7 +8,7 @@ class TextComponent extends Component {
   public parentNode: Component | null;
   public style: string;
   private textSize: Vector2;
-  declare protected collisionShape: BBCollision;
+  protected declare collisionShape: BBCollision;
   constructor(
     id: number,
     position: Vector2,
@@ -26,16 +26,18 @@ class TextComponent extends Component {
       this.position,
       this.textSize.x,
       this.textSize.y
-    )
+    );
   }
 
   draw(ctx: CanvasRenderingContext2D, style?: string) {
     // Ordem de prioridade (argumento -> objeto -> global)
     ctx.font = style ?? this.style ?? ctx.font;
-    ctx.textBaseline = "top";
-    ctx.textAlign = "left";
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
     this.textSize.x = ctx.measureText(this.text).width;
-    this.textSize.y = ctx.measureText(this.text).actualBoundingBoxDescent - ctx.measureText(this.text).actualBoundingBoxAscent;
+    this.textSize.y =
+      ctx.measureText(this.text).actualBoundingBoxDescent -
+      ctx.measureText(this.text).actualBoundingBoxAscent;
     this.collisionShape.b = this.textSize;
     this.collisionShape.drawPath = this.collisionShape.generatePath();
     //console.log(ctx.measureText(this.text))
