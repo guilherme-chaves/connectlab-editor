@@ -99,6 +99,14 @@ class Vector2 {
       this.x * sin + this.y * cos
     );
   }
+
+  getAngle(other: Vector2) {
+    return Math.atan2(other.y - this.y, other.x - this.x);
+  }
+
+  normalize() {
+    return this.divS(Math.sqrt(this.magSq()), true);
+  }
 }
 
 export default Vector2;
