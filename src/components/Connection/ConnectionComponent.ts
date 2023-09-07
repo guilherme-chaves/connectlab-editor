@@ -1,7 +1,8 @@
-import ComponentType, {connectionSlotsInterface} from '../types/types';
-import Vector2 from '../types/Vector2';
-import Component from './Component';
-import BBCollision from '../collision/BBCollision';
+import ComponentType, {connectionSlotsInterface} from '../../types/types';
+import Vector2 from '../../types/Vector2';
+import Component from '../Component';
+import BBCollision from '../../collision/BBCollision';
+import ConnectionPathFunctions from './connectionPath';
 
 class ConnectionComponent extends Component {
   public endPosition: Vector2;
@@ -44,7 +45,8 @@ class ConnectionComponent extends Component {
       0,
       0
     );
-    this.collisionShapes = this.generateCollisionShapes();
+    this.collisionShapes =
+      ConnectionPathFunctions.generateCollisionShapes(this);
   }
 
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
@@ -63,45 +65,12 @@ class ConnectionComponent extends Component {
     return path;
   }
 
-  generateCollisionShape() {
-    this.collisionShape.b = this.endPosition.minus(this.position);
-    this.collisionShape.moveShape(this.position, false);
-  }
-
   generateCollisionShapes() {
-    // Precisa refatorar esse método...
-    if (this.anchors.length < 1) return [];
-    const newCollisionSet = [];
-    let pPos = this.position
-      .bilinear(this.endPosition, this.anchors[0])
-      .minus(this.position);
-    newCollisionSet.push(
-      new BBCollision(this.position, new Vector2(0, 0), pPos.x, 2)
-    );
-    for (let i = 1; i <= this.anchors.length; i++) {
-      let nPos = new Vector2(0, 0);
-      if (i < this.anchors.length)
-        nPos = this.position
-          .bilinear(this.endPosition, this.anchors[i])
-          .minus(this.position);
-      else nPos = this.endPosition.minus(this.position);
-      const offset = new Vector2(
-        pPos.x === nPos.x ? pPos.x : -1 + pPos.x,
-        pPos.y === nPos.y ? pPos.y : -1 + pPos.y
-      );
-      const size = new Vector2(
-        pPos.x === nPos.x ? 2 : i === 1 ? nPos.x : nPos.x / 2,
-        pPos.y === nPos.y ? 2 : i === 1 ? nPos.y : nPos.y / 2
-      );
-      newCollisionSet.push(
-        new BBCollision(this.position, offset, size.x, size.y)
-      );
-      pPos = nPos;
-    }
-    return newCollisionSet;
+    return ConnectionPathFunctions.generateCollisionShapes(this);
   }
 
   generateAnchors(): Vector2[] {
+    console.log(this.position.getAngle(this.endPosition));
     return [];
   }
 
@@ -111,6 +80,10 @@ class ConnectionComponent extends Component {
 
   getCollisionShapes(): BBCollision[] {
     return this.collisionShapes;
+  }
+
+  setCollisionShapes(newCollisionShapes: BBCollision[]): void {
+    this.collisionShapes = newCollisionShapes;
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -149,7 +122,16 @@ class ConnectionComponent extends Component {
       if (movePoint !== 1) this.position = delta;
       if (movePoint !== 0) this.endPosition = delta;
     }
-    this.collisionShapes = this.generateCollisionShapes();
+    this.collisionShapes =
+      ConnectionPathFunctions.generateCollisionShapes(this);
+    // const n = this.endPosition.minus(this.position).normalize();
+    // ConnectionPathFunctions.generateAnchors(this);
+    this.anchors = ConnectionPathFunctions.generateAnchors(this);
+    // console.log(
+    //   this.position,
+    //   this.endPosition,
+    //   this.position.bilinear(this.endPosition, new Vector2(0.5, 0.5, true))
+    // );
     this.regenConnectionPath = true;
   }
 

@@ -1,4 +1,4 @@
-import ConnectionComponent from '../components/ConnectionComponent';
+import ConnectionComponent from '../components/Connection/ConnectionComponent';
 import NodeComponent from '../components/NodeComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';

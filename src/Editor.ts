@@ -5,7 +5,7 @@ import updateAll, {
   updateCanvas,
 } from './functions/canvasDraw';
 import ComponentsList from './components/ComponentsList';
-import ConnectionComponent from './components/ConnectionComponent';
+import ConnectionComponent from './components/Connection/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
 import Vector2 from './types/Vector2';

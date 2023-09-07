@@ -135,7 +135,7 @@ export default {
 
         componentsList
           .getComponents()
-          .connections[this.editingLineId].generateCollisionShape();
+          .connections[this.editingLineId].generateCollisionShapes();
 
         this.resetConnEventParams();
         return true;

@@ -5,7 +5,7 @@ import ComponentType, {
   slotListInterface,
   textListInterface,
 } from '../types/types';
-import ConnectionComponent from './ConnectionComponent';
+import ConnectionComponent from './Connection/ConnectionComponent';
 import NodeComponent from './NodeComponent';
 import SlotComponent from './SlotComponent';
 import TextComponent from './TextComponent';
