@@ -11,6 +11,7 @@ export default {
   lineStartSlot: -1,
   oldSlotCollision: -1,
   slotCollision: -1,
+
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
   checkConnectionClick(
     componentsList: ComponentsList,
@@ -29,6 +30,7 @@ export default {
     });
     return collided ? collidedWith : undefined;
   },
+
   addLine(editor: Editor, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) return true;
     const slotCollisions = slotEvents.checkSlotClick(
@@ -54,6 +56,7 @@ export default {
     }
     return false;
   },
+
   lineMove(
     componentsList: ComponentsList,
     eventsObject: EditorEvents,
@@ -72,6 +75,7 @@ export default {
     }
     return false;
   },
+
   fixLine(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
@@ -144,6 +148,7 @@ export default {
     this.resetConnEventParams();
     return false;
   },
+
   bindConnection(componentsList: ComponentsList, eventsObject: EditorEvents) {
     if (this.editingLine && this.editingLineId !== -1) {
       const slotCollided = slotEvents.checkSlotClick(

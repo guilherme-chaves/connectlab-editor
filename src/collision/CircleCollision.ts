@@ -5,7 +5,12 @@ export default class CircleCollision extends CollisionShape {
   public radius: number;
   public radiusSq: number;
 
-  constructor(position: Vector2, offset: Vector2, radius: number, color?: string) {
+  constructor(
+    position: Vector2,
+    offset: Vector2,
+    radius: number,
+    color?: string
+  ) {
     super();
     this.parentPosition = position;
     this.a = offset;
@@ -17,29 +22,27 @@ export default class CircleCollision extends CollisionShape {
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    const pos = this.parentPosition.add(this.a)
+    const pos = this.parentPosition.add(this.a);
     path.arc(pos.x, pos.y, this.radius, 0, Math.PI * 2);
     return path;
   }
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
-    ctx.beginPath();
     const oldStrokeStyle = ctx.strokeStyle;
     ctx.strokeStyle = this.color;
     ctx.stroke(this.drawPath);
     ctx.strokeStyle = oldStrokeStyle;
-    ctx.closePath();
   }
 
-  moveShape(delta: Vector2, useDelta: boolean = true): void {
+  moveShape(delta: Vector2, useDelta = true): void {
     if (useDelta) this.parentPosition.add(delta);
-    else this.parentPosition = delta
+    else this.parentPosition = delta;
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Vector2): boolean {
-    const pos = this.parentPosition.add(this.a)
+    const pos = this.parentPosition.add(this.a);
     return pos.minus(point).magSq() < this.radiusSq;
   }
 }
