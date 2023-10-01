@@ -1,17 +1,14 @@
-import ComponentsList from '../components/ComponentsList';
+import Editor from '../Editor';
 import EditorEvents from './events';
 
 export default {
   // Busca na lista de slots quais possuem uma colisão com o ponto do mouse
-  checkSlotClick(
-    componentsList: ComponentsList,
-    eventsObject: EditorEvents
-  ): number[] | undefined {
+  checkSlotClick(eventsObject: EditorEvents): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
-    Object.keys(componentsList.getComponents()['slots']).forEach(key => {
+    Object.keys(Editor.editorEnv.getComponents()['slots']).forEach(key => {
       const keyN = parseInt(key);
-      const collision = componentsList
+      const collision = Editor.editorEnv
         .getComponents()
         ['slots'][keyN].getCollisionShape()
         .collisionWithPoint(eventsObject.getMousePosition());

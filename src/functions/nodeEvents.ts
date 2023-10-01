@@ -1,19 +1,16 @@
-import ComponentsList from '../components/ComponentsList';
 import Vector2 from '../types/Vector2';
 import EditorEvents from './events';
-import connectionEvents from './connectionEvents';
+import connectionEvents from './Connection/connectionEvents';
+import Editor from '../Editor';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(
-    componentsList: ComponentsList,
-    eventsObject: EditorEvents
-  ): number[] | undefined {
+  checkNodeClick(eventsObject: EditorEvents): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
-    Object.keys(componentsList.getComponents()['nodes']).forEach(key => {
+    Object.keys(Editor.editorEnv.getComponents()['nodes']).forEach(key => {
       const keyN = parseInt(key);
-      const collision = componentsList
+      const collision = Editor.editorEnv
         .getComponents()
         ['nodes'][keyN].getCollisionShape()
         .collisionWithPoint(eventsObject.getMousePosition());
@@ -22,11 +19,7 @@ export default {
     });
     return collided ? collidedWith : undefined;
   },
-  nodeMove(
-    componentsList: ComponentsList,
-    eventsObject: EditorEvents,
-    delta: Vector2
-  ): boolean {
+  nodeMove(eventsObject: EditorEvents, delta: Vector2): boolean {
     if (
       eventsObject.getCollisionList().nodes !== undefined &&
       eventsObject.getMouseChangedPosition() &&
@@ -35,39 +28,40 @@ export default {
       const key = Object.values(
         eventsObject.getCollisionList().nodes as number[]
       )[0];
-      componentsList.getComponents().nodes[key].changePosition(delta);
-      componentsList
+      Editor.editorEnv.getComponents().nodes[key].changePosition(delta);
+      Editor.editorEnv
         .getComponents()
         .nodes[key].getSlotComponents()
         .forEach(slotKey => {
-          componentsList
+          Editor.editorEnv
             .getComponents()
             .slots[slotKey].setParentPosition(
-              componentsList.getComponents().nodes[key].position
+              Editor.editorEnv.getComponents().nodes[key].position
             );
-          componentsList
+          Editor.editorEnv
             .getComponents()
             .slots[slotKey].getCollisionShape()
             .moveShape(delta);
           if (
-            componentsList.getComponents().slots[slotKey].getConnectionId() !==
-            -1
+            Editor.editorEnv
+              .getComponents()
+              .slots[slotKey].getConnectionId() !== -1
           ) {
-            const connectionKey = componentsList
+            const connectionKey = Editor.editorEnv
               .getComponents()
               .slots[slotKey].getConnectionId();
             if (
-              componentsList.getComponents().connections[connectionKey]
+              Editor.editorEnv.getComponents().connections[connectionKey]
                 .connectedTo.start?.id === slotKey
             )
-              componentsList
+              Editor.editorEnv
                 .getComponents()
                 .connections[connectionKey].changePosition(delta, 0, true);
             else if (
-              componentsList.getComponents().connections[connectionKey]
+              Editor.editorEnv.getComponents().connections[connectionKey]
                 .connectedTo.end?.id === slotKey
             )
-              componentsList
+              Editor.editorEnv
                 .getComponents()
                 .connections[connectionKey].changePosition(delta, 1, true);
           }

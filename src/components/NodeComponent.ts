@@ -4,7 +4,7 @@ import {ADDNode, NOTNode, ORNode} from '../types/NodeTypes';
 import Vector2 from '../types/Vector2';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
-import ComponentsList from './ComponentsList';
+import Editor from '../Editor';
 
 class NodeComponent extends Component {
   public readonly nodeType: NodeType;
@@ -19,14 +19,13 @@ class NodeComponent extends Component {
     nodeType: nodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slotKeys: Array<number>,
-    componentsList: ComponentsList
+    slotKeys: Array<number>
   ) {
     super(id, position);
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slotKeys;
     this.nodeImage = new Image();
-    this.ready = new Promise((resolve, reject) => {
+    this.ready = new Promise(resolve => {
       this.nodeImage.addEventListener('load', () => {
         const halfImgPos = new Vector2(
           -this.nodeImage.width / 2.0,
@@ -50,7 +49,7 @@ class NodeComponent extends Component {
           this.nodeImage.height
         );
         for (let i = 0; i < slotKeys.length; i++) {
-          componentsList
+          Editor.editorEnv
             .getComponents()
             .slots[slotKeys[i]].setParentPosition(this.position);
         }

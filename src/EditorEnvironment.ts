@@ -4,14 +4,14 @@ import ComponentType, {
   nodeListInterface,
   slotListInterface,
   textListInterface,
-} from '../types/types';
-import ConnectionComponent from './Connection/ConnectionComponent';
-import NodeComponent from './NodeComponent';
-import SlotComponent from './SlotComponent';
-import TextComponent from './TextComponent';
+} from './types/types';
+import ConnectionComponent from './components/ConnectionComponent';
+import NodeComponent from './components/NodeComponent';
+import SlotComponent from './components/SlotComponent';
+import TextComponent from './components/TextComponent';
 
-class ComponentsList {
-  public readonly documentId: string;
+class EditorEnvironment {
+  public documentId: string;
   private lastComponentId: number;
   private nodeList: nodeListInterface;
   private slotList: slotListInterface;
@@ -115,4 +115,4 @@ class ComponentsList {
     }
   }
 }
-export default ComponentsList;
+export default EditorEnvironment;

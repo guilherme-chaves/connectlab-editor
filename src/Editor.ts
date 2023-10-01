@@ -4,8 +4,8 @@ import updateAll, {
   updateBackground,
   updateCanvas,
 } from './functions/canvasDraw';
-import ComponentsList from './components/ComponentsList';
-import ConnectionComponent from './components/Connection/ConnectionComponent';
+import EditorEnvironment from './EditorEnvironment';
+import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
 import Vector2 from './types/Vector2';
@@ -15,7 +15,8 @@ import EditorEvents from './functions/events';
 
 export default class Editor {
   // Lista de componentes
-  private editorEnv: ComponentsList;
+  // eslint-disable-next-line prettier/prettier
+  public static readonly editorEnv: EditorEnvironment = new EditorEnvironment('');
   // Controle de eventos do canvas
   private editorEvents: EditorEvents;
   // Contextos dos canvas
@@ -33,7 +34,7 @@ export default class Editor {
     canvasVw: number,
     canvasVh: number
   ) {
-    this.editorEnv = new ComponentsList(documentId);
+    Editor.editorEnv.documentId = documentId;
     this.editorEvents = new EditorEvents();
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
@@ -52,10 +53,6 @@ export default class Editor {
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
     return domElement.getContext('2d')!;
-  }
-
-  getEnviroment(): ComponentsList {
-    return this.editorEnv;
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
@@ -77,7 +74,7 @@ export default class Editor {
   draw(canvas = true, background = false) {
     if (background)
       updateBackground(this.backgroundCtx, this.backgroundPattern);
-    if (canvas) updateCanvas(this.canvasCtx, this.editorEnv.getComponents());
+    if (canvas) updateCanvas(this.canvasCtx, Editor.editorEnv.getComponents());
   }
 
   update = () => {
@@ -99,11 +96,11 @@ export default class Editor {
   };
 
   move = () => {
-    this.editorEvents.mouseMove(this, this.editorEnv);
+    this.editorEvents.mouseMove(this);
   };
 
   onclick = () => {
-    this.editorEvents.mouseClick(this.editorEnv);
+    this.editorEvents.mouseClick();
   };
 
   ondrag = () => {};
@@ -116,7 +113,7 @@ export default class Editor {
     requestAnimationFrame.bind(
       updateAll(
         this.canvasCtx,
-        this.editorEnv.getComponents(),
+        Editor.editorEnv.getComponents(),
         this.backgroundCtx,
         this.backgroundPattern
       )
@@ -130,15 +127,14 @@ export default class Editor {
   ) {
     const slotKeys: Array<number> = [];
     const newNode = new NodeComponent(
-      this.editorEnv.getLastComponentId(),
+      Editor.editorEnv.getLastComponentId(),
       new Vector2(x, y),
       type,
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
-      slotKeys,
-      this.editorEnv
+      slotKeys
     );
-    const newNodeId = this.editorEnv.addComponent(newNode);
+    const newNodeId = Editor.editorEnv.addComponent(newNode);
     await newNode.ready;
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
       (slot, index) => {
@@ -155,7 +151,9 @@ export default class Editor {
         slotKeys.push(key);
       }
     );
-    this.editorEnv.getComponents().nodes[newNodeId].addSlotComponents(slotKeys);
+    Editor.editorEnv
+      .getComponents()
+      .nodes[newNodeId].addSlotComponents(slotKeys);
     this.draw(true, false);
     return newNodeId;
   }
@@ -167,23 +165,23 @@ export default class Editor {
     to?: componentAssocInterface
   ) {
     const newLine = new ConnectionComponent(
-      this.editorEnv.getLastComponentId(),
+      Editor.editorEnv.getLastComponentId(),
       new Vector2(x1, y1),
       new Vector2(x1, y1),
       {start: from, end: to}
     );
-    return this.editorEnv.addComponent(newLine);
+    return Editor.editorEnv.addComponent(newLine);
   }
 
   text(text: string, x: number, y: number, style?: string, parent?: Component) {
     const newText = new TextComponent(
-      this.editorEnv.getLastComponentId(),
+      Editor.editorEnv.getLastComponentId(),
       new Vector2(x, y),
       text,
       style,
       parent
     );
-    return this.editorEnv.addComponent(newText);
+    return Editor.editorEnv.addComponent(newText);
   }
 
   slot(
@@ -199,7 +197,7 @@ export default class Editor {
     colorActive?: string
   ) {
     const newSlot = new SlotComponent(
-      this.editorEnv.getLastComponentId(),
+      Editor.editorEnv.getLastComponentId(),
       new Vector2(x, y),
       parentType,
       parentId,
@@ -211,7 +209,7 @@ export default class Editor {
       color,
       colorActive
     );
-    return this.editorEnv.addComponent(newSlot);
+    return Editor.editorEnv.addComponent(newSlot);
   }
 
   setMousePosition(clientX: number, clientY: number) {
@@ -230,7 +228,7 @@ export default class Editor {
   }
 
   mouseReleased() {
-    this.editorEvents.mouseRelease(this.editorEnv);
+    this.editorEvents.mouseRelease();
   }
 
   clearCollision(onlyDragCollisions = true) {

@@ -1,6 +1,6 @@
 import BBCollision from '../../collision/BBCollision';
 import Vector2 from '../../types/Vector2';
-import ConnectionComponent from './ConnectionComponent';
+import ConnectionComponent from '../../components/ConnectionComponent';
 import {QUARTER_PI, THREE_QUARTER_PI} from '../../types/consts';
 
 export default {
@@ -16,6 +16,10 @@ export default {
       v1.x === v2.x ? trueXSize : falseXSize,
       v1.y === v2.y ? trueYSize : falseYSize
     );
+  },
+
+  checkAnchorCollision(p1: Vector2) {
+    //Teste
   },
 
   generateAnchors(connection: ConnectionComponent) {
@@ -63,7 +67,9 @@ export default {
 
       if (currentPos.equals(endPosition)) break;
       if (loopRuns > 64) {
-        console.error('O código atingiu o limite de iterações! Saída forçada.');
+        console.error(
+          'O código atingiu o limite de iterações!! Saída forçada.'
+        );
         break;
       }
       loopRuns += 1;

@@ -1,8 +1,8 @@
-import ComponentType, {connectionSlotsInterface} from '../../types/types';
-import Vector2 from '../../types/Vector2';
-import Component from '../Component';
-import BBCollision from '../../collision/BBCollision';
-import ConnectionPathFunctions from './connectionPath';
+import ComponentType, {connectionSlotsInterface} from '../types/types';
+import Vector2 from '../types/Vector2';
+import Component from './Component';
+import BBCollision from '../collision/BBCollision';
+import ConnectionPathFunctions from '../functions/Connection/connectionPath';
 
 class ConnectionComponent extends Component {
   public endPosition: Vector2;

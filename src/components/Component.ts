@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import ComponentType from '../types/types';
 import Vector2 from '../types/Vector2';
 import CollisionShape from '../collision/CollisionShape';

@@ -1,7 +1,6 @@
 import Editor from '../Editor';
 import Vector2 from '../types/Vector2';
-import ComponentsList from '../components/ComponentsList';
-import connectionEvents from './connectionEvents';
+import connectionEvents from './Connection/connectionEvents';
 import nodeEvents from './nodeEvents';
 import slotEvents from './slotEvents';
 import textEvents from './textEvents';
@@ -44,21 +43,18 @@ export default class EditorEvents {
     this.mouseChangedPosition = false;
   }
 
-  mouseClick(componentsList: ComponentsList) {
+  mouseClick() {
     if (this.mouseClicked && this.mouseChangedState) {
       // Obtêm uma lista com todas as colisões encontradas
-      const nodeId = nodeEvents.checkNodeClick(componentsList, this);
-      const slotId = slotEvents.checkSlotClick(componentsList, this);
-      const connectionId = connectionEvents.checkConnectionClick(
-        componentsList,
-        this
-      );
-      const textId = textEvents.checkTextClick(componentsList, this);
+      const nodeId = nodeEvents.checkNodeClick(this);
+      const slotId = slotEvents.checkSlotClick(this);
+      const connectionId = connectionEvents.checkConnectionClick(this);
+      const textId = textEvents.checkTextClick(this);
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined)
-        componentsList.getComponents().slots[slotId[0]].setState(true);
-      this.clearUnselectedComponents(componentsList, undefined, slotId);
+        Editor.editorEnv.getComponents().slots[slotId[0]].setState(true);
+      this.clearUnselectedComponents(undefined, slotId);
 
       this.collisionList = {
         nodes: nodeId,
@@ -70,25 +66,23 @@ export default class EditorEvents {
     }
   }
 
-  mouseRelease(componentsList: ComponentsList) {
+  mouseRelease() {
     if (!this.mouseClicked && this.mouseChangedState) {
-      if (!connectionEvents.fixLine(componentsList, this)) {
+      if (!connectionEvents.fixLine(this)) {
         this.clearDragCollisions();
       }
       this.mouseChangedState = false;
     }
   }
 
-  mouseMove(editor: Editor, componentsList: ComponentsList) {
+  mouseMove(editor: Editor) {
     if (this.mouseClicked) {
       connectionEvents.lineMove(
-        componentsList,
         this,
         this.mousePosition.minus(this.oldMousePosition)
       );
       connectionEvents.addLine(editor, this);
       nodeEvents.nodeMove(
-        componentsList,
         this,
         this.mousePosition.minus(this.oldMousePosition)
       );
@@ -100,7 +94,6 @@ export default class EditorEvents {
 
   // Procura na lista anterior de colisões as que não estão presentes na atual, removendo seu estado de selecionado/ativo
   clearUnselectedComponents(
-    componentsList: ComponentsList,
     newNodeIds?: number[],
     newSlotIds?: number[],
     newConnectionIds?: number[],
@@ -109,7 +102,7 @@ export default class EditorEvents {
     if (this.collisionList.slots !== undefined) {
       this.collisionList.slots.forEach(slot => {
         if (!newSlotIds?.includes(slot)) {
-          componentsList.getComponents().slots[slot].setState(false);
+          Editor.editorEnv.getComponents().slots[slot].setState(false);
         }
       });
     }
@@ -123,8 +116,8 @@ export default class EditorEvents {
     this.collisionList.nodes = undefined;
   }
 
-  clearAllCollisions(componentsList: ComponentsList) {
-    this.clearUnselectedComponents(componentsList);
+  clearAllCollisions() {
+    this.clearUnselectedComponents();
     this.collisionList.nodes = undefined;
     this.collisionList.slots = undefined;
     this.collisionList.connections = undefined;
