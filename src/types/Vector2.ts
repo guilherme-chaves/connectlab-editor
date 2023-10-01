@@ -1,71 +1,100 @@
 interface Vector2 {
-  x: number;
-  y: number;
+  add(other: Vector2, forceFloat: boolean): Vector2;
+  minus(other: Vector2, forceFloat: boolean): Vector2;
+  multS(s: number, forceFloat: boolean): Vector2;
+  mult(other: Vector2, forceFloat: boolean): Vector2;
+  div(other: Vector2, forceFloat: boolean): Vector2;
+  dot(other: Vector2): number;
+  cross(other: Vector2): number;
+  magSq(): number;
+  madd(other: Vector2, s: number, forceFloat: boolean): Vector2;
+  lerp(other: Vector2, t: number, forceFloat: boolean): Vector2;
+  bilinear(other: Vector2, bt: Vector2, forceFloat: boolean): Vector2;
+  equals(other: Vector2): boolean;
+  rotateZ(angle: number): Vector2;
+  getAngle(other: Vector2): number;
+  normalize(): Vector2;
 }
 
 class Vector2 {
+  private forceFloat: boolean;
+  private _x = 0;
+  private _y = 0;
+
   constructor(xOrVector2: number | Vector2, y = 0, forceFloat = false) {
+    this.forceFloat = forceFloat;
     if (typeof xOrVector2 === 'number') {
-      if (forceFloat) {
-        this.x = xOrVector2;
-        this.y = y;
-      } else {
-        this.x = Math.floor(xOrVector2);
-        this.y = Math.floor(y);
-      }
+      this.x = xOrVector2;
+      this.y = y;
     } else {
       this.x = xOrVector2.x;
       this.y = xOrVector2.y;
     }
   }
 
+  get x(): number {
+    return this._x;
+  }
+
+  set x(value: number) {
+    this._x = this.forceFloat ? value : Math.floor(value);
+  }
+
+  get y(): number {
+    return this._y;
+  }
+
+  set y(value: number) {
+    this._y = this.forceFloat ? value : Math.floor(value);
+  }
+
   add(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x + other.x, this.y + other.y, forceFloat);
+    return new Vector2(this._x + other.x, this.y + other.y, forceFloat);
   }
 
   minus(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x - other.x, this.y - other.y, forceFloat);
+    return new Vector2(this._x - other.x, this.y - other.y, forceFloat);
   }
 
   multS(s: number, forceFloat = false): Vector2 {
-    return new Vector2(this.x * s, this.y * s, forceFloat);
+    return new Vector2(this._x * s, this.y * s, forceFloat);
   }
 
-  mult(other: Vector2, forceFloat = false) {
-    return new Vector2(this.x * other.x, this.y * other.y, forceFloat);
+  mult(other: Vector2, forceFloat = false): Vector2 {
+    return new Vector2(this._x * other.x, this.y * other.y, forceFloat);
   }
 
-  div(other: Vector2, forceFloat = false) {
-    return new Vector2(this.x / other.x, this.y / other.y, forceFloat);
+  div(other: Vector2, forceFloat = false): Vector2 {
+    return new Vector2(this._x / other.x, this.y / other.y, forceFloat);
   }
 
-  divS(s: number, forceFloat = false) {
-    return new Vector2(this.x / s, this.y / s, forceFloat);
+  divS(s: number, forceFloat = false): Vector2 {
+    return new Vector2(this._x / s, this.y / s, forceFloat);
   }
 
   dot(other: Vector2): number {
-    return this.x * other.x + this.y * other.y;
+    return this._x * other.x + this.y * other.y;
   }
 
   cross(other: Vector2): number {
-    return this.x * other.y - this.y * other.x;
+    return this._x * other.y - this.y * other.x;
   }
 
   magSq(): number {
     return this.dot(this);
   }
 
-  madd(other: Vector2, s: number, forceFloat = false) {
-    return new Vector2(this.x + s * other.x, this.y + s * other.y, forceFloat);
+  madd(other: Vector2, s: number, forceFloat = false): Vector2 {
+    return new Vector2(this._x + s * other.x, this.y + s * other.y, forceFloat);
   }
 
   // Interpolação linear
-  lerp(other: Vector2, t: number, forceFloat = false) {
+  lerp(other: Vector2, t: number, forceFloat = false): Vector2 {
     return this.madd(other.minus(this), t, forceFloat);
   }
 
   // Interpolação bilinear
-  bilinear(other: Vector2, bt: Vector2, forceFloat = false) {
+  bilinear(other: Vector2, bt: Vector2, forceFloat = false): Vector2 {
     return new Vector2(
       this.lerp(other, bt.x, forceFloat).x,
       this.lerp(other, bt.y, forceFloat).y,
@@ -74,7 +103,7 @@ class Vector2 {
   }
 
   equals(other: Vector2): boolean {
-    return this.x === other.x && this.y === other.y;
+    return this._x === other.x && this.y === other.y;
   }
 
   inBounds(
@@ -85,7 +114,7 @@ class Vector2 {
     forceFloat = false
   ): Vector2 {
     return new Vector2(
-      Math.min(Math.max(this.x, left), right),
+      Math.min(Math.max(this._x, left), right),
       Math.min(Math.max(this.y, top), bottom),
       forceFloat
     );
@@ -95,16 +124,16 @@ class Vector2 {
     const sin = Math.sin(angle);
     const cos = Math.cos(angle);
     return new Vector2(
-      this.x * cos - this.y * sin,
-      this.x * sin + this.y * cos
+      this._x * cos - this.y * sin,
+      this._x * sin + this.y * cos
     );
   }
 
-  getAngle(other: Vector2) {
-    return Math.atan2(other.y - this.y, other.x - this.x);
+  getAngle(other: Vector2): number {
+    return Math.atan2(other.y - this.y, other.x - this._x);
   }
 
-  normalize() {
+  normalize(): Vector2 {
     return this.divS(Math.sqrt(this.magSq()), true);
   }
 }
