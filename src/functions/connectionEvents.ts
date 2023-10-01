@@ -88,6 +88,7 @@ export default {
         currentSlotCollision !== undefined &&
         currentSlotCollision[0] !== this.lineStartSlot
       ) {
+        // Comparação para evitar conexões entre o mesmo slot
         if (
           componentsList
             .getComponents()
@@ -96,24 +97,27 @@ export default {
             .getComponents()
             .slots[currentSlotCollision[0]].getInSlot()
         ) {
-          // Impede conexões entre slots do mesmo tipo
           delete componentsList.getComponents().connections[this.editingLineId];
           this.resetConnEventParams();
           return false;
-        } else if (
+        }
+
+        // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
+        else if (
           !componentsList
             .getComponents()
             .slots[currentSlotCollision[0]].getInSlot()
         ) {
-          // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
           const temp = this.lineStartSlot;
           this.lineStartSlot = currentSlotCollision[0];
           currentSlotCollision[0] = temp;
         }
 
-        // Remove uma antiga conexão nos slots inicial e final, se existir, e atribui a nova conexão
+        // Remove uma antiga conexão nos slots inicial e final, se existir
         this.removeOldConnection(componentsList, this.lineStartSlot);
         this.removeOldConnection(componentsList, currentSlotCollision[0]);
+
+        // Atribui a nova conexão aos slots
         componentsList
           .getComponents()
           .slots[this.lineStartSlot].setConnectionId(this.editingLineId);
@@ -121,6 +125,7 @@ export default {
           .getComponents()
           .slots[currentSlotCollision[0]].setConnectionId(this.editingLineId);
 
+        // Define as posições inicial e final da conexão para os dois slots
         this.setConnectionParams(
           componentsList,
           componentsList
@@ -133,13 +138,17 @@ export default {
           currentSlotCollision[0]
         );
 
+        // Cria conjunto de caixas de colisão para a conexão
         componentsList
           .getComponents()
           .connections[this.editingLineId].generateCollisionShapes();
 
+        // Retorna a lista de parâmetros do objeto para seus valores padrão
         this.resetConnEventParams();
         return true;
-      } else {
+      }
+      // Caso não haja colisão com algum slot, exclue a conexão que está sendo gerada
+      else {
         delete componentsList.getComponents().connections[this.editingLineId];
         this.resetConnEventParams();
         return false;
