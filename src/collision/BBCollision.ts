@@ -61,4 +61,13 @@ export default class BBCollision extends CollisionShape {
       point.y < this.bottomRight.y
     );
   }
+
+  collisionWithBB(other: BBCollision): boolean {
+    return !(
+      this.bottomRight.x < other.topLeft.x ||
+      this.bottomRight.y < other.topLeft.y ||
+      this.topLeft.x > other.bottomRight.x ||
+      this.topLeft.y > other.bottomRight.y
+    );
+  }
 }

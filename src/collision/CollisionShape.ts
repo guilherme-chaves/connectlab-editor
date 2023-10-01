@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import Vector2 from '../types/Vector2';
+import BBCollision from './BBCollision';
 
 export default class CollisionShape {
   public parentPosition: Vector2 = new Vector2(0, 0);
@@ -28,7 +30,11 @@ export default class CollisionShape {
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Vector2) {
+  collisionWithPoint(point: Vector2): boolean {
+    throw new Error('Função não implementada, utilize uma das classes-filhas');
+  }
+
+  collisionWithBB(other: BBCollision): boolean {
     throw new Error('Função não implementada, utilize uma das classes-filhas');
   }
 }
