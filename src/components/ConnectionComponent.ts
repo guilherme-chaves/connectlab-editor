@@ -70,7 +70,7 @@ class ConnectionComponent extends Component {
   }
 
   generateAnchors(): Vector2[] {
-    console.log(this.position.getAngle(this.endPosition));
+    console.log(this.position.atan2(this.endPosition));
     return [];
   }
 

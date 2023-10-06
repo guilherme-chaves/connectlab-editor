@@ -12,8 +12,10 @@ interface Vector2 {
   bilinear(other: Vector2, bt: Vector2, forceFloat: boolean): Vector2;
   equals(other: Vector2): boolean;
   rotateZ(angle: number): Vector2;
-  getAngle(other: Vector2): number;
+  atan2(other: Vector2): number;
   normalize(): Vector2;
+  min(other: Vector2, splitXY: boolean, forceFloat: boolean): Vector2;
+  max(other: Vector2, splitXY: boolean, forceFloat: boolean): Vector2;
 }
 
 class Vector2 {
@@ -129,12 +131,40 @@ class Vector2 {
     );
   }
 
-  getAngle(other: Vector2): number {
+  atan2(other: Vector2): number {
     return Math.atan2(other.y - this.y, other.x - this._x);
   }
 
   normalize(): Vector2 {
     return this.divS(Math.sqrt(this.magSq()), true);
+  }
+
+  min(other: Vector2, splitXY = true, forceFloat = false): Vector2 {
+    if (!splitXY) {
+      if (this.x < other.x) return this;
+      else if (other.x < this.x) return other;
+      else if (this.y < other.y) return this;
+      else return other;
+    }
+    return new Vector2(
+      Math.min(this.x, other.x),
+      Math.min(this.y, other.y),
+      forceFloat
+    );
+  }
+
+  max(other: Vector2, splitXY = true, forceFloat = false): Vector2 {
+    if (!splitXY) {
+      if (this.x > other.x) return this;
+      else if (other.x > this.x) return other;
+      else if (this.y > other.y) return this;
+      else return other;
+    }
+    return new Vector2(
+      Math.max(this.x, other.x),
+      Math.max(this.y, other.y),
+      forceFloat
+    );
   }
 }
 
