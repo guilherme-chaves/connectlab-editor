@@ -19,18 +19,32 @@ export default {
     );
   },
 
-  checkAnchorCollision(p1: Vector2, p2: Vector2) {
-    const size = p1.max(p2).minus(p1.min(p2));
+  checkAnchorCollision(
+    p1: Vector2,
+    p2: Vector2,
+    connection: ConnectionComponent
+  ) {
+    const vDiff = p1.max(p2).minus(p1.min(p2));
+    const size = this.getConnectionDimensions(p1, p2, 2, vDiff.x, 2, vDiff.y);
     const tempBB = new BBCollision(p1, new Vector2(0, 0), size.x, size.y);
-    Object.keys(Editor.editorEnv.getComponents().nodes).forEach(key => {
+    const nodeKeys = Object.keys(Editor.editorEnv.getComponents().nodes).map(
+      key => {
+        return parseInt(key);
+      }
+    );
+    for (let i = 0; i < nodeKeys.length; i++) {
       if (
         Editor.editorEnv
           .getComponents()
-          .nodes[parseInt(key)].getCollisionShape()
+          .nodes[nodeKeys[i]].getCollisionShape()
           .collisionWithBB(tempBB)
-      )
-        return true;
-    });
+      ) {
+        const startSlotNodeId = Editor.editorEnv
+          .getComponents()
+          .slots[connection.connectedTo.start!.id].getParentId();
+        if (startSlotNodeId !== nodeKeys[i]) return true;
+      }
+    }
     return false;
   },
 
@@ -57,7 +71,7 @@ export default {
     yDivisor: number,
     lastAnchor: Vector2 | undefined
   ) {
-    const newAnchor: Vector2 = new Vector2(0, 0);
+    const newAnchor: Vector2 = new Vector2(0, 0, true);
     if (lastAnchor === undefined) {
       newAnchor.x = Math.abs(stepTo.x) / xDivisor;
       newAnchor.y = Math.abs(stepTo.y) / yDivisor;
@@ -89,7 +103,6 @@ export default {
     while (true) {
       if (!lastStepWasRotated) {
         const headedTowards = currentPosition.atan2(endPosition);
-        console.log(headedTowards);
         stepTo = this.getStepDirection(headedTowards);
       } else {
         stepTo = stepTo.rotateZ(-HALF_PI);
@@ -102,8 +115,11 @@ export default {
       );
       lastPosition = currentPosition;
       currentPosition = startPos.bilinear(endPosition, newAnchor);
-      if (this.checkAnchorCollision(lastPosition, currentPosition))
+      if (
+        this.checkAnchorCollision(lastPosition, currentPosition, connection)
+      ) {
         console.log('Colisão ocorrida: ', currentPosition);
+      }
       anchorsArr.push(newAnchor);
       lastAnchorAdded = newAnchor;
 
@@ -116,7 +132,7 @@ export default {
       }
       marchingLoopRuns += 1;
     }
-    console.log(anchorsArr);
+    // console.log(anchorsArr);
     return anchorsArr;
     /*
     let doXStep = true;
