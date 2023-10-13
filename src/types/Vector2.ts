@@ -23,7 +23,7 @@ class Vector2 {
   private _x = 0;
   private _y = 0;
 
-  constructor(xOrVector2: number | Vector2, y = 0, forceFloat = false) {
+  constructor(xOrVector2: number | Vector2 = 0, y = 0, forceFloat = false) {
     this.forceFloat = forceFloat;
     if (typeof xOrVector2 === 'number') {
       this.x = xOrVector2;
