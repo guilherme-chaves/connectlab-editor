@@ -44,9 +44,9 @@ class NodeComponent extends Component {
         );
         this.collisionShape = new BBCollision(
           this.position,
-          new Vector2(0, 0),
-          this.nodeImage.width,
-          this.nodeImage.height
+          new Vector2(4, 4),
+          this.nodeImage.width - 8,
+          this.nodeImage.height - 8
         );
         for (let i = 0; i < slotKeys.length; i++) {
           Editor.editorEnv

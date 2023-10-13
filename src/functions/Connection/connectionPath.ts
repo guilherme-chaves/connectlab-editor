@@ -26,7 +26,8 @@ export default {
   ) {
     const vDiff = p1.max(p2).minus(p1.min(p2));
     const size = this.getConnectionDimensions(p1, p2, 2, vDiff.x, 2, vDiff.y);
-    const tempBB = new BBCollision(p1, new Vector2(0, 0), size.x, size.y);
+    if (size.max(new Vector2(16, 16)).equals(new Vector2(16, 16))) return false;
+    const tempBB = new BBCollision(p1, new Vector2(), size.x, size.y);
     const nodeKeys = Object.keys(Editor.editorEnv.getComponents().nodes).map(
       key => {
         return parseInt(key);
@@ -39,16 +40,18 @@ export default {
           .nodes[nodeKeys[i]].getCollisionShape()
           .collisionWithBB(tempBB)
       ) {
-        const startSlotNodeId = Editor.editorEnv
-          .getComponents()
-          .slots[connection.connectedTo.start!.id].getParentId();
-        if (startSlotNodeId !== nodeKeys[i]) return true;
+        // const startSlotNodeId = Editor.editorEnv
+        //   .getComponents()
+        //   .slots[connection.connectedTo.start!.id].getParentId();
+        // if (startSlotNodeId !== nodeKeys[i]) return true;
+        return true;
       }
     }
     return false;
   },
 
-  getStepDirection(angle: number) {
+  getStepDirection(currentPosition: Vector2, endPosition: Vector2) {
+    const angle = currentPosition.atan2(endPosition);
     return new Vector2(
       // eixo X
       angle <= QUARTER_PI && angle >= -QUARTER_PI
@@ -65,64 +68,161 @@ export default {
     );
   },
 
+  getPreferredRotatedStepDirection(
+    startPosition: Vector2,
+    currentPosition: Vector2,
+    endPosition: Vector2,
+    originalStep: Vector2,
+    stepDivisor: Vector2,
+    lastAnchor: Vector2 | undefined
+  ) {
+    const originalAnchor = this.setAnchorCoordinates(
+      originalStep,
+      stepDivisor,
+      lastAnchor
+    );
+    // 90 graus
+    const s1 = originalAnchor.rotateZ(HALF_PI);
+    // 180 graus
+    const s2 = originalAnchor.rotateZ(Math.PI);
+    // 270 graus
+    const s3 = originalAnchor.rotateZ(-HALF_PI);
+    const l1 = startPosition.bilinear(endPosition, s1).magSq();
+    const l2 = startPosition.bilinear(endPosition, s2).magSq();
+    const l3 = startPosition.bilinear(endPosition, s3).magSq();
+    const sOrder = [];
+    if (l1 < l2 && l1 < l3) {
+      sOrder.push(s1);
+      if (l2 < l3) sOrder.push(s2, s3);
+      else sOrder.push(s3, s2);
+    } else if (l2 < l3) {
+      sOrder.push(s2);
+      if (l1 < l3) sOrder.push(s1, s3);
+      else sOrder.push(s3, s1);
+    } else {
+      sOrder.push(s3);
+      if (l1 < l2) sOrder.push(s1, s2);
+      else sOrder.push(s2, s1);
+    }
+    return sOrder;
+  },
+
   setAnchorCoordinates(
-    stepTo: Vector2,
-    xDivisor: number,
-    yDivisor: number,
+    step: Vector2,
+    stepDivisor: Vector2,
     lastAnchor: Vector2 | undefined
   ) {
     const newAnchor: Vector2 = new Vector2(0, 0, true);
     if (lastAnchor === undefined) {
-      newAnchor.x = Math.abs(stepTo.x) / xDivisor;
-      newAnchor.y = Math.abs(stepTo.y) / yDivisor;
+      newAnchor.x = Math.abs(step.x) / stepDivisor.x;
+      newAnchor.y = Math.abs(step.y) / stepDivisor.y;
     } else {
-      newAnchor.x = lastAnchor.x + Math.abs(stepTo.x) / xDivisor;
-      newAnchor.y = lastAnchor.y + Math.abs(stepTo.y) / yDivisor;
+      newAnchor.x = lastAnchor.x + Math.abs(step.x) / stepDivisor.x;
+      newAnchor.y = lastAnchor.y + Math.abs(step.y) / stepDivisor.y;
     }
     return newAnchor;
   },
 
+  directAnchorPath(
+    startPosition: Vector2,
+    currentPosition: Vector2,
+    endPosition: Vector2,
+    stepDivisor: Vector2,
+    connection: ConnectionComponent,
+    lastAnchor: Vector2 | undefined
+  ) {
+    const step = this.getStepDirection(currentPosition, endPosition);
+    return this.shortenedAnchorPath(
+      startPosition,
+      currentPosition,
+      endPosition,
+      step,
+      stepDivisor,
+      connection,
+      lastAnchor
+    );
+  },
+
+  shortenedAnchorPath(
+    startPosition: Vector2,
+    currentPosition: Vector2,
+    endPosition: Vector2,
+    step: Vector2,
+    stepDivisor: Vector2,
+    connection: ConnectionComponent,
+    lastAnchor: Vector2 | undefined,
+    recursiveDepth = 0
+  ): Vector2 {
+    const nextAnchor = this.setAnchorCoordinates(step, stepDivisor, lastAnchor);
+    const nextAnchorPosition = startPosition.bilinear(endPosition, nextAnchor);
+    if (recursiveDepth < 4) {
+      if (
+        this.checkAnchorCollision(
+          currentPosition,
+          nextAnchorPosition,
+          connection
+        )
+      )
+        return this.shortenedAnchorPath(
+          startPosition,
+          currentPosition,
+          endPosition,
+          step,
+          stepDivisor.multS(2),
+          connection,
+          lastAnchor,
+          (recursiveDepth += 1)
+        );
+      else return nextAnchor;
+    } else return new Vector2(-1, -1);
+  },
+
+  rotatedAnchorPath(
+    startPosition: Vector2,
+    currentPosition: Vector2,
+    endPosition: Vector2,
+    stepDivisor: Vector2,
+    connection: ConnectionComponent,
+    lastAnchor: Vector2 | undefined
+  ) {
+    const originalStep = this.getStepDirection(currentPosition, endPosition);
+    const prefferedSteps = this.getPreferredRotatedStepDirection(
+      startPosition,
+      currentPosition,
+      endPosition,
+      originalStep,
+      stepDivisor,
+      lastAnchor
+    );
+    for (let i = 0; i < prefferedSteps.length; i++) {
+      const anchor = this.shortenedAnchorPath(
+        startPosition,
+        currentPosition,
+        endPosition,
+        prefferedSteps[i],
+        stepDivisor,
+        connection,
+        lastAnchor
+      );
+      if (!anchor.equals(new Vector2(-1, -1))) return anchor;
+    }
+    return new Vector2(-1, -1);
+  },
+
   generateAnchors(connection: ConnectionComponent) {
     const anchorsArr: Vector2[] = [];
-    let lastAnchorAdded: Vector2 | undefined = undefined;
-    const startPos = connection.position;
-    let lastPosition = connection.position;
+    let lastAnchor: Vector2 | undefined = undefined;
+    const startPosition = connection.position;
     let currentPosition = connection.position;
     const endPosition = connection.endPosition;
-    const initialXStepDivisor = 2.0;
-    const initialYStepDivisor = 1.0;
-    // eslint-disable-next-line prefer-const
-    let xStepDivisor = initialXStepDivisor;
-    // eslint-disable-next-line prefer-const
-    let yStepDivisor = initialYStepDivisor;
-    let stepTo = new Vector2(0, 0);
-    let lastStepTo = stepTo;
-    let lastStepWasRotated = false;
+    const initialStepDivisor = new Vector2(2.0, 1.0, true);
+    const stepDivisor = initialStepDivisor;
+    let usedRotation = false;
     let marchingLoopRuns = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      if (!lastStepWasRotated) {
-        const headedTowards = currentPosition.atan2(endPosition);
-        stepTo = this.getStepDirection(headedTowards);
-      } else {
-        stepTo = stepTo.rotateZ(-HALF_PI);
-      }
-      const newAnchor = this.setAnchorCoordinates(
-        stepTo,
-        xStepDivisor,
-        yStepDivisor,
-        lastAnchorAdded
-      );
-      lastPosition = currentPosition;
-      currentPosition = startPos.bilinear(endPosition, newAnchor);
-      if (
-        this.checkAnchorCollision(lastPosition, currentPosition, connection)
-      ) {
-        console.log('Colisão ocorrida: ', currentPosition);
-      }
-      anchorsArr.push(newAnchor);
-      lastAnchorAdded = newAnchor;
-
+      // Evita que o código nunca saia do loop
+      marchingLoopRuns += 1;
       if (currentPosition.equals(endPosition)) break;
       if (marchingLoopRuns > 64) {
         console.error(
@@ -130,55 +230,66 @@ export default {
         );
         break;
       }
-      marchingLoopRuns += 1;
-    }
-    // console.log(anchorsArr);
-    return anchorsArr;
-    /*
-    let doXStep = true;
-    let doYStep = true;
-    // eslint-disable-next-line prefer-const
-    let reachedEndPos = false;
-    while (!reachedEndPos) {
-      //debugger;
-      const n = connection.endPosition.minus(currentPos).normalize();
-      if (Math.abs(n.x) > stepBias && doXStep) {
-        stepTo.x = Math.sign(n.x);
-        stepTo.y = 0;
-        doXStep = false;
-        doYStep = true;
-      } else if (Math.abs(n.y) > stepBias && doYStep) {
-        stepTo.x = 0;
-        stepTo.y = Math.sign(n.y);
-        doXStep = true;
-        doYStep = false;
-      }
-      console.log(stepTo);
-      if (connection.endPosition.equals(currentPos)) break;
-      if (stepTo.x === 0 && stepTo.y === 0) break;
-      const newAnchor = new Vector2(0, 0, true);
-      if (anchorsArr.length > 0) {
-        newAnchor.x =
-          stepTo.x !== 0
-            ? anchorsArr[anchorsArr.length - 1].x + stepTo.x / xStepDivisor
-            : anchorsArr[anchorsArr.length - 1].x;
-        newAnchor.y =
-          stepTo.y !== 0
-            ? anchorsArr[anchorsArr.length - 1].y + stepTo.y / yStepDivisor
-            : anchorsArr[anchorsArr.length - 1].y;
-      } else {
-        newAnchor.x = stepTo.x !== 0 ? stepTo.x / xStepDivisor : 0;
-        newAnchor.y = stepTo.y !== 0 ? stepTo.y / yStepDivisor : 0;
-      }
-      currentPos = connection.position.bilinear(
-        connection.endPosition,
-        newAnchor
-      );
+      let nextAnchor;
 
-      anchorsArr.push(newAnchor);
+      if (!usedRotation)
+        nextAnchor = this.directAnchorPath(
+          startPosition,
+          currentPosition,
+          endPosition,
+          stepDivisor,
+          connection,
+          lastAnchor
+        );
+
+      if (nextAnchor?.equals(new Vector2(-1, -1)) || usedRotation) {
+        nextAnchor = this.rotatedAnchorPath(
+          startPosition,
+          currentPosition,
+          endPosition,
+          stepDivisor,
+          connection,
+          lastAnchor
+        );
+        usedRotation = true;
+      }
+      if (nextAnchor?.equals(new Vector2(-1, -1))) {
+        const lastAnchorPosition = startPosition.bilinear(
+          endPosition,
+          lastAnchor ?? new Vector2()
+        );
+        nextAnchor = this.rotatedAnchorPath(
+          startPosition,
+          lastAnchorPosition,
+          endPosition,
+          stepDivisor,
+          connection,
+          anchorsArr.slice(-2)[0]
+        );
+        if (nextAnchor.equals(new Vector2(-1, -1))) {
+          console.error(
+            'Erro fatal! Não foi possível encontrar caminhos válidos!!'
+          );
+          break;
+        } else {
+          usedRotation = true;
+          currentPosition = lastAnchorPosition;
+          lastAnchor = anchorsArr.slice(-2)[0];
+          anchorsArr.pop();
+          nextAnchor = this.fixAnchorSize(nextAnchor);
+          anchorsArr.push(nextAnchor);
+          continue;
+        }
+      }
+      usedRotation = false;
+      if (nextAnchor !== undefined) {
+        nextAnchor = this.fixAnchorSize(nextAnchor);
+        anchorsArr.push(nextAnchor);
+        currentPosition = startPosition.bilinear(endPosition, nextAnchor);
+        lastAnchor = nextAnchor;
+      }
     }
     return anchorsArr;
-    */
   },
 
   generateCollisionShapes(connection: ConnectionComponent) {
@@ -214,5 +325,14 @@ export default {
       pPos = nPos;
     }
     return collisionArr;
+  },
+
+  // workaround
+  fixAnchorSize(anchor: Vector2) {
+    return new Vector2(1, 1, true).min(
+      anchor.max(new Vector2(0, 0, true), true, true),
+      true,
+      true
+    );
   },
 };
