@@ -1,6 +1,14 @@
 import {nodeTypes} from '../types/types';
 import {NodeTypeInterface} from '../types/types';
-import {ADDNode, NOTNode, ORNode} from '../types/NodeTypes';
+import {
+  ADDNode,
+  NANDNode,
+  NORNode,
+  NOTNode,
+  ORNode,
+  XNORNode,
+  XORNode,
+} from '../types/NodeTypes';
 import Vector2 from '../types/Vector2';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
@@ -53,10 +61,18 @@ class NodeComponent extends Component {
     switch (type) {
       case nodeTypes.ADD:
         return ADDNode;
-      case nodeTypes.OR:
-        return ORNode;
+      case nodeTypes.NAND:
+        return NANDNode;
+      case nodeTypes.NOR:
+        return NORNode;
       case nodeTypes.NOT:
         return NOTNode;
+      case nodeTypes.OR:
+        return ORNode;
+      case nodeTypes.XNOR:
+        return XNORNode;
+      case nodeTypes.XOR:
+        return XORNode;
       default:
         return NOTNode;
     }
@@ -84,7 +100,7 @@ class NodeComponent extends Component {
   }
 
   setSlotId(slotId: number, index: number) {
-    this.nodeType.connectionSlots[index].slotId = slotId;
+    this.slotComponents[index] = slotId;
   }
 
   getConnectionSlots() {

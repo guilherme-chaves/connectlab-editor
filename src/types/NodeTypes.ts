@@ -8,25 +8,19 @@ const ADDNode: NodeTypeInterface = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(-8, -8),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(0, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(-8, 8),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(0, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(8, 0),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(88, 25),
     },
   ],
   op(slotsState) {
@@ -34,36 +28,57 @@ const ADDNode: NodeTypeInterface = {
   },
 };
 
-const ORNode: NodeTypeInterface = {
-  id: nodeTypes.OR,
+const NANDNode: NodeTypeInterface = {
+  id: nodeTypes.NAND,
   connectionSlots: [
     {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(-8, -8),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(0, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(-8, 8),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(0, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(8, 0),
-      slotId: -1,
-      status: false,
+      localPos: new Vector2(88, 25),
     },
   ],
   op(slotsState) {
-    return slotsState[0] || slotsState[1];
+    return !(slotsState[0] && slotsState[1]);
+  },
+};
+
+const NORNode: NodeTypeInterface = {
+  id: nodeTypes.NOR,
+  connectionSlots: [
+    {
+      id: 0,
+      name: 'A',
+      in: true,
+      localPos: new Vector2(0, 15),
+    },
+    {
+      id: 1,
+      name: 'B',
+      in: true,
+      localPos: new Vector2(0, 35),
+    },
+    {
+      id: 2,
+      name: 'C',
+      in: false,
+      localPos: new Vector2(88, 25),
+    },
+  ],
+  op(slotsState) {
+    return !(slotsState[0] || slotsState[1]);
   },
 };
 
@@ -75,16 +90,12 @@ const NOTNode: NodeTypeInterface = {
       name: 'In',
       in: true,
       localPos: new Vector2(0, 25),
-      slotId: -1,
-      status: false,
     },
     {
       id: 1,
       name: 'Out',
       in: false,
       localPos: new Vector2(88, 25),
-      slotId: -1,
-      status: false,
     },
   ],
   op(slotsState) {
@@ -92,4 +103,85 @@ const NOTNode: NodeTypeInterface = {
   },
 };
 
-export {ADDNode, ORNode, NOTNode};
+const ORNode: NodeTypeInterface = {
+  id: nodeTypes.OR,
+  connectionSlots: [
+    {
+      id: 0,
+      name: 'A',
+      in: true,
+      localPos: new Vector2(0, 15),
+    },
+    {
+      id: 1,
+      name: 'B',
+      in: true,
+      localPos: new Vector2(0, 35),
+    },
+    {
+      id: 2,
+      name: 'C',
+      in: false,
+      localPos: new Vector2(88, 25),
+    },
+  ],
+  op(slotsState) {
+    return slotsState[0] || slotsState[1];
+  },
+};
+
+const XNORNode: NodeTypeInterface = {
+  id: nodeTypes.XNOR,
+  connectionSlots: [
+    {
+      id: 0,
+      name: 'A',
+      in: true,
+      localPos: new Vector2(0, 15),
+    },
+    {
+      id: 1,
+      name: 'B',
+      in: true,
+      localPos: new Vector2(0, 35),
+    },
+    {
+      id: 2,
+      name: 'C',
+      in: false,
+      localPos: new Vector2(88, 25),
+    },
+  ],
+  op(slotsState) {
+    return slotsState[0] === slotsState[1];
+  },
+};
+
+const XORNode: NodeTypeInterface = {
+  id: nodeTypes.XOR,
+  connectionSlots: [
+    {
+      id: 0,
+      name: 'A',
+      in: true,
+      localPos: new Vector2(0, 15),
+    },
+    {
+      id: 1,
+      name: 'B',
+      in: true,
+      localPos: new Vector2(0, 35),
+    },
+    {
+      id: 2,
+      name: 'C',
+      in: false,
+      localPos: new Vector2(88, 25),
+    },
+  ],
+  op(slotsState) {
+    return slotsState[0] !== slotsState[1];
+  },
+};
+
+export {ADDNode, NANDNode, NORNode, NOTNode, ORNode, XNORNode, XORNode};

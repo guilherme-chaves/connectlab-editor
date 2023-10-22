@@ -120,10 +120,10 @@ export default class Editor {
     );
   };
 
-  async node(
+  node(
     x: number = this.editorEvents.getMousePosition().x,
     y: number = this.editorEvents.getMousePosition().y,
-    type: nodeTypes = nodeTypes.NOT
+    type: nodeTypes = nodeTypes.ADD
   ) {
     const slotKeys: Array<number> = [];
     const newNode = new NodeComponent(
@@ -135,21 +135,17 @@ export default class Editor {
       slotKeys
     );
     const newNodeId = Editor.editorEnv.addComponent(newNode);
-    NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
-      (slot, index) => {
-        const key = this.slot(
-          slot.localPos.x,
-          slot.localPos.y,
-          ComponentType.NODE,
-          newNodeId,
-          newNode.position,
-          slot.in
-        );
-        NodeComponent.getNodeTypeObject(type).connectionSlots[index].slotId =
-          key;
-        slotKeys.push(key);
-      }
-    );
+    NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
+      const key = this.slot(
+        slot.localPos.x,
+        slot.localPos.y,
+        ComponentType.NODE,
+        newNodeId,
+        newNode.position,
+        slot.in
+      );
+      slotKeys.push(key);
+    });
     Editor.editorEnv
       .getComponents()
       .nodes[newNodeId].addSlotComponents(slotKeys);
