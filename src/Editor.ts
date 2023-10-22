@@ -29,15 +29,22 @@ export default class Editor {
 
   constructor(
     documentId: string,
-    canvasDOM: HTMLCanvasElement,
-    backgroundDOM: HTMLCanvasElement,
+    canvasID: string,
+    backgroundID: string,
     canvasVw: number,
     canvasVh: number
   ) {
     Editor.editorEnv.documentId = documentId;
     this.editorEvents = new EditorEvents();
+
+    const canvasDOM = <HTMLCanvasElement>document.getElementById(canvasID);
+    const backgroundDOM = <HTMLCanvasElement>(
+      document.getElementById(backgroundID)
+    );
+
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
+    this.createEditorEvents(canvasDOM, backgroundDOM);
     this.backgroundPattern = null;
     this.canvasArea = new Vector2(canvasVw, canvasVh, true);
     this.loadPattern(bgTexturePath);
@@ -53,6 +60,34 @@ export default class Editor {
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
     return domElement.getContext('2d')!;
+  }
+
+  private createEditorEvents(
+    canvasDOM: HTMLCanvasElement,
+    backgroundDOM: HTMLCanvasElement
+  ) {
+    window.addEventListener('load', () => {
+      this.resize();
+      this.update();
+    });
+    window.addEventListener('resize', () => {
+      this.resize();
+    });
+    canvasDOM.addEventListener('mousedown', () => {
+      this.setMouseClicked(true);
+    });
+    canvasDOM.addEventListener('mouseup', () => {
+      this.setMouseClicked(false);
+    });
+    canvasDOM.addEventListener('mouseout', () => {
+      this.setMouseClicked(false);
+    });
+    window.addEventListener('mousemove', ({clientX, clientY}) => {
+      this.setMousePosition(clientX, clientY);
+    });
+    window.addEventListener('keypress', () => {
+      this.node();
+    });
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
@@ -88,24 +123,24 @@ export default class Editor {
     // colisão(this.editorEnv)
   };
 
-  compute = () => {
+  compute() {
     setInterval(() => {
       this.onclick();
       this.mouseReleased();
     }, 1000.0 / this.frameRate);
-  };
+  }
 
-  move = () => {
+  move() {
     this.editorEvents.mouseMove(this);
-  };
+  }
 
-  onclick = () => {
+  onclick() {
     this.editorEvents.mouseClick();
-  };
+  }
 
-  ondrag = () => {};
+  ondrag() {}
 
-  resize = () => {
+  resize() {
     this.canvasCtx.canvas.width = window.innerWidth * this.canvasArea.x;
     this.canvasCtx.canvas.height = window.innerHeight * this.canvasArea.y;
     this.backgroundCtx.canvas.width = window.innerWidth * this.canvasArea.x;
@@ -118,7 +153,7 @@ export default class Editor {
         this.backgroundPattern
       )
     );
-  };
+  }
 
   node(
     x: number = this.editorEvents.getMousePosition().x,

@@ -1,39 +1,12 @@
 import './style.css';
 import Editor from './Editor';
 
-/* Obtem os elementos DOM dos dois canvas sobrepostos */
-const canvas = <HTMLCanvasElement>document.getElementById('editor-canvas');
-const bg = <HTMLCanvasElement>document.getElementById('editor-background');
+const editor = new Editor(
+  'teste',
+  'editor-canvas',
+  'editor-background',
+  0.75,
+  0.8
+);
 
-const editor = new Editor('teste', canvas, bg, 0.75, 0.8);
 editor.text('Olá mundo', 500, 200, '32px sans-serif');
-
-addEventListener('load', () => {
-  editor.resize();
-  editor.update();
-});
-
-/* Atualizar tamanho do canvas caso tamanho do navegador se altere */
-addEventListener('resize', () => {
-  editor.resize();
-});
-
-canvas.addEventListener('mousedown', () => {
-  editor.setMouseClicked(true);
-});
-
-canvas.addEventListener('mouseup', () => {
-  editor.setMouseClicked(false);
-});
-
-canvas.addEventListener('mouseout', () => {
-  editor.setMouseClicked(false);
-});
-
-addEventListener('mousemove', ({clientX, clientY}) => {
-  editor.setMousePosition(clientX, clientY);
-});
-
-addEventListener('keypress', () => {
-  editor.node();
-});
