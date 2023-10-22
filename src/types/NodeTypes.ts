@@ -1,11 +1,8 @@
-import NodeTypeInterface from './NodeType';
-import {nodeTypes} from './types';
+import {NodeTypeInterface, nodeTypes} from './types';
 import Vector2 from './Vector2';
-import NOTPath from '../assets/gates/NOT.svg';
 
 const ADDNode: NodeTypeInterface = {
   id: nodeTypes.ADD,
-  imgPath: '',
   connectionSlots: [
     {
       id: 0,
@@ -39,7 +36,6 @@ const ADDNode: NodeTypeInterface = {
 
 const ORNode: NodeTypeInterface = {
   id: nodeTypes.OR,
-  imgPath: '',
   connectionSlots: [
     {
       id: 0,
@@ -73,7 +69,6 @@ const ORNode: NodeTypeInterface = {
 
 const NOTNode: NodeTypeInterface = {
   id: nodeTypes.NOT,
-  imgPath: NOTPath,
   connectionSlots: [
     {
       id: 0,
