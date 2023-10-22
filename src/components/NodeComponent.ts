@@ -1,17 +1,18 @@
 import {nodeTypes} from '../types/types';
-import NodeType from '../types/NodeType';
+import {NodeTypeInterface} from '../types/types';
 import {ADDNode, NOTNode, ORNode} from '../types/NodeTypes';
 import Vector2 from '../types/Vector2';
 import Component from './Component';
 import BBCollision from '../collision/BBCollision';
 import Editor from '../Editor';
+import EditorEnvironment from '../EditorEnvironment';
 
 class NodeComponent extends Component {
-  public readonly nodeType: NodeType;
-  private nodeImage: HTMLImageElement;
+  public readonly nodeType: NodeTypeInterface;
   private slotComponents: Array<number>;
   protected declare collisionShape: BBCollision;
-  public ready: Promise<unknown>;
+  private imageWidth: number;
+  private imageHeight: number;
 
   constructor(
     id: number,
@@ -24,42 +25,30 @@ class NodeComponent extends Component {
     super(id, position);
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slotKeys;
-    this.nodeImage = new Image();
-    this.ready = new Promise(resolve => {
-      this.nodeImage.addEventListener('load', () => {
-        const halfImgPos = new Vector2(
-          -this.nodeImage.width / 2.0,
-          -this.nodeImage.height / 2.0
-        );
-        this.position = this.position.add(halfImgPos);
-        const canvasBound = new Vector2(canvasWidth, canvasHeight);
-        canvasBound.minus(
-          new Vector2(this.nodeImage.width, this.nodeImage.height)
-        );
-        this.position = this.position.inBounds(
-          0,
-          0,
-          canvasBound.y,
-          canvasBound.x
-        );
-        this.collisionShape = new BBCollision(
-          this.position,
-          new Vector2(0, 0),
-          this.nodeImage.width,
-          this.nodeImage.height
-        );
-        for (let i = 0; i < slotKeys.length; i++) {
-          Editor.editorEnv
-            .getComponents()
-            .slots[slotKeys[i]].setParentPosition(this.position);
-        }
-        resolve(undefined);
-      });
-      this.nodeImage.src = this.nodeType.imgPath;
-    });
+    this.imageWidth =
+      EditorEnvironment.nodeImageList[`${this.nodeType.id}`].width;
+    this.imageHeight =
+      EditorEnvironment.nodeImageList[`${this.nodeType.id}`].height;
+    this.position = this.position.minus(
+      new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+    );
+    const canvasBound = new Vector2(canvasWidth, canvasHeight);
+    canvasBound.minus(new Vector2(this.imageWidth, this.imageHeight));
+    this.position = this.position.inBounds(0, 0, canvasBound.y, canvasBound.x);
+    this.collisionShape = new BBCollision(
+      this.position,
+      new Vector2(0, 0),
+      this.imageWidth,
+      this.imageHeight
+    );
+    for (let i = 0; i < slotKeys.length; i++) {
+      Editor.editorEnv
+        .getComponents()
+        .slots[slotKeys[i]].setParentPosition(this.position);
+    }
   }
 
-  static getNodeTypeObject(type: nodeTypes): NodeType {
+  static getNodeTypeObject(type: nodeTypes): NodeTypeInterface {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
       case nodeTypes.ADD:
@@ -87,7 +76,7 @@ class NodeComponent extends Component {
   }
 
   getNodeImage() {
-    return this.nodeImage;
+    return EditorEnvironment.nodeImageList[`${this.nodeType.id}`];
   }
 
   getNodeType() {
@@ -107,7 +96,11 @@ class NodeComponent extends Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.nodeImage, this.position.x, this.position.y);
+    ctx.drawImage(
+      EditorEnvironment.nodeImageList[`${this.nodeType.id}`],
+      this.position.x,
+      this.position.y
+    );
     if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
   }
 }

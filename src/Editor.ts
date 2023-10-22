@@ -135,7 +135,6 @@ export default class Editor {
       slotKeys
     );
     const newNodeId = Editor.editorEnv.addComponent(newNode);
-    await newNode.ready;
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(
       (slot, index) => {
         const key = this.slot(

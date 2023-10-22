@@ -1,4 +1,5 @@
 import ComponentType, {
+  ImageListObject,
   componentListInterface,
   connectionListInterface,
   nodeListInterface,
@@ -9,6 +10,7 @@ import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
+import preloadNodeImages from './functions/Node/preloadNodeImages';
 
 class EditorEnvironment {
   public documentId: string;
@@ -17,6 +19,7 @@ class EditorEnvironment {
   private slotList: slotListInterface;
   private connectionList: connectionListInterface;
   private textList: textListInterface;
+  public static readonly nodeImageList: ImageListObject = preloadNodeImages();
   constructor(
     documentId: string,
     lastComponentId = 0,
