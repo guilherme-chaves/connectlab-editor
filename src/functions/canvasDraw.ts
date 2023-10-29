@@ -32,7 +32,7 @@ export function updateBackground(
   ctx.fill();
 }
 
-function updateAll(
+export default function updateAll(
   canvasCtx: CanvasRenderingContext2D,
   elements: componentListInterface,
   bgCtx: CanvasRenderingContext2D | null,
@@ -43,5 +43,3 @@ function updateAll(
     updateBackground(bgCtx, bgPattern);
   }
 }
-
-export default updateAll;

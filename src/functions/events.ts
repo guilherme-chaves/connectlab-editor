@@ -4,6 +4,7 @@ import connectionEvents from './Connection/connectionEvents';
 import nodeEvents from './nodeEvents';
 import slotEvents from './slotEvents';
 import textEvents from './textEvents';
+import Mouse from '../types/Mouse';
 
 interface collisionListInterface {
   [index: string]: Array<number> | undefined;
@@ -19,12 +20,6 @@ export default class EditorEvents {
 
   private collisionList: collisionListInterface;
 
-  private mousePosition: Vector2; // Posição dentro do canvas, não global
-  private oldMousePosition: Vector2;
-  private mouseClicked: boolean;
-  private mouseChangedState: boolean;
-  private mouseChangedPosition: boolean;
-
   constructor() {
     // this.currentComponentType = ComponentType.NODE
     // this.currentNodeType = nodeTypes.NOT
@@ -35,21 +30,15 @@ export default class EditorEvents {
       connections: undefined,
       texts: undefined,
     };
-
-    this.mousePosition = new Vector2(0, 0);
-    this.oldMousePosition = this.mousePosition;
-    this.mouseClicked = false;
-    this.mouseChangedState = true;
-    this.mouseChangedPosition = false;
   }
 
-  mouseClick() {
-    if (this.mouseClicked && this.mouseChangedState) {
+  onMouseClick() {
+    if (Mouse.clicked && Mouse.stateChanged) {
       // Obtêm uma lista com todas as colisões encontradas
-      const nodeId = nodeEvents.checkNodeClick(this);
-      const slotId = slotEvents.checkSlotClick(this);
-      const connectionId = connectionEvents.checkConnectionClick(this);
-      const textId = textEvents.checkTextClick(this);
+      const nodeId = nodeEvents.checkNodeClick();
+      const slotId = slotEvents.checkSlotClick();
+      const connectionId = connectionEvents.checkConnectionClick();
+      const textId = textEvents.checkTextClick();
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined)
@@ -62,31 +51,24 @@ export default class EditorEvents {
         connections: connectionId,
         texts: textId,
       };
-      this.mouseChangedState = false;
+      Mouse.stateChanged = false;
     }
   }
 
-  mouseRelease() {
-    if (!this.mouseClicked && this.mouseChangedState) {
-      if (!connectionEvents.fixLine(this)) {
+  onMouseRelease() {
+    if (!Mouse.clicked && Mouse.stateChanged) {
+      if (!connectionEvents.fixLine()) {
         this.clearDragCollisions();
       }
-      this.mouseChangedState = false;
+      Mouse.stateChanged = false;
     }
   }
 
   mouseMove(editor: Editor) {
-    if (this.mouseClicked) {
-      connectionEvents.lineMove(
-        this,
-        this.mousePosition.minus(this.oldMousePosition)
-      );
-      connectionEvents.addLine(editor, this);
-      nodeEvents.nodeMove(
-        this,
-        this.mousePosition.minus(this.oldMousePosition)
-      );
-      this.mouseChangedPosition = false;
+    if (Mouse.clicked) {
+      connectionEvents.lineMove(Mouse.position);
+      connectionEvents.addLine(editor);
+      nodeEvents.nodeMove(this, Mouse.position, false);
       return true;
     }
     return false;
@@ -122,32 +104,5 @@ export default class EditorEvents {
     this.collisionList.slots = undefined;
     this.collisionList.connections = undefined;
     this.collisionList.texts = undefined;
-  }
-
-  getMousePosition(): Vector2 {
-    return this.mousePosition;
-  }
-
-  setMousePosition(position: Vector2) {
-    this.oldMousePosition = this.mousePosition;
-    this.mousePosition = position;
-    this.mouseChangedPosition = true;
-  }
-
-  getMouseChangedState() {
-    return this.mouseChangedState;
-  }
-
-  getMouseChangedPosition() {
-    return this.mouseChangedPosition;
-  }
-
-  getMouseClicked() {
-    return this.mouseClicked;
-  }
-
-  setMouseClicked(state = false) {
-    this.mouseClicked = state;
-    this.mouseChangedState = true;
   }
 }

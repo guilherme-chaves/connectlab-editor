@@ -37,15 +37,15 @@ class NodeComponent extends Component {
       EditorEnvironment.nodeImageList[`${this.nodeType.id}`].width;
     this.imageHeight =
       EditorEnvironment.nodeImageList[`${this.nodeType.id}`].height;
-    this.position = this.position.minus(
+    this.position = this.position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
     const canvasBound = new Vector2(canvasWidth, canvasHeight);
-    canvasBound.minus(new Vector2(this.imageWidth, this.imageHeight));
-    this.position = this.position.inBounds(0, 0, canvasBound.y, canvasBound.x);
+    canvasBound.sub(new Vector2(this.imageWidth, this.imageHeight));
+    this.position = this.position.min(canvasBound).max(Vector2.ZERO);
     this.collisionShape = new BBCollision(
       this.position,
-      new Vector2(0, 0),
+      Vector2.ZERO,
       this.imageWidth,
       this.imageHeight
     );
@@ -86,9 +86,16 @@ class NodeComponent extends Component {
     return this.slotComponents;
   }
 
-  changePosition(delta: Vector2): void {
-    this.position = this.position.add(delta);
-    this.collisionShape.moveShape(delta, true);
+  changePosition(v: Vector2, useDelta = true): void {
+    if (useDelta) {
+      this.position = this.position.add(v);
+      this.collisionShape.moveShape(v);
+    } else {
+      this.position = v.sub(
+        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      );
+      this.collisionShape.moveShape(this.position, false);
+    }
   }
 
   getNodeImage() {

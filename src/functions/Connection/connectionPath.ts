@@ -34,12 +34,11 @@ export default {
     let xStepDivisor = defaultXStepDivisor;
     // eslint-disable-next-line prefer-const
     let yStepDivisor = defaultYStepDivisor;
-    const stepTo = new Vector2(0, 0);
+    const stepTo = Vector2.ZERO;
     let loopRuns = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const headedTowards = currentPos.getAngle(endPosition);
-      console.log(headedTowards);
       stepTo.x =
         headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
           ? 1
@@ -74,53 +73,8 @@ export default {
       }
       loopRuns += 1;
     }
-    console.log(anchorsArr);
+    // console.log(anchorsArr);
     return anchorsArr;
-    /*
-    let doXStep = true;
-    let doYStep = true;
-    // eslint-disable-next-line prefer-const
-    let reachedEndPos = false;
-    while (!reachedEndPos) {
-      //debugger;
-      const n = connection.endPosition.minus(currentPos).normalize();
-      if (Math.abs(n.x) > stepBias && doXStep) {
-        stepTo.x = Math.sign(n.x);
-        stepTo.y = 0;
-        doXStep = false;
-        doYStep = true;
-      } else if (Math.abs(n.y) > stepBias && doYStep) {
-        stepTo.x = 0;
-        stepTo.y = Math.sign(n.y);
-        doXStep = true;
-        doYStep = false;
-      }
-      console.log(stepTo);
-      if (connection.endPosition.equals(currentPos)) break;
-      if (stepTo.x === 0 && stepTo.y === 0) break;
-      const newAnchor = new Vector2(0, 0, true);
-      if (anchorsArr.length > 0) {
-        newAnchor.x =
-          stepTo.x !== 0
-            ? anchorsArr[anchorsArr.length - 1].x + stepTo.x / xStepDivisor
-            : anchorsArr[anchorsArr.length - 1].x;
-        newAnchor.y =
-          stepTo.y !== 0
-            ? anchorsArr[anchorsArr.length - 1].y + stepTo.y / yStepDivisor
-            : anchorsArr[anchorsArr.length - 1].y;
-      } else {
-        newAnchor.x = stepTo.x !== 0 ? stepTo.x / xStepDivisor : 0;
-        newAnchor.y = stepTo.y !== 0 ? stepTo.y / yStepDivisor : 0;
-      }
-      currentPos = connection.position.bilinear(
-        connection.endPosition,
-        newAnchor
-      );
-
-      anchorsArr.push(newAnchor);
-    }
-    return anchorsArr;
-    */
   },
 
   generateCollisionShapes(connection: ConnectionComponent) {
@@ -130,7 +84,7 @@ export default {
     let pPos = connection.position;
     // 0 => Ponto inicial à primeira âncora, length => última âncora à ponto final
     for (let i = 0; i <= connection.anchors.length; i++) {
-      let nPos = new Vector2(0, 0);
+      let nPos = Vector2.ZERO;
       if (i < connection.anchors.length)
         nPos = connection.position.bilinear(
           connection.endPosition,
@@ -147,8 +101,8 @@ export default {
       );
       collisionArr.push(
         new BBCollision(
-          pPos.minus(new Vector2(1, 1)),
-          new Vector2(0, 0),
+          pPos.sub(new Vector2(1, 1)),
+          Vector2.ZERO,
           size.x,
           size.y
         )

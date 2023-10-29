@@ -1,6 +1,6 @@
 interface Vector2 {
   add(other: Vector2, forceFloat: boolean): Vector2;
-  minus(other: Vector2, forceFloat: boolean): Vector2;
+  sub(other: Vector2, forceFloat: boolean): Vector2;
   multS(s: number, forceFloat: boolean): Vector2;
   mult(other: Vector2, forceFloat: boolean): Vector2;
   div(other: Vector2, forceFloat: boolean): Vector2;
@@ -11,7 +11,9 @@ interface Vector2 {
   lerp(other: Vector2, t: number, forceFloat: boolean): Vector2;
   bilinear(other: Vector2, bt: Vector2, forceFloat: boolean): Vector2;
   equals(other: Vector2): boolean;
-  rotateZ(angle: number): Vector2;
+  min(other: Vector2): Vector2;
+  max(other: Vector2): Vector2;
+  rotate(angle: number): Vector2;
   getAngle(other: Vector2): number;
   normalize(): Vector2;
 }
@@ -20,13 +22,14 @@ class Vector2 {
   private forceFloat: boolean;
   private _x = 0;
   private _y = 0;
+  static readonly ZERO = new Vector2();
 
-  constructor(xOrVector2: number | Vector2, y = 0, forceFloat = false) {
+  constructor(xOrVector2: number | Vector2 = 0, y = 0, forceFloat = false) {
     this.forceFloat = forceFloat;
     if (typeof xOrVector2 === 'number') {
       this.x = xOrVector2;
       this.y = y;
-    } else {
+    } else if (typeof xOrVector2 === 'object') {
       this.x = xOrVector2.x;
       this.y = xOrVector2.y;
     }
@@ -49,35 +52,35 @@ class Vector2 {
   }
 
   add(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this._x + other.x, this.y + other.y, forceFloat);
+    return new Vector2(this.x + other.x, this.y + other.y, forceFloat);
   }
 
-  minus(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this._x - other.x, this.y - other.y, forceFloat);
+  sub(other: Vector2, forceFloat = false): Vector2 {
+    return new Vector2(this.x - other.x, this.y - other.y, forceFloat);
   }
 
   multS(s: number, forceFloat = false): Vector2 {
-    return new Vector2(this._x * s, this.y * s, forceFloat);
+    return new Vector2(this.x * s, this.y * s, forceFloat);
   }
 
   mult(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this._x * other.x, this.y * other.y, forceFloat);
+    return new Vector2(this.x * other.x, this.y * other.y, forceFloat);
   }
 
   div(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this._x / other.x, this.y / other.y, forceFloat);
+    return new Vector2(this.x / other.x, this.y / other.y, forceFloat);
   }
 
   divS(s: number, forceFloat = false): Vector2 {
-    return new Vector2(this._x / s, this.y / s, forceFloat);
+    return new Vector2(this.x / s, this.y / s, forceFloat);
   }
 
   dot(other: Vector2): number {
-    return this._x * other.x + this.y * other.y;
+    return this.x * other.x + this.y * other.y;
   }
 
   cross(other: Vector2): number {
-    return this._x * other.y - this.y * other.x;
+    return this.x * other.y - this.y * other.x;
   }
 
   magSq(): number {
@@ -85,12 +88,12 @@ class Vector2 {
   }
 
   madd(other: Vector2, s: number, forceFloat = false): Vector2 {
-    return new Vector2(this._x + s * other.x, this.y + s * other.y, forceFloat);
+    return new Vector2(this.x + s * other.x, this.y + s * other.y, forceFloat);
   }
 
   // Interpolação linear
   lerp(other: Vector2, t: number, forceFloat = false): Vector2 {
-    return this.madd(other.minus(this), t, forceFloat);
+    return this.madd(other.sub(this), t, forceFloat);
   }
 
   // Interpolação bilinear
@@ -103,29 +106,31 @@ class Vector2 {
   }
 
   equals(other: Vector2): boolean {
-    return this._x === other.x && this.y === other.y;
+    return this.x === other.x && this.y === other.y;
   }
 
-  inBounds(
-    top: number,
-    left: number,
-    bottom: number,
-    right: number,
-    forceFloat = false
-  ): Vector2 {
+  min(other: Vector2, forceFloat = false): Vector2 {
     return new Vector2(
-      Math.min(Math.max(this._x, left), right),
-      Math.min(Math.max(this.y, top), bottom),
+      Math.min(this.x, other.x),
+      Math.min(this.y, other.y),
       forceFloat
     );
   }
 
-  rotateZ(angle: number): Vector2 {
+  max(other: Vector2, forceFloat = false): Vector2 {
+    return new Vector2(
+      Math.max(this.x, other.x),
+      Math.max(this.y, other.y),
+      forceFloat
+    );
+  }
+
+  rotate(angle: number): Vector2 {
     const sin = Math.sin(angle);
     const cos = Math.cos(angle);
     return new Vector2(
-      this._x * cos - this.y * sin,
-      this._x * sin + this.y * cos
+      this.x * cos - this.y * sin,
+      this.x * sin + this.y * cos
     );
   }
 

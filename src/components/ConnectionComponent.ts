@@ -11,9 +11,7 @@ class ConnectionComponent extends Component {
   public connectedTo: connectionSlotsInterface;
   private connectionPath: Path2D;
   private regenConnectionPath: boolean;
-  private attractionBias: number; // Tendência de um ponto a assumir uma das coordenadas de seu antecessor
-  private slotComponents: Array<number>;
-  private minDistFromConnection: number;
+  public readonly minDistFromConnection: number;
   protected declare collisionShape: BBCollision;
   protected collisionShapes: BBCollision[];
 
@@ -34,8 +32,6 @@ class ConnectionComponent extends Component {
       new Vector2(0.5, 1, true),
     ];
     this.connectedTo = connections;
-    this.attractionBias = 0.075;
-    this.slotComponents = [];
     this.minDistFromConnection = 64;
     this.connectionPath = this.generatePath();
     this.regenConnectionPath = false;
@@ -124,14 +120,7 @@ class ConnectionComponent extends Component {
     }
     this.collisionShapes =
       ConnectionPathFunctions.generateCollisionShapes(this);
-    // const n = this.endPosition.minus(this.position).normalize();
-    // ConnectionPathFunctions.generateAnchors(this);
     this.anchors = ConnectionPathFunctions.generateAnchors(this);
-    // console.log(
-    //   this.position,
-    //   this.endPosition,
-    //   this.position.bilinear(this.endPosition, new Vector2(0.5, 0.5, true))
-    // );
     this.regenConnectionPath = true;
   }
 
@@ -146,8 +135,8 @@ class ConnectionComponent extends Component {
       return;
     }
     this.anchors[index] = position
-      .minus(this.position)
-      .div(this.endPosition.minus(this.position), true);
+      .sub(this.position)
+      .div(this.endPosition.sub(this.position), true);
     this.regenConnectionPath = true;
   }
 

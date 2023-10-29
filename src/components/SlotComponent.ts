@@ -13,7 +13,7 @@ export default class SlotComponent extends Component {
   private color: string;
   private colorActive: string;
   private radius: number;
-  private attractionBias: number; // Área de atração do slot para linhas a serem conectadas
+  private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
   protected declare collisionShape: CircleCollision;
 
   constructor(
@@ -39,11 +39,11 @@ export default class SlotComponent extends Component {
     this.state = false;
     this.inSlot = inSlot;
     this.radius = radius;
-    this.attractionBias = attractionRadius;
+    this.attractionRadius = attractionRadius;
     this.collisionShape = new CircleCollision(
-      this.position.add(this.parentPosition),
-      new Vector2(0, 0),
-      this.attractionBias
+      this.parentPosition,
+      this.position,
+      this.attractionRadius
     );
     // Buscar como ler os parâmetros do Node após as mudanças realizadas - centralizar no mouse e colisão com os limites do canvas
     this.componentPath = this.generatePath();
@@ -76,11 +76,12 @@ export default class SlotComponent extends Component {
 
   setParentPosition(position: Vector2) {
     this.parentPosition = position;
-    this.collisionShape.moveShape(
-      this.position.add(this.parentPosition),
-      false
-    );
+    this.collisionShape.moveShape(this.parentPosition, false);
     this.componentPath = this.generatePath();
+  }
+
+  getGlobalPosition() {
+    return this.parentPosition.add(this.position);
   }
 
   getCollisionShape(): CircleCollision {

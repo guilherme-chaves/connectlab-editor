@@ -35,14 +35,14 @@ export default class CircleCollision extends CollisionShape {
     ctx.strokeStyle = oldStrokeStyle;
   }
 
-  moveShape(delta: Vector2, useDelta = true): void {
-    if (useDelta) this.parentPosition.add(delta);
-    else this.parentPosition = delta;
+  moveShape(v: Vector2, useDelta = true): void {
+    if (useDelta) this.parentPosition.add(v);
+    else this.parentPosition = v;
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Vector2): boolean {
     const pos = this.parentPosition.add(this.a);
-    return pos.minus(point).magSq() < this.radiusSq;
+    return pos.sub(point).magSq() < this.radiusSq;
   }
 }

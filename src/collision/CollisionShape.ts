@@ -24,17 +24,17 @@ export default class CollisionShape {
     ctx.strokeStyle = oldStrokeStyle;
   }
 
-  moveShape(delta: Vector2, useDelta = true) {
-    if (useDelta) this.parentPosition.add(delta);
-    else this.parentPosition = delta;
+  moveShape(v: Vector2, useDelta = true) {
+    if (useDelta) this.parentPosition.add(v);
+    else this.parentPosition = v;
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(_point: Vector2): boolean {
     throw new Error('Função não implementada, utilize uma das classes-filhas');
   }
 
-  collisionWithBB(other: BBCollision): boolean {
+  collisionWithBB(_other: BBCollision): boolean {
     throw new Error('Função não implementada, utilize uma das classes-filhas');
   }
 }

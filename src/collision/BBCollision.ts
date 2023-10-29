@@ -17,8 +17,8 @@ export default class BBCollision extends CollisionShape {
     this.b = new Vector2(width, height);
     this.color = color ?? this.color;
     this.drawPath = this.generatePath();
-    this.topLeft = new Vector2(0, 0);
-    this.bottomRight = new Vector2(0, 0);
+    this.topLeft = Vector2.ZERO;
+    this.bottomRight = Vector2.ZERO;
     this.setAlignedBounds();
   }
 
@@ -46,9 +46,9 @@ export default class BBCollision extends CollisionShape {
     super.draw(ctx, selected);
   }
 
-  moveShape(delta: Vector2, useDelta = true): void {
-    if (useDelta) this.parentPosition = this.parentPosition.add(delta);
-    else this.parentPosition = delta;
+  moveShape(v: Vector2, useDelta = true): void {
+    if (useDelta) this.parentPosition = this.parentPosition.add(v);
+    else this.parentPosition = v;
     this.drawPath = this.generatePath();
     this.setAlignedBounds();
   }
