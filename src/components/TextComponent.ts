@@ -1,58 +1,86 @@
 import ComponentType from '../types/types';
 import Vector2 from '../types/Vector2';
-import Component from './Component';
 import BBCollision from '../collision/BBCollision';
+import Component from '../interfaces/componentInterface';
 
-class TextComponent extends Component {
+class TextComponent implements Component {
+  public readonly id: number;
+  private _position: Vector2;
+  public readonly componentType: ComponentType;
   public text: string;
   public parentNode: Component | null;
   public style: string;
   private textSize: Vector2;
-  protected declare collisionShape: BBCollision;
+  private _collisionShape: BBCollision;
+  private canvasContext: CanvasRenderingContext2D;
+
+  get position(): Vector2 {
+    return this._position;
+  }
+
+  set position(value: Vector2) {
+    this._position = value;
+  }
+
+  get collisionShape() {
+    return this._collisionShape;
+  }
+
+  set collisionShape(value: BBCollision) {
+    this._collisionShape = value;
+  }
+
   constructor(
     id: number,
     position: Vector2,
     text = '',
     style = '12px sans-serif',
-    parent: Component | null = null
+    parent: Component | null = null,
+    ctx: CanvasRenderingContext2D
   ) {
-    super(id, position, ComponentType.TEXT);
+    this.id = id;
+    this._position = position;
+    this.componentType = ComponentType.TEXT;
     this.text = text;
     this.style = style;
     this.parentNode = parent;
-    this.textSize = new Vector2(0, 0);
-    this.collisionShape = new BBCollision(
-      this.parentNode?.position ?? new Vector2(0, 0),
-      this.position,
+    this.canvasContext = ctx;
+    this.textSize = this.measureText(ctx, text, style);
+    this._collisionShape = new BBCollision(
+      position,
       this.textSize.x,
       this.textSize.y
     );
   }
 
-  draw(ctx: CanvasRenderingContext2D, style?: string) {
-    // Ordem de prioridade (argumento -> objeto -> global)
-    ctx.font = style ?? this.style ?? ctx.font;
+  private measureText(
+    ctx: CanvasRenderingContext2D,
+    text: string,
+    style: string
+  ): Vector2 {
+    ctx.font = style;
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
-    this.textSize.x = ctx.measureText(this.text).width;
-    this.textSize.y =
-      ctx.measureText(this.text).actualBoundingBoxDescent -
-      ctx.measureText(this.text).actualBoundingBoxAscent;
-    this.collisionShape.b = this.textSize;
-    this.collisionShape.drawPath = this.collisionShape.generatePath();
-    //console.log(ctx.measureText(this.text))
-    // Caso possua um nó-pai, deve usar a posição relativa a ele
-    if (this.parentNode !== null) {
-      const pos = this.parentNode.position.add(this.position);
-      ctx.fillText(this.text, pos.x, pos.y);
-    } else {
-      ctx.fillText(this.text, this.position.x, this.position.y);
-    }
+    const textDimensions = ctx.measureText(text);
+    return new Vector2(
+      textDimensions.width,
+      textDimensions.actualBoundingBoxDescent -
+        textDimensions.actualBoundingBoxAscent
+    );
+  }
+
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.font = this.style;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    ctx.fillText(this.text, this.position.x, this.position.y);
     this.collisionShape.draw(ctx, true);
   }
 
-  getCollisionShape(): BBCollision {
-    return this.collisionShape;
+  move(v: Vector2, useDelta = true) {
+    if (useDelta) this.position = this.position.add(v);
+    else this.position = v;
+    this._collisionShape.moveShape(v, useDelta);
   }
 }
 

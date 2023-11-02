@@ -1,107 +1,103 @@
 import CircleCollision from '../collision/CircleCollision';
+import Component from '../interfaces/componentInterface';
 import Vector2 from '../types/Vector2';
 import ComponentType from '../types/types';
-import Component from './Component';
+import ConnectionComponent from './ConnectionComponent';
 
-export default class SlotComponent extends Component {
-  private parentType: ComponentType;
-  private parentId: number;
-  private connectionId: number;
-  private parentPosition: Vector2;
-  private state: boolean;
-  private inSlot: boolean;
+export default class SlotComponent implements Component {
+  public readonly id: number;
+  private _position: Vector2;
+  public readonly componentType: ComponentType;
+  private _parent: Component;
+  private _slotConnections: Array<ConnectionComponent>;
+  private drawPath: Path2D;
+  public state: boolean;
+  public readonly inSlot: boolean;
   private color: string;
   private colorActive: string;
   private radius: number;
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
-  protected declare collisionShape: CircleCollision;
+  private _collisionShape: CircleCollision;
+
+  get position(): Vector2 {
+    return this._position;
+  }
+
+  set position(value: Vector2) {
+    this._position = value;
+  }
+
+  get globalPosition() {
+    return this._position.add(this.parent.position);
+  }
+
+  get parent() {
+    return this._parent;
+  }
+
+  get slotConnections() {
+    return this._slotConnections;
+  }
+
+  set slotConnections(value: Array<ConnectionComponent>) {
+    if (this.inSlot) this._slotConnections = [value[0]];
+    else this._slotConnections = value;
+  }
+
+  get collisionShape() {
+    return this._collisionShape;
+  }
+
+  set collisionShape(value: CircleCollision) {
+    this._collisionShape = value;
+  }
 
   constructor(
     id: number,
     position: Vector2,
-    parentType: ComponentType,
-    parentId: number,
-    parentPosition: Vector2,
-    connectionId = -1,
+    parent: Component,
+    connections: Array<ConnectionComponent> = [],
     inSlot = true,
     radius = 4,
     attractionRadius = 12,
     color = '#0880FF',
     colorActive = '#FF0000'
   ) {
-    super(id, position, ComponentType.SLOT);
-    this.parentType = parentType;
-    this.parentId = parentId;
-    this.parentPosition = parentPosition;
-    this.connectionId = connectionId;
+    this.id = id;
+    this._position = position;
+    this.componentType = ComponentType.SLOT;
+    this._parent = parent;
+    this._slotConnections = connections;
     this.color = color;
     this.colorActive = colorActive;
     this.state = false;
     this.inSlot = inSlot;
     this.radius = radius;
     this.attractionRadius = attractionRadius;
-    this.collisionShape = new CircleCollision(
-      this.parentPosition,
-      this.position,
+    this._collisionShape = new CircleCollision(
+      this.globalPosition,
       this.attractionRadius
     );
-    // Buscar como ler os parâmetros do Node após as mudanças realizadas - centralizar no mouse e colisão com os limites do canvas
-    this.componentPath = this.generatePath();
+    this.drawPath = this.generatePath();
   }
 
-  getPosition(globalPos = false) {
-    if (globalPos) return this.position.add(this.parentPosition);
-    return this.position;
+  move(v: Vector2) {
+    this._position = v;
+    this.collisionShape.moveShape(this.globalPosition, false);
+    this.drawPath = this.generatePath();
   }
 
-  getState(): boolean {
-    return this.state;
-  }
-
-  setState(state: boolean): void {
-    this.state = state;
-  }
-
-  getInSlot(): boolean {
-    return this.inSlot;
-  }
-
-  getParentId() {
-    return this.parentId;
-  }
-
-  getParentPosition() {
-    return this.parentPosition;
-  }
-
-  setParentPosition(position: Vector2) {
-    this.parentPosition = position;
-    this.collisionShape.moveShape(this.parentPosition, false);
-    this.componentPath = this.generatePath();
-  }
-
-  getGlobalPosition() {
-    return this.parentPosition.add(this.position);
-  }
-
-  getCollisionShape(): CircleCollision {
-    return this.collisionShape;
-  }
-
-  getConnectionId() {
-    return this.connectionId;
-  }
-
-  setConnectionId(id: number) {
-    this.connectionId = id;
+  update() {
+    this.collisionShape.moveShape(this.globalPosition, false);
+    this.drawPath = this.generatePath();
   }
 
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
-  protected generatePath(): Path2D {
+  private generatePath(): Path2D {
     const path = new Path2D();
     path.arc(
-      this.parentPosition.x + this.position.x,
-      this.parentPosition.y + this.position.y,
+      this.globalPosition.x,
+      this.globalPosition.y,
       this.radius,
       0,
       Math.PI * 2
@@ -112,7 +108,7 @@ export default class SlotComponent extends Component {
   draw(ctx: CanvasRenderingContext2D): void {
     const oldFillStyle = ctx.fillStyle;
     ctx.fillStyle = this.state ? this.colorActive : this.color;
-    ctx.fill(this.componentPath);
+    ctx.fill(this.drawPath);
     ctx.fillStyle = oldFillStyle;
     this.collisionShape.draw(ctx, true);
   }

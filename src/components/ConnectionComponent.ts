@@ -1,19 +1,37 @@
 import ComponentType, {connectionSlotsInterface} from '../types/types';
 import Vector2 from '../types/Vector2';
-import Component from './Component';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';
+import Component from '../interfaces/componentInterface';
 
-class ConnectionComponent extends Component {
+class ConnectionComponent implements Component {
+  public readonly id: number;
+  private _position: Vector2;
+  public readonly componentType: ComponentType;
   public endPosition: Vector2;
-  // Pesos relativos ao ponto inicial e final
-  public anchors: Array<Vector2>;
+  // Pesos (valores de 0 a 1) relativos a interpolação bilinear entre os pontos inicial e final
+  public anchors: Array<DOMPoint>;
   public connectedTo: connectionSlotsInterface;
-  private connectionPath: Path2D;
+  private drawPath: Path2D;
   private regenConnectionPath: boolean;
   public readonly minDistFromConnection: number;
-  protected declare collisionShape: BBCollision;
-  protected collisionShapes: BBCollision[];
+  private _collisionShape: Array<BBCollision>;
+
+  get position(): Vector2 {
+    return this._position;
+  }
+
+  set position(value: Vector2) {
+    this._position = value;
+  }
+
+  get collisionShape() {
+    return this._collisionShape;
+  }
+
+  set collisionShape(value: Array<BBCollision>) {
+    this._collisionShape = value;
+  }
 
   constructor(
     id: number,
@@ -22,26 +40,21 @@ class ConnectionComponent extends Component {
     connections: connectionSlotsInterface = {start: undefined, end: undefined}
   ) {
     // A variável position funciona como startPoint
-    super(id, startPoint, ComponentType.LINE);
+    this.id = id;
+    this._position = startPoint;
+    this.componentType = ComponentType.LINE;
     this.endPosition = endPosition;
-    // As âncoras funcionam como porcentagens de interpolação entre os dois pontos
     this.anchors = [
-      new Vector2(0.25, 0, true),
-      new Vector2(0.25, 0.5, true),
-      new Vector2(0.5, 0.5, true),
-      new Vector2(0.5, 1, true),
+      new DOMPoint(0.25, 0),
+      new DOMPoint(0.25, 0.5),
+      new DOMPoint(0.5, 0.5),
+      new DOMPoint(0.5, 1),
     ];
     this.connectedTo = connections;
     this.minDistFromConnection = 64;
-    this.connectionPath = this.generatePath();
+    this.drawPath = this.generatePath();
     this.regenConnectionPath = false;
-    this.collisionShape = new BBCollision(
-      new Vector2(0, 0),
-      new Vector2(0, 0),
-      0,
-      0
-    );
-    this.collisionShapes =
+    this._collisionShape =
       ConnectionPathFunctions.generateCollisionShapes(this);
   }
 
@@ -70,29 +83,17 @@ class ConnectionComponent extends Component {
     return [];
   }
 
-  getCollisionShape(): BBCollision {
-    return this.collisionShape;
-  }
-
-  getCollisionShapes(): BBCollision[] {
-    return this.collisionShapes;
-  }
-
-  setCollisionShapes(newCollisionShapes: BBCollision[]): void {
-    this.collisionShapes = newCollisionShapes;
-  }
-
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
-    if (this.regenConnectionPath) this.connectionPath = this.generatePath();
+    if (this.regenConnectionPath) this.drawPath = this.generatePath();
     ctx.strokeStyle = '#101010';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
-    ctx.stroke(this.connectionPath);
-    this.collisionShapes.forEach(shape => shape.draw(ctx, true));
+    ctx.stroke(this.drawPath);
+    this.collisionShape.forEach(shape => shape.draw(ctx, true));
   }
 
-  addAnchor(point: Vector2, arrIndex: number = this.anchors.length): void {
+  addAnchor(point: DOMPoint, arrIndex: number = this.anchors.length): void {
     this.anchors.splice(arrIndex, 0, point);
     this.regenConnectionPath = true;
   }
@@ -110,16 +111,22 @@ class ConnectionComponent extends Component {
 
   // Recebe um delta entre a posição anterior e a atual
   // movePoint -> 0 = position, 1 = endPosition, 2 (ou qualquer outro) = ambos
-  changePosition(delta: Vector2, movePoint = 2, useDelta = true) {
+  move(
+    v: Vector2,
+    movePoint = 2,
+    useDelta = true,
+    updateCollisionShapes = true
+  ) {
     if (useDelta) {
-      if (movePoint !== 1) this.position = this.position.add(delta);
-      if (movePoint !== 0) this.endPosition = this.endPosition.add(delta);
+      if (movePoint !== 1) this.position = this.position.add(v);
+      if (movePoint !== 0) this.endPosition = this.endPosition.add(v);
     } else {
-      if (movePoint !== 1) this.position = delta;
-      if (movePoint !== 0) this.endPosition = delta;
+      if (movePoint !== 1) this.position = v;
+      if (movePoint !== 0) this.endPosition = v;
     }
-    this.collisionShapes =
-      ConnectionPathFunctions.generateCollisionShapes(this);
+    if (updateCollisionShapes)
+      this.collisionShape =
+        ConnectionPathFunctions.generateCollisionShapes(this);
     this.anchors = ConnectionPathFunctions.generateAnchors(this);
     this.regenConnectionPath = true;
   }
@@ -134,9 +141,10 @@ class ConnectionComponent extends Component {
       );
       return;
     }
-    this.anchors[index] = position
+    const nAnchor = position
       .sub(this.position)
       .div(this.endPosition.sub(this.position), true);
+    this.anchors[index] = new DOMPoint(nAnchor.x, nAnchor.y);
     this.regenConnectionPath = true;
   }
 

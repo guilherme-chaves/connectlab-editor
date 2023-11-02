@@ -1,4 +1,4 @@
-import {nodeTypes} from '../types/types';
+import ComponentType, {nodeTypes} from '../types/types';
 import {NodeTypeInterface} from '../types/types';
 import {
   ADDNode,
@@ -10,17 +10,48 @@ import {
   XORNode,
 } from '../types/NodeTypes';
 import Vector2 from '../types/Vector2';
-import Component from './Component';
 import BBCollision from '../collision/BBCollision';
-import Editor from '../Editor';
 import EditorEnvironment from '../EditorEnvironment';
+import Component from '../interfaces/componentInterface';
+import SlotComponent from './SlotComponent';
 
-class NodeComponent extends Component {
+class NodeComponent implements Component {
+  public readonly id: number;
+  private _position: Vector2;
+  public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeInterface;
-  private slotComponents: Array<number>;
-  protected declare collisionShape: BBCollision;
+  private _slotComponents: Array<SlotComponent>;
+  private _collisionShape: BBCollision;
   private imageWidth: number;
   private imageHeight: number;
+
+  get position(): Vector2 {
+    return this._position;
+  }
+
+  set position(value: Vector2) {
+    this._position = value;
+  }
+
+  get slotComponents() {
+    return this._slotComponents;
+  }
+
+  set slotComponents(value: Array<SlotComponent>) {
+    this._slotComponents = value;
+  }
+
+  get collisionShape() {
+    return this._collisionShape;
+  }
+
+  set collisionShape(value: BBCollision) {
+    this._collisionShape = value;
+  }
+
+  get image() {
+    return EditorEnvironment.nodeImageList[`${this.nodeType.id}`];
+  }
 
   constructor(
     id: number,
@@ -28,32 +59,28 @@ class NodeComponent extends Component {
     nodeType: nodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slotKeys: Array<number>
+    slots: Array<SlotComponent>
   ) {
-    super(id, position);
+    this.id = id;
+    this._position = position;
+    this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
-    this.slotComponents = slotKeys;
+    this._slotComponents = slots;
     this.imageWidth =
       EditorEnvironment.nodeImageList[`${this.nodeType.id}`].width;
     this.imageHeight =
       EditorEnvironment.nodeImageList[`${this.nodeType.id}`].height;
-    this.position = this.position.sub(
+    this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
     const canvasBound = new Vector2(canvasWidth, canvasHeight);
     canvasBound.sub(new Vector2(this.imageWidth, this.imageHeight));
     this.position = this.position.min(canvasBound).max(Vector2.ZERO);
-    this.collisionShape = new BBCollision(
+    this._collisionShape = new BBCollision(
       this.position,
-      Vector2.ZERO,
       this.imageWidth,
       this.imageHeight
     );
-    for (let i = 0; i < slotKeys.length; i++) {
-      Editor.editorEnv
-        .getComponents()
-        .slots[slotKeys[i]].setParentPosition(this.position);
-    }
   }
 
   static getNodeTypeObject(type: nodeTypes): NodeTypeInterface {
@@ -78,15 +105,7 @@ class NodeComponent extends Component {
     }
   }
 
-  addSlotComponents(slotKeys: Array<number>) {
-    this.slotComponents = slotKeys;
-  }
-
-  getSlotComponents() {
-    return this.slotComponents;
-  }
-
-  changePosition(v: Vector2, useDelta = true): void {
+  move(v: Vector2, useDelta = true): void {
     if (useDelta) {
       this.position = this.position.add(v);
       this.collisionShape.moveShape(v);
@@ -96,26 +115,6 @@ class NodeComponent extends Component {
       );
       this.collisionShape.moveShape(this.position, false);
     }
-  }
-
-  getNodeImage() {
-    return EditorEnvironment.nodeImageList[`${this.nodeType.id}`];
-  }
-
-  getNodeType() {
-    return this.nodeType;
-  }
-
-  setSlotId(slotId: number, index: number) {
-    this.slotComponents[index] = slotId;
-  }
-
-  getConnectionSlots() {
-    return this.nodeType.connectionSlots;
-  }
-
-  getCollisionShape(): BBCollision {
-    return this.collisionShape;
   }
 
   draw(ctx: CanvasRenderingContext2D) {
