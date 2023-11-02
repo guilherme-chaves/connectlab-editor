@@ -1,48 +1,78 @@
-import CollisionShape from './CollisionShape';
+import Collision from '../interfaces/collisionInterface';
 import Vector2 from '../types/Vector2';
+import BBCollision from './BBCollision';
 
-export default class CircleCollision extends CollisionShape {
-  public radius: number;
-  public radiusSq: number;
+export default class CircleCollision implements Collision {
+  private _position: Vector2;
+  public readonly radius: number;
+  private readonly radiusSquared: number;
+  private drawPath: Path2D;
+  private _borderColor: string;
 
-  constructor(
-    position: Vector2,
-    offset: Vector2,
-    radius: number,
-    color?: string
-  ) {
-    super();
-    this.parentPosition = position;
-    this.a = offset;
+  get position(): Vector2 {
+    return this._position;
+  }
+
+  set position(value: Vector2) {
+    this._position = value;
+  }
+
+  get borderColor() {
+    return this._borderColor;
+  }
+
+  set borderColor(value: string) {
+    this._borderColor = value;
+  }
+
+  constructor(position: Vector2, radius: number, borderColor = '#FF8008DC') {
+    this._position = position;
     this.radius = radius;
-    this.radiusSq = radius * radius;
-    this.color = color ?? this.color;
+    this.radiusSquared = radius * radius;
+    this._borderColor = borderColor;
     this.drawPath = this.generatePath();
   }
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    const pos = this.parentPosition.add(this.a);
-    path.arc(pos.x, pos.y, this.radius, 0, Math.PI * 2);
+    path.arc(this._position.x, this._position.y, this.radius, 0, Math.PI * 2);
     return path;
   }
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
     const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this.color;
+    ctx.strokeStyle = this._borderColor;
     ctx.stroke(this.drawPath);
     ctx.strokeStyle = oldStrokeStyle;
   }
 
   moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this.parentPosition.add(v);
-    else this.parentPosition = v;
+    if (useDelta) this._position.add(v);
+    else this._position = v;
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Vector2): boolean {
-    const pos = this.parentPosition.add(this.a);
-    return pos.sub(point).magSq() < this.radiusSq;
+    return this._position.sub(point).magSq() < this.radiusSquared;
+  }
+
+  collisionWithAABB(other: BBCollision): boolean {
+    let distance = 0;
+    if (this.position.x < other.globalPoints.b.x)
+      distance += Math.pow(other.globalPoints.b.x - this.position.x, 2);
+    else if (this.position.x > other.globalPoints.a.x)
+      distance += Math.pow(this.position.x - other.globalPoints.a.x, 2);
+
+    if (this.position.y < other.globalPoints.b.y)
+      distance += Math.pow(other.globalPoints.b.y - this.position.y, 2);
+    else if (this.position.y > other.globalPoints.a.y)
+      distance += Math.pow(this.position.y - other.globalPoints.a.y, 2);
+
+    return distance < this.radiusSquared;
+  }
+
+  collisionWithCircle(other: CircleCollision): boolean {
+    return this.position.sub(other.position).mag() < this.radius + other.radius;
   }
 }
