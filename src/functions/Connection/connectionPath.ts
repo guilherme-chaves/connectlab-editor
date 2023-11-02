@@ -22,9 +22,9 @@ export default {
     //Teste
   },
 
-  generateAnchors(connection: ConnectionComponent) {
-    const anchorsArr: Vector2[] = [];
-    let lastAnchorAdded: Vector2 = new Vector2(0, 0, true);
+  generateAnchors(connection: ConnectionComponent): Array<DOMPoint> {
+    const anchorsArr: Array<DOMPoint> = [];
+    let lastAnchorAdded: DOMPoint = new DOMPoint(0, 0);
     const startPos = connection.position;
     let currentPos = connection.position;
     const endPosition = connection.endPosition;
@@ -52,7 +52,7 @@ export default {
           : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
           ? -1
           : 0;
-      const newAnchor = new Vector2(0, 0, true);
+      const newAnchor = new DOMPoint(0, 0);
       if (anchorsArr.length === 0) {
         newAnchor.x = Math.abs(stepTo.x) / xStepDivisor;
         newAnchor.y = Math.abs(stepTo.y) / yStepDivisor;
@@ -100,12 +100,7 @@ export default {
         nPos.y - pPos.y
       );
       collisionArr.push(
-        new BBCollision(
-          pPos.sub(new Vector2(1, 1)),
-          Vector2.ZERO,
-          size.x,
-          size.y
-        )
+        new BBCollision(pPos.sub(new Vector2(1, 1)), size.x, size.y)
       );
       pPos = nPos;
     }

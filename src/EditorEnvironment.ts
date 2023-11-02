@@ -11,6 +11,7 @@ import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
+import Component from './interfaces/componentInterface';
 
 class EditorEnvironment {
   public documentId: string;
@@ -59,14 +60,8 @@ class EditorEnvironment {
     this.lastComponentId = id;
   }
 
-  addComponent(
-    component:
-      | NodeComponent
-      | SlotComponent
-      | ConnectionComponent
-      | TextComponent
-  ) {
-    switch (component.type) {
+  addComponent(component: Component) {
+    switch (component.componentType) {
       case ComponentType.NODE:
         this.nodeList[this.lastComponentId] = component as NodeComponent;
         break;

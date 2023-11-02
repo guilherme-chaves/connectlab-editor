@@ -10,8 +10,7 @@ export default {
       const keyN = parseInt(key);
       const collision = Editor.editorEnv
         .getComponents()
-        ['texts'][keyN].getCollisionShape()
-        .collisionWithPoint(Mouse.position);
+        ['texts'][keyN].collisionShape.collisionWithPoint(Mouse.position);
       if (collision) collidedWith.push(keyN);
       collided = collided || collision;
     });

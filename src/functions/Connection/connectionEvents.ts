@@ -3,6 +3,7 @@ import Vector2 from '../../types/Vector2';
 import ComponentType from '../../types/types';
 import Mouse from '../../types/Mouse';
 import slotEvents from '../slotEvents';
+import SlotComponent from '../../components/SlotComponent';
 
 export default {
   editingLineId: -1,
@@ -20,10 +21,11 @@ export default {
         const keyN = parseInt(key);
         const collision = Editor.editorEnv
           .getComponents()
-          ['connections'][keyN].getCollisionShape()
-          .collisionWithPoint(Mouse.position);
-        if (collision) collidedWith.push(keyN);
-        collided = collided || collision;
+          ['connections'][keyN].collisionShape.find(collisionShape => {
+            return collisionShape.collisionWithPoint(Mouse.position);
+          });
+        if (collision !== undefined) collidedWith.push(keyN);
+        collided = collided || collision !== undefined;
       }
     );
     return collided ? collidedWith : undefined;
@@ -35,11 +37,14 @@ export default {
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
       const slot = Editor.editorEnv.getComponents().slots[key];
-      const slotPosition = slot.position.add(slot.getParentPosition());
-      this.editingLineId = editor.line(slotPosition.x, slotPosition.y, {
-        type: ComponentType.SLOT,
-        id: key,
-      });
+      this.editingLineId = editor.line(
+        slot.globalPosition.x,
+        slot.globalPosition.y,
+        {
+          type: ComponentType.SLOT,
+          id: key,
+        }
+      );
       this.editingLine = true;
       this.oldSlotCollision = this.slotCollision;
       this.slotCollision = key;
@@ -56,7 +61,7 @@ export default {
     if (this.editingLine && this.editingLineId !== -1) {
       Editor.editorEnv
         .getComponents()
-        .connections[this.editingLineId].changePosition(position, 1, false);
+        .connections[this.editingLineId].move(position, 1, false, false);
       this.bindConnection();
       return true;
     }
@@ -66,21 +71,20 @@ export default {
   fixLine() {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
-      const currentSlotCollision = slotEvents.checkSlotClick();
+      const currentSlotCollisions = slotEvents.checkSlotClick();
       if (
         this.slotCollision !== -1 &&
-        currentSlotCollision !== undefined &&
-        currentSlotCollision[0] !== this.lineStartSlot
+        currentSlotCollisions !== undefined &&
+        currentSlotCollisions[0] !== this.lineStartSlot
       ) {
         // Comparação para evitar conexões entre o mesmo slot
-        if (
-          Editor.editorEnv
-            .getComponents()
-            .slots[this.lineStartSlot].getInSlot() ===
-          Editor.editorEnv
-            .getComponents()
-            .slots[currentSlotCollision[0]].getInSlot()
-        ) {
+        let startSlot =
+          Editor.editorEnv.getComponents().slots[this.lineStartSlot];
+        let currentSlot =
+          Editor.editorEnv.getComponents().slots[currentSlotCollisions[0]];
+        const currentLine =
+          Editor.editorEnv.getComponents().connections[this.editingLineId];
+        if (startSlot.inSlot === currentSlot.inSlot) {
           delete Editor.editorEnv.getComponents().connections[
             this.editingLineId
           ];
@@ -89,44 +93,36 @@ export default {
         }
 
         // Caso a conexão esteja sendo feita de forma inversa (in -> out), trocar o valor dos parâmetros
-        else if (
-          !Editor.editorEnv
-            .getComponents()
-            .slots[currentSlotCollision[0]].getInSlot()
-        ) {
+        else if (!currentSlot.inSlot) {
           const temp = this.lineStartSlot;
-          this.lineStartSlot = currentSlotCollision[0];
-          currentSlotCollision[0] = temp;
+          const tempObj = startSlot;
+          this.lineStartSlot = currentSlotCollisions[0];
+          startSlot = currentSlot;
+          currentSlotCollisions[0] = temp;
+          currentSlot = tempObj;
         }
 
-        // Remove uma antiga conexão nos slots inicial e final, se existir
-        this.removeOldConnection(this.lineStartSlot);
-        this.removeOldConnection(currentSlotCollision[0]);
+        // Remove uma conexão anterior no slot de entrada, se existir
+        this.removeOldInSlotConnection(startSlot);
+        this.removeOldInSlotConnection(currentSlot);
 
         // Atribui a nova conexão aos slots
-        Editor.editorEnv
-          .getComponents()
-          .slots[this.lineStartSlot].setConnectionId(this.editingLineId);
-        Editor.editorEnv
-          .getComponents()
-          .slots[currentSlotCollision[0]].setConnectionId(this.editingLineId);
+        startSlot.slotConnections = [...startSlot.slotConnections, currentLine];
+        currentSlot.slotConnections = [
+          ...currentSlot.slotConnections,
+          currentLine,
+        ];
 
         // Define as posições inicial e final da conexão para os dois slots
-        this.setConnectionParams(
-          Editor.editorEnv
-            .getComponents()
-            .slots[this.lineStartSlot].getPosition(true),
-          Editor.editorEnv
-            .getComponents()
-            .slots[currentSlotCollision[0]].getPosition(true),
+        this.changeConnectionParams(
+          startSlot.globalPosition,
+          currentSlot.globalPosition,
           this.lineStartSlot,
-          currentSlotCollision[0]
+          currentSlotCollisions[0]
         );
 
         // Cria conjunto de caixas de colisão para a conexão
-        Editor.editorEnv
-          .getComponents()
-          .connections[this.editingLineId].generateCollisionShapes();
+        currentLine.collisionShape = currentLine.generateCollisionShapes();
 
         // Retorna a lista de parâmetros do objeto para seus valores padrão
         this.resetConnEventParams();
@@ -145,38 +141,29 @@ export default {
 
   bindConnection() {
     if (this.editingLine && this.editingLineId !== -1) {
-      const slotCollided = slotEvents.checkSlotClick();
-      if (slotCollided !== undefined) {
+      const slotCollisions = slotEvents.checkSlotClick();
+      const currentLine =
+        Editor.editorEnv.getComponents().connections[this.editingLineId];
+      if (slotCollisions !== undefined) {
         // Evitar colisões com o slot de onde a linha se origina
-        if (
-          Editor.editorEnv.getComponents().connections[this.editingLineId]
-            .connectedTo.start?.id !== slotCollided[0]
-        ) {
-          const collisionWith =
-            Editor.editorEnv.getComponents().slots[slotCollided[0]];
+        if (currentLine.connectedTo.start?.id !== slotCollisions[0]) {
+          const slotCollided =
+            Editor.editorEnv.getComponents().slots[slotCollisions[0]];
           this.oldSlotCollision = this.slotCollision;
-          this.slotCollision = slotCollided[0];
-          // A posição do slot é relativa ao seu componente-pai
-          const collisionPos = collisionWith.position.add(
-            collisionWith.getParentPosition()
-          );
+          this.slotCollision = slotCollisions[0];
           // Fixa a posição da linha para o slot
-          Editor.editorEnv.getComponents().connections[
-            this.editingLineId
-          ].endPosition = collisionPos;
+          currentLine.endPosition = new Vector2(slotCollided.globalPosition);
         }
       } else {
         if (this.slotCollision !== -1) {
           this.oldSlotCollision = this.slotCollision;
           this.slotCollision = -1;
         }
-        Editor.editorEnv.getComponents().connections[
-          this.editingLineId
-        ].endPosition = Mouse.position;
+        currentLine.endPosition = Mouse.position;
       }
     }
   },
-  setConnectionParams(
+  changeConnectionParams(
     startPos?: Vector2,
     endPos?: Vector2,
     startSlotId?: number,
@@ -185,11 +172,11 @@ export default {
     if (startPos !== undefined)
       Editor.editorEnv
         .getComponents()
-        .connections[this.editingLineId].changePosition(startPos, 0, false);
+        .connections[this.editingLineId].move(startPos, 0, false, false);
     if (endPos !== undefined)
       Editor.editorEnv
         .getComponents()
-        .connections[this.editingLineId].changePosition(endPos, 1, false);
+        .connections[this.editingLineId].move(endPos, 1, false, false);
     if (startSlotId !== undefined)
       Editor.editorEnv
         .getComponents()
@@ -207,23 +194,34 @@ export default {
           true
         );
   },
-  removeOldConnection(slotId: number) {
-    const oldConnectionId = Editor.editorEnv
-      .getComponents()
-      .slots[slotId].getConnectionId();
-    if (oldConnectionId !== -1) {
-      const oldConnection =
-        Editor.editorEnv.getComponents().connections[oldConnectionId];
-      Editor.editorEnv.getComponents().slots[slotId].setConnectionId(-1);
+  removeOldInSlotConnection(slot: SlotComponent) {
+    if (!slot.inSlot) return;
+    const oldConnection = slot.slotConnections[0];
+    if (oldConnection !== undefined) {
+      slot.slotConnections.shift();
       if (oldConnection.connectedTo.start)
         Editor.editorEnv
           .getComponents()
-          .slots[oldConnection.connectedTo.start.id].setConnectionId(-1);
+          .slots[oldConnection.connectedTo.start.id].slotConnections.find(
+            (connection, index, arr) => {
+              if (connection.id === oldConnection.connectedTo.start?.id) {
+                arr.splice(index, 1);
+                return true;
+              } else return false;
+            }
+          );
       if (oldConnection.connectedTo.end)
         Editor.editorEnv
           .getComponents()
-          .slots[oldConnection.connectedTo.end.id].setConnectionId(-1);
-      delete Editor.editorEnv.getComponents().connections[oldConnectionId];
+          .slots[oldConnection.connectedTo.end.id].slotConnections.find(
+            (connection, index, arr) => {
+              if (connection.id === oldConnection.connectedTo.end?.id) {
+                arr.splice(index, 1);
+                return true;
+              } else return false;
+            }
+          );
+      delete Editor.editorEnv.getComponents().connections[oldConnection.id];
     }
   },
   resetConnEventParams() {

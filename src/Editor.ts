@@ -1,4 +1,4 @@
-import ComponentType, {componentAssocInterface, nodeTypes} from './types/types';
+import {componentAssocInterface, nodeTypes} from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
 import updateAll, {
   updateBackground,
@@ -9,7 +9,7 @@ import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
 import Vector2 from './types/Vector2';
-import Component from './components/Component';
+import Component from './interfaces/componentInterface';
 import SlotComponent from './components/SlotComponent';
 import EditorEvents from './functions/events';
 import Mouse from './types/Mouse';
@@ -23,7 +23,7 @@ export default class Editor {
   private canvasCtx: CanvasRenderingContext2D;
   private backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: Vector2; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
   public readonly frameRate: number;
 
@@ -47,7 +47,7 @@ export default class Editor {
     this.backgroundCtx = this.createContext(backgroundDOM);
     this.createEditorEvents(canvasDOM, backgroundDOM);
     this.backgroundPattern = null;
-    this.canvasArea = new Vector2(canvasVw, canvasVh, true);
+    this.canvasArea = new DOMPoint(canvasVw, canvasVh);
     this.loadPattern(bgTexturePath);
     this.frameRate = frameRate;
     this.compute();
@@ -152,30 +152,26 @@ export default class Editor {
     x: number = Mouse.position.x,
     y: number = Mouse.position.y
   ) {
-    const slotKeys: Array<number> = [];
+    const slots: Array<SlotComponent> = [];
     const newNode = new NodeComponent(
       Editor.editorEnv.getLastComponentId(),
       new Vector2(x, y),
       type,
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
-      slotKeys
+      slots
     );
     const newNodeId = Editor.editorEnv.addComponent(newNode);
     NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
-      const key = this.slot(
+      const slotKey = this.slot(
         slot.localPos.x,
         slot.localPos.y,
-        ComponentType.NODE,
-        newNodeId,
-        newNode.position,
+        Editor.editorEnv.getComponents().nodes[newNodeId],
         slot.in
       );
-      slotKeys.push(key);
+      slots.push(Editor.editorEnv.getComponents().slots[slotKey]);
     });
-    Editor.editorEnv
-      .getComponents()
-      .nodes[newNodeId].addSlotComponents(slotKeys);
+    Editor.editorEnv.getComponents().nodes[newNodeId].slotComponents = slots;
     this.draw(true, false);
     return newNodeId;
   }
@@ -192,6 +188,7 @@ export default class Editor {
       new Vector2(x1, y1),
       {start: from, end: to}
     );
+    this.draw(true, false);
     return Editor.editorEnv.addComponent(newLine);
   }
 
@@ -201,17 +198,17 @@ export default class Editor {
       new Vector2(x, y),
       text,
       style,
-      parent
+      parent,
+      this.canvasCtx
     );
+    this.draw(true, false);
     return Editor.editorEnv.addComponent(newText);
   }
 
   slot(
     x: number,
     y: number,
-    parentType: ComponentType,
-    parentId: number,
-    parentPosition: Vector2,
+    parent: Component,
     inSlot?: boolean,
     radius?: number,
     attractionRadius?: number,
@@ -221,9 +218,7 @@ export default class Editor {
     const newSlot = new SlotComponent(
       Editor.editorEnv.getLastComponentId(),
       new Vector2(x, y),
-      parentType,
-      parentId,
-      parentPosition,
+      parent,
       undefined,
       inSlot,
       radius,

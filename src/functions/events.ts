@@ -1,5 +1,4 @@
 import Editor from '../Editor';
-import Vector2 from '../types/Vector2';
 import connectionEvents from './Connection/connectionEvents';
 import nodeEvents from './nodeEvents';
 import slotEvents from './slotEvents';
@@ -42,7 +41,7 @@ export default class EditorEvents {
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined)
-        Editor.editorEnv.getComponents().slots[slotId[0]].setState(true);
+        Editor.editorEnv.getComponents().slots[slotId[0]].state = true;
       this.clearUnselectedComponents(undefined, slotId);
 
       this.collisionList = {
@@ -84,7 +83,7 @@ export default class EditorEvents {
     if (this.collisionList.slots !== undefined) {
       this.collisionList.slots.forEach(slot => {
         if (!newSlotIds?.includes(slot)) {
-          Editor.editorEnv.getComponents().slots[slot].setState(false);
+          Editor.editorEnv.getComponents().slots[slot].state = false;
         }
       });
     }
