@@ -6,6 +6,7 @@ interface Vector2 {
   div(other: Vector2, forceFloat: boolean): Vector2;
   dot(other: Vector2): number;
   cross(other: Vector2): number;
+  mag(): number;
   magSq(): number;
   madd(other: Vector2, s: number, forceFloat: boolean): Vector2;
   lerp(other: Vector2, t: number, forceFloat: boolean): Vector2;
@@ -83,6 +84,10 @@ class Vector2 {
     return this.x * other.y - this.y * other.x;
   }
 
+  mag(): number {
+    return Math.sqrt(this.magSq());
+  }
+
   magSq(): number {
     return this.dot(this);
   }
@@ -97,7 +102,11 @@ class Vector2 {
   }
 
   // Interpolação bilinear
-  bilinear(other: Vector2, bt: Vector2, forceFloat = false): Vector2 {
+  bilinear(
+    other: Vector2,
+    bt: Vector2 | DOMPoint,
+    forceFloat = false
+  ): Vector2 {
     return new Vector2(
       this.lerp(other, bt.x, forceFloat).x,
       this.lerp(other, bt.y, forceFloat).y,
