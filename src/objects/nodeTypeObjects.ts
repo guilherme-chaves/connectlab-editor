@@ -1,5 +1,5 @@
-import {NodeTypeInterface, nodeTypes} from './types';
-import Vector2 from './Vector2';
+import {NodeTypeInterface, nodeTypes} from '../types/types';
+import Vector2 from '../types/Vector2';
 
 const ADDNode: NodeTypeInterface = {
   id: nodeTypes.ADD,
