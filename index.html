@@ -8,12 +8,53 @@
   </head>
   <body>
     <div id="app">
-      <canvas id="editor-background" width="2400" height="1080">
-        Parece que seu navegador não suporta a utilização de canvas.
-      </canvas>
-      <canvas id="editor-canvas" width="2400" height="1080">
-        Parece que seu navegador não suporta a utilização de canvas.
-      </canvas>
+      <div id="app-sidebar">
+        <ul id="app-key-list">
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/AND_ANSI.svg"/>
+            <span>AND</span>
+            <span>A</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/OR_ANSI.svg"/>
+            <span>OR</span>
+            <span>O</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/NOT_ANSI.svg"/>
+            <span>NOT</span>
+            <span>N</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/NAND_ANSI.svg"/>
+            <span>NAND</span>
+            <span>D</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/NOR_ANSI.svg"/>
+            <span>NOR</span>
+            <span>R</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/XOR_ANSI.svg"/>
+            <span>XOR</span>
+            <span>X</span>
+          </li>
+          <li class="app-key-item">
+            <img class="app-key-gate-img" src="/src/assets/gates/XNOR_ANSI.svg"/>
+            <span>XNOR</span>
+            <span>V</span>
+          </li>
+        </ul>
+      </div>
+      <div class="app-canvas-el">
+        <canvas id="editor-background" width="2400" height="1080">
+          Parece que seu navegador não suporta a utilização de canvas.
+        </canvas>
+        <canvas id="editor-canvas" width="2400" height="1080">
+          Parece que seu navegador não suporta a utilização de canvas.
+        </canvas>
+      </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>

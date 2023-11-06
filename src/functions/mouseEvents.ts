@@ -13,16 +13,10 @@ interface collisionListInterface {
   texts: Array<number> | undefined;
 }
 
-export default class EditorEvents {
-  // private currentComponentType: ComponentType
-  // private currentNodeType: nodeTypes
-
+export default class MouseEvents {
   private collisionList: collisionListInterface;
 
   constructor() {
-    // this.currentComponentType = ComponentType.NODE
-    // this.currentNodeType = nodeTypes.NOT
-
     this.collisionList = {
       nodes: undefined,
       slots: undefined,
@@ -63,7 +57,7 @@ export default class EditorEvents {
     }
   }
 
-  mouseMove(editor: Editor) {
+  onMouseMove(editor: Editor) {
     if (Mouse.clicked) {
       connectionEvents.lineMove(Mouse.position);
       connectionEvents.addLine(editor);

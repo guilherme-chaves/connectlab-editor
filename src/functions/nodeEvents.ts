@@ -1,5 +1,5 @@
 import Vector2 from '../types/Vector2';
-import EditorEvents from './events';
+import MouseEvents from './mouseEvents';
 import connectionEvents from './Connection/connectionEvents';
 import Editor from '../Editor';
 import Mouse from '../types/Mouse';
@@ -20,13 +20,13 @@ export default {
     });
     return collided ? collidedWith : undefined;
   },
-  nodeMove(eventsObject: EditorEvents, v: Vector2, useDelta = true): boolean {
+  nodeMove(mouseEvents: MouseEvents, v: Vector2, useDelta = true): boolean {
     if (
-      eventsObject.getCollisionList().nodes !== undefined &&
+      mouseEvents.getCollisionList().nodes !== undefined &&
       !connectionEvents.editingLine
     ) {
       const key = Object.values(
-        eventsObject.getCollisionList().nodes as number[]
+        mouseEvents.getCollisionList().nodes as number[]
       )[0];
       const node = Editor.editorEnv.getComponents().nodes[key];
       node.move(v, useDelta);

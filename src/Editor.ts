@@ -11,44 +11,50 @@ import NodeComponent from './components/NodeComponent';
 import Vector2 from './types/Vector2';
 import Component from './interfaces/componentInterface';
 import SlotComponent from './components/SlotComponent';
-import EditorEvents from './functions/events';
+import MouseEvents from './functions/mouseEvents';
 import Mouse from './types/Mouse';
+import KeyboardEvents from './functions/keyboardEvents';
 
 export default class Editor {
   // Lista de componentes
   public static readonly editorEnv = new EditorEnvironment('');
   // Controle de eventos do canvas
-  private editorEvents: EditorEvents;
+  private mouseEvents: MouseEvents;
+  private keyboardEvents: KeyboardEvents;
+  private canvasId: string;
   // Contextos dos canvas
   private canvasCtx: CanvasRenderingContext2D;
   private backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
   private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
+  private windowArea: DOMPoint;
   public readonly frameRate: number;
 
   constructor(
     documentId: string,
     canvasID: string,
     backgroundID: string,
-    canvasVw: number,
-    canvasVh: number,
+    canvasVw = 1,
+    canvasVh = 1,
     frameRate = 60.0
   ) {
     Editor.editorEnv.documentId = documentId;
-    this.editorEvents = new EditorEvents();
+    this.mouseEvents = new MouseEvents();
+    this.keyboardEvents = new KeyboardEvents();
 
     const canvasDOM = <HTMLCanvasElement>document.getElementById(canvasID);
     const backgroundDOM = <HTMLCanvasElement>(
       document.getElementById(backgroundID)
     );
-
+    this.canvasId = canvasID;
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
     this.createEditorEvents(canvasDOM, backgroundDOM);
     this.backgroundPattern = null;
     this.canvasArea = new DOMPoint(canvasVw, canvasVh);
-    this.loadPattern(bgTexturePath);
+    this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
+    this.loadBackgroundPattern(bgTexturePath);
     this.frameRate = frameRate;
     this.compute();
   }
@@ -87,8 +93,11 @@ export default class Editor {
       const rect = this.canvasCtx.canvas.getBoundingClientRect();
       Mouse.position = new Vector2(clientX - rect.left, clientY - rect.top);
     });
+    window.addEventListener('keydown', (ev: KeyboardEvent) => {
+      this.keyboardEvents.onKeyDown(ev, this);
+    });
     window.addEventListener('keyup', () => {
-      this.node();
+      this.keyboardEvents.onKeyUp();
     });
   }
 
@@ -97,7 +106,7 @@ export default class Editor {
     return this.backgroundCtx;
   }
 
-  loadPattern(bgPath: string) {
+  loadBackgroundPattern(bgPath: string) {
     const backgroundImg = new Image();
     backgroundImg.onload = () => {
       this.backgroundPattern = this.backgroundCtx.createPattern(
@@ -108,6 +117,24 @@ export default class Editor {
     backgroundImg.src = bgPath;
   }
 
+  computeWindowArea() {
+    const canvasParentEl = document.getElementById(
+      this.canvasId
+    )?.parentElement;
+    if (canvasParentEl !== undefined && canvasParentEl !== null) {
+      const computedStyle = window.getComputedStyle(canvasParentEl);
+      this.windowArea.x = parseFloat(
+        computedStyle.width.substring(0, computedStyle.length - 2)
+      );
+      this.windowArea.y = parseFloat(
+        computedStyle.height.substring(0, computedStyle.length - 2)
+      );
+    } else {
+      this.windowArea.x = window.innerWidth;
+      this.windowArea.y = window.innerHeight;
+    }
+  }
+
   draw(canvas = true, background = false) {
     if (background)
       updateBackground(this.backgroundCtx, this.backgroundPattern);
@@ -115,10 +142,11 @@ export default class Editor {
   }
 
   resize() {
-    this.canvasCtx.canvas.width = window.innerWidth * this.canvasArea.x;
-    this.canvasCtx.canvas.height = window.innerHeight * this.canvasArea.y;
-    this.backgroundCtx.canvas.width = window.innerWidth * this.canvasArea.x;
-    this.backgroundCtx.canvas.height = window.innerHeight * this.canvasArea.y;
+    this.computeWindowArea();
+    this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+    this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+    this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+    this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
     requestAnimationFrame.bind(
       updateAll(
         this.canvasCtx,
@@ -132,7 +160,6 @@ export default class Editor {
   update = () => {
     requestAnimationFrame(this.update);
     this.draw(true);
-    this.editorEvents.mouseMove(this);
     // this.checkConnections()
     // this.checkCollisions()
     // To-Do -> Adicionar as seguintes partes:
@@ -142,8 +169,9 @@ export default class Editor {
 
   compute() {
     setInterval(() => {
-      this.editorEvents.onMouseClick();
-      this.editorEvents.onMouseRelease();
+      this.mouseEvents.onMouseMove(this);
+      this.mouseEvents.onMouseClick();
+      this.mouseEvents.onMouseRelease();
     }, 1000.0 / this.frameRate);
   }
 
