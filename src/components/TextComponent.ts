@@ -45,7 +45,7 @@ class TextComponent implements Component {
     this.style = style;
     this.parentNode = parent;
     this.canvasContext = ctx;
-    this.textSize = this.measureText(ctx, text, style);
+    this.textSize = this.measureText(text, style);
     this._collisionShape = new BBCollision(
       position,
       this.textSize.x,
@@ -53,15 +53,11 @@ class TextComponent implements Component {
     );
   }
 
-  private measureText(
-    ctx: CanvasRenderingContext2D,
-    text: string,
-    style: string
-  ): Vector2 {
-    ctx.font = style;
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    const textDimensions = ctx.measureText(text);
+  private measureText(text: string, style: string): Vector2 {
+    this.canvasContext.font = style;
+    this.canvasContext.textBaseline = 'top';
+    this.canvasContext.textAlign = 'left';
+    const textDimensions = this.canvasContext.measureText(text);
     return new Vector2(
       textDimensions.width,
       textDimensions.actualBoundingBoxDescent -
