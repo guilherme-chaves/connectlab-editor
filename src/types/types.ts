@@ -43,19 +43,19 @@ export interface ImageListObject {
   [index: string]: HTMLImageElement;
 }
 
-export interface nodeListInterface {
+export interface NodeList {
   [index: number]: NodeComponent;
 }
 
-export interface slotListInterface {
+export interface SlotList {
   [index: number]: SlotComponent;
 }
 
-export interface connectionListInterface {
+export interface ConnectionList {
   [index: number]: ConnectionComponent;
 }
 
-export interface textListInterface {
+export interface TextList {
   [index: number]: TextComponent;
 }
 
@@ -64,15 +64,12 @@ export interface InputList {
 }
 
 export interface componentListInterface {
-  [index: string]:
-    | nodeListInterface
-    | slotListInterface
-    | connectionListInterface
-    | textListInterface;
-  nodes: nodeListInterface;
-  slots: slotListInterface;
-  connections: connectionListInterface;
-  texts: textListInterface;
+  [index: string]: NodeList | SlotList | ConnectionList | TextList | InputList;
+  nodes: NodeList;
+  slots: SlotList;
+  connections: ConnectionList;
+  texts: TextList;
+  inputs: InputList;
 }
 
 export interface componentAssocInterface {
@@ -87,7 +84,7 @@ export interface connectionSlotsInterface {
 }
 
 // Modelo para criação de objetos do tipo NODE
-export interface NodeTypeInterface {
+export interface NodeTypeObject {
   readonly id: nodeTypes;
   readonly connectionSlots: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)

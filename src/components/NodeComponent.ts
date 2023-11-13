@@ -1,5 +1,5 @@
 import ComponentType, {nodeTypes} from '../types/types';
-import {NodeTypeInterface} from '../types/types';
+import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
   NANDNode,
@@ -19,7 +19,7 @@ class NodeComponent implements Component {
   public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
-  public readonly nodeType: NodeTypeInterface;
+  public readonly nodeType: NodeTypeObject;
   private _slotComponents: Array<SlotComponent>;
   private _collisionShape: BBCollision;
   private imageWidth: number;
@@ -83,7 +83,7 @@ class NodeComponent implements Component {
     );
   }
 
-  static getNodeTypeObject(type: nodeTypes): NodeTypeInterface {
+  static getNodeTypeObject(type: nodeTypes): NodeTypeObject {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
       case nodeTypes.ADD:

@@ -1,7 +1,7 @@
-import {NodeTypeInterface, nodeTypes} from '../types/types';
+import {NodeTypeObject, nodeTypes} from '../types/types';
 import Vector2 from '../types/Vector2';
 
-const ADDNode: NodeTypeInterface = {
+const ADDNode: NodeTypeObject = {
   id: nodeTypes.ADD,
   connectionSlots: [
     {
@@ -28,7 +28,7 @@ const ADDNode: NodeTypeInterface = {
   },
 };
 
-const NANDNode: NodeTypeInterface = {
+const NANDNode: NodeTypeObject = {
   id: nodeTypes.NAND,
   connectionSlots: [
     {
@@ -55,7 +55,7 @@ const NANDNode: NodeTypeInterface = {
   },
 };
 
-const NORNode: NodeTypeInterface = {
+const NORNode: NodeTypeObject = {
   id: nodeTypes.NOR,
   connectionSlots: [
     {
@@ -82,7 +82,7 @@ const NORNode: NodeTypeInterface = {
   },
 };
 
-const NOTNode: NodeTypeInterface = {
+const NOTNode: NodeTypeObject = {
   id: nodeTypes.NOT,
   connectionSlots: [
     {
@@ -103,7 +103,7 @@ const NOTNode: NodeTypeInterface = {
   },
 };
 
-const ORNode: NodeTypeInterface = {
+const ORNode: NodeTypeObject = {
   id: nodeTypes.OR,
   connectionSlots: [
     {
@@ -130,7 +130,7 @@ const ORNode: NodeTypeInterface = {
   },
 };
 
-const XNORNode: NodeTypeInterface = {
+const XNORNode: NodeTypeObject = {
   id: nodeTypes.XNOR,
   connectionSlots: [
     {
@@ -157,7 +157,7 @@ const XNORNode: NodeTypeInterface = {
   },
 };
 
-const XORNode: NodeTypeInterface = {
+const XORNode: NodeTypeObject = {
   id: nodeTypes.XOR,
   connectionSlots: [
     {

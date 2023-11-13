@@ -1,10 +1,11 @@
 import ComponentType, {
   ImageListObject,
   componentListInterface,
-  connectionListInterface,
-  nodeListInterface,
-  slotListInterface,
-  textListInterface,
+  NodeList,
+  ConnectionList,
+  SlotList,
+  TextList,
+  InputList,
 } from './types/types';
 import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
@@ -16,27 +17,30 @@ import Component from './interfaces/componentInterface';
 
 class EditorEnvironment {
   public documentId: string;
-  private lastComponentId: number;
-  private nodeList: nodeListInterface;
-  private slotList: slotListInterface;
-  private connectionList: connectionListInterface;
-  private textList: textListInterface;
+  private _nextComponentId: number;
+  private nodeList: NodeList;
+  private slotList: SlotList;
+  private connectionList: ConnectionList;
+  private textList: TextList;
+  private inputList: InputList;
   public static readonly nodeImageList: ImageListObject = preloadNodeImages();
   public static readonly IOImageList: ImageListObject = preloadIOImages();
   constructor(
     documentId: string,
-    lastComponentId = 0,
+    startId = 0,
     nodeList = {},
     slotList = {},
     connectionList = {},
-    textList = {}
+    textList = {},
+    inputList = {}
   ) {
     this.documentId = documentId;
-    this.lastComponentId = lastComponentId;
+    this._nextComponentId = startId;
     this.nodeList = nodeList;
     this.slotList = slotList;
     this.connectionList = connectionList;
     this.textList = textList;
+    this.inputList = inputList;
   }
 
   /* Getters e Setters */
@@ -58,32 +62,34 @@ class EditorEnvironment {
     return this.lastComponentId;
   }
 
-  setLastComponentId(id: number): void {
-    this.lastComponentId = id;
+  get nextComponentId(): number {
+    return this._nextComponentId;
   }
 
   addComponent(component: Component) {
     switch (component.componentType) {
       case ComponentType.NODE:
-        this.nodeList[this.lastComponentId] = component as NodeComponent;
+        this.nodeList[this._nextComponentId] = component as NodeComponent;
         break;
       case ComponentType.SLOT:
-        this.slotList[this.lastComponentId] = component as SlotComponent;
+        this.slotList[this._nextComponentId] = component as SlotComponent;
         break;
       case ComponentType.LINE:
-        this.connectionList[this.lastComponentId] =
+        this.connectionList[this._nextComponentId] =
           component as ConnectionComponent;
         break;
       case ComponentType.TEXT:
-        this.textList[this.lastComponentId] = component as TextComponent;
+        this.textList[this._nextComponentId] = component as TextComponent;
         break;
+      case ComponentType.INPUT:
+        this.inputList[this._nextComponentId] = component as InputComponent;
     }
-    this.lastComponentId += 1;
-    return this.lastComponentId - 1;
+    this._nextComponentId += 1;
+    return this._nextComponentId - 1;
   }
 
   removeComponent(
-    componentId: number = this.lastComponentId,
+    componentId: number = this._nextComponentId - 1,
     type?: ComponentType
   ): void {
     if (type) {

@@ -176,14 +176,10 @@ export default class Editor {
     }, 1000.0 / this.frameRate);
   }
 
-  node(
-    type: nodeTypes = nodeTypes.ADD,
-    x: number = Mouse.position.x,
-    y: number = Mouse.position.y
-  ) {
+  node(type = nodeTypes.ADD, x = Mouse.position.x, y = Mouse.position.y) {
     const slots: Array<SlotComponent> = [];
     const newNode = new NodeComponent(
-      Editor.editorEnv.getLastComponentId(),
+      Editor.editorEnv.nextComponentId,
       new Vector2(x, y),
       type,
       this.canvasCtx.canvas.width,
