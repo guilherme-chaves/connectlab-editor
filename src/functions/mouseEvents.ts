@@ -34,8 +34,7 @@ export default class MouseEvents {
       const textId = textEvents.checkTextClick();
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      if (slotId !== undefined)
-        Editor.editorEnv.getComponents().slots[slotId[0]].state = true;
+      if (slotId !== undefined) Editor.editorEnv.slots[slotId[0]].state = true;
       this.clearUnselectedComponents(undefined, slotId);
 
       this.collisionList = {
@@ -77,7 +76,7 @@ export default class MouseEvents {
     if (this.collisionList.slots !== undefined) {
       this.collisionList.slots.forEach(slot => {
         if (!newSlotIds?.includes(slot)) {
-          Editor.editorEnv.getComponents().slots[slot].state = false;
+          Editor.editorEnv.slots[slot].state = false;
         }
       });
     }

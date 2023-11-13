@@ -6,11 +6,11 @@ export default {
   checkSlotClick(): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
-    Object.keys(Editor.editorEnv.getComponents()['slots']).forEach(key => {
+    Object.keys(Editor.editorEnv.slots).forEach(key => {
       const keyN = parseInt(key);
-      const collision = Editor.editorEnv
-        .getComponents()
-        ['slots'][keyN].collisionShape.collisionWithPoint(Mouse.position);
+      const collision = Editor.editorEnv.slots[
+        keyN
+      ].collisionShape.collisionWithPoint(Mouse.position);
       if (collision) collidedWith.push(keyN);
       collided = collided || collision;
     });

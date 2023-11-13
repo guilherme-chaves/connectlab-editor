@@ -6,11 +6,11 @@ export default {
   checkTextClick(): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
-    Object.keys(Editor.editorEnv.getComponents()['texts']).forEach(key => {
+    Object.keys(Editor.editorEnv.texts).forEach(key => {
       const keyN = parseInt(key);
-      const collision = Editor.editorEnv
-        .getComponents()
-        ['texts'][keyN].collisionShape.collisionWithPoint(Mouse.position);
+      const collision = Editor.editorEnv.texts[
+        keyN
+      ].collisionShape.collisionWithPoint(Mouse.position);
       if (collision) collidedWith.push(keyN);
       collided = collided || collision;
     });

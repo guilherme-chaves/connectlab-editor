@@ -14,6 +14,7 @@ import TextComponent from './components/TextComponent';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
 import preloadIOImages from './functions/IO/preloadIOImages';
 import Component from './interfaces/componentInterface';
+import InputComponent from './components/InputComponent';
 
 class EditorEnvironment {
   public documentId: string;
@@ -49,17 +50,34 @@ class EditorEnvironment {
     return this.documentId;
   }
 
-  getComponents(): componentListInterface {
+  get components(): componentListInterface {
     return {
       nodes: this.nodeList,
       slots: this.slotList,
       connections: this.connectionList,
       texts: this.textList,
+      inputs: this.inputList,
     };
   }
 
-  getLastComponentId(): number {
-    return this.lastComponentId;
+  get nodes(): NodeList {
+    return this.nodeList;
+  }
+
+  get slots(): SlotList {
+    return this.slotList;
+  }
+
+  get connections(): ConnectionList {
+    return this.connectionList;
+  }
+
+  get texts(): TextList {
+    return this.textList;
+  }
+
+  get inputs(): InputList {
+    return this.inputList;
   }
 
   get nextComponentId(): number {

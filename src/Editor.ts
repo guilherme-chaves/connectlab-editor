@@ -139,7 +139,7 @@ export default class Editor {
   draw(canvas = true, background = false) {
     if (background)
       updateBackground(this.backgroundCtx, this.backgroundPattern);
-    if (canvas) updateCanvas(this.canvasCtx, Editor.editorEnv.getComponents());
+    if (canvas) updateCanvas(this.canvasCtx, Editor.editorEnv.components);
   }
 
   resize() {
@@ -151,7 +151,7 @@ export default class Editor {
     requestAnimationFrame.bind(
       updateAll(
         this.canvasCtx,
-        Editor.editorEnv.getComponents(),
+        Editor.editorEnv.components,
         this.backgroundCtx,
         this.backgroundPattern
       )
@@ -191,14 +191,35 @@ export default class Editor {
       const slotKey = this.slot(
         slot.localPos.x,
         slot.localPos.y,
-        Editor.editorEnv.getComponents().nodes[newNodeId],
+        Editor.editorEnv.nodes[newNodeId],
         slot.in
       );
-      slots.push(Editor.editorEnv.getComponents().slots[slotKey]);
+      slots.push(Editor.editorEnv.slots[slotKey]);
     });
-    Editor.editorEnv.getComponents().nodes[newNodeId].slotComponents = slots;
+    Editor.editorEnv.nodes[newNodeId].slotComponents = slots;
     this.draw(true, false);
     return newNodeId;
+  }
+
+  input(type = inputTypes.SWITCH, x = Mouse.position.x, y = Mouse.position.y) {
+    const newInput = new InputComponent(
+      Editor.editorEnv.nextComponentId,
+      new Vector2(x, y),
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      type,
+      undefined
+    );
+    const newInputId = Editor.editorEnv.addComponent(newInput);
+    const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
+    const slotId = this.slot(
+      slotInfo.localPos.x,
+      slotInfo.localPos.y,
+      Editor.editorEnv.inputs[newInputId],
+      false
+    );
+    Editor.editorEnv.inputs[newInputId].slotComponent =
+      Editor.editorEnv.slots[slotId];
   }
 
   line(
@@ -208,7 +229,7 @@ export default class Editor {
     to?: componentAssocInterface
   ) {
     const newLine = new ConnectionComponent(
-      Editor.editorEnv.getLastComponentId(),
+      Editor.editorEnv.nextComponentId,
       new Vector2(x1, y1),
       new Vector2(x1, y1),
       {start: from, end: to}
@@ -219,7 +240,7 @@ export default class Editor {
 
   text(text: string, x: number, y: number, style?: string, parent?: Component) {
     const newText = new TextComponent(
-      Editor.editorEnv.getLastComponentId(),
+      Editor.editorEnv.nextComponentId,
       new Vector2(x, y),
       text,
       style,
@@ -241,7 +262,7 @@ export default class Editor {
     colorActive?: string
   ) {
     const newSlot = new SlotComponent(
-      Editor.editorEnv.getLastComponentId(),
+      Editor.editorEnv.nextComponentId,
       new Vector2(x, y),
       parent,
       undefined,

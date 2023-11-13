@@ -10,11 +10,11 @@ export default {
   checkNodeClick(): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
-    Object.keys(Editor.editorEnv.getComponents()['nodes']).forEach(key => {
+    Object.keys(Editor.editorEnv.nodes).forEach(key => {
       const keyN = parseInt(key);
-      const collision = Editor.editorEnv
-        .getComponents()
-        ['nodes'][keyN].collisionShape.collisionWithPoint(Mouse.position);
+      const collision = Editor.editorEnv.nodes[
+        keyN
+      ].collisionShape.collisionWithPoint(Mouse.position);
       if (collision) collidedWith.push(keyN);
       collided = collided || collision;
     });
@@ -28,7 +28,7 @@ export default {
       const key = Object.values(
         mouseEvents.getCollisionList().nodes as number[]
       )[0];
-      const node = Editor.editorEnv.getComponents().nodes[key];
+      const node = Editor.editorEnv.nodes[key];
       node.move(v, useDelta);
       this.moveNodeAssociatedElements(node, useDelta);
       return true;
