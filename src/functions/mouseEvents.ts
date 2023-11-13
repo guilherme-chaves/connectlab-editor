@@ -1,6 +1,6 @@
 import Editor from '../Editor';
 import connectionEvents from './Connection/connectionEvents';
-import nodeEvents from './nodeEvents';
+import nodeEvents from './Node/nodeEvents';
 import slotEvents from './slotEvents';
 import textEvents from './textEvents';
 import Mouse from '../types/Mouse';

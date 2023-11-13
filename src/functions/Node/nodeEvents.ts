@@ -1,9 +1,9 @@
-import Vector2 from '../types/Vector2';
-import MouseEvents from './mouseEvents';
-import connectionEvents from './Connection/connectionEvents';
-import Editor from '../Editor';
-import Mouse from '../types/Mouse';
-import NodeComponent from '../components/NodeComponent';
+import Vector2 from '../../types/Vector2';
+import MouseEvents from '../mouseEvents';
+import connectionEvents from '../Connection/connectionEvents';
+import Editor from '../../Editor';
+import Mouse from '../../types/Mouse';
+import NodeComponent from '../../components/NodeComponent';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
