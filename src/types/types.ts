@@ -1,4 +1,5 @@
 import ConnectionComponent from '../components/ConnectionComponent';
+import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
@@ -9,6 +10,8 @@ enum ComponentType {
   NODE = 2,
   TEXT = 3,
   SLOT = 4,
+  INPUT = 5,
+  OUTPUT = 6,
 }
 
 export enum nodeTypes {
@@ -19,6 +22,14 @@ export enum nodeTypes {
   OR = 4,
   XNOR = 5,
   XOR = 6,
+}
+
+export enum inputTypes {
+  SWITCH = 0,
+}
+
+export enum outputTypes {
+  MONO_LED = 1,
 }
 
 export enum EditorMode {
@@ -46,6 +57,10 @@ export interface connectionListInterface {
 
 export interface textListInterface {
   [index: number]: TextComponent;
+}
+
+export interface InputList {
+  [index: number]: InputComponent;
 }
 
 export interface componentListInterface {
@@ -81,6 +96,16 @@ export interface NodeTypeInterface {
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
   readonly op: (slotsState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
+}
+
+export interface InputTypeObject {
+  readonly id: inputTypes;
+  readonly connectionSlot: {
+    id: number;
+    name: string;
+    localPos: Vector2;
+  };
+  readonly op: (slotState: boolean) => boolean;
 }
 
 export default ComponentType;

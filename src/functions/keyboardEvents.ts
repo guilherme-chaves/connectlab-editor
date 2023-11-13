@@ -1,6 +1,6 @@
 import Editor from '../Editor';
 import Keyboard from '../types/Keyboard';
-import {nodeTypes} from '../types/types';
+import {inputTypes, nodeTypes} from '../types/types';
 
 export enum keyboardMode {
   ADD_NODE = 0,
@@ -8,7 +8,7 @@ export enum keyboardMode {
 }
 
 // *_u = uppercase/letras maiúsuculas
-export enum nodeKeycodes {
+enum nodeKeycodes {
   ADD = 'a',
   ADD_u = 'A',
   NAND = 'd',
@@ -25,6 +25,11 @@ export enum nodeKeycodes {
   XOR_u = 'X',
 }
 
+enum inputKeycodes {
+  SWITCH = 's',
+  SWITCH_u = 'S',
+}
+
 export default class KeyboardEvents {
   onKeyDown(ev: KeyboardEvent, editor: Editor) {
     Keyboard.key = ev.key;
@@ -34,10 +39,10 @@ export default class KeyboardEvents {
       Keyboard.keyPressed = true;
       Keyboard.keyHold = false;
     }
-    if (!Keyboard.keyHold) this.addNodeByKeyPressed(editor);
+    if (!Keyboard.keyHold) this.addComponentByKeyPressed(editor);
   }
 
-  addNodeByKeyPressed(editor: Editor) {
+  addComponentByKeyPressed(editor: Editor) {
     switch (Keyboard.key) {
       case nodeKeycodes.ADD:
       case nodeKeycodes.ADD_u:
@@ -66,6 +71,10 @@ export default class KeyboardEvents {
       case nodeKeycodes.XOR:
       case nodeKeycodes.XOR_u:
         editor.node(nodeTypes.XOR);
+        break;
+      case inputKeycodes.SWITCH:
+      case inputKeycodes.SWITCH_u:
+        editor.input(inputTypes.SWITCH);
         break;
     }
   }

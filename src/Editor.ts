@@ -1,4 +1,4 @@
-import {componentAssocInterface, nodeTypes} from './types/types';
+import {componentAssocInterface, inputTypes, nodeTypes} from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
 import updateAll, {
   updateBackground,
@@ -14,6 +14,7 @@ import SlotComponent from './components/SlotComponent';
 import MouseEvents from './functions/mouseEvents';
 import Mouse from './types/Mouse';
 import KeyboardEvents from './functions/keyboardEvents';
+import InputComponent from './components/InputComponent';
 
 export default class Editor {
   // Lista de componentes

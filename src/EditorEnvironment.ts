@@ -11,6 +11,7 @@ import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
+import preloadIOImages from './functions/IO/preloadIOImages';
 import Component from './interfaces/componentInterface';
 
 class EditorEnvironment {
@@ -21,6 +22,7 @@ class EditorEnvironment {
   private connectionList: connectionListInterface;
   private textList: textListInterface;
   public static readonly nodeImageList: ImageListObject = preloadNodeImages();
+  public static readonly IOImageList: ImageListObject = preloadIOImages();
   constructor(
     documentId: string,
     lastComponentId = 0,
