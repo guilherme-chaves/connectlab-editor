@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="70" height="50" version="1.1" viewBox="0 0 70 50" xmlns="http://www.w3.org/2000/svg">
+ <g>
+  <rect x="1" y="1" width="48" height="48" fill="#fff" stroke="#000" stroke-width="2"/>
+  <path d="m49.5 25.044h21.5" fill="#fff" stroke="#000" stroke-width="2.1136"/>
+  <text x="15.848" y="36.439999" fill="#000000" font-family="sans-serif" font-size="32px" stroke="#000000" style="font-variant-caps:normal;font-variant-east-asian:normal;font-variant-ligatures:normal;font-variant-numeric:normal" xml:space="preserve"><tspan>1</tspan></text>
+ </g>
+</svg>
