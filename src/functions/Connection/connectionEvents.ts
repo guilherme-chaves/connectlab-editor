@@ -4,6 +4,8 @@ import ComponentType from '../../types/types';
 import Mouse from '../../types/Mouse';
 import slotEvents from '../slotEvents';
 import SlotComponent from '../../components/SlotComponent';
+import nodeEvents from '../Node/nodeEvents';
+import inputEvents from '../IO/inputEvents';
 
 export default {
   editingLineId: -1,
@@ -31,6 +33,7 @@ export default {
 
   addLine(editor: Editor) {
     if (this.editingLine && this.editingLineId !== -1) return true;
+    if (nodeEvents.editingNode) return false;
     const slotCollisions = slotEvents.checkSlotClick();
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
@@ -55,18 +58,23 @@ export default {
     return false;
   },
 
-  lineMove(position: Vector2) {
-    if (this.editingLine && this.editingLineId !== -1) {
-      Editor.editorEnv.connections[this.editingLineId].move(
-        position,
-        1,
-        false,
-        false
-      );
-      this.bindConnection();
-      return true;
-    }
-    return false;
+  move(position: Vector2) {
+    if (
+      !this.editingLine ||
+      this.editingLineId === -1 ||
+      nodeEvents.editingNode ||
+      inputEvents.editingInput
+    )
+      return false;
+
+    Editor.editorEnv.connections[this.editingLineId].move(
+      position,
+      1,
+      false,
+      false
+    );
+    this.bindConnection();
+    return true;
   },
 
   fixLine() {

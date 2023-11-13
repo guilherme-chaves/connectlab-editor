@@ -4,6 +4,7 @@ import nodeEvents from './Node/nodeEvents';
 import slotEvents from './slotEvents';
 import textEvents from './textEvents';
 import Mouse from '../types/Mouse';
+import inputEvents from './IO/inputEvents';
 
 interface collisionListInterface {
   [index: string]: Array<number> | undefined;
@@ -11,6 +12,7 @@ interface collisionListInterface {
   slots: Array<number> | undefined;
   connections: Array<number> | undefined;
   texts: Array<number> | undefined;
+  inputs: Array<number> | undefined;
 }
 
 export default class MouseEvents {
@@ -22,6 +24,7 @@ export default class MouseEvents {
       slots: undefined,
       connections: undefined,
       texts: undefined,
+      inputs: undefined,
     };
   }
 
@@ -32,6 +35,7 @@ export default class MouseEvents {
       const slotId = slotEvents.checkSlotClick();
       const connectionId = connectionEvents.checkConnectionClick();
       const textId = textEvents.checkTextClick();
+      const inputId = inputEvents.checkInputClick();
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined) Editor.editorEnv.slots[slotId[0]].state = true;
@@ -42,6 +46,7 @@ export default class MouseEvents {
         slots: slotId,
         connections: connectionId,
         texts: textId,
+        inputs: inputId,
       };
       Mouse.stateChanged = false;
     }
@@ -58,10 +63,12 @@ export default class MouseEvents {
 
   onMouseMove(editor: Editor) {
     if (Mouse.clicked) {
-      connectionEvents.lineMove(Mouse.position);
-      connectionEvents.addLine(editor);
-      nodeEvents.nodeMove(this, Mouse.position, false);
-      return true;
+      return (
+        connectionEvents.move(Mouse.position) ||
+        connectionEvents.addLine(editor) ||
+        nodeEvents.move(this, Mouse.position, false) ||
+        inputEvents.move(this, Mouse.position, false)
+      );
     }
     return false;
   }
@@ -88,6 +95,7 @@ export default class MouseEvents {
 
   clearDragCollisions() {
     this.collisionList.nodes = undefined;
+    this.collisionList.inputs = undefined;
   }
 
   clearAllCollisions() {
@@ -96,5 +104,6 @@ export default class MouseEvents {
     this.collisionList.slots = undefined;
     this.collisionList.connections = undefined;
     this.collisionList.texts = undefined;
+    this.collisionList.inputs = undefined;
   }
 }

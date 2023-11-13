@@ -4,8 +4,10 @@ import connectionEvents from '../Connection/connectionEvents';
 import Editor from '../../Editor';
 import Mouse from '../../types/Mouse';
 import NodeComponent from '../../components/NodeComponent';
+import inputEvents from '../IO/inputEvents';
 
 export default {
+  editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
   checkNodeClick(): number[] | undefined {
     let collided = false;
@@ -20,22 +22,26 @@ export default {
     });
     return collided ? collidedWith : undefined;
   },
-  nodeMove(mouseEvents: MouseEvents, v: Vector2, useDelta = true): boolean {
+  move(mouseEvents: MouseEvents, v: Vector2, useDelta = true): boolean {
     if (
-      mouseEvents.getCollisionList().nodes !== undefined &&
-      !connectionEvents.editingLine
+      mouseEvents.getCollisionList().nodes === undefined ||
+      connectionEvents.editingLine ||
+      inputEvents.editingInput
     ) {
-      const key = Object.values(
-        mouseEvents.getCollisionList().nodes as number[]
-      )[0];
-      const node = Editor.editorEnv.nodes[key];
-      node.move(v, useDelta);
-      this.moveNodeAssociatedElements(node, useDelta);
-      return true;
+      this.editingNode = false;
+      return false;
     }
-    return false;
+
+    this.editingNode = true;
+    const key = Object.values(
+      mouseEvents.getCollisionList().nodes as number[]
+    )[0];
+    const node = Editor.editorEnv.nodes[key];
+    node.move(v, useDelta);
+    this.moveLinkedElements(node, useDelta);
+    return true;
   },
-  moveNodeAssociatedElements(node: NodeComponent, useDelta = true): void {
+  moveLinkedElements(node: NodeComponent, useDelta = true): void {
     node.slotComponents.forEach(slot => {
       slot.update();
       slot.slotConnections.forEach(connection => {
