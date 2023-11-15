@@ -1,29 +1,29 @@
 export default class Keyboard {
-  private static _lastKeyPressed = '';
-  private static _keyPressed = false;
-  private static _keyHolded = false;
+  private _lastKeyPressed = '';
+  private _keyPressed = false;
+  private _keyHolded = false;
 
-  static get key() {
+  get key() {
     return this._lastKeyPressed;
   }
 
-  static set key(value: string) {
-    Keyboard._lastKeyPressed = value;
+  set key(value: string) {
+    this._lastKeyPressed = value;
   }
 
-  static get keyPressed() {
-    return Keyboard._keyPressed;
+  get keyPressed() {
+    return this._keyPressed;
   }
 
-  static set keyPressed(value: boolean) {
-    Keyboard._keyPressed = value;
+  set keyPressed(value: boolean) {
+    this._keyPressed = value;
   }
 
-  static get keyHold() {
-    return Keyboard._keyHolded;
+  get keyHold() {
+    return this._keyHolded;
   }
 
-  static set keyHold(value: boolean) {
-    Keyboard._keyHolded = value;
+  set keyHold(value: boolean) {
+    this._keyHolded = value;
   }
 }

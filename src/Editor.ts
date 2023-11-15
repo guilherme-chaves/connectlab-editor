@@ -15,17 +15,20 @@ import MouseEvents from './functions/mouseEvents';
 import Mouse from './types/Mouse';
 import KeyboardEvents from './functions/keyboardEvents';
 import InputComponent from './components/InputComponent';
+import Keyboard from './types/Keyboard';
 
 export default class Editor {
   // Lista de componentes
   public static readonly editorEnv = new EditorEnvironment('');
   // Controle de eventos do canvas
-  private mouseEvents: MouseEvents;
-  private keyboardEvents: KeyboardEvents;
-  private canvasId: string;
+  private readonly mouse: Mouse;
+  private readonly keyboard: Keyboard;
+  private readonly mouseEvents: MouseEvents;
+  private readonly keyboardEvents: KeyboardEvents;
   // Contextos dos canvas
-  private canvasCtx: CanvasRenderingContext2D;
-  private backgroundCtx: CanvasRenderingContext2D;
+  private readonly canvasId: string;
+  private readonly canvasCtx: CanvasRenderingContext2D;
+  private readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
   private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
@@ -41,8 +44,10 @@ export default class Editor {
     frameRate = 60.0
   ) {
     Editor.editorEnv.documentId = documentId;
-    this.mouseEvents = new MouseEvents();
-    this.keyboardEvents = new KeyboardEvents();
+    this.mouse = new Mouse();
+    this.keyboard = new Keyboard();
+    this.mouseEvents = new MouseEvents(this.mouse);
+    this.keyboardEvents = new KeyboardEvents(this.keyboard);
 
     const canvasDOM = <HTMLCanvasElement>document.getElementById(canvasID);
     const backgroundDOM = <HTMLCanvasElement>(
@@ -81,18 +86,19 @@ export default class Editor {
     window.addEventListener('resize', () => {
       this.resize();
     });
-    canvasDOM.addEventListener('mousedown', () => {
-      Mouse.clicked = true;
+    canvasDOM.addEventListener('mousedown', ({x, y}) => {
+      this.mouse.clicked = true;
+      if (this.mouse.stateChanged)
+        this.mouse.clickStartPosition = this.computePositionInCanvas(x, y);
     });
     canvasDOM.addEventListener('mouseup', () => {
-      Mouse.clicked = false;
+      this.mouse.clicked = false;
     });
     canvasDOM.addEventListener('mouseout', () => {
-      Mouse.clicked = false;
+      this.mouse.clicked = false;
     });
-    window.addEventListener('mousemove', ({clientX, clientY}) => {
-      const rect = this.canvasCtx.canvas.getBoundingClientRect();
-      Mouse.position = new Vector2(clientX - rect.left, clientY - rect.top);
+    window.addEventListener('mousemove', ({x, y}) => {
+      this.mouse.position = this.computePositionInCanvas(x, y);
     });
     window.addEventListener('keydown', (ev: KeyboardEvent) => {
       this.keyboardEvents.onKeyDown(ev, this);
@@ -136,6 +142,11 @@ export default class Editor {
     }
   }
 
+  computePositionInCanvas(x: number, y: number) {
+    const rect = this.canvasCtx.canvas.getBoundingClientRect();
+    return new Vector2(x - rect.left, y - rect.top);
+  }
+
   draw(canvas = true, background = false) {
     if (background)
       updateBackground(this.backgroundCtx, this.backgroundPattern);
@@ -170,13 +181,17 @@ export default class Editor {
 
   compute() {
     setInterval(() => {
-      this.mouseEvents.onMouseMove(this);
-      this.mouseEvents.onMouseClick();
+      this.mouseEvents.onMouseMove();
+      this.mouseEvents.onMouseClick(this);
       this.mouseEvents.onMouseRelease();
     }, 1000.0 / this.frameRate);
   }
 
-  node(type = nodeTypes.ADD, x = Mouse.position.x, y = Mouse.position.y) {
+  node(
+    type = nodeTypes.ADD,
+    x = this.mouse.position.x,
+    y = this.mouse.position.y
+  ) {
     const slots: Array<SlotComponent> = [];
     const newNode = new NodeComponent(
       Editor.editorEnv.nextComponentId,
@@ -201,7 +216,11 @@ export default class Editor {
     return newNodeId;
   }
 
-  input(type = inputTypes.SWITCH, x = Mouse.position.x, y = Mouse.position.y) {
+  input(
+    type = inputTypes.SWITCH,
+    x = this.mouse.position.x,
+    y = this.mouse.position.y
+  ) {
     const newInput = new InputComponent(
       Editor.editorEnv.nextComponentId,
       new Vector2(x, y),

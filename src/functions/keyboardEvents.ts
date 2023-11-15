@@ -31,19 +31,23 @@ enum inputKeycodes {
 }
 
 export default class KeyboardEvents {
+  private _keyboard: Keyboard;
+  constructor(keyboard: Keyboard) {
+    this._keyboard = keyboard;
+  }
   onKeyDown(ev: KeyboardEvent, editor: Editor) {
-    Keyboard.key = ev.key;
-    if (Keyboard.keyPressed) {
-      Keyboard.keyHold = true;
+    this._keyboard.key = ev.key;
+    if (this._keyboard.keyPressed) {
+      this._keyboard.keyHold = true;
     } else {
-      Keyboard.keyPressed = true;
-      Keyboard.keyHold = false;
+      this._keyboard.keyPressed = true;
+      this._keyboard.keyHold = false;
     }
-    if (!Keyboard.keyHold) this.addComponentByKeyPressed(editor);
+    if (!this._keyboard.keyHold) this.addComponentByKeyPressed(editor);
   }
 
   addComponentByKeyPressed(editor: Editor) {
-    switch (Keyboard.key) {
+    switch (this._keyboard.key) {
       case nodeKeycodes.ADD:
       case nodeKeycodes.ADD_u:
         editor.node(nodeTypes.ADD);
@@ -80,8 +84,8 @@ export default class KeyboardEvents {
   }
 
   onKeyUp() {
-    Keyboard.key = '';
-    Keyboard.keyPressed = false;
-    Keyboard.keyHold = false;
+    this._keyboard.key = '';
+    this._keyboard.keyPressed = false;
+    this._keyboard.keyHold = false;
   }
 }

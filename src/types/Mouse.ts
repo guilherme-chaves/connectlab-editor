@@ -1,32 +1,55 @@
 import Vector2 from './Vector2';
 
 export default class Mouse {
-  private static _mousePosition = Vector2.ZERO;
-  private static _mouseClicked = false;
-  private static _mouseStateChanged = false;
+  private _mousePosition = Vector2.ZERO;
+  private _mouseClicked = false;
+  private _mouseDragged = false;
+  private _mouseClickPosition = Vector2.ZERO;
+  private _mouseStateChanged = false;
+  private _mouseClickThreshold = 6; // pixels
 
-  static get position() {
+  get position() {
     return this._mousePosition;
   }
 
-  static set position(value: Vector2) {
+  set position(value: Vector2) {
     this._mousePosition = value;
   }
 
-  static get clicked() {
+  get clicked() {
     return this._mouseClicked;
   }
 
-  static set clicked(value: boolean) {
+  set clicked(value: boolean) {
     this._mouseClicked = value;
-    this.stateChanged = true;
+    this._mouseStateChanged = true;
   }
 
-  static get stateChanged() {
+  get dragged() {
+    return this._mouseDragged;
+  }
+
+  set dragged(value: boolean) {
+    this._mouseDragged = value;
+  }
+
+  get clickStartPosition() {
+    return this._mouseClickPosition;
+  }
+
+  set clickStartPosition(value: Vector2) {
+    this._mouseClickPosition = value;
+  }
+
+  get clickToDragThreshold() {
+    return this._mouseClickThreshold;
+  }
+
+  get stateChanged() {
     return this._mouseStateChanged;
   }
 
-  static set stateChanged(value: boolean) {
+  set stateChanged(value: boolean) {
     this._mouseStateChanged = value;
   }
 }

@@ -1,29 +1,29 @@
 import Editor from '../../Editor';
 import InputComponent from '../../components/InputComponent';
-import Mouse from '../../types/Mouse';
 import Vector2 from '../../types/Vector2';
 import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
-import MouseEvents from '../mouseEvents';
+import {CollisionList} from '../mouseEvents';
 
 export default {
   editingInput: false,
-  checkInputClick(): number[] | undefined {
+  checkInputClick(position: Vector2): number[] | undefined {
     let collided = false;
     const collidedWith = Array<number>();
     Object.keys(Editor.editorEnv.inputs).forEach(key => {
       const keyN = parseInt(key);
-      const collision = Editor.editorEnv.inputs[
-        keyN
-      ].collisionShape.collisionWithPoint(Mouse.position);
+      const collision =
+        Editor.editorEnv.inputs[keyN].collisionShape.collisionWithPoint(
+          position
+        );
       if (collision) collidedWith.push(keyN);
       collided = collided || collision;
     });
     return collided ? collidedWith : undefined;
   },
-  move(mouseEvents: MouseEvents, v: Vector2, useDelta = true): boolean {
+  move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
     if (
-      mouseEvents.getCollisionList().inputs === undefined ||
+      collisionList.inputs === undefined ||
       connectionEvents.editingLine ||
       nodeEvents.editingNode
     ) {
@@ -32,9 +32,7 @@ export default {
     }
 
     this.editingInput = true;
-    const key = Object.values(
-      mouseEvents.getCollisionList().inputs as number[]
-    )[0];
+    const key = Object.values(collisionList.inputs as number[])[0];
     const input = Editor.editorEnv.inputs[key];
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);

@@ -1,7 +1,6 @@
 import Editor from '../../Editor';
 import Vector2 from '../../types/Vector2';
 import ComponentType from '../../types/types';
-import Mouse from '../../types/Mouse';
 import slotEvents from '../slotEvents';
 import SlotComponent from '../../components/SlotComponent';
 import nodeEvents from '../Node/nodeEvents';
@@ -15,14 +14,14 @@ export default {
   slotCollision: -1,
 
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
-  checkConnectionClick(): number[] | undefined {
+  checkConnectionClick(position: Vector2): number[] | undefined {
     let collided = false;
     const collidedWith = new Array<number>();
     Object.keys(Editor.editorEnv.connections).forEach(key => {
       const keyN = parseInt(key);
       const collision = Editor.editorEnv.connections[keyN].collisionShape.find(
         collisionShape => {
-          return collisionShape.collisionWithPoint(Mouse.position);
+          return collisionShape.collisionWithPoint(position);
         }
       );
       if (collision !== undefined) collidedWith.push(keyN);
@@ -31,10 +30,10 @@ export default {
     return collided ? collidedWith : undefined;
   },
 
-  addLine(editor: Editor) {
+  addLine(editor: Editor, position: Vector2) {
     if (this.editingLine && this.editingLineId !== -1) return true;
     if (nodeEvents.editingNode) return false;
-    const slotCollisions = slotEvents.checkSlotClick();
+    const slotCollisions = slotEvents.checkSlotClick(position);
     if (slotCollisions !== undefined) {
       const key = Object.values(slotCollisions)[0];
       const slot = Editor.editorEnv.slots[key];
@@ -73,14 +72,14 @@ export default {
       false,
       false
     );
-    this.bindConnection();
+    this.bindConnection(position);
     return true;
   },
 
-  fixLine() {
+  fixLine(position: Vector2) {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
-      const currentSlotCollisions = slotEvents.checkSlotClick();
+      const currentSlotCollisions = slotEvents.checkSlotClick(position);
       if (
         this.slotCollision !== -1 &&
         currentSlotCollisions !== undefined &&
@@ -143,9 +142,9 @@ export default {
     return false;
   },
 
-  bindConnection() {
+  bindConnection(position: Vector2) {
     if (this.editingLine && this.editingLineId !== -1) {
-      const slotCollisions = slotEvents.checkSlotClick();
+      const slotCollisions = slotEvents.checkSlotClick(position);
       const currentLine = Editor.editorEnv.connections[this.editingLineId];
       if (slotCollisions !== undefined) {
         // Evitar colisões com o slot de onde a linha se origina
@@ -161,7 +160,7 @@ export default {
           this.oldSlotCollision = this.slotCollision;
           this.slotCollision = -1;
         }
-        currentLine.endPosition = Mouse.position;
+        currentLine.endPosition = position;
       }
     }
   },
