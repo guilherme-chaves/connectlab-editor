@@ -60,8 +60,12 @@ export default class MouseEvents {
   }
 
   onMouseRelease() {
-    if (!Mouse.clicked && Mouse.stateChanged) {
-      if (!connectionEvents.fixLine()) {
+    if (!this._mouse.clicked && this._mouse.stateChanged) {
+      if (!this._mouse.dragged) {
+        if (this.collisionList.inputs !== undefined)
+          inputEvents.switchInputState(this.collisionList.inputs[0]);
+      }
+      if (!connectionEvents.fixLine(this._mouse.position)) {
         this.clearDragCollisions();
       }
       this._mouse.dragged = false;

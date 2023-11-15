@@ -49,4 +49,8 @@ export default {
       });
     }
   },
+  switchInputState(inputId: number): void {
+    const input = Editor.editorEnv.inputs[inputId];
+    input.state = !input.state;
+  },
 };

@@ -15,6 +15,7 @@ class InputComponent implements Component {
   private _collisionShape: BBCollision;
   private imageWidth: number;
   private imageHeight: number;
+  private _state: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -38,6 +39,14 @@ class InputComponent implements Component {
 
   set collisionShape(value: BBCollision) {
     this._collisionShape = value;
+  }
+
+  get state() {
+    return this._state;
+  }
+
+  set state(value: boolean) {
+    this._state = value;
   }
 
   constructor(
@@ -68,6 +77,7 @@ class InputComponent implements Component {
       this.imageWidth,
       this.imageHeight
     );
+    this._state = false;
   }
 
   static getInputTypeObject(type: inputTypes): InputTypeObject {
@@ -93,8 +103,7 @@ class InputComponent implements Component {
 
   draw(ctx: CanvasRenderingContext2D) {
     let imgId = '';
-    if (this._slotComponent !== undefined && this._slotComponent?.state)
-      imgId = `${this.inputType.id}_1`;
+    if (this._state) imgId = `${this.inputType.id}_1`;
     else imgId = `${this.inputType.id}_0`;
 
     ctx.drawImage(
