@@ -4,6 +4,7 @@ import Vector2 from '../../types/Vector2';
 import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
 import {CollisionList} from '../mouseEvents';
+import outputEvents from './outputEvents';
 
 export default {
   editingInput: false,
@@ -25,7 +26,8 @@ export default {
     if (
       collisionList.inputs === undefined ||
       connectionEvents.editingLine ||
-      nodeEvents.editingNode
+      nodeEvents.editingNode ||
+      outputEvents.editingOutput
     ) {
       this.editingInput = false;
       return false;

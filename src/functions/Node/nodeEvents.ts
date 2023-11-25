@@ -4,6 +4,7 @@ import connectionEvents from '../Connection/connectionEvents';
 import Editor from '../../Editor';
 import NodeComponent from '../../components/NodeComponent';
 import inputEvents from '../IO/inputEvents';
+import outputEvents from '../IO/outputEvents';
 
 export default {
   editingNode: false,
@@ -26,7 +27,8 @@ export default {
     if (
       collisionList.nodes === undefined ||
       connectionEvents.editingLine ||
-      inputEvents.editingInput
+      inputEvents.editingInput ||
+      outputEvents.editingOutput
     ) {
       this.editingNode = false;
       return false;

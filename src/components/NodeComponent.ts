@@ -73,8 +73,9 @@ class NodeComponent implements Component {
     this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
-    const canvasBound = new Vector2(canvasWidth, canvasHeight);
-    canvasBound.sub(new Vector2(this.imageWidth, this.imageHeight));
+    const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
+      new Vector2(this.imageWidth, this.imageHeight)
+    );
     this.position = this.position.min(canvasBound).max(Vector2.ZERO);
     this._collisionShape = new BBCollision(
       this.position,

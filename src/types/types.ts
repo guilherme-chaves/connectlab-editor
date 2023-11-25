@@ -1,8 +1,10 @@
 import ConnectionComponent from '../components/ConnectionComponent';
 import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
+import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
+import Component from '../interfaces/componentInterface';
 import Vector2 from './Vector2';
 
 enum ComponentType {
@@ -29,7 +31,8 @@ export enum inputTypes {
 }
 
 export enum outputTypes {
-  MONO_LED = 1,
+  MONO_LED_OFF = 0,
+  MONO_LED_RED = 1,
 }
 
 export enum EditorMode {
@@ -39,37 +42,30 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export interface ImageListObject {
-  [index: string]: HTMLImageElement;
-}
+export type ImageListObject = Record<string, HTMLImageElement>;
 
-export interface NodeList {
-  [index: number]: NodeComponent;
-}
+export type ComponentList = Record<number, Component>;
 
-export interface SlotList {
-  [index: number]: SlotComponent;
-}
+export type NodeList = Record<number, NodeComponent>;
 
-export interface ConnectionList {
-  [index: number]: ConnectionComponent;
-}
+export type SlotList = Record<number, SlotComponent>;
 
-export interface TextList {
-  [index: number]: TextComponent;
-}
+export type ConnectionList = Record<number, ConnectionComponent>;
 
-export interface InputList {
-  [index: number]: InputComponent;
-}
+export type TextList = Record<number, TextComponent>;
+
+export type InputList = Record<number, InputComponent>;
+
+export type OutputList = Record<number, OutputComponent>;
 
 export interface componentListInterface {
-  [index: string]: NodeList | SlotList | ConnectionList | TextList | InputList;
+  [index: string]: ComponentList;
   nodes: NodeList;
   slots: SlotList;
   connections: ConnectionList;
   texts: TextList;
   inputs: InputList;
+  outputs: OutputList;
 }
 
 export interface componentAssocInterface {
@@ -103,6 +99,15 @@ export interface InputTypeObject {
     localPos: Vector2;
   };
   readonly op: (slotState: boolean) => boolean;
+}
+
+export interface OutputTypeObject {
+  readonly id: outputTypes;
+  readonly connectionSlot: {
+    id: number;
+    name: string;
+    localPos: Vector2;
+  };
 }
 
 export default ComponentType;

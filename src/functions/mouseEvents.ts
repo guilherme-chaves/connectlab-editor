@@ -3,8 +3,10 @@ import connectionEvents from './Connection/connectionEvents';
 import nodeEvents from './Node/nodeEvents';
 import slotEvents from './slotEvents';
 import textEvents from './textEvents';
-import Mouse from '../types/Mouse';
 import inputEvents from './IO/inputEvents';
+import outputEvents from './IO/outputEvents';
+
+import Mouse from '../types/Mouse';
 
 export interface CollisionList {
   [index: string]: Array<number> | undefined;
@@ -13,6 +15,7 @@ export interface CollisionList {
   connections: Array<number> | undefined;
   texts: Array<number> | undefined;
   inputs: Array<number> | undefined;
+  outputs: Array<number> | undefined;
 }
 
 export default class MouseEvents {
@@ -27,6 +30,7 @@ export default class MouseEvents {
       connections: undefined,
       texts: undefined,
       inputs: undefined,
+      outputs: undefined,
     };
   }
 
@@ -40,6 +44,7 @@ export default class MouseEvents {
       );
       const textId = textEvents.checkTextClick(this._mouse.position);
       const inputId = inputEvents.checkInputClick(this._mouse.position);
+      const outputId = outputEvents.checkOutputClick(this._mouse.position);
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined) {
@@ -54,6 +59,7 @@ export default class MouseEvents {
         connections: connectionId,
         texts: textId,
         inputs: inputId,
+        outputs: outputId,
       };
       this._mouse.stateChanged = false;
     }
@@ -88,7 +94,8 @@ export default class MouseEvents {
       return (
         connectionEvents.move(this._mouse.position) ||
         nodeEvents.move(this.collisionList, this._mouse.position, false) ||
-        inputEvents.move(this.collisionList, this._mouse.position, false)
+        inputEvents.move(this.collisionList, this._mouse.position, false) ||
+        outputEvents.move(this.collisionList, this._mouse.position, false)
       );
     }
     return false;

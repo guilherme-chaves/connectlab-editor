@@ -5,6 +5,7 @@ import slotEvents from '../slotEvents';
 import SlotComponent from '../../components/SlotComponent';
 import nodeEvents from '../Node/nodeEvents';
 import inputEvents from '../IO/inputEvents';
+import outputEvents from '../IO/outputEvents';
 
 export default {
   editingLineId: -1,
@@ -62,7 +63,8 @@ export default {
       !this.editingLine ||
       this.editingLineId === -1 ||
       nodeEvents.editingNode ||
-      inputEvents.editingInput
+      inputEvents.editingInput ||
+      outputEvents.editingOutput
     )
       return false;
 

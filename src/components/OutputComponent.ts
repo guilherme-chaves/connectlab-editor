@@ -1,21 +1,22 @@
 import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
-import {SwitchInput} from '../objects/inputTypeObjects';
+import {LEDROutput} from '../objects/outputTypeObjects';
 import Vector2 from '../types/Vector2';
-import ComponentType, {InputTypeObject, inputTypes} from '../types/types';
+import ComponentType, {OutputTypeObject, outputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
-class InputComponent implements Component {
+class OutputComponent implements Component {
   public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
-  public readonly inputType: InputTypeObject;
+  public readonly outputType: OutputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   private _collisionShape: BBCollision;
   private imageWidth: number;
   private imageHeight: number;
   private _state: boolean;
+  private _isLEDOutput: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -54,18 +55,19 @@ class InputComponent implements Component {
     position: Vector2,
     canvasWidth: number,
     canvasHeight: number,
-    inputType: inputTypes,
+    outputType: outputTypes,
     slot: SlotComponent | undefined
   ) {
     this.id = id;
     this._position = position;
-    this.componentType = ComponentType.INPUT;
-    this.inputType = InputComponent.getInputTypeObject(inputType);
+    this.componentType = ComponentType.OUTPUT;
+    [this.outputType, this._isLEDOutput] =
+      OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
     this.imageWidth =
-      EditorEnvironment.InputImageList[`${this.inputType.id}_0`].width;
+      EditorEnvironment.OutputImageList[`${this.outputType.id}`].width;
     this.imageHeight =
-      EditorEnvironment.InputImageList[`${this.inputType.id}_0`].height;
+      EditorEnvironment.OutputImageList[`${this.outputType.id}`].height;
     this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
@@ -81,12 +83,12 @@ class InputComponent implements Component {
     this._state = false;
   }
 
-  static getInputTypeObject(type: inputTypes): InputTypeObject {
+  static getOutputTypeObject(type: outputTypes): [OutputTypeObject, boolean] {
     switch (type) {
-      case inputTypes.SWITCH:
-        return SwitchInput;
+      case outputTypes.MONO_LED_RED:
+        return [LEDROutput, true];
       default:
-        return SwitchInput;
+        return [LEDROutput, true];
     }
   }
 
@@ -103,12 +105,13 @@ class InputComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    let imgId = '';
-    if (this._state) imgId = `${this.inputType.id}_1`;
-    else imgId = `${this.inputType.id}_0`;
+    let imgId = `${this.outputType.id}`;
+    if (this._isLEDOutput && !this.state) {
+      imgId = `${outputTypes.MONO_LED_OFF}`;
+    }
 
     ctx.drawImage(
-      EditorEnvironment.InputImageList[imgId],
+      EditorEnvironment.OutputImageList[imgId],
       this.position.x,
       this.position.y
     );
@@ -116,4 +119,4 @@ class InputComponent implements Component {
   }
 }
 
-export default InputComponent;
+export default OutputComponent;

@@ -6,15 +6,20 @@ import ComponentType, {
   SlotList,
   TextList,
   InputList,
+  OutputList,
 } from './types/types';
 import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
-import preloadIOImages from './functions/IO/preloadIOImages';
+import {
+  preloadInputImages,
+  preloadOutputImages,
+} from './functions/IO/preloadIOImages';
 import Component from './interfaces/componentInterface';
 import InputComponent from './components/InputComponent';
+import OutputComponent from './components/OutputComponent';
 
 class EditorEnvironment {
   public documentId: string;
@@ -24,8 +29,11 @@ class EditorEnvironment {
   private connectionList: ConnectionList;
   private textList: TextList;
   private inputList: InputList;
+  private outputList: OutputList;
   public static readonly nodeImageList: ImageListObject = preloadNodeImages();
-  public static readonly IOImageList: ImageListObject = preloadIOImages();
+  public static readonly InputImageList: ImageListObject = preloadInputImages();
+  public static readonly OutputImageList: ImageListObject =
+    preloadOutputImages();
   constructor(
     documentId: string,
     startId = 0,
@@ -33,7 +41,8 @@ class EditorEnvironment {
     slotList = {},
     connectionList = {},
     textList = {},
-    inputList = {}
+    inputList = {},
+    outputList = {}
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
@@ -42,6 +51,7 @@ class EditorEnvironment {
     this.connectionList = connectionList;
     this.textList = textList;
     this.inputList = inputList;
+    this.outputList = outputList;
   }
 
   /* Getters e Setters */
@@ -57,6 +67,7 @@ class EditorEnvironment {
       connections: this.connectionList,
       texts: this.textList,
       inputs: this.inputList,
+      outputs: this.outputList,
     };
   }
 
@@ -80,6 +91,10 @@ class EditorEnvironment {
     return this.inputList;
   }
 
+  get outputs(): OutputList {
+    return this.outputList;
+  }
+
   get nextComponentId(): number {
     return this._nextComponentId;
   }
@@ -101,6 +116,10 @@ class EditorEnvironment {
         break;
       case ComponentType.INPUT:
         this.inputList[this._nextComponentId] = component as InputComponent;
+        break;
+      case ComponentType.OUTPUT:
+        this.outputList[this._nextComponentId] = component as OutputComponent;
+        break;
     }
     this._nextComponentId += 1;
     return this._nextComponentId - 1;
@@ -124,6 +143,12 @@ class EditorEnvironment {
         case ComponentType.TEXT:
           delete this.textList[componentId];
           break;
+        case ComponentType.INPUT:
+          delete this.inputList[componentId];
+          break;
+        case ComponentType.OUTPUT:
+          delete this.outputList[componentId];
+          break;
       }
     } else {
       if (Object.prototype.hasOwnProperty.call(this.nodeList, componentId))
@@ -136,6 +161,10 @@ class EditorEnvironment {
         delete this.connectionList[componentId];
       if (Object.prototype.hasOwnProperty.call(this.textList, componentId))
         delete this.textList[componentId];
+      if (Object.prototype.hasOwnProperty.call(this.inputList, componentId))
+        delete this.inputList[componentId];
+      if (Object.prototype.hasOwnProperty.call(this.outputList, componentId))
+        delete this.outputList[componentId];
     }
   }
 }

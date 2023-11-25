@@ -1,6 +1,6 @@
 import Editor from '../Editor';
 import Keyboard from '../types/Keyboard';
-import {inputTypes, nodeTypes} from '../types/types';
+import {inputTypes, nodeTypes, outputTypes} from '../types/types';
 
 export enum keyboardMode {
   ADD_NODE = 0,
@@ -28,6 +28,11 @@ enum nodeKeycodes {
 enum inputKeycodes {
   SWITCH = 's',
   SWITCH_u = 'S',
+}
+
+enum outputKeycodes {
+  LED_RED = 'l',
+  LED_RED_u = 'L',
 }
 
 export default class KeyboardEvents {
@@ -80,6 +85,9 @@ export default class KeyboardEvents {
       case inputKeycodes.SWITCH_u:
         editor.input(inputTypes.SWITCH);
         break;
+      case outputKeycodes.LED_RED:
+      case outputKeycodes.LED_RED_u:
+        editor.output(outputTypes.MONO_LED_RED);
     }
   }
 

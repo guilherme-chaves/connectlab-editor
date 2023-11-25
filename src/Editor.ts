@@ -1,4 +1,9 @@
-import {componentAssocInterface, inputTypes, nodeTypes} from './types/types';
+import {
+  componentAssocInterface,
+  inputTypes,
+  nodeTypes,
+  outputTypes,
+} from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
 import updateAll, {
   updateBackground,
@@ -16,6 +21,7 @@ import Mouse from './types/Mouse';
 import KeyboardEvents from './functions/keyboardEvents';
 import InputComponent from './components/InputComponent';
 import Keyboard from './types/Keyboard';
+import OutputComponent from './components/OutputComponent';
 
 export default class Editor {
   // Lista de componentes
@@ -238,6 +244,32 @@ export default class Editor {
       false
     );
     Editor.editorEnv.inputs[newInputId].slotComponent =
+      Editor.editorEnv.slots[slotId];
+  }
+
+  output(
+    type = outputTypes.MONO_LED_RED,
+    x = this.mouse.position.x,
+    y = this.mouse.position.y
+  ) {
+    const newOutput = new OutputComponent(
+      Editor.editorEnv.nextComponentId,
+      new Vector2(x, y),
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      type,
+      undefined
+    );
+    const newOutputId = Editor.editorEnv.addComponent(newOutput);
+    const slotInfo =
+      OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
+    const slotId = this.slot(
+      slotInfo.localPos.x,
+      slotInfo.localPos.y,
+      Editor.editorEnv.outputs[newOutputId],
+      true
+    );
+    Editor.editorEnv.outputs[newOutputId].slotComponent =
       Editor.editorEnv.slots[slotId];
   }
 
