@@ -1,6 +1,7 @@
 import Editor from '../../Editor';
 import InputComponent from '../../components/InputComponent';
 import Vector2 from '../../types/Vector2';
+import componentEvents from '../Component/componentEvents';
 import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
 import {CollisionList} from '../mouseEvents';
@@ -8,19 +9,11 @@ import outputEvents from './outputEvents';
 
 export default {
   editingInput: false,
-  checkInputClick(position: Vector2): number[] | undefined {
-    let collided = false;
-    const collidedWith = Array<number>();
-    Object.keys(Editor.editorEnv.inputs).forEach(key => {
-      const keyN = parseInt(key);
-      const collision =
-        Editor.editorEnv.inputs[keyN].collisionShape.collisionWithPoint(
-          position
-        );
-      if (collision) collidedWith.push(keyN);
-      collided = collided || collision;
-    });
-    return collided ? collidedWith : undefined;
+  checkInputClick(position: Vector2): string[] | undefined {
+    return componentEvents.checkComponentClick(
+      position,
+      Editor.editorEnv.inputs
+    );
   },
   move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
     if (

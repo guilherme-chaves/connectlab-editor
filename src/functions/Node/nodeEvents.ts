@@ -5,23 +5,16 @@ import Editor from '../../Editor';
 import NodeComponent from '../../components/NodeComponent';
 import inputEvents from '../IO/inputEvents';
 import outputEvents from '../IO/outputEvents';
+import componentEvents from '../Component/componentEvents';
 
 export default {
   editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(position: Vector2): number[] | undefined {
-    let collided = false;
-    const collidedWith = new Array<number>();
-    Object.keys(Editor.editorEnv.nodes).forEach(key => {
-      const keyN = parseInt(key);
-      const collision =
-        Editor.editorEnv.nodes[keyN].collisionShape.collisionWithPoint(
-          position
-        );
-      if (collision) collidedWith.push(keyN);
-      collided = collided || collision;
-    });
-    return collided ? collidedWith : undefined;
+  checkNodeClick(position: Vector2): string[] | undefined {
+    return componentEvents.checkComponentClick(
+      position,
+      Editor.editorEnv.nodes
+    );
   },
   move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
     if (

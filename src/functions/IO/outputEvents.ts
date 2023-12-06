@@ -5,22 +5,15 @@ import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
 import inputEvents from './inputEvents';
 import {CollisionList} from '../mouseEvents';
+import componentEvents from '../Component/componentEvents';
 
 export default {
   editingOutput: false,
-  checkOutputClick(position: Vector2): number[] | undefined {
-    let collided = false;
-    const collidedWith = Array<number>();
-    Object.keys(Editor.editorEnv.outputs).forEach(key => {
-      const keyN = parseInt(key);
-      const collision =
-        Editor.editorEnv.outputs[keyN].collisionShape.collisionWithPoint(
-          position
-        );
-      if (collision) collidedWith.push(keyN);
-      collided = collided || collision;
-    });
-    return collided ? collidedWith : undefined;
+  checkOutputClick(position: Vector2): string[] | undefined {
+    return componentEvents.checkComponentClick(
+      position,
+      Editor.editorEnv.outputs
+    );
   },
   move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
     if (
