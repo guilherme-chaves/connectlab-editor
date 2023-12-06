@@ -1,6 +1,6 @@
 import ComponentType, {
   ImageListObject,
-  componentListInterface,
+  FullComponentList,
   NodeList,
   ConnectionList,
   SlotList,
@@ -60,7 +60,7 @@ class EditorEnvironment {
     return this.documentId;
   }
 
-  get components(): componentListInterface {
+  get components(): FullComponentList {
     return {
       nodes: this.nodeList,
       slots: this.slotList,
@@ -95,11 +95,11 @@ class EditorEnvironment {
     return this.outputList;
   }
 
-  get nextComponentId(): number {
-    return this._nextComponentId;
+  get nextComponentId(): string {
+    return `${this._nextComponentId}`;
   }
 
-  addComponent(component: Component) {
+  addComponent(component: Component): string {
     switch (component.componentType) {
       case ComponentType.NODE:
         this.nodeList[this._nextComponentId] = component as NodeComponent;
@@ -121,8 +121,9 @@ class EditorEnvironment {
         this.outputList[this._nextComponentId] = component as OutputComponent;
         break;
     }
+    console.log(component);
     this._nextComponentId += 1;
-    return this._nextComponentId - 1;
+    return `${this._nextComponentId - 1}`;
   }
 
   removeComponent(

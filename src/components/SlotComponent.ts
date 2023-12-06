@@ -5,7 +5,7 @@ import ComponentType from '../types/types';
 import ConnectionComponent from './ConnectionComponent';
 
 export default class SlotComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   private _parent: Component;
@@ -53,7 +53,7 @@ export default class SlotComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     position: Vector2,
     parent: Component,
     connections: Array<ConnectionComponent> = [],

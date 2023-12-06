@@ -5,17 +5,17 @@ import NOTPath from '../../assets/gates/NOT_ANSI.svg';
 import ORPath from '../../assets/gates/OR_ANSI.svg';
 import XNORPath from '../../assets/gates/XNOR_ANSI.svg';
 import XORPath from '../../assets/gates/XOR_ANSI.svg';
-import {nodeTypes} from '../../types/types';
+import {NodeTypes} from '../../types/types';
 import preloadImage from '../preloadImage';
 
 const imageList = [
-  [`${nodeTypes.ADD}`, ADDPath],
-  [`${nodeTypes.NAND}`, NANDPath],
-  [`${nodeTypes.NOR}`, NORPath],
-  [`${nodeTypes.NOT}`, NOTPath],
-  [`${nodeTypes.OR}`, ORPath],
-  [`${nodeTypes.XNOR}`, XNORPath],
-  [`${nodeTypes.XOR}`, XORPath],
+  [`${NodeTypes.ADD}`, ADDPath],
+  [`${NodeTypes.NAND}`, NANDPath],
+  [`${NodeTypes.NOR}`, NORPath],
+  [`${NodeTypes.NOT}`, NOTPath],
+  [`${NodeTypes.OR}`, ORPath],
+  [`${NodeTypes.XNOR}`, XNORPath],
+  [`${NodeTypes.XOR}`, XORPath],
 ];
 
 export default function preloadNodeImages() {

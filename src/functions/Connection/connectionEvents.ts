@@ -8,31 +8,30 @@ import inputEvents from '../IO/inputEvents';
 import outputEvents from '../IO/outputEvents';
 
 export default {
-  editingLineId: -1,
+  editingLineId: '',
   editingLine: false,
-  lineStartSlot: -1,
-  oldSlotCollision: -1,
-  slotCollision: -1,
+  lineStartSlot: '',
+  oldSlotCollision: '',
+  slotCollision: '',
 
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
-  checkConnectionClick(position: Vector2): number[] | undefined {
+  checkConnectionClick(position: Vector2): string[] | undefined {
     let collided = false;
-    const collidedWith = new Array<number>();
+    const collidedWith = new Array<string>();
     Object.keys(Editor.editorEnv.connections).forEach(key => {
-      const keyN = parseInt(key);
-      const collision = Editor.editorEnv.connections[keyN].collisionShape.find(
+      const collision = Editor.editorEnv.connections[key].collisionShape.find(
         collisionShape => {
           return collisionShape.collisionWithPoint(position);
         }
       );
-      if (collision !== undefined) collidedWith.push(keyN);
+      if (collision !== undefined) collidedWith.push(key);
       collided = collided || collision !== undefined;
     });
     return collided ? collidedWith : undefined;
   },
 
   addLine(editor: Editor, position: Vector2) {
-    if (this.editingLine && this.editingLineId !== -1) return true;
+    if (this.editingLine && this.editingLineId.length !== 0) return true;
     if (nodeEvents.editingNode) return false;
     const slotCollisions = slotEvents.checkSlotClick(position);
     if (slotCollisions !== undefined) {
@@ -53,7 +52,7 @@ export default {
       return true;
     } else {
       this.oldSlotCollision = this.slotCollision;
-      this.slotCollision = -1;
+      this.slotCollision = '';
     }
     return false;
   },
@@ -61,7 +60,7 @@ export default {
   move(position: Vector2) {
     if (
       !this.editingLine ||
-      this.editingLineId === -1 ||
+      this.editingLineId.length === 0 ||
       nodeEvents.editingNode ||
       inputEvents.editingInput ||
       outputEvents.editingOutput
@@ -79,11 +78,11 @@ export default {
   },
 
   fixLine(position: Vector2) {
-    if (this.editingLine && this.editingLineId !== -1) {
+    if (this.editingLine && this.editingLineId.length !== 0) {
       // Busca se existe um slot na posição atual do mouse
       const currentSlotCollisions = slotEvents.checkSlotClick(position);
       if (
-        this.slotCollision !== -1 &&
+        this.slotCollision.length !== 0 &&
         currentSlotCollisions !== undefined &&
         currentSlotCollisions[0] !== this.lineStartSlot
       ) {
@@ -145,7 +144,7 @@ export default {
   },
 
   bindConnection(position: Vector2) {
-    if (this.editingLine && this.editingLineId !== -1) {
+    if (this.editingLine && this.editingLineId.length !== 0) {
       const slotCollisions = slotEvents.checkSlotClick(position);
       const currentLine = Editor.editorEnv.connections[this.editingLineId];
       if (slotCollisions !== undefined) {
@@ -158,9 +157,9 @@ export default {
           currentLine.endPosition = new Vector2(slotCollided.globalPosition);
         }
       } else {
-        if (this.slotCollision !== -1) {
+        if (this.slotCollision.length !== 0) {
           this.oldSlotCollision = this.slotCollision;
-          this.slotCollision = -1;
+          this.slotCollision = '';
         }
         currentLine.endPosition = position;
       }
@@ -169,8 +168,8 @@ export default {
   changeConnectionParams(
     startPos?: Vector2,
     endPos?: Vector2,
-    startSlotId?: number,
-    endSlotId?: number
+    startSlotId?: string,
+    endSlotId?: string
   ) {
     if (startPos !== undefined)
       Editor.editorEnv.connections[this.editingLineId].move(
@@ -228,9 +227,9 @@ export default {
   resetConnEventParams() {
     // Reinicia os parâmetros para evitar ligações acidentais
     this.editingLine = false;
-    this.editingLineId = -1;
-    this.slotCollision = -1;
-    this.oldSlotCollision = -1;
-    this.lineStartSlot = -1;
+    this.editingLineId = '';
+    this.slotCollision = '';
+    this.oldSlotCollision = '';
+    this.lineStartSlot = '';
   },
 };

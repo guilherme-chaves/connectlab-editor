@@ -1,4 +1,4 @@
-import ComponentType, {nodeTypes} from '../types/types';
+import ComponentType, {NodeTypes} from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
@@ -16,7 +16,7 @@ import Component from '../interfaces/componentInterface';
 import SlotComponent from './SlotComponent';
 
 class NodeComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
@@ -54,9 +54,9 @@ class NodeComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     position: Vector2,
-    nodeType: nodeTypes,
+    nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
     slots: Array<SlotComponent>
@@ -84,22 +84,22 @@ class NodeComponent implements Component {
     );
   }
 
-  static getNodeTypeObject(type: nodeTypes): NodeTypeObject {
+  static getNodeTypeObject(type: NodeTypes): NodeTypeObject {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
-      case nodeTypes.ADD:
+      case NodeTypes.ADD:
         return ADDNode;
-      case nodeTypes.NAND:
+      case NodeTypes.NAND:
         return NANDNode;
-      case nodeTypes.NOR:
+      case NodeTypes.NOR:
         return NORNode;
-      case nodeTypes.NOT:
+      case NodeTypes.NOT:
         return NOTNode;
-      case nodeTypes.OR:
+      case NodeTypes.OR:
         return ORNode;
-      case nodeTypes.XNOR:
+      case NodeTypes.XNOR:
         return XNORNode;
-      case nodeTypes.XOR:
+      case NodeTypes.XOR:
         return XORNode;
       default:
         return NOTNode;

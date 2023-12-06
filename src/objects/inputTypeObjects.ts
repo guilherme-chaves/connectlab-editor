@@ -1,8 +1,8 @@
 import Vector2 from '../types/Vector2';
-import {InputTypeObject, inputTypes} from '../types/types';
+import {InputTypeObject, InputTypes} from '../types/types';
 
 const SwitchInput: InputTypeObject = {
-  id: inputTypes.SWITCH,
+  id: InputTypes.SWITCH,
   connectionSlot: {
     id: 0,
     name: 'A',

@@ -1,6 +1,6 @@
 import Editor from '../Editor';
 import Keyboard from '../types/Keyboard';
-import {inputTypes, nodeTypes, outputTypes} from '../types/types';
+import {InputTypes, NodeTypes, OutputTypes} from '../types/types';
 
 export enum keyboardMode {
   ADD_NODE = 0,
@@ -55,39 +55,39 @@ export default class KeyboardEvents {
     switch (this._keyboard.key) {
       case nodeKeycodes.ADD:
       case nodeKeycodes.ADD_u:
-        editor.node(nodeTypes.ADD);
+        editor.node(NodeTypes.ADD);
         break;
       case nodeKeycodes.NAND:
       case nodeKeycodes.NAND_u:
-        editor.node(nodeTypes.NAND);
+        editor.node(NodeTypes.NAND);
         break;
       case nodeKeycodes.NOR:
       case nodeKeycodes.NOR_u:
-        editor.node(nodeTypes.NOR);
+        editor.node(NodeTypes.NOR);
         break;
       case nodeKeycodes.NOT:
       case nodeKeycodes.NOT_u:
-        editor.node(nodeTypes.NOT);
+        editor.node(NodeTypes.NOT);
         break;
       case nodeKeycodes.OR:
       case nodeKeycodes.OR_u:
-        editor.node(nodeTypes.OR);
+        editor.node(NodeTypes.OR);
         break;
       case nodeKeycodes.XNOR:
       case nodeKeycodes.XNOR_u:
-        editor.node(nodeTypes.XNOR);
+        editor.node(NodeTypes.XNOR);
         break;
       case nodeKeycodes.XOR:
       case nodeKeycodes.XOR_u:
-        editor.node(nodeTypes.XOR);
+        editor.node(NodeTypes.XOR);
         break;
       case inputKeycodes.SWITCH:
       case inputKeycodes.SWITCH_u:
-        editor.input(inputTypes.SWITCH);
+        editor.input(InputTypes.SWITCH);
         break;
       case outputKeycodes.LED_RED:
       case outputKeycodes.LED_RED_u:
-        editor.output(outputTypes.MONO_LED_RED);
+        editor.output(OutputTypes.MONO_LED_RED);
     }
   }
 

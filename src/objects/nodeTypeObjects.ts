@@ -1,8 +1,8 @@
-import {NodeTypeObject, nodeTypes} from '../types/types';
+import {NodeTypeObject, NodeTypes} from '../types/types';
 import Vector2 from '../types/Vector2';
 
 const ADDNode: NodeTypeObject = {
-  id: nodeTypes.ADD,
+  id: NodeTypes.ADD,
   connectionSlots: [
     {
       id: 0,
@@ -29,7 +29,7 @@ const ADDNode: NodeTypeObject = {
 };
 
 const NANDNode: NodeTypeObject = {
-  id: nodeTypes.NAND,
+  id: NodeTypes.NAND,
   connectionSlots: [
     {
       id: 0,
@@ -56,7 +56,7 @@ const NANDNode: NodeTypeObject = {
 };
 
 const NORNode: NodeTypeObject = {
-  id: nodeTypes.NOR,
+  id: NodeTypes.NOR,
   connectionSlots: [
     {
       id: 0,
@@ -83,7 +83,7 @@ const NORNode: NodeTypeObject = {
 };
 
 const NOTNode: NodeTypeObject = {
-  id: nodeTypes.NOT,
+  id: NodeTypes.NOT,
   connectionSlots: [
     {
       id: 0,
@@ -104,7 +104,7 @@ const NOTNode: NodeTypeObject = {
 };
 
 const ORNode: NodeTypeObject = {
-  id: nodeTypes.OR,
+  id: NodeTypes.OR,
   connectionSlots: [
     {
       id: 0,
@@ -131,7 +131,7 @@ const ORNode: NodeTypeObject = {
 };
 
 const XNORNode: NodeTypeObject = {
-  id: nodeTypes.XNOR,
+  id: NodeTypes.XNOR,
   connectionSlots: [
     {
       id: 0,
@@ -158,7 +158,7 @@ const XNORNode: NodeTypeObject = {
 };
 
 const XORNode: NodeTypeObject = {
-  id: nodeTypes.XOR,
+  id: NodeTypes.XOR,
   connectionSlots: [
     {
       id: 0,

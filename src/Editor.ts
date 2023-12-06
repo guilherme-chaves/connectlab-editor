@@ -1,8 +1,8 @@
 import {
-  componentAssocInterface,
-  inputTypes,
-  nodeTypes,
-  outputTypes,
+  ConnectionVertex,
+  InputTypes,
+  NodeTypes,
+  OutputTypes,
 } from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
 import updateAll, {
@@ -194,7 +194,7 @@ export default class Editor {
   }
 
   node(
-    type = nodeTypes.ADD,
+    type = NodeTypes.ADD,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ) {
@@ -223,7 +223,7 @@ export default class Editor {
   }
 
   input(
-    type = inputTypes.SWITCH,
+    type = InputTypes.SWITCH,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ) {
@@ -248,7 +248,7 @@ export default class Editor {
   }
 
   output(
-    type = outputTypes.MONO_LED_RED,
+    type = OutputTypes.MONO_LED_RED,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ) {
@@ -273,12 +273,7 @@ export default class Editor {
       Editor.editorEnv.slots[slotId];
   }
 
-  line(
-    x1: number,
-    y1: number,
-    from?: componentAssocInterface,
-    to?: componentAssocInterface
-  ) {
+  line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {
     const newLine = new ConnectionComponent(
       Editor.editorEnv.nextComponentId,
       new Vector2(x1, y1),

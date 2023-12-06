@@ -16,7 +16,7 @@ enum ComponentType {
   OUTPUT = 6,
 }
 
-export enum nodeTypes {
+export enum NodeTypes {
   ADD = 0,
   NAND = 1,
   NOR = 2,
@@ -26,11 +26,11 @@ export enum nodeTypes {
   XOR = 6,
 }
 
-export enum inputTypes {
+export enum InputTypes {
   SWITCH = 0,
 }
 
-export enum outputTypes {
+export enum OutputTypes {
   MONO_LED_OFF = 0,
   MONO_LED_RED = 1,
 }
@@ -44,21 +44,21 @@ export enum EditorMode {
 
 export type ImageListObject = Record<string, HTMLImageElement>;
 
-export type ComponentList = Record<number, Component>;
+export type ComponentList = Record<string, Component>;
 
-export type NodeList = Record<number, NodeComponent>;
+export type NodeList = Record<string, NodeComponent>;
 
-export type SlotList = Record<number, SlotComponent>;
+export type SlotList = Record<string, SlotComponent>;
 
-export type ConnectionList = Record<number, ConnectionComponent>;
+export type ConnectionList = Record<string, ConnectionComponent>;
 
-export type TextList = Record<number, TextComponent>;
+export type TextList = Record<string, TextComponent>;
 
-export type InputList = Record<number, InputComponent>;
+export type InputList = Record<string, InputComponent>;
 
-export type OutputList = Record<number, OutputComponent>;
+export type OutputList = Record<string, OutputComponent>;
 
-export interface componentListInterface {
+export interface FullComponentList {
   [index: string]: ComponentList;
   nodes: NodeList;
   slots: SlotList;
@@ -68,20 +68,20 @@ export interface componentListInterface {
   outputs: OutputList;
 }
 
-export interface componentAssocInterface {
+export interface ConnectionVertex {
   type: ComponentType;
-  id: number;
+  id: string;
 }
 
-export interface connectionSlotsInterface {
-  [index: symbol]: componentAssocInterface | undefined;
-  start: componentAssocInterface | undefined;
-  end: componentAssocInterface | undefined;
+export interface ConnectionVertices {
+  [index: symbol]: ConnectionVertex | undefined;
+  start: ConnectionVertex | undefined;
+  end: ConnectionVertex | undefined;
 }
 
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
-  readonly id: nodeTypes;
+  readonly id: NodeTypes;
   readonly connectionSlots: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
@@ -92,7 +92,7 @@ export interface NodeTypeObject {
 }
 
 export interface InputTypeObject {
-  readonly id: inputTypes;
+  readonly id: InputTypes;
   readonly connectionSlot: {
     id: number;
     name: string;
@@ -102,7 +102,7 @@ export interface InputTypeObject {
 }
 
 export interface OutputTypeObject {
-  readonly id: outputTypes;
+  readonly id: OutputTypes;
   readonly connectionSlot: {
     id: number;
     name: string;

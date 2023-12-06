@@ -3,11 +3,11 @@ import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import Vector2 from '../types/Vector2';
-import ComponentType, {OutputTypeObject, outputTypes} from '../types/types';
+import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
 class OutputComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public readonly outputType: OutputTypeObject;
@@ -51,11 +51,11 @@ class OutputComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     position: Vector2,
     canvasWidth: number,
     canvasHeight: number,
-    outputType: outputTypes,
+    outputType: OutputTypes,
     slot: SlotComponent | undefined
   ) {
     this.id = id;
@@ -83,9 +83,9 @@ class OutputComponent implements Component {
     this._state = false;
   }
 
-  static getOutputTypeObject(type: outputTypes): [OutputTypeObject, boolean] {
+  static getOutputTypeObject(type: OutputTypes): [OutputTypeObject, boolean] {
     switch (type) {
-      case outputTypes.MONO_LED_RED:
+      case OutputTypes.MONO_LED_RED:
         return [LEDROutput, true];
       default:
         return [LEDROutput, true];
@@ -107,7 +107,7 @@ class OutputComponent implements Component {
   draw(ctx: CanvasRenderingContext2D) {
     let imgId = `${this.outputType.id}`;
     if (this._isLEDOutput && !this.state) {
-      imgId = `${outputTypes.MONO_LED_OFF}`;
+      imgId = `${OutputTypes.MONO_LED_OFF}`;
     }
 
     ctx.drawImage(

@@ -34,7 +34,7 @@ export default {
     }
 
     this.editingOutput = true;
-    const key = Object.values(collisionList.outputs as number[])[0];
+    const key = Object.values(collisionList.outputs)[0];
     const output = Editor.editorEnv.outputs[key];
     output.move(v, useDelta);
     this.moveLinkedElements(output, useDelta);
@@ -50,9 +50,5 @@ export default {
           connection.move(output.slotComponent!.globalPosition, 1, useDelta);
       });
     }
-  },
-  switchInputState(inputId: number): void {
-    const input = Editor.editorEnv.inputs[inputId];
-    input.state = !input.state;
   },
 };

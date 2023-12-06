@@ -4,7 +4,7 @@ import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
 
 class TextComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public text: string;
@@ -31,7 +31,7 @@ class TextComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     position: Vector2,
     text = '',
     style = '12px sans-serif',

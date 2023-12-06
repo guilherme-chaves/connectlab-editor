@@ -34,7 +34,7 @@ export default {
     }
 
     this.editingInput = true;
-    const key = Object.values(collisionList.inputs as number[])[0];
+    const key = Object.values(collisionList.inputs)[0];
     const input = Editor.editorEnv.inputs[key];
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);
@@ -51,7 +51,7 @@ export default {
       });
     }
   },
-  switchInputState(inputId: number): void {
+  switchInputState(inputId: string): void {
     const input = Editor.editorEnv.inputs[inputId];
     input.state = !input.state;
   },

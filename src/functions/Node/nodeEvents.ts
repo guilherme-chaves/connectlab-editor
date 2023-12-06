@@ -35,7 +35,7 @@ export default {
     }
 
     this.editingNode = true;
-    const key = Object.values(collisionList.nodes as number[])[0];
+    const key = Object.values(collisionList.nodes)[0];
     const node = Editor.editorEnv.nodes[key];
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);

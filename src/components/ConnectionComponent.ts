@@ -1,17 +1,17 @@
-import ComponentType, {connectionSlotsInterface} from '../types/types';
+import ComponentType, {ConnectionVertices} from '../types/types';
 import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';
 import Component from '../interfaces/componentInterface';
 
 class ConnectionComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public endPosition: Vector2;
   // Pesos (valores de 0 a 1) relativos a interpolação bilinear entre os pontos inicial e final
   public anchors: Array<DOMPoint>;
-  public connectedTo: connectionSlotsInterface;
+  public connectedTo: ConnectionVertices;
   private drawPath: Path2D;
   private regenConnectionPath: boolean;
   public readonly minDistFromConnection: number;
@@ -34,10 +34,10 @@ class ConnectionComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     startPoint: Vector2,
     endPosition: Vector2,
-    connections: connectionSlotsInterface = {start: undefined, end: undefined}
+    connections: ConnectionVertices = {start: undefined, end: undefined}
   ) {
     // A variável position funciona como startPoint
     this.id = id;
@@ -149,7 +149,7 @@ class ConnectionComponent implements Component {
   }
 
   changeConnection(
-    componentId: number | undefined,
+    componentId: string | undefined,
     componentType: ComponentType | undefined,
     end = false
   ) {

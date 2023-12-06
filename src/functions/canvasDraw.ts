@@ -1,4 +1,13 @@
-import {componentListInterface} from '../types/types';
+import {FullComponentList} from '../types/types';
+
+const drawOrder = [
+  'connections',
+  'nodes',
+  'inputs',
+  'outputs',
+  'slots',
+  'texts',
+];
 
 // Limpa o canvas antes de desenhar um novo quadro
 export function clearFrame(ctx: CanvasRenderingContext2D) {
@@ -10,22 +19,17 @@ export function clearFrame(ctx: CanvasRenderingContext2D) {
 
 export function updateCanvas(
   ctx: CanvasRenderingContext2D,
-  elements: componentListInterface
+  elements: FullComponentList
 ) {
   clearFrame(ctx);
-  const drawOrder = [
-    'connections',
-    'nodes',
-    'inputs',
-    'outputs',
-    'slots',
-    'texts',
-  ];
-  for (let i = 0; i < drawOrder.length; i++) {
-    const elementKeys = Object.keys(elements[drawOrder[i]]);
-    for (let j = 0; j < elementKeys.length; j++) {
-      elements[drawOrder[i]][parseInt(elementKeys[j])].draw(ctx);
+  for (const category of drawOrder) {
+    for (const elementKey in elements[category]) {
+      elements[category][elementKey].draw(ctx);
     }
+    // const elementKeys = Object.keys(elements[drawOrder[i]]);
+    // for (let j = 0; j < elementKeys.length; j++) {
+    //   elements[drawOrder[i]][elementKeys[j]].draw(ctx);
+    // }
   }
 }
 
@@ -41,7 +45,7 @@ export function updateBackground(
 
 export default function updateAll(
   canvasCtx: CanvasRenderingContext2D,
-  elements: componentListInterface,
+  elements: FullComponentList,
   bgCtx: CanvasRenderingContext2D | null,
   bgPattern: CanvasPattern | null
 ) {

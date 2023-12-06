@@ -3,11 +3,11 @@ import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import Vector2 from '../types/Vector2';
-import ComponentType, {InputTypeObject, inputTypes} from '../types/types';
+import ComponentType, {InputTypeObject, InputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
 class InputComponent implements Component {
-  public readonly id: number;
+  public readonly id: string;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public readonly inputType: InputTypeObject;
@@ -50,11 +50,11 @@ class InputComponent implements Component {
   }
 
   constructor(
-    id: number,
+    id: string,
     position: Vector2,
     canvasWidth: number,
     canvasHeight: number,
-    inputType: inputTypes,
+    inputType: InputTypes,
     slot: SlotComponent | undefined
   ) {
     this.id = id;
@@ -81,9 +81,9 @@ class InputComponent implements Component {
     this._state = false;
   }
 
-  static getInputTypeObject(type: inputTypes): InputTypeObject {
+  static getInputTypeObject(type: InputTypes): InputTypeObject {
     switch (type) {
-      case inputTypes.SWITCH:
+      case InputTypes.SWITCH:
         return SwitchInput;
       default:
         return SwitchInput;

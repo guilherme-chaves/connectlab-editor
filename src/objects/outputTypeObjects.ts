@@ -1,8 +1,8 @@
 import Vector2 from '../types/Vector2';
-import {OutputTypeObject, outputTypes} from '../types/types';
+import {OutputTypeObject, OutputTypes} from '../types/types';
 
 const LEDROutput: OutputTypeObject = {
-  id: outputTypes.MONO_LED_RED,
+  id: OutputTypes.MONO_LED_RED,
   connectionSlot: {
     id: 0,
     name: 'A',
