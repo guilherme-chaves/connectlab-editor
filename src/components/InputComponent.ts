@@ -49,6 +49,14 @@ class InputComponent implements Component {
     this._state = value;
   }
 
+  get images() {
+    // Valores de ID das imagens são arbitrariamente multiplicados para permitir multiplas imagens para o mesmo componente
+    return [
+      EditorEnvironment.InputImageList.get(this.inputType.id * 10),
+      EditorEnvironment.InputImageList.get(this.inputType.id * 10 + 1),
+    ];
+  }
+
   constructor(
     id: string,
     position: Vector2,
@@ -62,10 +70,8 @@ class InputComponent implements Component {
     this.componentType = ComponentType.INPUT;
     this.inputType = InputComponent.getInputTypeObject(inputType);
     this._slotComponent = slot;
-    this.imageWidth =
-      EditorEnvironment.InputImageList[`${this.inputType.id}_0`].width;
-    this.imageHeight =
-      EditorEnvironment.InputImageList[`${this.inputType.id}_0`].height;
+    this.imageWidth = this.images[0]!.width;
+    this.imageHeight = this.images[0]!.height;
     this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
@@ -103,12 +109,8 @@ class InputComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    let imgId = '';
-    if (this._state) imgId = `${this.inputType.id}_1`;
-    else imgId = `${this.inputType.id}_0`;
-
     ctx.drawImage(
-      EditorEnvironment.InputImageList[imgId],
+      this.images[this._state ? 1 : 0]!,
       this.position.x,
       this.position.y
     );

@@ -50,7 +50,7 @@ class NodeComponent implements Component {
   }
 
   get image() {
-    return EditorEnvironment.nodeImageList[`${this.nodeType.id}`];
+    return EditorEnvironment.nodeImageList.get(this.nodeType.id);
   }
 
   constructor(
@@ -66,10 +66,8 @@ class NodeComponent implements Component {
     this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this._slotComponents = slots;
-    this.imageWidth =
-      EditorEnvironment.nodeImageList[`${this.nodeType.id}`].width;
-    this.imageHeight =
-      EditorEnvironment.nodeImageList[`${this.nodeType.id}`].height;
+    this.imageWidth = this.image!.width;
+    this.imageHeight = this.image!.height;
     this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
@@ -119,11 +117,7 @@ class NodeComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(
-      EditorEnvironment.nodeImageList[`${this.nodeType.id}`],
-      this.position.x,
-      this.position.y
-    );
+    ctx.drawImage(this.image!, this.position.x, this.position.y);
     if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
   }
 }

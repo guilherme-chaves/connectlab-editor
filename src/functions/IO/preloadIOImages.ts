@@ -6,15 +6,17 @@ import LED_RED from '../../assets/gates/LED_RED_ON.svg';
 
 import {InputTypes, OutputTypes} from '../../types/types';
 import preloadImage from '../preloadImage';
-const inputImageList = [
-  [`${InputTypes.SWITCH}_0`, INPUT_OFF],
-  [`${InputTypes.SWITCH}_1`, INPUT_ON],
-];
 
-const outputImageList = [
-  [`${OutputTypes.MONO_LED_OFF}`, LED_OFF],
-  [`${OutputTypes.MONO_LED_RED}`, LED_RED],
-];
+// Valores de ID das imagens são arbitrariamente multiplicados para permitir multiplas imagens para o mesmo componente
+const inputImageList: Map<number, string> = new Map([
+  [InputTypes.SWITCH * 10, INPUT_OFF],
+  [InputTypes.SWITCH * 10 + 1, INPUT_ON],
+]);
+
+const outputImageList: Map<number, string> = new Map([
+  [OutputTypes.MONO_LED_OFF, LED_OFF],
+  [OutputTypes.MONO_LED_RED, LED_RED],
+]);
 
 export function preloadInputImages() {
   return preloadImage(inputImageList);

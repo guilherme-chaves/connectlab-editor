@@ -50,6 +50,10 @@ class OutputComponent implements Component {
     this._state = value;
   }
 
+  get image() {
+    return EditorEnvironment.OutputImageList.get(this.outputType.id);
+  }
+
   constructor(
     id: string,
     position: Vector2,
@@ -64,10 +68,8 @@ class OutputComponent implements Component {
     [this.outputType, this._isLEDOutput] =
       OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
-    this.imageWidth =
-      EditorEnvironment.OutputImageList[`${this.outputType.id}`].width;
-    this.imageHeight =
-      EditorEnvironment.OutputImageList[`${this.outputType.id}`].height;
+    this.imageWidth = this.image!.width;
+    this.imageHeight = this.image!.height;
     this._position = this._position.sub(
       new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
     );
@@ -105,13 +107,13 @@ class OutputComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    let imgId = `${this.outputType.id}`;
+    let imgId = this.outputType.id;
     if (this._isLEDOutput && !this.state) {
-      imgId = `${OutputTypes.MONO_LED_OFF}`;
+      imgId = OutputTypes.MONO_LED_OFF;
     }
 
     ctx.drawImage(
-      EditorEnvironment.OutputImageList[imgId],
+      EditorEnvironment.OutputImageList.get(imgId)!,
       this.position.x,
       this.position.y
     );

@@ -8,15 +8,15 @@ import XORPath from '../../assets/gates/XOR_ANSI.svg';
 import {NodeTypes} from '../../types/types';
 import preloadImage from '../preloadImage';
 
-const imageList = [
-  [`${NodeTypes.ADD}`, ADDPath],
-  [`${NodeTypes.NAND}`, NANDPath],
-  [`${NodeTypes.NOR}`, NORPath],
-  [`${NodeTypes.NOT}`, NOTPath],
-  [`${NodeTypes.OR}`, ORPath],
-  [`${NodeTypes.XNOR}`, XNORPath],
-  [`${NodeTypes.XOR}`, XORPath],
-];
+const imageList: Map<number, string> = new Map([
+  [NodeTypes.ADD, ADDPath],
+  [NodeTypes.NAND, NANDPath],
+  [NodeTypes.NOR, NORPath],
+  [NodeTypes.NOT, NOTPath],
+  [NodeTypes.OR, ORPath],
+  [NodeTypes.XNOR, XNORPath],
+  [NodeTypes.XOR, XORPath],
+]);
 
 export default function preloadNodeImages() {
   return preloadImage(imageList);

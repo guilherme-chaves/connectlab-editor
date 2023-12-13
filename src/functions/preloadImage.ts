@@ -6,11 +6,11 @@ import {ImageListObject} from '../types/types';
  * @argument Array(s) com chave da imagem e caminho (path) da imagem, no formato [chave, chaminho]
  * @returns Objeto com a lista de imagens
  */
-export default function preloadImage(list: string[][]) {
-  const images: ImageListObject = {};
-  for (let i = 0; i < list.length; i++) {
-    images[list[i][0]] = new Image();
-    images[list[i][0]].src = list[i][1] as string;
-  }
+export default function preloadImage(list: Map<number, string>) {
+  const images: ImageListObject = new Map();
+  list.forEach((value, key) => {
+    images.set(key, new Image());
+    images.get(key)!.src = value;
+  });
   return images;
 }

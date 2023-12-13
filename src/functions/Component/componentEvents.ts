@@ -1,4 +1,3 @@
-import Editor from '../../Editor';
 import Vector2 from '../../types/Vector2';
 import {
   NodeList,

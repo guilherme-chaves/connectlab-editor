@@ -42,7 +42,7 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export type ImageListObject = Record<string, HTMLImageElement>;
+export type ImageListObject = Map<number, HTMLImageElement>;
 
 export type ComponentList = Record<string, Component>;
 
