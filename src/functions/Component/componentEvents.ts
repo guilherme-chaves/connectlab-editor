@@ -10,13 +10,12 @@ import {
 export default {
   checkComponentClick(
     position: Vector2,
-    elementList: NodeList | InputList | OutputList | SlotList | TextList
-  ): string[] | undefined {
+    elementsList: NodeList | InputList | OutputList | SlotList | TextList
+  ): number[] | undefined {
     let collided = false;
-    const collidedWith = new Array<string>();
-    Object.keys(elementList).forEach(key => {
-      const collision =
-        elementList[key].collisionShape.collisionWithPoint(position);
+    const collidedWith = new Array<number>();
+    elementsList.forEach((component, key) => {
+      const collision = component.collisionShape.collisionWithPoint(position);
       if (collision) collidedWith.push(key);
       collided = collided || collision;
     });

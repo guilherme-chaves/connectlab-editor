@@ -10,7 +10,7 @@ import componentEvents from '../Component/componentEvents';
 export default {
   editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(position: Vector2): string[] | undefined {
+  checkNodeClick(position: Vector2): number[] | undefined {
     return componentEvents.checkComponentClick(
       position,
       Editor.editorEnv.nodes
@@ -28,8 +28,7 @@ export default {
     }
 
     this.editingNode = true;
-    const key = Object.values(collisionList.nodes)[0];
-    const node = Editor.editorEnv.nodes[key];
+    const node = Editor.editorEnv.nodes.get(collisionList.nodes[0])!;
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);
     return true;

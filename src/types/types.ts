@@ -4,7 +4,6 @@ import NodeComponent from '../components/NodeComponent';
 import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
-import Component from '../interfaces/componentInterface';
 import Vector2 from './Vector2';
 
 enum ComponentType {
@@ -44,22 +43,26 @@ export enum EditorMode {
 
 export type ImageListObject = Map<number, HTMLImageElement>;
 
-export type ComponentList = Record<string, Component>;
+export type NodeList = Map<number, NodeComponent>;
 
-export type NodeList = Record<string, NodeComponent>;
+export type SlotList = Map<number, SlotComponent>;
 
-export type SlotList = Record<string, SlotComponent>;
+export type ConnectionList = Map<number, ConnectionComponent>;
 
-export type ConnectionList = Record<string, ConnectionComponent>;
+export type TextList = Map<number, TextComponent>;
 
-export type TextList = Record<string, TextComponent>;
+export type InputList = Map<number, InputComponent>;
 
-export type InputList = Record<string, InputComponent>;
-
-export type OutputList = Record<string, OutputComponent>;
+export type OutputList = Map<number, OutputComponent>;
 
 export interface FullComponentList {
-  [index: string]: ComponentList;
+  [index: string]:
+    | NodeList
+    | SlotList
+    | ConnectionList
+    | TextList
+    | InputList
+    | OutputList;
   nodes: NodeList;
   slots: SlotList;
   connections: ConnectionList;
@@ -70,7 +73,7 @@ export interface FullComponentList {
 
 export interface ConnectionVertex {
   type: ComponentType;
-  id: string;
+  id: number;
 }
 
 export interface ConnectionVertices {

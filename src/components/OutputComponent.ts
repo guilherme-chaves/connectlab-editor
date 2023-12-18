@@ -7,7 +7,7 @@ import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
 class OutputComponent implements Component {
-  public readonly id: string;
+  public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public readonly outputType: OutputTypeObject;
@@ -55,7 +55,7 @@ class OutputComponent implements Component {
   }
 
   constructor(
-    id: string,
+    id: number,
     position: Vector2,
     canvasWidth: number,
     canvasHeight: number,

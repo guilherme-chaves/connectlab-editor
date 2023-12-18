@@ -37,12 +37,12 @@ class EditorEnvironment {
   constructor(
     documentId: string,
     startId = 0,
-    nodeList = {},
-    slotList = {},
-    connectionList = {},
-    textList = {},
-    inputList = {},
-    outputList = {}
+    nodeList = new Map(),
+    slotList = new Map(),
+    connectionList = new Map(),
+    textList = new Map(),
+    inputList = new Map(),
+    outputList = new Map()
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
@@ -95,77 +95,72 @@ class EditorEnvironment {
     return this.outputList;
   }
 
-  get nextComponentId(): string {
-    return `${this._nextComponentId}`;
+  get nextComponentId(): number {
+    return this._nextComponentId;
   }
 
-  addComponent(component: Component): string {
+  addComponent(component: Component): number {
     switch (component.componentType) {
       case ComponentType.NODE:
-        this.nodeList[this._nextComponentId] = component as NodeComponent;
+        this.nodeList.set(this._nextComponentId, component as NodeComponent);
         break;
       case ComponentType.SLOT:
-        this.slotList[this._nextComponentId] = component as SlotComponent;
+        this.slotList.set(this._nextComponentId, component as SlotComponent);
         break;
       case ComponentType.LINE:
-        this.connectionList[this._nextComponentId] =
-          component as ConnectionComponent;
+        this.connectionList.set(
+          this._nextComponentId,
+          component as ConnectionComponent
+        );
         break;
       case ComponentType.TEXT:
-        this.textList[this._nextComponentId] = component as TextComponent;
+        this.textList.set(this._nextComponentId, component as TextComponent);
         break;
       case ComponentType.INPUT:
-        this.inputList[this._nextComponentId] = component as InputComponent;
+        this.inputList.set(this._nextComponentId, component as InputComponent);
         break;
       case ComponentType.OUTPUT:
-        this.outputList[this._nextComponentId] = component as OutputComponent;
+        this.outputList.set(
+          this._nextComponentId,
+          component as OutputComponent
+        );
         break;
     }
     console.log(component);
     this._nextComponentId += 1;
-    return `${this._nextComponentId - 1}`;
+    return this._nextComponentId - 1;
   }
 
   removeComponent(
     componentId: number = this._nextComponentId - 1,
     type?: ComponentType
-  ): void {
+  ): boolean {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
-          delete this.nodeList[componentId];
-          break;
+          return this.nodeList.delete(componentId);
         case ComponentType.SLOT:
-          delete this.slotList[componentId];
-          break;
+          return this.slotList.delete(componentId);
         case ComponentType.LINE:
-          delete this.connectionList[componentId];
-          break;
+          return this.connectionList.delete(componentId);
         case ComponentType.TEXT:
-          delete this.textList[componentId];
-          break;
+          return this.textList.delete(componentId);
         case ComponentType.INPUT:
-          delete this.inputList[componentId];
-          break;
+          return this.inputList.delete(componentId);
         case ComponentType.OUTPUT:
-          delete this.outputList[componentId];
-          break;
+          return this.outputList.delete(componentId);
+        default:
+          return false;
       }
     } else {
-      if (Object.prototype.hasOwnProperty.call(this.nodeList, componentId))
-        delete this.nodeList[componentId];
-      if (Object.prototype.hasOwnProperty.call(this.slotList, componentId))
-        delete this.slotList[componentId];
-      if (
-        Object.prototype.hasOwnProperty.call(this.connectionList, componentId)
-      )
-        delete this.connectionList[componentId];
-      if (Object.prototype.hasOwnProperty.call(this.textList, componentId))
-        delete this.textList[componentId];
-      if (Object.prototype.hasOwnProperty.call(this.inputList, componentId))
-        delete this.inputList[componentId];
-      if (Object.prototype.hasOwnProperty.call(this.outputList, componentId))
-        delete this.outputList[componentId];
+      return (
+        this.nodeList.delete(componentId) ||
+        this.slotList.delete(componentId) ||
+        this.connectionList.delete(componentId) ||
+        this.textList.delete(componentId) ||
+        this.inputList.delete(componentId) ||
+        this.outputList.delete(componentId)
+      );
     }
   }
 }

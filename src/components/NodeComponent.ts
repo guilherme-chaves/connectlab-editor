@@ -16,7 +16,7 @@ import Component from '../interfaces/componentInterface';
 import SlotComponent from './SlotComponent';
 
 class NodeComponent implements Component {
-  public readonly id: string;
+  public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
@@ -54,7 +54,7 @@ class NodeComponent implements Component {
   }
 
   constructor(
-    id: string,
+    id: number,
     position: Vector2,
     nodeType: NodeTypes,
     canvasWidth: number,

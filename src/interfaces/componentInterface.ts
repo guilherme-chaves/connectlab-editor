@@ -3,7 +3,7 @@ import ComponentType from '../types/types';
 import Collision from './collisionInterface';
 
 export default interface Component {
-  readonly id: string;
+  readonly id: number;
   position: Vector2;
   readonly componentType: ComponentType;
   collisionShape: Collision | Array<Collision>;

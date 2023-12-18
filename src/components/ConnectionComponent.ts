@@ -5,7 +5,7 @@ import ConnectionPathFunctions from '../functions/Connection/connectionPath';
 import Component from '../interfaces/componentInterface';
 
 class ConnectionComponent implements Component {
-  public readonly id: string;
+  public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
   public endPosition: Vector2;
@@ -34,7 +34,7 @@ class ConnectionComponent implements Component {
   }
 
   constructor(
-    id: string,
+    id: number,
     startPoint: Vector2,
     endPosition: Vector2,
     connections: ConnectionVertices = {start: undefined, end: undefined}
@@ -149,7 +149,7 @@ class ConnectionComponent implements Component {
   }
 
   changeConnection(
-    componentId: string | undefined,
+    componentId: number | undefined,
     componentType: ComponentType | undefined,
     end = false
   ) {

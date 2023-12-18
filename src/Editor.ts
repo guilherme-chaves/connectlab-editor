@@ -212,13 +212,12 @@ export default class Editor {
       const slotKey = this.slot(
         slot.localPos.x,
         slot.localPos.y,
-        Editor.editorEnv.nodes[newNodeId],
+        Editor.editorEnv.nodes.get(newNodeId)!,
         slot.in
       );
-      slots.push(Editor.editorEnv.slots[slotKey]);
+      slots.push(Editor.editorEnv.slots.get(slotKey)!);
     });
-    Editor.editorEnv.nodes[newNodeId].slotComponents = slots;
-    this.draw(true, false);
+    Editor.editorEnv.nodes.get(newNodeId)!.slotComponents = slots;
     return newNodeId;
   }
 
@@ -240,11 +239,11 @@ export default class Editor {
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
-      Editor.editorEnv.inputs[newInputId],
+      Editor.editorEnv.inputs.get(newInputId)!,
       false
     );
-    Editor.editorEnv.inputs[newInputId].slotComponent =
-      Editor.editorEnv.slots[slotId];
+    Editor.editorEnv.inputs.get(newInputId)!.slotComponent =
+      Editor.editorEnv.slots.get(slotId);
   }
 
   output(
@@ -266,11 +265,11 @@ export default class Editor {
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
-      Editor.editorEnv.outputs[newOutputId],
+      Editor.editorEnv.outputs.get(newOutputId)!,
       true
     );
-    Editor.editorEnv.outputs[newOutputId].slotComponent =
-      Editor.editorEnv.slots[slotId];
+    Editor.editorEnv.outputs.get(newOutputId)!.slotComponent =
+      Editor.editorEnv.slots.get(slotId);
   }
 
   line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {
@@ -280,7 +279,6 @@ export default class Editor {
       new Vector2(x1, y1),
       {start: from, end: to}
     );
-    this.draw(true, false);
     return Editor.editorEnv.addComponent(newLine);
   }
 
@@ -293,7 +291,6 @@ export default class Editor {
       parent,
       this.canvasCtx
     );
-    this.draw(true, false);
     return Editor.editorEnv.addComponent(newText);
   }
 

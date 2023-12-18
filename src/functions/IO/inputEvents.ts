@@ -9,7 +9,7 @@ import outputEvents from './outputEvents';
 
 export default {
   editingInput: false,
-  checkInputClick(position: Vector2): string[] | undefined {
+  checkInputClick(position: Vector2): number[] | undefined {
     return componentEvents.checkComponentClick(
       position,
       Editor.editorEnv.inputs
@@ -27,8 +27,7 @@ export default {
     }
 
     this.editingInput = true;
-    const key = Object.values(collisionList.inputs)[0];
-    const input = Editor.editorEnv.inputs[key];
+    const input = Editor.editorEnv.inputs.get(collisionList.inputs[0])!;
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);
     return true;
@@ -44,8 +43,8 @@ export default {
       });
     }
   },
-  switchInputState(inputId: string): void {
-    const input = Editor.editorEnv.inputs[inputId];
+  switchInputState(inputId: number): void {
+    const input = Editor.editorEnv.inputs.get(inputId)!;
     input.state = !input.state;
   },
 };

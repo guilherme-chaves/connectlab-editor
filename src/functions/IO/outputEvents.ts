@@ -9,7 +9,7 @@ import componentEvents from '../Component/componentEvents';
 
 export default {
   editingOutput: false,
-  checkOutputClick(position: Vector2): string[] | undefined {
+  checkOutputClick(position: Vector2): number[] | undefined {
     return componentEvents.checkComponentClick(
       position,
       Editor.editorEnv.outputs
@@ -27,8 +27,7 @@ export default {
     }
 
     this.editingOutput = true;
-    const key = Object.values(collisionList.outputs)[0];
-    const output = Editor.editorEnv.outputs[key];
+    const output = Editor.editorEnv.outputs.get(collisionList.outputs[0])!;
     output.move(v, useDelta);
     this.moveLinkedElements(output, useDelta);
     return true;

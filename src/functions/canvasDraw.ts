@@ -23,13 +23,10 @@ export function updateCanvas(
 ) {
   clearFrame(ctx);
   for (const category of drawOrder) {
-    for (const elementKey in elements[category]) {
-      elements[category][elementKey].draw(ctx);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const [_key, component] of elements[category]) {
+      component.draw(ctx);
     }
-    // const elementKeys = Object.keys(elements[drawOrder[i]]);
-    // for (let j = 0; j < elementKeys.length; j++) {
-    //   elements[drawOrder[i]][elementKeys[j]].draw(ctx);
-    // }
   }
 }
 
