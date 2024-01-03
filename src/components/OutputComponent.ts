@@ -5,6 +5,7 @@ import {LEDROutput} from '../objects/outputTypeObjects';
 import Vector2 from '../types/Vector2';
 import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
+import signalEvents from '../functions/Signal/signalEvents';
 
 class OutputComponent implements Component {
   public readonly id: number;
@@ -15,7 +16,6 @@ class OutputComponent implements Component {
   private _collisionShape: BBCollision;
   private imageWidth: number;
   private imageHeight: number;
-  private _state: boolean;
   private _isLEDOutput: boolean;
 
   get position(): Vector2 {
@@ -43,11 +43,11 @@ class OutputComponent implements Component {
   }
 
   get state() {
-    return this._state;
+    return signalEvents.getVertexState(this.id);
   }
 
   set state(value: boolean) {
-    this._state = value;
+    signalEvents.setVertexState(this.id, value);
   }
 
   get image() {
@@ -82,7 +82,6 @@ class OutputComponent implements Component {
       this.imageWidth,
       this.imageHeight
     );
-    this._state = false;
   }
 
   static getOutputTypeObject(type: OutputTypes): [OutputTypeObject, boolean] {

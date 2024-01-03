@@ -48,7 +48,7 @@ export default class MouseEvents {
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId !== undefined) {
-        Editor.editorEnv.slots.get(slotId[0])!.state = true;
+        Editor.editorEnv.slots.get(slotId[0])!.selected = true;
         connectionEvents.addLine(editor, this._mouse.position);
       }
       this.clearUnselectedComponents(undefined, slotId);
@@ -103,15 +103,15 @@ export default class MouseEvents {
 
   // Procura na lista anterior de colisões as que não estão presentes na atual, removendo seu estado de selecionado/ativo
   clearUnselectedComponents(
-    newNodeIds?: Array<number>,
+    _newNodeIds?: Array<number>,
     newSlotIds?: Array<number>,
-    newConnectionIds?: Array<number>,
-    newTextIds?: Array<number>
+    _newConnectionIds?: Array<number>,
+    _newTextIds?: Array<number>
   ): void {
     if (this.collisionList.slots !== undefined) {
       this.collisionList.slots.forEach(slot => {
         if (!newSlotIds?.includes(slot)) {
-          Editor.editorEnv.slots.get(slot)!.state = false;
+          Editor.editorEnv.slots.get(slot)!.selected = false;
         }
       });
     }

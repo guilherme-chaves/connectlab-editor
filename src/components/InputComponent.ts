@@ -1,5 +1,6 @@
 import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
+import signalEvents from '../functions/Signal/signalEvents';
 import Component from '../interfaces/componentInterface';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import Vector2 from '../types/Vector2';
@@ -15,7 +16,6 @@ class InputComponent implements Component {
   private _collisionShape: BBCollision;
   private imageWidth: number;
   private imageHeight: number;
-  private _state: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -42,11 +42,11 @@ class InputComponent implements Component {
   }
 
   get state() {
-    return this._state;
+    return signalEvents.getVertexState(this.id);
   }
 
   set state(value: boolean) {
-    this._state = value;
+    signalEvents.setVertexState(this.id, value);
   }
 
   get images() {
@@ -84,7 +84,6 @@ class InputComponent implements Component {
       this.imageWidth,
       this.imageHeight
     );
-    this._state = false;
   }
 
   static getInputTypeObject(type: InputTypes): InputTypeObject {
@@ -110,7 +109,7 @@ class InputComponent implements Component {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.drawImage(
-      this.images[this._state ? 1 : 0]!,
+      this.images[this.state ? 1 : 0]!,
       this.position.x,
       this.position.y
     );

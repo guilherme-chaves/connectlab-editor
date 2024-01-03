@@ -14,6 +14,7 @@ import BBCollision from '../collision/BBCollision';
 import EditorEnvironment from '../EditorEnvironment';
 import Component from '../interfaces/componentInterface';
 import SlotComponent from './SlotComponent';
+import signalEvents from '../functions/Signal/signalEvents';
 
 class NodeComponent implements Component {
   public readonly id: number;
@@ -51,6 +52,14 @@ class NodeComponent implements Component {
 
   get image() {
     return EditorEnvironment.nodeImageList.get(this.nodeType.id);
+  }
+
+  get state() {
+    return signalEvents.getVertexState(this.id);
+  }
+
+  set state(value: boolean) {
+    signalEvents.setVertexState(this.id, value);
   }
 
   constructor(

@@ -11,7 +11,7 @@ export default class SlotComponent implements Component {
   private _parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
   private drawPath: Path2D;
-  public state: boolean;
+  public selected: boolean;
   public readonly inSlot: boolean;
   private color: string;
   private colorActive: string;
@@ -70,7 +70,7 @@ export default class SlotComponent implements Component {
     this._slotConnections = connections;
     this.color = color;
     this.colorActive = colorActive;
-    this.state = false;
+    this.selected = false;
     this.inSlot = inSlot;
     this.radius = radius;
     this.attractionRadius = attractionRadius;
@@ -107,7 +107,7 @@ export default class SlotComponent implements Component {
 
   draw(ctx: CanvasRenderingContext2D): void {
     const oldFillStyle = ctx.fillStyle;
-    ctx.fillStyle = this.state ? this.colorActive : this.color;
+    ctx.fillStyle = this.selected ? this.colorActive : this.color;
     ctx.fill(this.drawPath);
     ctx.fillStyle = oldFillStyle;
     this.collisionShape.draw(ctx, true);

@@ -18,9 +18,9 @@ export default {
     );
   },
 
-  checkAnchorCollision(p1: Vector2) {
-    //Teste
-  },
+  // checkAnchorCollision(p1: Vector2) {
+  //   //Teste
+  // },
 
   generateAnchors(connection: ConnectionComponent): Array<DOMPoint> {
     const anchorsArr: Array<DOMPoint> = [];
@@ -43,15 +43,15 @@ export default {
         headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
           ? 1
           : headedTowards > THREE_QUARTER_PI ||
-            headedTowards < -THREE_QUARTER_PI
-          ? -1
-          : 0;
+              headedTowards < -THREE_QUARTER_PI
+            ? -1
+            : 0;
       stepTo.y =
         headedTowards > QUARTER_PI && headedTowards <= THREE_QUARTER_PI
           ? 1
           : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
-          ? -1
-          : 0;
+            ? -1
+            : 0;
       const newAnchor = new DOMPoint(0, 0);
       if (anchorsArr.length === 0) {
         newAnchor.x = Math.abs(stepTo.x) / xStepDivisor;

@@ -7,6 +7,7 @@ import ComponentType, {
   TextList,
   InputList,
   OutputList,
+  SignalGraph,
 } from './types/types';
 import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
@@ -20,6 +21,7 @@ import {
 import Component from './interfaces/componentInterface';
 import InputComponent from './components/InputComponent';
 import OutputComponent from './components/OutputComponent';
+import signalEvents from './functions/Signal/signalEvents';
 
 class EditorEnvironment {
   public documentId: string;
@@ -34,6 +36,8 @@ class EditorEnvironment {
   public static readonly InputImageList: ImageListObject = preloadInputImages();
   public static readonly OutputImageList: ImageListObject =
     preloadOutputImages();
+  private _signalGraph: SignalGraph;
+
   constructor(
     documentId: string,
     startId = 0,
@@ -52,6 +56,7 @@ class EditorEnvironment {
     this.textList = textList;
     this.inputList = inputList;
     this.outputList = outputList;
+    this._signalGraph = new Map();
   }
 
   /* Getters e Setters */
@@ -99,10 +104,22 @@ class EditorEnvironment {
     return this._nextComponentId;
   }
 
+  get signalGraph(): SignalGraph {
+    return this._signalGraph;
+  }
+
   addComponent(component: Component): number {
     switch (component.componentType) {
       case ComponentType.NODE:
         this.nodeList.set(this._nextComponentId, component as NodeComponent);
+        signalEvents.addVertex(
+          this._nextComponentId,
+          undefined,
+          signalEvents.convertToSignalFromList(
+            this._nextComponentId,
+            ComponentType.NODE
+          )
+        );
         break;
       case ComponentType.SLOT:
         this.slotList.set(this._nextComponentId, component as SlotComponent);
@@ -118,11 +135,27 @@ class EditorEnvironment {
         break;
       case ComponentType.INPUT:
         this.inputList.set(this._nextComponentId, component as InputComponent);
+        signalEvents.addVertex(
+          this._nextComponentId,
+          undefined,
+          signalEvents.convertToSignalFromList(
+            this._nextComponentId,
+            ComponentType.INPUT
+          )
+        );
         break;
       case ComponentType.OUTPUT:
         this.outputList.set(
           this._nextComponentId,
           component as OutputComponent
+        );
+        signalEvents.addVertex(
+          this._nextComponentId,
+          undefined,
+          signalEvents.convertToSignalFromList(
+            this._nextComponentId,
+            ComponentType.OUTPUT
+          )
         );
         break;
     }
@@ -138,29 +171,35 @@ class EditorEnvironment {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
+          signalEvents.removeVertex(componentId, type);
           return this.nodeList.delete(componentId);
         case ComponentType.SLOT:
           return this.slotList.delete(componentId);
         case ComponentType.LINE:
+          signalEvents.removeEdge(this.connectionList.get(componentId));
           return this.connectionList.delete(componentId);
         case ComponentType.TEXT:
           return this.textList.delete(componentId);
         case ComponentType.INPUT:
+          signalEvents.removeVertex(componentId, type);
           return this.inputList.delete(componentId);
         case ComponentType.OUTPUT:
+          signalEvents.removeVertex(componentId, type);
           return this.outputList.delete(componentId);
         default:
           return false;
       }
     } else {
-      return (
-        this.nodeList.delete(componentId) ||
-        this.slotList.delete(componentId) ||
-        this.connectionList.delete(componentId) ||
-        this.textList.delete(componentId) ||
-        this.inputList.delete(componentId) ||
-        this.outputList.delete(componentId)
-      );
+      const component =
+        this.connectionList.get(componentId) ??
+        this.nodeList.get(componentId) ??
+        this.inputList.get(componentId) ??
+        this.outputList.get(componentId) ??
+        this.slotList.get(componentId) ??
+        this.textList.get(componentId);
+      if (component !== undefined)
+        return this.removeComponent(component.id, component.componentType);
+      else return false;
     }
   }
 }

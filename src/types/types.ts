@@ -113,4 +113,8 @@ export interface OutputTypeObject {
   };
 }
 
+export type SignalGraphData = {state: boolean; signalFrom: Array<number>};
+
+export type SignalGraph = Map<number, SignalGraphData>;
+
 export default ComponentType;

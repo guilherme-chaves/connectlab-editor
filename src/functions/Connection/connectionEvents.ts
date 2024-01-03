@@ -6,6 +6,7 @@ import SlotComponent from '../../components/SlotComponent';
 import nodeEvents from '../Node/nodeEvents';
 import inputEvents from '../IO/inputEvents';
 import outputEvents from '../IO/outputEvents';
+import signalEvents from '../Signal/signalEvents';
 
 export default {
   editingLineId: -1,
@@ -17,7 +18,7 @@ export default {
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
   checkConnectionClick(position: Vector2): number[] | undefined {
     let collided = false;
-    const collidedWith = new Array<number>();
+    const collidedWith: Array<number> = [];
     Editor.editorEnv.connections.forEach((connection, key) => {
       const collision = connection.collisionShape.find(collisionShape => {
         return collisionShape.collisionWithPoint(position);
@@ -123,8 +124,8 @@ export default {
           this.lineStartSlot,
           currentSlotCollisions[0]
         );
-
         // Cria conjunto de caixas de colisão para a conexão
+        signalEvents.addEdge(currentLine);
         currentLine.collisionShape = currentLine.generateCollisionShapes();
 
         // Retorna a lista de parâmetros do objeto para seus valores padrão
