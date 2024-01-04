@@ -81,8 +81,9 @@ export default class SlotComponent implements Component {
     this.drawPath = this.generatePath();
   }
 
-  move(v: Vector2) {
-    this._position = v;
+  move(v: Vector2, useDelta = true) {
+    if (useDelta) this._position = this._position.add(v);
+    else this._position = v;
     this.collisionShape.moveShape(this.globalPosition, false);
     this.drawPath = this.generatePath();
   }

@@ -67,7 +67,7 @@ export default {
 
     Editor.editorEnv.connections
       .get(this.editingLineId)!
-      .move(position, 1, false, false);
+      .move(position, false, 1, false);
     this.bindConnection(position);
     return true;
   },
@@ -177,11 +177,11 @@ export default {
     if (startPos !== undefined)
       Editor.editorEnv.connections
         .get(this.editingLineId)!
-        .move(startPos, 0, false, false);
+        .move(startPos, false, 0, false);
     if (endPos !== undefined)
       Editor.editorEnv.connections
         .get(this.editingLineId)!
-        .move(endPos, 1, false, false);
+        .move(endPos, false, 1, false);
     if (startSlotId !== undefined)
       Editor.editorEnv.connections
         .get(this.editingLineId)!

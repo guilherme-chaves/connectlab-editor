@@ -38,9 +38,9 @@ export default {
       slot.update();
       slot.slotConnections.forEach(connection => {
         if (connection.connectedTo.start?.id === slot.id)
-          connection.move(slot.globalPosition, 0, useDelta);
+          connection.move(slot.globalPosition, useDelta, 0);
         else if (connection.connectedTo.end?.id === slot.id)
-          connection.move(slot.globalPosition, 1, useDelta);
+          connection.move(slot.globalPosition, useDelta, 1);
       });
     });
   },

@@ -113,8 +113,8 @@ class ConnectionComponent implements Component {
   // movePoint -> 0 = position, 1 = endPosition, 2 (ou qualquer outro) = ambos
   move(
     v: Vector2,
-    movePoint = 2,
     useDelta = true,
+    movePoint = 2,
     updateCollisionShapes = true
   ) {
     if (useDelta) {

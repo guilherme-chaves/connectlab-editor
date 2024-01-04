@@ -37,9 +37,9 @@ export default {
       output.slotComponent.update();
       output.slotComponent.slotConnections.forEach(connection => {
         if (connection.connectedTo.start?.id === output.slotComponent!.id)
-          connection.move(output.slotComponent!.globalPosition, 0, useDelta);
+          connection.move(output.slotComponent!.globalPosition, useDelta, 0);
         else if (connection.connectedTo.end?.id === output.slotComponent!.id)
-          connection.move(output.slotComponent!.globalPosition, 1, useDelta);
+          connection.move(output.slotComponent!.globalPosition, useDelta, 1);
       });
     }
   },
