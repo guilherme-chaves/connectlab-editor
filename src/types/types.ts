@@ -85,13 +85,13 @@ export interface ConnectionVertices {
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
   readonly id: NodeTypes;
-  readonly connectionSlots: Array<{
+  readonly connectionSlot: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
     localPos: Vector2; // Posição do slot, relativo ao elemento-pai
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
-  readonly op: (slotsState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
+  readonly op: (slotState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
 }
 
 export interface InputTypeObject {
@@ -101,7 +101,7 @@ export interface InputTypeObject {
     name: string;
     localPos: Vector2;
   };
-  readonly op: (slotState: boolean) => boolean;
+  readonly op: (slotState: Array<boolean>) => boolean;
 }
 
 export interface OutputTypeObject {
@@ -111,6 +111,7 @@ export interface OutputTypeObject {
     name: string;
     localPos: Vector2;
   };
+  readonly op: (slotState: Array<boolean>) => boolean;
 }
 
 export type SignalGraphData = {state: boolean; signalFrom: Array<number>};

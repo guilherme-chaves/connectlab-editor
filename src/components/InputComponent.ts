@@ -1,17 +1,17 @@
 import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
 import signalEvents from '../functions/Signal/signalEvents';
-import Component from '../interfaces/componentInterface';
+import Node from '../interfaces/nodeInterface';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import Vector2 from '../types/Vector2';
 import ComponentType, {InputTypeObject, InputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
-class InputComponent implements Component {
+class InputComponent implements Node {
   public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
-  public readonly inputType: InputTypeObject;
+  public readonly nodeType: InputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   private _collisionShape: BBCollision;
   private imageWidth: number;
@@ -25,12 +25,12 @@ class InputComponent implements Component {
     this._position = value;
   }
 
-  get slotComponent() {
-    return this._slotComponent;
+  get slotComponents() {
+    return this._slotComponent !== undefined ? [this._slotComponent] : [];
   }
 
-  set slotComponent(value: SlotComponent | undefined) {
-    this._slotComponent = value;
+  set slotComponents(value: Array<SlotComponent>) {
+    this._slotComponent = value[0];
   }
 
   get collisionShape() {
@@ -49,11 +49,15 @@ class InputComponent implements Component {
     signalEvents.setVertexState(this.id, value);
   }
 
+  get image() {
+    return EditorEnvironment.InputImageList.get(this.nodeType.id * 10);
+  }
+
   get images() {
     // Valores de ID das imagens são arbitrariamente multiplicados para permitir multiplas imagens para o mesmo componente
     return [
-      EditorEnvironment.InputImageList.get(this.inputType.id * 10),
-      EditorEnvironment.InputImageList.get(this.inputType.id * 10 + 1),
+      EditorEnvironment.InputImageList.get(this.nodeType.id * 10),
+      EditorEnvironment.InputImageList.get(this.nodeType.id * 10 + 1),
     ];
   }
 
@@ -68,7 +72,7 @@ class InputComponent implements Component {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.INPUT;
-    this.inputType = InputComponent.getInputTypeObject(inputType);
+    this.nodeType = InputComponent.getInputTypeObject(inputType);
     this._slotComponent = slot;
     this.imageWidth = this.images[0]!.width;
     this.imageHeight = this.images[0]!.height;

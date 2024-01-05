@@ -207,7 +207,7 @@ export default class Editor {
       slots
     );
     const newNodeId = Editor.editorEnv.addComponent(newNode);
-    NodeComponent.getNodeTypeObject(type).connectionSlots.forEach(slot => {
+    NodeComponent.getNodeTypeObject(type).connectionSlot.forEach(slot => {
       const slotKey = this.slot(
         slot.localPos.x,
         slot.localPos.y,
@@ -241,8 +241,9 @@ export default class Editor {
       Editor.editorEnv.inputs.get(newInputId)!,
       false
     );
-    Editor.editorEnv.inputs.get(newInputId)!.slotComponent =
-      Editor.editorEnv.slots.get(slotId);
+    Editor.editorEnv.inputs.get(newInputId)!.slotComponents = [
+      Editor.editorEnv.slots.get(slotId)!,
+    ];
   }
 
   output(
@@ -267,8 +268,9 @@ export default class Editor {
       Editor.editorEnv.outputs.get(newOutputId)!,
       true
     );
-    Editor.editorEnv.outputs.get(newOutputId)!.slotComponent =
-      Editor.editorEnv.slots.get(slotId);
+    Editor.editorEnv.outputs.get(newOutputId)!.slotComponents = [
+      Editor.editorEnv.slots.get(slotId)!,
+    ];
   }
 
   line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {

@@ -1,17 +1,17 @@
 import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
-import Component from '../interfaces/componentInterface';
+import Node from '../interfaces/nodeInterface';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import Vector2 from '../types/Vector2';
 import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 import signalEvents from '../functions/Signal/signalEvents';
 
-class OutputComponent implements Component {
+class OutputComponent implements Node {
   public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;
-  public readonly outputType: OutputTypeObject;
+  public readonly nodeType: OutputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   private _collisionShape: BBCollision;
   private imageWidth: number;
@@ -26,12 +26,12 @@ class OutputComponent implements Component {
     this._position = value;
   }
 
-  get slotComponent() {
-    return this._slotComponent;
+  get slotComponents() {
+    return this._slotComponent !== undefined ? [this._slotComponent] : [];
   }
 
-  set slotComponent(value: SlotComponent | undefined) {
-    this._slotComponent = value;
+  set slotComponents(value: Array<SlotComponent>) {
+    this._slotComponent = value[0];
   }
 
   get collisionShape() {
@@ -51,7 +51,7 @@ class OutputComponent implements Component {
   }
 
   get image() {
-    return EditorEnvironment.OutputImageList.get(this.outputType.id);
+    return EditorEnvironment.OutputImageList.get(this.nodeType.id);
   }
 
   constructor(
@@ -65,7 +65,7 @@ class OutputComponent implements Component {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.OUTPUT;
-    [this.outputType, this._isLEDOutput] =
+    [this.nodeType, this._isLEDOutput] =
       OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
     this.imageWidth = this.image!.width;
@@ -106,7 +106,7 @@ class OutputComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    let imgId = this.outputType.id;
+    let imgId = this.nodeType.id;
     if (this._isLEDOutput && !this.state) {
       imgId = OutputTypes.MONO_LED_OFF;
     }

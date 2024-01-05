@@ -8,6 +8,9 @@ const LEDROutput: OutputTypeObject = {
     name: 'A',
     localPos: new Vector2(23, 64),
   },
+  op(slotState) {
+    return slotState.length > 0 ? slotState[0] : false;
+  },
 };
 
 export {LEDROutput};

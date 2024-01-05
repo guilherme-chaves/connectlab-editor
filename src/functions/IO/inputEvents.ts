@@ -33,13 +33,13 @@ export default {
     return true;
   },
   moveLinkedElements(input: InputComponent, useDelta = true): void {
-    if (input.slotComponent !== undefined) {
-      input.slotComponent.update();
-      input.slotComponent.slotConnections.forEach(connection => {
-        if (connection.connectedTo.start?.id === input.slotComponent!.id)
-          connection.move(input.slotComponent!.globalPosition, useDelta, 0);
-        else if (connection.connectedTo.end?.id === input.slotComponent!.id)
-          connection.move(input.slotComponent!.globalPosition, useDelta, 1);
+    if (input.slotComponents !== undefined) {
+      input.slotComponents[0].update();
+      input.slotComponents[0].slotConnections.forEach(connection => {
+        if (connection.connectedTo.start?.id === input.slotComponents[0]!.id)
+          connection.move(input.slotComponents[0]!.globalPosition, useDelta, 0);
+        else if (connection.connectedTo.end?.id === input.slotComponents[0]!.id)
+          connection.move(input.slotComponents[0]!.globalPosition, useDelta, 1);
       });
     }
   },

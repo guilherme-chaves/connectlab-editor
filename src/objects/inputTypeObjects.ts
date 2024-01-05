@@ -8,8 +8,8 @@ const SwitchInput: InputTypeObject = {
     name: 'A',
     localPos: new Vector2(70, 25),
   },
-  op(slotsState) {
-    return slotsState;
+  op(slotState) {
+    return slotState.length > 0 ? slotState[0] : false;
   },
 };
 

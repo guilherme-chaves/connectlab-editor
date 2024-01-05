@@ -3,7 +3,7 @@ import Vector2 from '../types/Vector2';
 
 const ADDNode: NodeTypeObject = {
   id: NodeTypes.ADD,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -23,14 +23,14 @@ const ADDNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return slotsState[0] && slotsState[1];
+  op(slotState) {
+    return slotState.length >= 2 ? slotState[0] && slotState[1] : false;
   },
 };
 
 const NANDNode: NodeTypeObject = {
   id: NodeTypes.NAND,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -50,14 +50,14 @@ const NANDNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return !(slotsState[0] && slotsState[1]);
+  op(slotState) {
+    return slotState.length >= 2 ? !(slotState[0] && slotState[1]) : false;
   },
 };
 
 const NORNode: NodeTypeObject = {
   id: NodeTypes.NOR,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -77,14 +77,14 @@ const NORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return !(slotsState[0] || slotsState[1]);
+  op(slotState) {
+    return slotState.length >= 2 ? !(slotState[0] || slotState[1]) : false;
   },
 };
 
 const NOTNode: NodeTypeObject = {
   id: NodeTypes.NOT,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'In',
@@ -98,14 +98,14 @@ const NOTNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return !slotsState[0];
+  op(slotState) {
+    return slotState.length >= 1 ? !slotState[0] : false;
   },
 };
 
 const ORNode: NodeTypeObject = {
   id: NodeTypes.OR,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -125,14 +125,14 @@ const ORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return slotsState[0] || slotsState[1];
+  op(slotState) {
+    return slotState.length >= 2 ? slotState[0] || slotState[1] : false;
   },
 };
 
 const XNORNode: NodeTypeObject = {
   id: NodeTypes.XNOR,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -152,14 +152,14 @@ const XNORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return slotsState[0] === slotsState[1];
+  op(slotState) {
+    return slotState.length >= 2 ? slotState[0] === slotState[1] : false;
   },
 };
 
 const XORNode: NodeTypeObject = {
   id: NodeTypes.XOR,
-  connectionSlots: [
+  connectionSlot: [
     {
       id: 0,
       name: 'A',
@@ -179,8 +179,8 @@ const XORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotsState) {
-    return slotsState[0] !== slotsState[1];
+  op(slotState) {
+    return slotState.length >= 2 ? slotState[0] !== slotState[1] : false;
   },
 };
 

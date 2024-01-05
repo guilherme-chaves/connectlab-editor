@@ -12,11 +12,11 @@ import {
 import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import EditorEnvironment from '../EditorEnvironment';
-import Component from '../interfaces/componentInterface';
+import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import signalEvents from '../functions/Signal/signalEvents';
 
-class NodeComponent implements Component {
+class NodeComponent implements Node {
   public readonly id: number;
   private _position: Vector2;
   public readonly componentType: ComponentType;

@@ -1,4 +1,4 @@
-interface Vector2 {
+interface Vector2Interface {
   add(other: Vector2, forceFloat: boolean): Vector2;
   sub(other: Vector2, forceFloat: boolean): Vector2;
   multS(s: number, forceFloat: boolean): Vector2;
@@ -19,7 +19,7 @@ interface Vector2 {
   normalize(): Vector2;
 }
 
-class Vector2 {
+class Vector2 implements Vector2Interface {
   private forceFloat: boolean;
   private _x = 0;
   private _y = 0;
