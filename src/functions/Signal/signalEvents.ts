@@ -2,7 +2,7 @@ import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
 import SlotComponent from '../../components/SlotComponent';
 import ComponentType, {SignalGraph} from '../../types/types';
-// import signalUpdate from './signalUpdate';
+import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
@@ -13,7 +13,7 @@ export default {
   ): void {
     if (!signalGraph.has(nodeId)) {
       signalGraph.set(nodeId, {state, signalFrom});
-      // signalUpdate.updateGraph();
+      signalUpdate.updateGraph();
     }
   },
   removeVertex(
@@ -25,19 +25,13 @@ export default {
       let slots: Array<SlotComponent> = [];
       switch (componentType) {
         case ComponentType.INPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)!.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.inputs.get(nodeId)!.slotComponents;
           break;
         case ComponentType.NODE:
           slots = editorEnv.nodes.get(nodeId)!.slotComponents;
           break;
         case ComponentType.OUTPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)!.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.outputs.get(nodeId)!.slotComponents;
       }
       for (let i = 0; i < slots.length; i++) {
         if (slots[i].inSlot) {
@@ -49,7 +43,7 @@ export default {
         }
       }
       editorEnv.signalGraph.delete(nodeId);
-      // signalUpdate.updateGraph();
+      signalUpdate.updateGraph();
     }
   },
   addEdge(editorEnv: EditorEnvironment, connection: ConnectionComponent): void {
@@ -74,7 +68,7 @@ export default {
     } else {
       this.addVertex(editorEnv.signalGraph, endNodeId, false, [startNodeId]);
     }
-    // signalUpdate.updateGraph();
+    signalUpdate.updateGraph();
   },
   removeEdge(
     editorEnv: EditorEnvironment,
@@ -92,7 +86,7 @@ export default {
       if (index !== -1)
         editorEnv.signalGraph.get(endNode.id)!.signalFrom.splice(index, 1);
     }
-    // signalUpdate.updateGraph();
+    signalUpdate.updateGraph();
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): boolean {
     return signalGraph.get(nodeId)?.state ?? false;
@@ -104,7 +98,7 @@ export default {
   ): void {
     if (signalGraph.has(nodeId)) {
       signalGraph.get(nodeId)!.state = state;
-      // signalUpdate.updateGraphPartial();
+      signalUpdate.updateGraph();
     }
   },
   getVertexConnections(
@@ -126,19 +120,13 @@ export default {
       let slots: Array<SlotComponent> = [];
       switch (componentType) {
         case ComponentType.INPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)?.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.inputs.get(nodeId)!.slotComponents;
           break;
         case ComponentType.NODE:
           slots = editorEnv.nodes.get(nodeId)?.slotComponents ?? [];
           break;
         case ComponentType.OUTPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)?.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.inputs.get(nodeId)!.slotComponents;
       }
       for (let i = 0; i < slots.length; i++) {
         if (slots[i].inSlot) {
