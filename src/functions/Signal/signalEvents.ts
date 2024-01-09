@@ -98,7 +98,7 @@ export default {
   ): void {
     if (signalGraph.has(nodeId)) {
       signalGraph.get(nodeId)!.state = state;
-      signalUpdate.updateGraph();
+      signalUpdate.updateGraphPartial(nodeId);
     }
   },
   getVertexConnections(
