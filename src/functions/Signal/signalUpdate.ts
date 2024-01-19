@@ -20,23 +20,7 @@ export default {
         visited.add(stack[0]);
         const nodeObj = this.getNodeObject(stack[0]);
         if (nodeObj !== undefined) {
-          for (const slot of nodeObj.slotComponents) {
-            if (slot.inSlot) continue;
-            for (const connection of slot.slotConnections) {
-              if (connection.connectedTo.start) {
-                const slot = Editor.editorEnv.slots.get(
-                  connection.connectedTo.start.id
-                )!;
-                stack.push(slot.parent.id);
-              }
-              if (connection.connectedTo.end) {
-                const slot = Editor.editorEnv.slots.get(
-                  connection.connectedTo.end.id
-                )!;
-                stack.push(slot.parent.id);
-              }
-            }
-          }
+          stack.push(...Editor.editorEnv.signalGraph.get(stack[0])!.signalTo);
           if (
             stack[0] !== nodeId &&
             nodeObj.componentType !== ComponentType.INPUT

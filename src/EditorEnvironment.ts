@@ -179,7 +179,7 @@ class EditorEnvironment {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
-          signalEvents.removeVertex(this, componentId, type);
+          signalEvents.removeVertex(this, componentId);
           return this.nodeList.delete(componentId);
         case ComponentType.SLOT:
           return this.slotList.delete(componentId);
@@ -189,10 +189,10 @@ class EditorEnvironment {
         case ComponentType.TEXT:
           return this.textList.delete(componentId);
         case ComponentType.INPUT:
-          signalEvents.removeVertex(this, componentId, type);
+          signalEvents.removeVertex(this, componentId);
           return this.inputList.delete(componentId);
         case ComponentType.OUTPUT:
-          signalEvents.removeVertex(this, componentId, type);
+          signalEvents.removeVertex(this, componentId);
           return this.outputList.delete(componentId);
         default:
           return false;

@@ -109,7 +109,11 @@ export interface OutputTypeObject {
   readonly op: (slotState: Array<boolean>) => boolean;
 }
 
-export type SignalGraphData = {state: boolean; signalFrom: Array<number>};
+export interface SignalGraphData {
+  state: boolean;
+  signalFrom: Array<number>;
+  signalTo: Array<number>;
+}
 
 export type SignalGraph = Map<number, SignalGraphData>;
 
