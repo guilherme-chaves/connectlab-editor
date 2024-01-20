@@ -1,10 +1,14 @@
-import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
 import signalEvents from '../functions/Signal/signalEvents';
 import Node from '../interfaces/nodeInterface';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import Vector2 from '../types/Vector2';
-import ComponentType, {InputTypeObject, InputTypes} from '../types/types';
+import ComponentType, {
+  ImageListObject,
+  InputTypeObject,
+  InputTypes,
+  SignalGraph,
+} from '../types/types';
 import SlotComponent from './SlotComponent';
 
 class InputComponent implements Node {
@@ -14,8 +18,11 @@ class InputComponent implements Node {
   public readonly nodeType: InputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   private _collisionShape: BBCollision;
+  private _images: ImageListObject;
   private imageWidth: number;
   private imageHeight: number;
+  private readonly _signalGraph: SignalGraph;
+  public selected: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -42,22 +49,22 @@ class InputComponent implements Node {
   }
 
   get state() {
-    return signalEvents.getVertexState(this.id);
+    return signalEvents.getVertexState(this._signalGraph, this.id);
   }
 
   set state(value: boolean) {
-    signalEvents.setVertexState(this.id, value);
+    signalEvents.setVertexState(this._signalGraph, this.id, value);
   }
 
   get image() {
-    return EditorEnvironment.InputImageList.get(this.nodeType.id * 10);
+    return this._images.get(this.nodeType.id * 10);
   }
 
   get images() {
     // Valores de ID das imagens são arbitrariamente multiplicados para permitir multiplas imagens para o mesmo componente
     return [
-      EditorEnvironment.InputImageList.get(this.nodeType.id * 10),
-      EditorEnvironment.InputImageList.get(this.nodeType.id * 10 + 1),
+      this._images.get(this.nodeType.id * 10),
+      this._images.get(this.nodeType.id * 10 + 1),
     ];
   }
 
@@ -67,13 +74,17 @@ class InputComponent implements Node {
     canvasWidth: number,
     canvasHeight: number,
     inputType: InputTypes,
-    slot: SlotComponent | undefined
+    slot: SlotComponent | undefined,
+    images: ImageListObject,
+    signalGraph: SignalGraph
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.INPUT;
     this.nodeType = InputComponent.getInputTypeObject(inputType);
     this._slotComponent = slot;
+    this._images = images;
+    this._signalGraph = signalGraph;
     this.imageWidth = this.images[0]!.width;
     this.imageHeight = this.images[0]!.height;
     this._position = this._position.sub(
@@ -88,6 +99,7 @@ class InputComponent implements Node {
       this.imageWidth,
       this.imageHeight
     );
+    this.selected = false;
   }
 
   static getInputTypeObject(type: InputTypes): InputTypeObject {

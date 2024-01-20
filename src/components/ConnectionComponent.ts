@@ -16,6 +16,7 @@ class ConnectionComponent implements Component {
   private regenConnectionPath: boolean;
   public readonly minDistFromConnection: number;
   private _collisionShape: Array<BBCollision>;
+  public selected: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -56,6 +57,7 @@ class ConnectionComponent implements Component {
     this.regenConnectionPath = false;
     this._collisionShape =
       ConnectionPathFunctions.generateCollisionShapes(this);
+    this.selected = false;
   }
 
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável

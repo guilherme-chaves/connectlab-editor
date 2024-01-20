@@ -25,7 +25,7 @@ import OutputComponent from './components/OutputComponent';
 
 export default class Editor {
   // Lista de componentes
-  public static readonly editorEnv = new EditorEnvironment('');
+  public readonly editorEnv;
   // Controle de eventos do canvas
   private readonly mouse: Mouse;
   private readonly keyboard: Keyboard;
@@ -49,7 +49,7 @@ export default class Editor {
     canvasVh = 1,
     frameRate = 60.0
   ) {
-    Editor.editorEnv.documentId = documentId;
+    this.editorEnv = new EditorEnvironment(documentId);
     this.mouse = new Mouse();
     this.keyboard = new Keyboard();
     this.mouseEvents = new MouseEvents(this.mouse);
@@ -68,7 +68,6 @@ export default class Editor {
     this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
     this.loadBackgroundPattern(bgTexturePath);
     this.frameRate = frameRate;
-    this.compute();
   }
 
   // static loadFile(jsonData): Editor
@@ -83,10 +82,12 @@ export default class Editor {
 
   private createEditorEvents(
     canvasDOM: HTMLCanvasElement,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _backgroundDOM: HTMLCanvasElement
   ) {
     window.addEventListener('load', () => {
       this.resize();
+      this.compute();
       this.update();
     });
     window.addEventListener('resize', () => {
@@ -155,7 +156,7 @@ export default class Editor {
   draw(canvas = true, background = false) {
     if (background)
       updateBackground(this.backgroundCtx, this.backgroundPattern);
-    if (canvas) updateCanvas(this.canvasCtx, Editor.editorEnv.components);
+    if (canvas) updateCanvas(this.canvasCtx, this.editorEnv.components);
   }
 
   resize() {
@@ -167,7 +168,7 @@ export default class Editor {
     requestAnimationFrame.bind(
       updateAll(
         this.canvasCtx,
-        Editor.editorEnv.components,
+        this.editorEnv.components,
         this.backgroundCtx,
         this.backgroundPattern
       )
@@ -186,9 +187,9 @@ export default class Editor {
 
   compute() {
     setInterval(() => {
-      this.mouseEvents.onMouseMove();
+      this.mouseEvents.onMouseMove(this.editorEnv);
       this.mouseEvents.onMouseClick(this);
-      this.mouseEvents.onMouseRelease();
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     }, 1000.0 / this.frameRate);
   }
 
@@ -199,24 +200,26 @@ export default class Editor {
   ) {
     const slots: Array<SlotComponent> = [];
     const newNode = new NodeComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x, y),
       type,
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
-      slots
+      slots,
+      this.editorEnv.nodeImageList,
+      this.editorEnv.signalGraph
     );
-    const newNodeId = Editor.editorEnv.addComponent(newNode);
+    const newNodeId = this.editorEnv.addComponent(newNode);
     NodeComponent.getNodeTypeObject(type).connectionSlot.forEach(slot => {
       const slotKey = this.slot(
         slot.localPos.x,
         slot.localPos.y,
-        Editor.editorEnv.nodes.get(newNodeId)!,
+        this.editorEnv.nodes.get(newNodeId)!,
         slot.in
       );
-      slots.push(Editor.editorEnv.slots.get(slotKey)!);
+      slots.push(this.editorEnv.slots.get(slotKey)!);
     });
-    Editor.editorEnv.nodes.get(newNodeId)!.slotComponents = slots;
+    this.editorEnv.nodes.get(newNodeId)!.slotComponents = slots;
     return newNodeId;
   }
 
@@ -226,23 +229,25 @@ export default class Editor {
     y = this.mouse.position.y
   ) {
     const newInput = new InputComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x, y),
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
       type,
-      undefined
+      undefined,
+      this.editorEnv.inputImageList,
+      this.editorEnv.signalGraph
     );
-    const newInputId = Editor.editorEnv.addComponent(newInput);
+    const newInputId = this.editorEnv.addComponent(newInput);
     const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
-      Editor.editorEnv.inputs.get(newInputId)!,
+      this.editorEnv.inputs.get(newInputId)!,
       false
     );
-    Editor.editorEnv.inputs.get(newInputId)!.slotComponents = [
-      Editor.editorEnv.slots.get(slotId)!,
+    this.editorEnv.inputs.get(newInputId)!.slotComponents = [
+      this.editorEnv.slots.get(slotId)!,
     ];
   }
 
@@ -252,47 +257,49 @@ export default class Editor {
     y = this.mouse.position.y
   ) {
     const newOutput = new OutputComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x, y),
       this.canvasCtx.canvas.width,
       this.canvasCtx.canvas.height,
       type,
-      undefined
+      undefined,
+      this.editorEnv.outputImageList,
+      this.editorEnv.signalGraph
     );
-    const newOutputId = Editor.editorEnv.addComponent(newOutput);
+    const newOutputId = this.editorEnv.addComponent(newOutput);
     const slotInfo =
       OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
-      Editor.editorEnv.outputs.get(newOutputId)!,
+      this.editorEnv.outputs.get(newOutputId)!,
       true
     );
-    Editor.editorEnv.outputs.get(newOutputId)!.slotComponents = [
-      Editor.editorEnv.slots.get(slotId)!,
+    this.editorEnv.outputs.get(newOutputId)!.slotComponents = [
+      this.editorEnv.slots.get(slotId)!,
     ];
   }
 
   line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {
     const newLine = new ConnectionComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x1, y1),
       new Vector2(x1, y1),
       {start: from, end: to}
     );
-    return Editor.editorEnv.addComponent(newLine);
+    return this.editorEnv.addComponent(newLine);
   }
 
   text(text: string, x: number, y: number, style?: string, parent?: Component) {
     const newText = new TextComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x, y),
       text,
       style,
       parent,
       this.canvasCtx
     );
-    return Editor.editorEnv.addComponent(newText);
+    return this.editorEnv.addComponent(newText);
   }
 
   slot(
@@ -306,7 +313,7 @@ export default class Editor {
     colorActive?: string
   ) {
     const newSlot = new SlotComponent(
-      Editor.editorEnv.nextComponentId,
+      this.editorEnv.nextComponentId,
       new Vector2(x, y),
       parent,
       undefined,
@@ -316,6 +323,6 @@ export default class Editor {
       color,
       colorActive
     );
-    return Editor.editorEnv.addComponent(newSlot);
+    return this.editorEnv.addComponent(newSlot);
   }
 }

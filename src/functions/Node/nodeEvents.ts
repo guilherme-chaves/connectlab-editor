@@ -1,7 +1,7 @@
+import {NodeList} from '../../types/types';
 import Vector2 from '../../types/Vector2';
 import {CollisionList} from '../mouseEvents';
 import connectionEvents from '../Connection/connectionEvents';
-import Editor from '../../Editor';
 import NodeComponent from '../../components/NodeComponent';
 import inputEvents from '../IO/inputEvents';
 import outputEvents from '../IO/outputEvents';
@@ -10,13 +10,15 @@ import componentEvents from '../Component/componentEvents';
 export default {
   editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(position: Vector2): number[] | undefined {
-    return componentEvents.checkComponentClick(
-      position,
-      Editor.editorEnv.nodes
-    );
+  checkNodeClick(nodes: NodeList, position: Vector2): number[] | undefined {
+    return componentEvents.checkComponentClick(position, nodes);
   },
-  move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
+  move(
+    nodes: NodeList,
+    collisionList: CollisionList,
+    v: Vector2,
+    useDelta = true
+  ): boolean {
     if (
       collisionList.nodes === undefined ||
       connectionEvents.editingLine ||
@@ -28,7 +30,7 @@ export default {
     }
 
     this.editingNode = true;
-    const node = Editor.editorEnv.nodes.get(collisionList.nodes[0])!;
+    const node = nodes.get(collisionList.nodes[0])!;
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);
     return true;

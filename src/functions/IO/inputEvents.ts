@@ -1,6 +1,6 @@
-import Editor from '../../Editor';
 import InputComponent from '../../components/InputComponent';
 import Vector2 from '../../types/Vector2';
+import {InputList} from '../../types/types';
 import componentEvents from '../Component/componentEvents';
 import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
@@ -9,13 +9,15 @@ import outputEvents from './outputEvents';
 
 export default {
   editingInput: false,
-  checkInputClick(position: Vector2): number[] | undefined {
-    return componentEvents.checkComponentClick(
-      position,
-      Editor.editorEnv.inputs
-    );
+  checkInputClick(inputs: InputList, position: Vector2): number[] | undefined {
+    return componentEvents.checkComponentClick(position, inputs);
   },
-  move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
+  move(
+    inputs: InputList,
+    collisionList: CollisionList,
+    v: Vector2,
+    useDelta = true
+  ): boolean {
     if (
       collisionList.inputs === undefined ||
       connectionEvents.editingLine ||
@@ -27,7 +29,7 @@ export default {
     }
 
     this.editingInput = true;
-    const input = Editor.editorEnv.inputs.get(collisionList.inputs[0])!;
+    const input = inputs.get(collisionList.inputs[0])!;
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);
     return true;
@@ -43,8 +45,8 @@ export default {
       });
     }
   },
-  switchInputState(inputId: number): void {
-    const input = Editor.editorEnv.inputs.get(inputId)!;
+  switchInputState(inputs: InputList, inputId: number): void {
+    const input = inputs.get(inputId)!;
     input.state = !input.state;
   },
 };

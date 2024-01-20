@@ -32,10 +32,9 @@ class EditorEnvironment {
   private textList: TextList;
   private inputList: InputList;
   private outputList: OutputList;
-  public static readonly nodeImageList: ImageListObject = preloadNodeImages();
-  public static readonly InputImageList: ImageListObject = preloadInputImages();
-  public static readonly OutputImageList: ImageListObject =
-    preloadOutputImages();
+  public readonly nodeImageList: ImageListObject;
+  public readonly inputImageList: ImageListObject;
+  public readonly outputImageList: ImageListObject;
   private _signalGraph: SignalGraph;
 
   constructor(
@@ -57,6 +56,9 @@ class EditorEnvironment {
     this.inputList = inputList;
     this.outputList = outputList;
     this._signalGraph = new Map();
+    this.nodeImageList = preloadNodeImages();
+    this.inputImageList = preloadInputImages();
+    this.outputImageList = preloadOutputImages();
   }
 
   /* Getters e Setters */
@@ -113,9 +115,11 @@ class EditorEnvironment {
       case ComponentType.NODE:
         this.nodeList.set(this._nextComponentId, component as NodeComponent);
         signalEvents.addVertex(
+          this._signalGraph,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(
+            this,
             this._nextComponentId,
             ComponentType.NODE
           )
@@ -136,9 +140,11 @@ class EditorEnvironment {
       case ComponentType.INPUT:
         this.inputList.set(this._nextComponentId, component as InputComponent);
         signalEvents.addVertex(
+          this._signalGraph,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(
+            this,
             this._nextComponentId,
             ComponentType.INPUT
           )
@@ -150,9 +156,11 @@ class EditorEnvironment {
           component as OutputComponent
         );
         signalEvents.addVertex(
+          this._signalGraph,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(
+            this,
             this._nextComponentId,
             ComponentType.OUTPUT
           )
@@ -171,20 +179,20 @@ class EditorEnvironment {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
-          signalEvents.removeVertex(componentId, type);
+          signalEvents.removeVertex(this, componentId, type);
           return this.nodeList.delete(componentId);
         case ComponentType.SLOT:
           return this.slotList.delete(componentId);
         case ComponentType.LINE:
-          signalEvents.removeEdge(this.connectionList.get(componentId));
+          signalEvents.removeEdge(this, this.connectionList.get(componentId));
           return this.connectionList.delete(componentId);
         case ComponentType.TEXT:
           return this.textList.delete(componentId);
         case ComponentType.INPUT:
-          signalEvents.removeVertex(componentId, type);
+          signalEvents.removeVertex(this, componentId, type);
           return this.inputList.delete(componentId);
         case ComponentType.OUTPUT:
-          signalEvents.removeVertex(componentId, type);
+          signalEvents.removeVertex(this, componentId, type);
           return this.outputList.delete(componentId);
         default:
           return false;

@@ -13,6 +13,7 @@ class TextComponent implements Component {
   private textSize: Vector2;
   private _collisionShape: BBCollision;
   private canvasContext: CanvasRenderingContext2D;
+  public selected: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -51,6 +52,7 @@ class TextComponent implements Component {
       this.textSize.x,
       this.textSize.y
     );
+    this.selected = false;
   }
 
   private measureText(text: string, style: string): Vector2 {

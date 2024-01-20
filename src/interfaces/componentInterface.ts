@@ -7,6 +7,7 @@ export default interface Component {
   position: Vector2;
   readonly componentType: ComponentType;
   collisionShape: Collision | Array<Collision>;
+  selected: boolean;
   move(v: Vector2, useDelta: boolean): void;
   draw(ctx: CanvasRenderingContext2D): void;
 }

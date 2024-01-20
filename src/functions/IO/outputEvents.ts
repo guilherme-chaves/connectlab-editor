@@ -1,4 +1,3 @@
-import Editor from '../../Editor';
 import OutputComponent from '../../components/OutputComponent';
 import Vector2 from '../../types/Vector2';
 import connectionEvents from '../Connection/connectionEvents';
@@ -6,16 +5,22 @@ import nodeEvents from '../Node/nodeEvents';
 import inputEvents from './inputEvents';
 import {CollisionList} from '../mouseEvents';
 import componentEvents from '../Component/componentEvents';
+import {OutputList} from '../../types/types';
 
 export default {
   editingOutput: false,
-  checkOutputClick(position: Vector2): number[] | undefined {
-    return componentEvents.checkComponentClick(
-      position,
-      Editor.editorEnv.outputs
-    );
+  checkOutputClick(
+    outputs: OutputList,
+    position: Vector2
+  ): number[] | undefined {
+    return componentEvents.checkComponentClick(position, outputs);
   },
-  move(collisionList: CollisionList, v: Vector2, useDelta = true): boolean {
+  move(
+    outputs: OutputList,
+    collisionList: CollisionList,
+    v: Vector2,
+    useDelta = true
+  ): boolean {
     if (
       collisionList.outputs === undefined ||
       connectionEvents.editingLine ||
@@ -27,7 +32,7 @@ export default {
     }
 
     this.editingOutput = true;
-    const output = Editor.editorEnv.outputs.get(collisionList.outputs[0])!;
+    const output = outputs.get(collisionList.outputs[0])!;
     output.move(v, useDelta);
     this.moveLinkedElements(output, useDelta);
     return true;

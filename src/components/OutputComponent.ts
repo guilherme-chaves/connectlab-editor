@@ -1,9 +1,13 @@
-import EditorEnvironment from '../EditorEnvironment';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import Vector2 from '../types/Vector2';
-import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
+import ComponentType, {
+  ImageListObject,
+  OutputTypeObject,
+  OutputTypes,
+  SignalGraph,
+} from '../types/types';
 import SlotComponent from './SlotComponent';
 import signalEvents from '../functions/Signal/signalEvents';
 
@@ -14,9 +18,12 @@ class OutputComponent implements Node {
   public readonly nodeType: OutputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   private _collisionShape: BBCollision;
+  private _images: ImageListObject;
   private imageWidth: number;
   private imageHeight: number;
   private _isLEDOutput: boolean;
+  private readonly _signalGraph: SignalGraph;
+  public selected: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -43,15 +50,15 @@ class OutputComponent implements Node {
   }
 
   get state() {
-    return signalEvents.getVertexState(this.id);
+    return signalEvents.getVertexState(this._signalGraph, this.id);
   }
 
   set state(value: boolean) {
-    signalEvents.setVertexState(this.id, value);
+    signalEvents.setVertexState(this._signalGraph, this.id, value);
   }
 
   get image() {
-    return EditorEnvironment.OutputImageList.get(this.nodeType.id);
+    return this._images.get(this.nodeType.id);
   }
 
   constructor(
@@ -60,7 +67,9 @@ class OutputComponent implements Node {
     canvasWidth: number,
     canvasHeight: number,
     outputType: OutputTypes,
-    slot: SlotComponent | undefined
+    slot: SlotComponent | undefined,
+    images: ImageListObject,
+    signalGraph: SignalGraph
   ) {
     this.id = id;
     this._position = position;
@@ -68,6 +77,8 @@ class OutputComponent implements Node {
     [this.nodeType, this._isLEDOutput] =
       OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
+    this._images = images;
+    this._signalGraph = signalGraph;
     this.imageWidth = this.image!.width;
     this.imageHeight = this.image!.height;
     this._position = this._position.sub(
@@ -82,6 +93,7 @@ class OutputComponent implements Node {
       this.imageWidth,
       this.imageHeight
     );
+    this.selected = false;
   }
 
   static getOutputTypeObject(type: OutputTypes): [OutputTypeObject, boolean] {
@@ -111,11 +123,7 @@ class OutputComponent implements Node {
       imgId = OutputTypes.MONO_LED_OFF;
     }
 
-    ctx.drawImage(
-      EditorEnvironment.OutputImageList.get(imgId)!,
-      this.position.x,
-      this.position.y
-    );
+    ctx.drawImage(this._images.get(imgId)!, this.position.x, this.position.y);
     if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
   }
 }

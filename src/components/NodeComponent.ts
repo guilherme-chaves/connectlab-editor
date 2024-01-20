@@ -1,4 +1,8 @@
-import ComponentType, {NodeTypes} from '../types/types';
+import ComponentType, {
+  ImageListObject,
+  NodeTypes,
+  SignalGraph,
+} from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
@@ -11,7 +15,6 @@ import {
 } from '../objects/nodeTypeObjects';
 import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
-import EditorEnvironment from '../EditorEnvironment';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import signalEvents from '../functions/Signal/signalEvents';
@@ -23,8 +26,11 @@ class NodeComponent implements Node {
   public readonly nodeType: NodeTypeObject;
   private _slotComponents: Array<SlotComponent>;
   private _collisionShape: BBCollision;
+  private _images: ImageListObject;
   private imageWidth: number;
   private imageHeight: number;
+  private readonly _signalGraph: SignalGraph;
+  public selected: boolean;
 
   get position(): Vector2 {
     return this._position;
@@ -51,15 +57,15 @@ class NodeComponent implements Node {
   }
 
   get image() {
-    return EditorEnvironment.nodeImageList.get(this.nodeType.id);
+    return this._images.get(this.nodeType.id);
   }
 
   get state() {
-    return signalEvents.getVertexState(this.id);
+    return signalEvents.getVertexState(this._signalGraph, this.id);
   }
 
   set state(value: boolean) {
-    signalEvents.setVertexState(this.id, value);
+    signalEvents.setVertexState(this._signalGraph, this.id, value);
   }
 
   constructor(
@@ -68,13 +74,17 @@ class NodeComponent implements Node {
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slots: Array<SlotComponent>
+    slots: Array<SlotComponent>,
+    images: ImageListObject,
+    signalGraph: SignalGraph
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this._slotComponents = slots;
+    this._images = images;
+    this._signalGraph = signalGraph;
     this.imageWidth = this.image!.width;
     this.imageHeight = this.image!.height;
     this._position = this._position.sub(
@@ -89,6 +99,7 @@ class NodeComponent implements Node {
       this.imageWidth,
       this.imageHeight
     );
+    this.selected = false;
   }
 
   static getNodeTypeObject(type: NodeTypes): NodeTypeObject {
