@@ -9,6 +9,6 @@ import Component from './componentInterface';
 export default interface Node extends Component {
   slotComponents: Array<SlotComponent>;
   readonly nodeType: NodeTypeObject | InputTypeObject | OutputTypeObject;
-  image: HTMLImageElement | undefined;
+  image: ImageBitmap | undefined;
   state: boolean;
 }

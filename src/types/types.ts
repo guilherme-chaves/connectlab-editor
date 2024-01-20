@@ -41,7 +41,7 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export type ImageListObject = Map<number, HTMLImageElement>;
+export type ImageListObject = Map<number, ImageBitmap>;
 
 export type NodeList = Map<number, NodeComponent>;
 

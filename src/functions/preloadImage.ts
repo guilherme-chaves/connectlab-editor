@@ -9,8 +9,13 @@ import {ImageListObject} from '../types/types';
 export default function preloadImage(list: Map<number, string>) {
   const images: ImageListObject = new Map();
   list.forEach((value, key) => {
-    images.set(key, new Image());
-    images.get(key)!.src = value;
+    const image = new Image();
+    image.onload = () => {
+      Promise.all([createImageBitmap(image)]).then(bitmap => {
+        images.set(key, bitmap[0]);
+      });
+    };
+    image.src = value;
   });
   return images;
 }

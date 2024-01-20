@@ -5,10 +5,7 @@ import {
   OutputTypes,
 } from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
-import updateAll, {
-  updateBackground,
-  updateCanvas,
-} from './functions/canvasDraw';
+import {updateBackground, updateCanvas} from './functions/canvasDraw';
 import EditorEnvironment from './EditorEnvironment';
 import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
@@ -39,6 +36,7 @@ export default class Editor {
   private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null;
   private windowArea: DOMPoint;
+  private windowResized: boolean;
   public readonly frameRate: number;
 
   constructor(
@@ -67,6 +65,7 @@ export default class Editor {
     this.canvasArea = new DOMPoint(canvasVw, canvasVh);
     this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
     this.loadBackgroundPattern(bgTexturePath);
+    this.windowResized = true;
     this.frameRate = frameRate;
   }
 
@@ -165,24 +164,13 @@ export default class Editor {
     this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
     this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
     this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    requestAnimationFrame.bind(
-      updateAll(
-        this.canvasCtx,
-        this.editorEnv.components,
-        this.backgroundCtx,
-        this.backgroundPattern
-      )
-    );
+    this.windowResized = true;
   }
 
   update = () => {
     requestAnimationFrame(this.update);
-    this.draw(true);
-    // this.checkConnections()
-    // this.checkCollisions()
-    // To-Do -> Adicionar as seguintes partes:
-    // eventos e adição de componentes
-    // colisão(this.editorEnv)
+    this.draw(true, this.windowResized);
+    if (this.windowResized) this.windowResized = false;
   };
 
   compute() {
