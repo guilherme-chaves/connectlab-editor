@@ -64,7 +64,7 @@ export default {
     } else {
       this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
-    signalUpdate.updateGraph(editorEnv);
+    signalUpdate.updateGraphPartial(editorEnv, startNodeId);
   },
   removeEdge(
     editorEnv: EditorEnvironment,
