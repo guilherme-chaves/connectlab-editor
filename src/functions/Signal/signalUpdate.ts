@@ -6,7 +6,7 @@ import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
 
 export default {
   updateGraph(editorEnv: EditorEnvironment): void {
-    const visited: Map<number, boolean> = new Map();
+    const visited: Set<number> = new Set();
     editorEnv.signalGraph.forEach((_node, key) => {
       this.updateVertexStatus(editorEnv, key, visited);
     });
@@ -39,11 +39,11 @@ export default {
   updateVertexStatus(
     editorEnv: EditorEnvironment,
     nodeId: number,
-    visited: Map<number, boolean>
+    visited: Set<number>
   ): void {
     if (visited.has(nodeId)) return;
+    visited.add(nodeId);
     const node = editorEnv.signalGraph.get(nodeId);
-    visited.set(nodeId, true);
     if (node === undefined) return;
     if (node.signalFrom.length < 1) return;
     for (let i = 0; i < node.signalFrom.length; i++)
