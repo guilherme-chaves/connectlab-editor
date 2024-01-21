@@ -115,7 +115,7 @@ class EditorEnvironment {
       case ComponentType.NODE:
         this.nodeList.set(this._nextComponentId, component as NodeComponent);
         signalEvents.addVertex(
-          this._signalGraph,
+          this,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(
@@ -140,7 +140,7 @@ class EditorEnvironment {
       case ComponentType.INPUT:
         this.inputList.set(this._nextComponentId, component as InputComponent);
         signalEvents.addVertex(
-          this._signalGraph,
+          this,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(
@@ -156,7 +156,7 @@ class EditorEnvironment {
           component as OutputComponent
         );
         signalEvents.addVertex(
-          this._signalGraph,
+          this,
           this._nextComponentId,
           undefined,
           signalEvents.convertToSignalFromList(

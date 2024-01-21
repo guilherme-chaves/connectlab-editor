@@ -1,32 +1,33 @@
-import Editor from '../../Editor';
+import EditorEnvironment from '../../EditorEnvironment';
 import InputComponent from '../../components/InputComponent';
 import NodeComponent from '../../components/NodeComponent';
 import OutputComponent from '../../components/OutputComponent';
-import ComponentType, {SignalGraphData} from '../../types/types';
+import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
 
 export default {
-  updateGraph(): void {
+  updateGraph(editorEnv: EditorEnvironment): void {
     const visited: Map<number, boolean> = new Map();
-    Editor.editorEnv.signalGraph.forEach((_node, key) => {
-      this.updateVertexStatus(key, visited);
+    editorEnv.signalGraph.forEach((_node, key) => {
+      this.updateVertexStatus(editorEnv, key, visited);
     });
     visited.clear();
   },
-  updateGraphPartial(nodeId: number): void {
+  updateGraphPartial(editorEnv: EditorEnvironment, nodeId: number): void {
     const visited: Set<number> = new Set();
     const stack: Array<number> = [nodeId];
     do {
       if (!visited.has(stack[0])) {
         visited.add(stack[0]);
-        const nodeObj = this.getNodeObject(stack[0]);
+        const nodeObj = this.getNodeObject(editorEnv, stack[0]);
         if (nodeObj !== undefined) {
-          stack.push(...Editor.editorEnv.signalGraph.get(stack[0])!.signalTo);
+          stack.push(...editorEnv.signalGraph.get(stack[0])!.signalTo);
           if (
             stack[0] !== nodeId &&
             nodeObj.componentType !== ComponentType.INPUT
           ) {
             this.computeState(
-              Editor.editorEnv.signalGraph.get(stack[0])!,
+              editorEnv.signalGraph,
+              editorEnv.signalGraph.get(stack[0])!,
               nodeObj
             );
           }
@@ -35,37 +36,41 @@ export default {
       stack.shift();
     } while (stack.length > 0);
   },
-  updateVertexStatus(nodeId: number, visited: Map<number, boolean>): void {
+  updateVertexStatus(
+    editorEnv: EditorEnvironment,
+    nodeId: number,
+    visited: Map<number, boolean>
+  ): void {
     if (visited.has(nodeId)) return;
-    const node = Editor.editorEnv.signalGraph.get(nodeId);
+    const node = editorEnv.signalGraph.get(nodeId);
     visited.set(nodeId, true);
     if (node === undefined) return;
     if (node.signalFrom.length < 1) return;
     for (let i = 0; i < node.signalFrom.length; i++)
-      this.updateVertexStatus(node.signalFrom[i], visited);
-    const nodeObj = this.getNodeObject(nodeId);
+      this.updateVertexStatus(editorEnv, node.signalFrom[i], visited);
+    const nodeObj = this.getNodeObject(editorEnv, nodeId);
     if (nodeObj !== undefined && nodeObj.componentType !== ComponentType.INPUT)
-      this.computeState(node, nodeObj);
+      this.computeState(editorEnv.signalGraph, node, nodeObj);
   },
   getNodeObject(
+    editorEnv: EditorEnvironment,
     nodeId: number
   ): NodeComponent | InputComponent | OutputComponent | undefined {
     return (
-      Editor.editorEnv.nodes.get(nodeId) ??
-      Editor.editorEnv.inputs.get(nodeId) ??
-      Editor.editorEnv.outputs.get(nodeId)
+      editorEnv.nodes.get(nodeId) ??
+      editorEnv.inputs.get(nodeId) ??
+      editorEnv.outputs.get(nodeId)
     );
   },
   computeState(
+    signalGraph: SignalGraph,
     node: SignalGraphData,
     nodeObj: NodeComponent | InputComponent | OutputComponent
   ) {
     const op: (slotState: Array<boolean>) => boolean = nodeObj.nodeType.op;
     const slotStatus: Array<boolean> = [];
     for (let i = 0; i < node.signalFrom.length; i++)
-      slotStatus.push(
-        Editor.editorEnv.signalGraph.get(node.signalFrom[i])?.state ?? false
-      );
+      slotStatus.push(signalGraph.get(node.signalFrom[i])?.state ?? false);
     node.state = op(slotStatus);
   },
 };

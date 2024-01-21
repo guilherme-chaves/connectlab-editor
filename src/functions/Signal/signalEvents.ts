@@ -6,15 +6,15 @@ import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
-    signalGraph: SignalGraph,
+    editorEnv: EditorEnvironment,
     nodeId: number,
     state: boolean = false,
     signalFrom: Array<number> = [],
     signalTo: Array<number> = []
   ): void {
-    if (!signalGraph.has(nodeId)) {
-      signalGraph.set(nodeId, {state, signalFrom, signalTo});
-      signalUpdate.updateGraph();
+    if (!editorEnv.signalGraph.has(nodeId)) {
+      editorEnv.signalGraph.set(nodeId, {state, signalFrom, signalTo});
+      signalUpdate.updateGraph(editorEnv);
     }
   },
   removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
@@ -29,7 +29,7 @@ export default {
         }
       });
       editorEnv.signalGraph.delete(nodeId);
-      signalUpdate.updateGraph();
+      signalUpdate.updateGraph(editorEnv);
     }
   },
   addEdge(editorEnv: EditorEnvironment, connection: ConnectionComponent): void {
@@ -52,9 +52,7 @@ export default {
       )
         editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
     } else {
-      this.addVertex(editorEnv.signalGraph, startNodeId, false, undefined, [
-        endNodeId,
-      ]);
+      this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
     }
     if (editorEnv.signalGraph.has(endNodeId)) {
       if (
@@ -62,12 +60,11 @@ export default {
           .get(endNodeId)!
           .signalFrom.find(el => startNodeId === el) === undefined
       )
-        return;
-      editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
+        editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
     } else {
-      this.addVertex(editorEnv.signalGraph, endNodeId, false, [startNodeId]);
+      this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
-    signalUpdate.updateGraph();
+    signalUpdate.updateGraph(editorEnv);
   },
   removeEdge(
     editorEnv: EditorEnvironment,
@@ -92,7 +89,7 @@ export default {
       if (indexST !== -1)
         editorEnv.signalGraph.get(startNodeId)!.signalTo.splice(indexST, 1);
     }
-    signalUpdate.updateGraph();
+    signalUpdate.updateGraph(editorEnv);
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): boolean {
     return signalGraph.get(nodeId)?.state ?? false;
@@ -104,7 +101,6 @@ export default {
   ): void {
     if (signalGraph.has(nodeId)) {
       signalGraph.get(nodeId)!.state = state;
-      signalUpdate.updateGraphPartial(nodeId);
     }
   },
   getVertexConnections(
@@ -129,10 +125,10 @@ export default {
           slots = editorEnv.inputs.get(nodeId)!.slotComponents;
           break;
         case ComponentType.NODE:
-          slots = editorEnv.nodes.get(nodeId)?.slotComponents ?? [];
+          slots = editorEnv.nodes.get(nodeId)!.slotComponents;
           break;
         case ComponentType.OUTPUT:
-          slots = editorEnv.inputs.get(nodeId)!.slotComponents;
+          slots = editorEnv.outputs.get(nodeId)!.slotComponents;
       }
       for (let i = 0; i < slots.length; i++) {
         if (slots[i].inSlot) {
