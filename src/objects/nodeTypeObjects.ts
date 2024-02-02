@@ -99,7 +99,7 @@ const NOTNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 1 ? !slotState[0] : false;
+    return slotState.length >= 1 ? !slotState[0] : true;
   },
 };
 

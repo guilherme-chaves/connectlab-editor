@@ -8,6 +8,7 @@ import outputEvents from './IO/outputEvents';
 
 import Mouse from '../types/Mouse';
 import EditorEnvironment from '../EditorEnvironment';
+import signalUpdate from './Signal/signalUpdate';
 
 export interface CollisionList {
   [index: string]: Array<number> | undefined;
@@ -85,11 +86,16 @@ export default class MouseEvents {
   onMouseRelease(editorEnv: EditorEnvironment) {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
-        if (this.collisionList.inputs !== undefined)
+        if (this.collisionList.inputs !== undefined) {
           inputEvents.switchInputState(
             editorEnv.inputs,
             this.collisionList.inputs[0]
           );
+          signalUpdate.updateGraphPartial(
+            editorEnv,
+            this.collisionList.inputs[0]
+          );
+        }
       }
       if (!connectionEvents.fixLine(editorEnv, this._mouse.position)) {
         this.clearDragCollisions();

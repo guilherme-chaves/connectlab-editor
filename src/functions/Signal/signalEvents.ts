@@ -2,54 +2,34 @@ import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
 import SlotComponent from '../../components/SlotComponent';
 import ComponentType, {SignalGraph} from '../../types/types';
-// import signalUpdate from './signalUpdate';
+import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
-    signalGraph: SignalGraph,
-    nodeId: number,
-    state: boolean = false,
-    signalFrom: Array<number> = []
-  ): void {
-    if (!signalGraph.has(nodeId)) {
-      signalGraph.set(nodeId, {state, signalFrom});
-      // signalUpdate.updateGraph();
-    }
-  },
-  removeVertex(
     editorEnv: EditorEnvironment,
     nodeId: number,
-    componentType: ComponentType
+    state: boolean = false,
+    signalFrom: Array<number> = [],
+    signalTo: Array<number> = []
   ): void {
+    if (!editorEnv.signalGraph.has(nodeId)) {
+      editorEnv.signalGraph.set(nodeId, {state, signalFrom, signalTo});
+      signalUpdate.updateGraph(editorEnv);
+    }
+  },
+  removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
     if (editorEnv.signalGraph.has(nodeId)) {
-      let slots: Array<SlotComponent> = [];
-      switch (componentType) {
-        case ComponentType.INPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)!.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
-          break;
-        case ComponentType.NODE:
-          slots = editorEnv.nodes.get(nodeId)!.slotComponents;
-          break;
-        case ComponentType.OUTPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)!.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
-      }
-      for (let i = 0; i < slots.length; i++) {
-        if (slots[i].inSlot) {
-          this.removeEdge(editorEnv, slots[i].slotConnections[0]);
-        } else {
-          slots[i].slotConnections.forEach(connection =>
-            this.removeEdge(editorEnv, connection)
-          );
+      editorEnv.signalGraph.get(nodeId)!.signalTo.forEach(connection => {
+        if (editorEnv.signalGraph.has(connection)) {
+          const index = editorEnv.signalGraph
+            .get(connection)!
+            .signalFrom.indexOf(nodeId);
+          if (index !== -1)
+            editorEnv.signalGraph.get(connection)!.signalFrom.splice(index, 1);
         }
-      }
+      });
       editorEnv.signalGraph.delete(nodeId);
-      // signalUpdate.updateGraph();
+      signalUpdate.updateGraph(editorEnv);
     }
   },
   addEdge(editorEnv: EditorEnvironment, connection: ConnectionComponent): void {
@@ -63,18 +43,28 @@ export default {
       const slot = editorEnv.slots.get(connection.connectedTo.end.id);
       if (slot !== undefined) endNodeId = slot.parent.id;
     }
+
+    if (editorEnv.signalGraph.has(startNodeId)) {
+      if (
+        editorEnv.signalGraph
+          .get(startNodeId)!
+          .signalTo.find(el => endNodeId === el) === undefined
+      )
+        editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
+    } else {
+      this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
+    }
     if (editorEnv.signalGraph.has(endNodeId)) {
       if (
         editorEnv.signalGraph
           .get(endNodeId)!
-          .signalFrom.find(el => startNodeId === el) !== undefined
+          .signalFrom.find(el => startNodeId === el) === undefined
       )
-        return;
-      editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
+        editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
     } else {
-      this.addVertex(editorEnv.signalGraph, endNodeId, false, [startNodeId]);
+      this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
-    // signalUpdate.updateGraph();
+    signalUpdate.updateGraphPartial(editorEnv, startNodeId);
   },
   removeEdge(
     editorEnv: EditorEnvironment,
@@ -84,15 +74,22 @@ export default {
     const startSlotId = connection.connectedTo.start?.id ?? -1;
     const endSlotId = connection.connectedTo.end?.id ?? -1;
     const startNodeId = editorEnv.slots.get(startSlotId)?.parent.id ?? -1;
-    const endNode = editorEnv.slots.get(endSlotId)?.parent;
-    if (endNode !== undefined) {
-      const index = editorEnv.signalGraph
-        .get(endNode.id)!
+    const endNodeId = editorEnv.slots.get(endSlotId)?.parent.id ?? -1;
+    if (endNodeId !== -1) {
+      const indexSF = editorEnv.signalGraph
+        .get(endNodeId)!
         .signalFrom.indexOf(startNodeId);
-      if (index !== -1)
-        editorEnv.signalGraph.get(endNode.id)!.signalFrom.splice(index, 1);
+      if (indexSF !== -1)
+        editorEnv.signalGraph.get(endNodeId)!.signalFrom.splice(indexSF, 1);
     }
-    // signalUpdate.updateGraph();
+    if (startNodeId !== -1) {
+      const indexST = editorEnv.signalGraph
+        .get(startNodeId)!
+        .signalTo.indexOf(endNodeId);
+      if (indexST !== -1)
+        editorEnv.signalGraph.get(startNodeId)!.signalTo.splice(indexST, 1);
+    }
+    signalUpdate.updateGraph(editorEnv);
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): boolean {
     return signalGraph.get(nodeId)?.state ?? false;
@@ -104,7 +101,6 @@ export default {
   ): void {
     if (signalGraph.has(nodeId)) {
       signalGraph.get(nodeId)!.state = state;
-      // signalUpdate.updateGraphPartial();
     }
   },
   getVertexConnections(
@@ -126,19 +122,13 @@ export default {
       let slots: Array<SlotComponent> = [];
       switch (componentType) {
         case ComponentType.INPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)?.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.inputs.get(nodeId)!.slotComponents;
           break;
         case ComponentType.NODE:
-          slots = editorEnv.nodes.get(nodeId)?.slotComponents ?? [];
+          slots = editorEnv.nodes.get(nodeId)!.slotComponents;
           break;
         case ComponentType.OUTPUT:
-          slots =
-            editorEnv.inputs.get(nodeId)?.slotComponents === undefined
-              ? []
-              : editorEnv.inputs.get(nodeId)!.slotComponents!;
+          slots = editorEnv.outputs.get(nodeId)!.slotComponents;
       }
       for (let i = 0; i < slots.length; i++) {
         if (slots[i].inSlot) {

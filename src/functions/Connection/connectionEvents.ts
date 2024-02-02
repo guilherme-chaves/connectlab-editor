@@ -68,7 +68,8 @@ export default {
       this.editingLineId === -1 ||
       nodeEvents.editingNode ||
       inputEvents.editingInput ||
-      outputEvents.editingOutput
+      outputEvents.editingOutput ||
+      !editorEnv.connections.has(this.editingLineId)
     )
       return false;
 

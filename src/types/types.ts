@@ -4,6 +4,7 @@ import NodeComponent from '../components/NodeComponent';
 import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
+import Component from '../interfaces/componentInterface';
 import Vector2 from './Vector2';
 
 enum ComponentType {
@@ -56,13 +57,7 @@ export type InputList = Map<number, InputComponent>;
 export type OutputList = Map<number, OutputComponent>;
 
 export interface FullComponentList {
-  [index: string]:
-    | NodeList
-    | SlotList
-    | ConnectionList
-    | TextList
-    | InputList
-    | OutputList;
+  [index: string]: Map<number, Component>;
   nodes: NodeList;
   slots: SlotList;
   connections: ConnectionList;
@@ -114,7 +109,11 @@ export interface OutputTypeObject {
   readonly op: (slotState: Array<boolean>) => boolean;
 }
 
-export type SignalGraphData = {state: boolean; signalFrom: Array<number>};
+export interface SignalGraphData {
+  state: boolean;
+  signalFrom: Array<number>;
+  signalTo: Array<number>;
+}
 
 export type SignalGraph = Map<number, SignalGraphData>;
 
