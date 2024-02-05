@@ -1,22 +1,25 @@
-import {NodeList} from '../../types/types';
-import Vector2 from '../../types/Vector2';
+import {NodeList, RenderGraph} from '../../types/types';
 import {CollisionList} from '../mouseEvents';
 import connectionEvents from '../Connection/connectionEvents';
 import NodeComponent from '../../components/NodeComponent';
 import inputEvents from '../IO/inputEvents';
 import outputEvents from '../IO/outputEvents';
 import componentEvents from '../Component/componentEvents';
+import Point2i from '../../types/Point2i';
+import {Line} from '../../interfaces/renderObjects';
 
 export default {
   editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(nodes: NodeList, position: Vector2): number[] | undefined {
+  checkNodeClick(nodes: NodeList, position: Point2i): number[] | undefined {
     return componentEvents.checkComponentClick(position, nodes);
   },
   move(
-    nodes: NodeList,
+    nodeId: number,
+    renderGraph: RenderGraph,
+    nodeList: NodeList,
     collisionList: CollisionList,
-    v: Vector2,
+    v: Point2i,
     useDelta = true
   ): boolean {
     if (
@@ -30,19 +33,31 @@ export default {
     }
 
     this.editingNode = true;
-    const node = nodes.get(collisionList.nodes[0])!;
-    node.move(v, useDelta);
-    this.moveLinkedElements(node, useDelta);
+    renderGraph.get(nodeId)!.move(v, useDelta);
+    this.moveLinkedElements(renderGraph, nodeList.get(nodeId)!, v, useDelta);
     return true;
   },
-  moveLinkedElements(node: NodeComponent, useDelta = true): void {
+  moveLinkedElements(
+    renderGraph: RenderGraph,
+    node: NodeComponent,
+    v: Point2i,
+    useDelta = true
+  ): void {
     node.slotComponents.forEach(slot => {
-      slot.update();
+      renderGraph.get(node.slotComponents[0].id)!.move(v, false);
       slot.slotConnections.forEach(connection => {
         if (connection.connectedTo.start?.id === slot.id)
-          connection.move(slot.globalPosition, useDelta, 0);
+          (renderGraph.get(connection.id)! as unknown as Line).move(
+            v,
+            useDelta,
+            0
+          );
         else if (connection.connectedTo.end?.id === slot.id)
-          connection.move(slot.globalPosition, useDelta, 1);
+          (renderGraph.get(connection.id)! as unknown as Line).move(
+            v,
+            useDelta,
+            0
+          );
       });
     });
   },

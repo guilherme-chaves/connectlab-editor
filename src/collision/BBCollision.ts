@@ -1,89 +1,25 @@
 import Collision from '../interfaces/collisionInterface';
-import Vector2 from '../types/Vector2';
+import Point2i from '../types/Point2i';
+import Vector2i from '../types/Vector2i';
 import CircleCollision from './CircleCollision';
 
-interface BBPoints {
-  a: Vector2;
-  b: Vector2;
-}
-
 export default class BBCollision implements Collision {
-  private _position: Vector2;
-  private _points: BBPoints;
-  public readonly width: number;
-  public readonly height: number;
-  private drawPath: Path2D;
-  private _borderColor: string;
+  public position: Point2i;
+  private size: Point2i;
 
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get localPoints(): BBPoints {
-    return this._points;
-  }
-
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
-
-  constructor(
-    position: Vector2,
-    width = 2,
-    height = 2,
-    borderColor = '#FF8008DC'
-  ) {
-    this._position = position;
-    this.width = width;
-    this.height = height;
-    this._borderColor = borderColor;
-    this._points = this.setPoints();
-    this.drawPath = this.generatePath();
-  }
-
-  get globalPoints(): BBPoints {
+  get globalPoints(): {a: Point2i; b: Point2i} {
     return {
-      a: this._position,
-      b: this._position.add(this._points.b),
+      a: this.position,
+      b: Vector2i.add(this.position, this.size),
     };
   }
 
-  private setPoints(): BBPoints {
-    return {
-      a: Vector2.ZERO,
-      b: new Vector2(this.width, this.height),
-    };
+  constructor(position: Point2i, width = 2, height = 2) {
+    this.position = position;
+    this.size = new Point2i(width, height);
   }
 
-  private generatePath(): Path2D {
-    const path = new Path2D();
-    path.rect(this._position.x, this._position.y, this.width, this.height);
-    return path;
-  }
-
-  draw(ctx: CanvasRenderingContext2D, selected: boolean) {
-    if (!selected) return;
-    const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this.borderColor;
-    ctx.stroke(this.drawPath);
-    ctx.strokeStyle = oldStrokeStyle;
-  }
-
-  moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
-    this.drawPath = this.generatePath();
-  }
-
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(point: Point2i): boolean {
     return (
       point.x > this.globalPoints.a.x &&
       point.x < this.globalPoints.b.x &&

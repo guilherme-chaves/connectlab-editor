@@ -1,10 +1,11 @@
-import Vector2 from './Vector2';
+import Point2i from './Point2i';
+import Vector2i from './Vector2i';
 
 export default class Mouse {
-  private _mousePosition = Vector2.ZERO;
+  private _mousePosition = Vector2i.ZERO.point;
   private _mouseClicked = false;
   private _mouseDragged = false;
-  private _mouseClickPosition = Vector2.ZERO;
+  private _mouseClickPosition = Vector2i.ZERO.point;
   private _mouseStateChanged = false;
   private _mouseClickThreshold = 6; // pixels
 
@@ -12,7 +13,7 @@ export default class Mouse {
     return this._mousePosition;
   }
 
-  set position(value: Vector2) {
+  set position(value: Point2i) {
     this._mousePosition = value;
   }
 
@@ -37,7 +38,7 @@ export default class Mouse {
     return this._mouseClickPosition;
   }
 
-  set clickStartPosition(value: Vector2) {
+  set clickStartPosition(value: Point2i) {
     this._mouseClickPosition = value;
   }
 

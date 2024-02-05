@@ -10,7 +10,7 @@ import EditorEnvironment from './EditorEnvironment';
 import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
-import Vector2 from './types/Vector2';
+import Vector2 from './types/Vector2i';
 import Component from './interfaces/componentInterface';
 import SlotComponent from './components/SlotComponent';
 import MouseEvents from './functions/mouseEvents';

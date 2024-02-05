@@ -1,20 +1,24 @@
 import BBCollision from '../../collision/BBCollision';
-import Vector2 from '../../types/Vector2';
-import ConnectionComponent from '../../components/ConnectionComponent';
+import Vector2i from '../../types/Vector2i';
 import {QUARTER_PI, THREE_QUARTER_PI} from '../../types/consts';
+import Point2f from '../../types/Point2f';
+import Vector2f from '../../types/Vector2f';
+import {Line} from '../../interfaces/renderObjects';
+import Point2i from '../../types/Point2i';
+import ConnectionComponent from '../../components/ConnectionComponent';
 
 export default {
   alignConnectionWithAxis(
-    v1: Vector2,
-    v2: Vector2,
+    p1: Point2i,
+    p2: Point2i,
     trueXSize = 0,
     falseXSize = 0,
     trueYSize = 0,
     falseYSize = 0
   ) {
-    return new Vector2(
-      v1.x === v2.x ? trueXSize : falseXSize,
-      v1.y === v2.y ? trueYSize : falseYSize
+    return new Point2i(
+      p1.x === p2.x ? trueXSize : falseXSize,
+      p1.y === p2.y ? trueYSize : falseYSize
     );
   },
 
@@ -22,23 +26,20 @@ export default {
   //   //Teste
   // },
 
-  generateAnchors(connection: ConnectionComponent): Array<DOMPoint> {
-    const anchorsArr: Array<DOMPoint> = [];
-    let lastAnchorAdded: DOMPoint = new DOMPoint(0, 0);
+  generateAnchors(connection: Line): Array<Point2f> {
+    const anchorsArr: Array<Point2f> = [];
+    let lastAnchorAdded: Point2f = Vector2f.ZERO.point;
     const startPos = connection.position;
-    let currentPos = connection.position;
+    const currentPos = connection.position;
     const endPosition = connection.endPosition;
-    const defaultXStepDivisor = 2.0;
-    const defaultYStepDivisor = 1.0;
-    // eslint-disable-next-line prefer-const
-    let xStepDivisor = defaultXStepDivisor;
-    // eslint-disable-next-line prefer-const
-    let yStepDivisor = defaultYStepDivisor;
-    const stepTo = Vector2.ZERO;
+    // const defaultXStepDivisor = 2.0;
+    // const defaultYStepDivisor = 1.0;
+    const stepDivisor = new Point2f(2.0, 1.0);
+    const stepTo = Vector2i.ZERO.point;
     let loopRuns = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const headedTowards = currentPos.getAngle(endPosition);
+      const headedTowards = Vector2i.getAngle(currentPos, endPosition);
       stepTo.x =
         headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
           ? 1
@@ -52,19 +53,21 @@ export default {
           : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
             ? -1
             : 0;
-      const newAnchor = new DOMPoint(0, 0);
+      const newAnchor = Vector2f.ZERO.point;
       if (anchorsArr.length === 0) {
-        newAnchor.x = Math.abs(stepTo.x) / xStepDivisor;
-        newAnchor.y = Math.abs(stepTo.y) / yStepDivisor;
+        Vector2f.div(Vector2i.abs(stepTo, stepTo), stepDivisor, newAnchor);
       } else {
-        newAnchor.x = lastAnchorAdded.x + Math.abs(stepTo.x) / xStepDivisor;
-        newAnchor.y = lastAnchorAdded.y + Math.abs(stepTo.y) / yStepDivisor;
+        Vector2f.add(
+          Vector2f.div(Vector2i.abs(stepTo, stepTo), stepDivisor),
+          lastAnchorAdded,
+          newAnchor
+        );
       }
-      currentPos = startPos.bilinear(endPosition, newAnchor);
+      Vector2i.bilinear(startPos, endPosition, newAnchor, currentPos);
       anchorsArr.push(newAnchor);
       lastAnchorAdded = newAnchor;
 
-      if (currentPos.equals(endPosition)) break;
+      if (Vector2i.equals(currentPos, endPosition)) break;
       if (loopRuns > 64) {
         console.error(
           'O código atingiu o limite de iterações!! Saída forçada.'
@@ -84,11 +87,13 @@ export default {
     let pPos = connection.position;
     // 0 => Ponto inicial à primeira âncora, length => última âncora à ponto final
     for (let i = 0; i <= connection.anchors.length; i++) {
-      let nPos = Vector2.ZERO;
+      let nPos = Vector2i.ZERO.point;
       if (i < connection.anchors.length)
-        nPos = connection.position.bilinear(
+        Vector2i.bilinear(
+          connection.position,
           connection.endPosition,
-          connection.anchors[i]
+          connection.anchors[i],
+          nPos
         );
       else nPos = connection.endPosition;
       const size = this.alignConnectionWithAxis(
@@ -100,7 +105,7 @@ export default {
         nPos.y - pPos.y
       );
       collisionArr.push(
-        new BBCollision(pPos.sub(new Vector2(1, 1)), size.x, size.y)
+        new BBCollision(Vector2i.sub(pPos, new Point2i(1, 1)), size.x, size.y)
       );
       pPos = nPos;
     }

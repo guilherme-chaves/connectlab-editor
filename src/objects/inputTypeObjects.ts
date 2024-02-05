@@ -1,4 +1,4 @@
-import Vector2 from '../types/Vector2';
+import Vector2 from '../types/Vector2i';
 import {InputTypeObject, InputTypes} from '../types/types';
 
 const SwitchInput: InputTypeObject = {

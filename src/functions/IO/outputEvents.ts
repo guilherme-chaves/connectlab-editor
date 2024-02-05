@@ -1,24 +1,27 @@
 import OutputComponent from '../../components/OutputComponent';
-import Vector2 from '../../types/Vector2';
 import connectionEvents from '../Connection/connectionEvents';
 import nodeEvents from '../Node/nodeEvents';
 import inputEvents from './inputEvents';
 import {CollisionList} from '../mouseEvents';
 import componentEvents from '../Component/componentEvents';
-import {OutputList} from '../../types/types';
+import {OutputList, RenderGraph} from '../../types/types';
+import Point2i from '../../types/Point2i';
+import {Line} from '../../interfaces/renderObjects';
 
 export default {
   editingOutput: false,
   checkOutputClick(
     outputs: OutputList,
-    position: Vector2
+    position: Point2i
   ): number[] | undefined {
     return componentEvents.checkComponentClick(position, outputs);
   },
   move(
-    outputs: OutputList,
+    outputId: number,
+    renderGraph: RenderGraph,
+    outputList: OutputList,
     collisionList: CollisionList,
-    v: Vector2,
+    v: Point2i,
     useDelta = true
   ): boolean {
     if (
@@ -32,29 +35,30 @@ export default {
     }
 
     this.editingOutput = true;
-    const output = outputs.get(collisionList.outputs[0])!;
-    output.move(v, useDelta);
-    this.moveLinkedElements(output, useDelta);
+    renderGraph.get(outputId)!.object!.move(v, useDelta);
+    this.moveLinkedElements(
+      renderGraph,
+      outputList.get(outputId)!,
+      v,
+      useDelta
+    );
     return true;
   },
-  moveLinkedElements(output: OutputComponent, useDelta = true): void {
-    if (output.slotComponents[0] !== undefined) {
-      output.slotComponents[0].update();
+  moveLinkedElements(
+    renderGraph: RenderGraph,
+    output: OutputComponent,
+    v: Point2i,
+    useDelta = true
+  ): void {
+    if (output.slotComponents !== undefined) {
+      renderGraph.get(output.slotComponents[0].id)!.object!.move(v, false);
       output.slotComponents[0].slotConnections.forEach(connection => {
         if (connection.connectedTo.start?.id === output.slotComponents[0]!.id)
-          connection.move(
-            output.slotComponents[0]!.globalPosition,
-            useDelta,
-            0
-          );
+          renderGraph.get(connection.id)!.line!.move(v, useDelta, 0);
         else if (
           connection.connectedTo.end?.id === output.slotComponents[0]!.id
         )
-          connection.move(
-            output.slotComponents[0]!.globalPosition,
-            useDelta,
-            1
-          );
+          renderGraph.get(connection.id)!.line!.move(v, useDelta, 0);
       });
     }
   },

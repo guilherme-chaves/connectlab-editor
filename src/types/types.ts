@@ -5,7 +5,8 @@ import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
-import Vector2 from './Vector2';
+import RenderObject, { Line } from '../interfaces/renderObjects';
+import Point2i from './Point2i';
 
 enum ComponentType {
   LINE = 1,
@@ -83,7 +84,7 @@ export interface NodeTypeObject {
   readonly connectionSlot: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
-    localPos: Vector2; // Posição do slot, relativo ao elemento-pai
+    localPos: Point2i; // Posição do slot, relativo ao elemento-pai
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
   readonly op: (slotState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
@@ -94,7 +95,7 @@ export interface InputTypeObject {
   readonly connectionSlot: {
     id: number;
     name: string;
-    localPos: Vector2;
+    localPos: Point2i;
   };
   readonly op: (slotState: Array<boolean>) => boolean;
 }
@@ -104,7 +105,7 @@ export interface OutputTypeObject {
   readonly connectionSlot: {
     id: number;
     name: string;
-    localPos: Vector2;
+    localPos: Point2i;
   };
   readonly op: (slotState: Array<boolean>) => boolean;
 }
@@ -116,5 +117,17 @@ export interface SignalGraphData {
 }
 
 export type SignalGraph = Map<number, SignalGraphData>;
+
+export type RenderGraphData = {
+  object?: RenderObject;
+  line?: Line;
+};
+
+export type RenderGraph = Map<number, RenderGraphData>;
+
+export enum RendererType {
+  CANVAS = 0,
+  // GL2 = 1,
+}
 
 export default ComponentType;

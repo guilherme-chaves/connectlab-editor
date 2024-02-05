@@ -1,4 +1,4 @@
-import Vector2 from '../types/Vector2';
+import Point2i from '../types/Point2i';
 import {OutputTypeObject, OutputTypes} from '../types/types';
 
 const LEDROutput: OutputTypeObject = {
@@ -6,7 +6,7 @@ const LEDROutput: OutputTypeObject = {
   connectionSlot: {
     id: 0,
     name: 'A',
-    localPos: new Vector2(23, 64),
+    localPos: new Point2i(23, 64),
   },
   op(slotState) {
     return slotState.length > 0 ? slotState[0] : false;

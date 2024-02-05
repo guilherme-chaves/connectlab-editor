@@ -1,4 +1,4 @@
-import Vector2 from '../types/Vector2';
+import Vector2 from '../types/Vector2i';
 import {TextList} from '../types/types';
 import componentEvents from './Component/componentEvents';
 

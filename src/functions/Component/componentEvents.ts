@@ -1,4 +1,4 @@
-import Vector2 from '../../types/Vector2';
+import Point2i from '../../types/Point2i';
 import {
   NodeList,
   InputList,
@@ -9,7 +9,7 @@ import {
 
 export default {
   checkComponentClick(
-    position: Vector2,
+    position: Point2i,
     elementsList: NodeList | InputList | OutputList | SlotList | TextList
   ): number[] | undefined {
     let collided = false;

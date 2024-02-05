@@ -1,60 +1,31 @@
 import Collision from '../interfaces/collisionInterface';
-import Vector2 from '../types/Vector2';
+import Point2i from '../types/Point2i';
+import Vector2i from '../types/Vector2i';
 import BBCollision from './BBCollision';
 
 export default class CircleCollision implements Collision {
-  private _position: Vector2;
+  private _position: Point2i;
   public readonly radius: number;
   private readonly radiusSquared: number;
-  private drawPath: Path2D;
-  private _borderColor: string;
 
-  get position(): Vector2 {
+  get position(): Point2i {
     return this._position;
   }
 
-  set position(value: Vector2) {
+  set position(value: Point2i) {
     this._position = value;
   }
 
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
-
-  constructor(position: Vector2, radius: number, borderColor = '#FF8008DC') {
+  constructor(position: Point2i, radius: number) {
     this._position = position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
-    this._borderColor = borderColor;
-    this.drawPath = this.generatePath();
   }
 
-  protected generatePath(): Path2D {
-    const path = new Path2D();
-    path.arc(this._position.x, this._position.y, this.radius, 0, Math.PI * 2);
-    return path;
-  }
-
-  draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
-    if (!selected) return;
-    const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this._borderColor;
-    ctx.stroke(this.drawPath);
-    ctx.strokeStyle = oldStrokeStyle;
-  }
-
-  moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this._position.add(v);
-    else this._position = v;
-    this.drawPath = this.generatePath();
-  }
-
-  collisionWithPoint(point: Vector2): boolean {
-    return this._position.sub(point).magSq() < this.radiusSquared;
+  collisionWithPoint(point: Point2i): boolean {
+    return (
+      Vector2i.magSq(Vector2i.sub(this.position, point)) < this.radiusSquared
+    );
   }
 
   collisionWithAABB(other: BBCollision): boolean {
@@ -73,6 +44,9 @@ export default class CircleCollision implements Collision {
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
-    return this.position.sub(other.position).mag() < this.radius + other.radius;
+    return (
+      Vector2i.mag(Vector2i.sub(this.position, other.position)) <
+      this.radius + other.radius
+    );
   }
 }
