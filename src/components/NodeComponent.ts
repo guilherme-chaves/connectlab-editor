@@ -1,4 +1,4 @@
-import ComponentType, {ImageListObject, NodeTypes} from '../types/types';
+import ComponentType, {NodeTypes} from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
@@ -13,7 +13,6 @@ import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import Point2i from '../types/Point2i';
-import Vector2i from '../types/Vector2i';
 
 class NodeComponent implements Node {
   public readonly id: number;
@@ -22,9 +21,6 @@ class NodeComponent implements Node {
   public readonly nodeType: NodeTypeObject;
   private _slotComponents: Array<SlotComponent>;
   private _collisionShape: BBCollision;
-  private imageWidth: number;
-  private imageHeight: number;
-  public selected: boolean;
 
   get slotComponents() {
     return this._slotComponents;
@@ -46,35 +42,16 @@ class NodeComponent implements Node {
     id: number,
     position: Point2i,
     nodeType: NodeTypes,
-    canvasWidth: number,
-    canvasHeight: number,
     slots: Array<SlotComponent>,
-    images: ImageListObject
+    width: number,
+    height: number
   ) {
     this.id = id;
     this.position = position;
     this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this._slotComponents = slots;
-    this.imageWidth = images.get(this.nodeType.id)!.width;
-    this.imageHeight = images.get(this.nodeType.id)!.height;
-    Vector2i.sub(
-      this.position,
-      new Point2i(this.imageWidth / 2.0, this.imageHeight / 2.0),
-      this.position
-    );
-    const canvasBound = Vector2i.sub(
-      new Point2i(canvasWidth, canvasHeight),
-      new Point2i(this.imageWidth, this.imageHeight)
-    );
-    Vector2i.min(this.position, canvasBound, this.position);
-    Vector2i.max(this.position, Vector2i.ZERO.point, this.position);
-    this._collisionShape = new BBCollision(
-      this.position,
-      this.imageWidth,
-      this.imageHeight
-    );
-    this.selected = false;
+    this._collisionShape = new BBCollision(this.position, width, height);
   }
 
   static getNodeTypeObject(type: NodeTypes): NodeTypeObject {

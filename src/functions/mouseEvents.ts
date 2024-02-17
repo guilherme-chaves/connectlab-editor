@@ -11,32 +11,41 @@ import EditorEnvironment from '../EditorEnvironment';
 import signalUpdate from './Signal/signalUpdate';
 
 export interface CollisionList {
-  [index: string]: Array<number> | undefined;
-  nodes: Array<number> | undefined;
-  slots: Array<number> | undefined;
-  connections: Array<number> | undefined;
-  texts: Array<number> | undefined;
-  inputs: Array<number> | undefined;
-  outputs: Array<number> | undefined;
+  [index: string]: Array<number>;
+  nodes: Array<number>;
+  slots: Array<number>;
+  connections: Array<number>;
+  texts: Array<number>;
+  inputs: Array<number>;
+  outputs: Array<number>;
 }
 
 export default class MouseEvents {
   private collisionList: CollisionList;
   private readonly _mouse: Mouse;
+  public movingObject:
+    | 'input'
+    | 'node'
+    | 'output'
+    | 'connection'
+    | 'text'
+    | 'none';
 
   constructor(mouse: Mouse) {
     this._mouse = mouse;
     this.collisionList = {
-      nodes: undefined,
-      slots: undefined,
-      connections: undefined,
-      texts: undefined,
-      inputs: undefined,
-      outputs: undefined,
+      nodes: [],
+      slots: [],
+      connections: [],
+      texts: [],
+      inputs: [],
+      outputs: [],
     };
+    this.movingObject = 'none';
   }
 
   onMouseClick(editor: Editor) {
+    if (editor.editorEnv.editorRenderer === undefined) return;
     if (this._mouse.stateChanged && this._mouse.clicked) {
       // Obtêm uma lista com todas as colisões encontradas
       const nodeId = nodeEvents.checkNodeClick(
@@ -65,8 +74,10 @@ export default class MouseEvents {
       );
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      if (slotId !== undefined) {
-        editor.editorEnv.slots.get(slotId[0])!.selected = true;
+      if (slotId.length > 0) {
+        editor.editorEnv.editorRenderer!.renderGraph.get(
+          slotId[0]
+        )!.object!.selected = true;
         connectionEvents.addLine(editor, this._mouse.position);
       }
       this.clearUnselectedComponents(editor.editorEnv, undefined, slotId);
@@ -83,14 +94,12 @@ export default class MouseEvents {
     }
   }
 
-  onMouseRelease(editorEnv: EditorEnvironment) {
+  onMouseRelease(editorEnv: EditorEnvironment): void {
+    if (editorEnv.editorRenderer === undefined) return;
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
-        if (this.collisionList.inputs !== undefined) {
-          inputEvents.switchInputState(
-            editorEnv.inputs,
-            this.collisionList.inputs[0]
-          );
+        if (this.collisionList.inputs.length > 0) {
+          inputEvents.switchInputState(editorEnv, this.collisionList.inputs[0]);
           signalUpdate.updateGraphPartial(
             editorEnv,
             this.collisionList.inputs[0]
@@ -100,45 +109,48 @@ export default class MouseEvents {
       if (!connectionEvents.fixLine(editorEnv, this._mouse.position)) {
         this.clearDragCollisions();
       }
-      this._mouse.dragged = false;
       this._mouse.stateChanged = false;
     }
   }
 
-  onMouseMove(editorEnv: EditorEnvironment) {
-    if (!this._mouse.dragged && this._mouse.clicked) {
-      const mouseMovement = this._mouse.position.sub(
-        this._mouse.clickStartPosition
-      );
-      this._mouse.dragged =
-        mouseMovement.x > this._mouse.clickToDragThreshold ||
-        mouseMovement.x < -this._mouse.clickToDragThreshold ||
-        mouseMovement.y > this._mouse.clickToDragThreshold ||
-        mouseMovement.y < -this._mouse.clickToDragThreshold;
-    }
-    if (this._mouse.dragged) {
-      return (
-        connectionEvents.move(editorEnv, this._mouse.position) ||
-        nodeEvents.move(
+  onMouseMove(editorEnv: EditorEnvironment): boolean {
+    if (editorEnv.editorRenderer === undefined) return false;
+    if (this._mouse.clicked && this._mouse.dragged) {
+      if (this.collisionList.nodes.length > 0) {
+        return nodeEvents.move(
+          this.collisionList!.nodes[0],
+          editorEnv.editorRenderer!.renderGraph,
           editorEnv.nodes,
           this.collisionList,
+          this,
           this._mouse.position,
           false
-        ) ||
-        inputEvents.move(
+        );
+      } else if (this.collisionList.inputs.length > 0) {
+        return inputEvents.move(
+          this.collisionList!.inputs[0],
+          editorEnv.editorRenderer!.renderGraph,
           editorEnv.inputs,
           this.collisionList,
+          this,
           this._mouse.position,
           false
-        ) ||
-        outputEvents.move(
+        );
+      } else if (this.collisionList.outputs.length > 0) {
+        return outputEvents.move(
+          this.collisionList!.outputs[0] ?? -1,
+          editorEnv.editorRenderer!.renderGraph,
           editorEnv.outputs,
           this.collisionList,
+          this,
           this._mouse.position,
           false
-        )
-      );
+        );
+      } else {
+        return connectionEvents.move(editorEnv, this, this._mouse.position);
+      }
     }
+    this.movingObject = 'none';
     return false;
   }
 
@@ -152,45 +164,52 @@ export default class MouseEvents {
     newInputIds: Array<number> = [],
     newOutputIds: Array<number> = []
   ): void {
-    if (this.collisionList.nodes !== undefined) {
+    if (this.collisionList.nodes.length > 0) {
       this.collisionList.nodes.forEach(node => {
         if (newNodeIds.includes(node)) {
-          editorEnv.nodes.get(node)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(node)!.object!.selected =
+            false;
         }
       });
     }
-    if (this.collisionList.slots !== undefined) {
+    if (this.collisionList.slots.length > 0) {
       this.collisionList.slots.forEach(slot => {
         if (newSlotIds.includes(slot)) {
-          editorEnv.slots.get(slot)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(slot)!.object!.selected =
+            false;
         }
       });
     }
-    if (this.collisionList.connections !== undefined) {
+    if (this.collisionList.connections.length > 0) {
       this.collisionList.connections.forEach(connection => {
         if (newConnectionIds.includes(connection)) {
-          editorEnv.connections.get(connection)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(
+            connection
+          )!.line!.selected = false;
         }
       });
     }
-    if (this.collisionList.texts !== undefined) {
+    if (this.collisionList.texts.length > 0) {
       this.collisionList.texts.forEach(text => {
         if (newTextIds.includes(text)) {
-          editorEnv.texts.get(text)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(text)!.object!.selected =
+            false;
         }
       });
     }
-    if (this.collisionList.inputs !== undefined) {
+    if (this.collisionList.inputs.length > 0) {
       this.collisionList.inputs.forEach(input => {
         if (newInputIds.includes(input)) {
-          editorEnv.inputs.get(input)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(input)!.object!.selected =
+            false;
         }
       });
     }
-    if (this.collisionList.outputs !== undefined) {
+    if (this.collisionList.outputs.length > 0) {
       this.collisionList.outputs.forEach(output => {
         if (newOutputIds.includes(output)) {
-          editorEnv.outputs.get(output)!.selected = false;
+          editorEnv.editorRenderer!.renderGraph.get(output)!.object!.selected =
+            false;
         }
       });
     }
@@ -201,16 +220,16 @@ export default class MouseEvents {
   }
 
   clearDragCollisions() {
-    this.collisionList.nodes = undefined;
-    this.collisionList.inputs = undefined;
+    this.collisionList.nodes = [];
+    this.collisionList.inputs = [];
   }
 
   clearAllCollisions(editorEnv: EditorEnvironment) {
     this.clearUnselectedComponents(editorEnv);
-    this.collisionList.nodes = undefined;
-    this.collisionList.slots = undefined;
-    this.collisionList.connections = undefined;
-    this.collisionList.texts = undefined;
-    this.collisionList.inputs = undefined;
+    this.collisionList.nodes = [];
+    this.collisionList.slots = [];
+    this.collisionList.connections = [];
+    this.collisionList.texts = [];
+    this.collisionList.inputs = [];
   }
 }

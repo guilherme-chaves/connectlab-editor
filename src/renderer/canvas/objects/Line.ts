@@ -1,4 +1,7 @@
-import {Line as LineInterface} from '../../../interfaces/renderObjects';
+import {
+  CollisionShape,
+  Line as LineInterface,
+} from '../../../interfaces/renderObjects';
 import Point2f from '../../../types/Point2f';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
@@ -8,7 +11,7 @@ export default class Line implements LineInterface {
   public position: Point2i;
   public endPosition: Point2i;
   public anchors: Point2f[];
-  public childElements: Set<number>;
+  public collisionShapes: Set<CollisionShape>;
   public selected: boolean;
   private path: Path2D;
   private regenConnectionPath: boolean;
@@ -17,13 +20,13 @@ export default class Line implements LineInterface {
     position: Point2i,
     endPosition: Point2i,
     anchors: Point2f[] = [],
-    children: Set<number> = new Set()
+    collisionShapes: Set<CollisionShape> = new Set()
   ) {
     this.position = position;
     this.endPosition = endPosition;
     this.anchors = anchors;
     this.selected = false;
-    this.childElements = children;
+    this.collisionShapes = collisionShapes;
     this.regenConnectionPath = false;
     this.path = this.generatePath();
   }
@@ -37,6 +40,9 @@ export default class Line implements LineInterface {
       if (movePoint !== 1) this.position = nPos;
       if (movePoint !== 0) this.endPosition = nPos;
     }
+    for (const cShape of this.collisionShapes) {
+      cShape.move(nPos, isDelta);
+    }
     this.anchors = ConnectionPathFunctions.generateAnchors(this);
     this.regenConnectionPath = true;
   }
@@ -48,6 +54,9 @@ export default class Line implements LineInterface {
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke(this.path);
+    for (const cShape of this.collisionShapes) {
+      cShape.draw(ctx);
+    }
   }
 
   generatePath(): Path2D {

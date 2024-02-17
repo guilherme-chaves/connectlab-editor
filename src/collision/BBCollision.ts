@@ -5,7 +5,7 @@ import CircleCollision from './CircleCollision';
 
 export default class BBCollision implements Collision {
   public position: Point2i;
-  private size: Point2i;
+  public readonly size: Point2i;
 
   get globalPoints(): {a: Point2i; b: Point2i} {
     return {

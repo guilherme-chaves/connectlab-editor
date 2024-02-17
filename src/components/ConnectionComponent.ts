@@ -15,7 +15,6 @@ class ConnectionComponent implements Component {
   public connectedTo: ConnectionVertices;
   private _collisionShape: Array<BBCollision>;
   public regenerateConnectionPath: boolean;
-  public selected: boolean;
 
   get collisionShape() {
     return this._collisionShape;
@@ -46,7 +45,6 @@ class ConnectionComponent implements Component {
     this.regenerateConnectionPath = false;
     this._collisionShape =
       ConnectionPathFunctions.generateCollisionShapes(this);
-    this.selected = false;
   }
 
   addAnchor(point: Point2f, arrIndex: number = this.anchors.length): void {

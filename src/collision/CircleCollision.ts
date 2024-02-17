@@ -4,20 +4,12 @@ import Vector2i from '../types/Vector2i';
 import BBCollision from './BBCollision';
 
 export default class CircleCollision implements Collision {
-  private _position: Point2i;
+  public position: Point2i;
   public readonly radius: number;
   private readonly radiusSquared: number;
 
-  get position(): Point2i {
-    return this._position;
-  }
-
-  set position(value: Point2i) {
-    this._position = value;
-  }
-
   constructor(position: Point2i, radius: number) {
-    this._position = position;
+    this.position = position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
   }

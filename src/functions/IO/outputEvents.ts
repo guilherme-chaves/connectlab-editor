@@ -1,19 +1,12 @@
 import OutputComponent from '../../components/OutputComponent';
-import connectionEvents from '../Connection/connectionEvents';
-import nodeEvents from '../Node/nodeEvents';
-import inputEvents from './inputEvents';
-import {CollisionList} from '../mouseEvents';
+import MouseEvents, {CollisionList} from '../mouseEvents';
 import componentEvents from '../Component/componentEvents';
 import {OutputList, RenderGraph} from '../../types/types';
 import Point2i from '../../types/Point2i';
-import {Line} from '../../interfaces/renderObjects';
 
 export default {
   editingOutput: false,
-  checkOutputClick(
-    outputs: OutputList,
-    position: Point2i
-  ): number[] | undefined {
+  checkOutputClick(outputs: OutputList, position: Point2i): number[] {
     return componentEvents.checkComponentClick(position, outputs);
   },
   move(
@@ -21,20 +14,18 @@ export default {
     renderGraph: RenderGraph,
     outputList: OutputList,
     collisionList: CollisionList,
+    mouseEvents: MouseEvents,
     v: Point2i,
     useDelta = true
   ): boolean {
     if (
-      collisionList.outputs === undefined ||
-      connectionEvents.editingLine ||
-      nodeEvents.editingNode ||
-      inputEvents.editingInput
-    ) {
-      this.editingOutput = false;
+      collisionList.outputs.length === 0 ||
+      (mouseEvents.movingObject !== 'none' &&
+        mouseEvents.movingObject !== 'output')
+    )
       return false;
-    }
 
-    this.editingOutput = true;
+    mouseEvents.movingObject = 'output';
     renderGraph.get(outputId)!.object!.move(v, useDelta);
     this.moveLinkedElements(
       renderGraph,
@@ -58,7 +49,7 @@ export default {
         else if (
           connection.connectedTo.end?.id === output.slotComponents[0]!.id
         )
-          renderGraph.get(connection.id)!.line!.move(v, useDelta, 0);
+          renderGraph.get(connection.id)!.line!.move(v, useDelta, 1);
       });
     }
   },

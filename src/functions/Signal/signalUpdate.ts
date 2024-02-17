@@ -2,7 +2,12 @@ import EditorEnvironment from '../../EditorEnvironment';
 import InputComponent from '../../components/InputComponent';
 import NodeComponent from '../../components/NodeComponent';
 import OutputComponent from '../../components/OutputComponent';
-import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
+import {Sprite} from '../../interfaces/renderObjects';
+import ComponentType, {
+  RenderObjectType,
+  SignalGraph,
+  SignalGraphData,
+} from '../../types/types';
 
 export default {
   updateGraph(editorEnv: EditorEnvironment): void {
@@ -30,6 +35,18 @@ export default {
               editorEnv.signalGraph.get(stack[0])!,
               nodeObj
             );
+            const renderObj = editorEnv.editorRenderer?.renderGraph.get(
+              stack[0]
+            );
+            if (
+              renderObj !== undefined &&
+              renderObj.type === RenderObjectType.SPRITE
+            ) {
+              (renderObj.object! as Sprite).currentSpriteId =
+                nodeObj.nodeType.imgPaths[
+                  editorEnv.signalGraph.get(stack[0])!.state ? 1 : 0
+                ];
+            }
           }
         }
       }
@@ -49,8 +66,22 @@ export default {
     for (let i = 0; i < node.signalFrom.length; i++)
       this.updateVertexStatus(editorEnv, node.signalFrom[i], visited);
     const nodeObj = this.getNodeObject(editorEnv, nodeId);
-    if (nodeObj !== undefined && nodeObj.componentType !== ComponentType.INPUT)
+    if (
+      nodeObj !== undefined &&
+      nodeObj.componentType !== ComponentType.INPUT
+    ) {
       this.computeState(editorEnv.signalGraph, node, nodeObj);
+      const renderObj = editorEnv.editorRenderer?.renderGraph.get(nodeId);
+      if (
+        renderObj !== undefined &&
+        renderObj.type === RenderObjectType.SPRITE
+      ) {
+        (renderObj.object! as Sprite).currentSpriteId =
+          nodeObj.nodeType.imgPaths[
+            editorEnv.signalGraph.get(nodeId)!.state ? 1 : 0
+          ];
+      }
+    }
   },
   getNodeObject(
     editorEnv: EditorEnvironment,

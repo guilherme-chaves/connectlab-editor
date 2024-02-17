@@ -1,13 +1,16 @@
+import BBCollision from '../collision/BBCollision';
 import Point2f from '../types/Point2f';
 import Point2i from '../types/Point2i';
 import {ImageListObject} from '../types/types';
+import Collision from './collisionInterface';
+import CircleCollisionComponent from '../collision/CircleCollision';
 
 export default interface RenderObject {
   position: Point2i;
   selected: boolean;
   draw(ctx: CanvasRenderingContext2D): void;
   move(nPos: Point2i, isDelta: boolean): void;
-  childElements: Set<number>;
+  collisionShapes: Set<CollisionShape>;
 }
 
 export interface Line extends Omit<RenderObject, 'move'> {
@@ -18,11 +21,11 @@ export interface Line extends Omit<RenderObject, 'move'> {
 
 export interface Sprite extends RenderObject {
   imageSet: ImageListObject;
-  currentSpriteId: number;
+  currentSpriteId: string;
 }
 
 export interface Texture extends RenderObject {
-  image: ImageBitmap;
+  image: ImageBitmap | undefined;
   repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
 }
 
@@ -39,15 +42,18 @@ export interface Text extends RenderObject {
   font: string;
 }
 
-export interface CollisionShape extends RenderObject {
+export interface CollisionShape extends Omit<RenderObject, 'collisionShapes'> {
   display: boolean;
   borderColor: string;
+  collisionObject: Collision;
 }
 
 export interface RectCollision extends CollisionShape {
   size: Point2i;
+  collisionObject: BBCollision;
 }
 
 export interface CircleCollision extends CollisionShape {
   radius: number;
+  collisionObject: CircleCollisionComponent;
 }

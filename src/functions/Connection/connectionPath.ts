@@ -28,14 +28,14 @@ export default {
 
   generateAnchors(connection: Line): Array<Point2f> {
     const anchorsArr: Array<Point2f> = [];
-    let lastAnchorAdded: Point2f = Vector2f.ZERO.point;
+    let lastAnchorAdded: Point2f = new Point2f();
     const startPos = connection.position;
     const currentPos = connection.position;
     const endPosition = connection.endPosition;
     // const defaultXStepDivisor = 2.0;
     // const defaultYStepDivisor = 1.0;
     const stepDivisor = new Point2f(2.0, 1.0);
-    const stepTo = Vector2i.ZERO.point;
+    const stepTo = new Point2i();
     let loopRuns = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
@@ -53,7 +53,7 @@ export default {
           : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
             ? -1
             : 0;
-      const newAnchor = Vector2f.ZERO.point;
+      const newAnchor = new Point2f();
       if (anchorsArr.length === 0) {
         Vector2f.div(Vector2i.abs(stepTo, stepTo), stepDivisor, newAnchor);
       } else {
@@ -87,7 +87,7 @@ export default {
     let pPos = connection.position;
     // 0 => Ponto inicial à primeira âncora, length => última âncora à ponto final
     for (let i = 0; i <= connection.anchors.length; i++) {
-      let nPos = Vector2i.ZERO.point;
+      let nPos = new Point2i();
       if (i < connection.anchors.length)
         Vector2i.bilinear(
           connection.position,

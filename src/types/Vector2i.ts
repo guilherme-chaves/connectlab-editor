@@ -5,7 +5,6 @@ import Point2i from './Point2i';
 import Vector2f from './Vector2f';
 
 export default class Vector2i implements Vector2Interface {
-  static readonly ZERO = new Vector2i();
   public point: Point2i;
 
   constructor(xOrVector2: number | Point = 0, y = 0) {

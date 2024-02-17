@@ -1,3 +1,5 @@
+import BBCollision from '../collision/BBCollision';
+import CircleCollision from '../collision/CircleCollision';
 import ConnectionComponent from '../components/ConnectionComponent';
 import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
@@ -5,7 +7,7 @@ import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
-import RenderObject, { Line } from '../interfaces/renderObjects';
+import RenderObject, {Line} from '../interfaces/renderObjects';
 import Point2i from './Point2i';
 
 enum ComponentType {
@@ -43,7 +45,7 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export type ImageListObject = Map<number, ImageBitmap>;
+export type ImageListObject = Map<string, ImageBitmap>;
 
 export type NodeList = Map<number, NodeComponent>;
 
@@ -56,6 +58,10 @@ export type TextList = Map<number, TextComponent>;
 export type InputList = Map<number, InputComponent>;
 
 export type OutputList = Map<number, OutputComponent>;
+
+export type BBCollisionList = Map<number, BBCollision>;
+
+export type CircleCollisionList = Map<number, CircleCollision>;
 
 export interface FullComponentList {
   [index: string]: Map<number, Component>;
@@ -81,6 +87,7 @@ export interface ConnectionVertices {
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
   readonly id: NodeTypes;
+  readonly imgPaths: string[];
   readonly connectionSlot: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
@@ -92,6 +99,7 @@ export interface NodeTypeObject {
 
 export interface InputTypeObject {
   readonly id: InputTypes;
+  readonly imgPaths: string[];
   readonly connectionSlot: {
     id: number;
     name: string;
@@ -102,6 +110,7 @@ export interface InputTypeObject {
 
 export interface OutputTypeObject {
   readonly id: OutputTypes;
+  readonly imgPaths: string[];
   readonly connectionSlot: {
     id: number;
     name: string;
@@ -118,15 +127,27 @@ export interface SignalGraphData {
 
 export type SignalGraph = Map<number, SignalGraphData>;
 
-export type RenderGraphData = {
+export enum RenderObjectType {
+  CIRCLE_COLLISION = 0,
+  LINE = 1,
+  POINT = 2,
+  RECT_COLLISION = 3,
+  SPRITE = 4,
+  TEXT = 5,
+  TEXTURE = 6,
+}
+
+export interface RenderGraphData {
+  type: RenderObjectType;
   object?: RenderObject;
   line?: Line;
-};
+}
 
 export type RenderGraph = Map<number, RenderGraphData>;
 
 export enum RendererType {
-  CANVAS = 0,
+  NONE = 0,
+  CANVAS = 1,
   // GL2 = 1,
 }
 

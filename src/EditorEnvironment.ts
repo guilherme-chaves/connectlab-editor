@@ -1,5 +1,4 @@
 import ComponentType, {
-  ImageListObject,
   FullComponentList,
   NodeList,
   ConnectionList,
@@ -13,15 +12,11 @@ import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
-import preloadNodeImages from './functions/Node/preloadNodeImages';
-import {
-  preloadInputImages,
-  preloadOutputImages,
-} from './functions/IO/preloadIOImages';
 import Component from './interfaces/componentInterface';
 import InputComponent from './components/InputComponent';
 import OutputComponent from './components/OutputComponent';
 import signalEvents from './functions/Signal/signalEvents';
+import Renderer from './interfaces/renderer';
 
 class EditorEnvironment {
   public documentId: string;
@@ -32,13 +27,13 @@ class EditorEnvironment {
   private textList: TextList;
   private inputList: InputList;
   private outputList: OutputList;
-  public readonly nodeImageList: ImageListObject;
-  public readonly inputImageList: ImageListObject;
-  public readonly outputImageList: ImageListObject;
   private _signalGraph: SignalGraph;
+  private _editorRenderer: Renderer | undefined;
 
   constructor(
     documentId: string,
+    signalGraph: SignalGraph,
+    renderer: Renderer | undefined,
     startId = 0,
     nodeList = new Map(),
     slotList = new Map(),
@@ -55,10 +50,8 @@ class EditorEnvironment {
     this.textList = textList;
     this.inputList = inputList;
     this.outputList = outputList;
-    this._signalGraph = new Map();
-    this.nodeImageList = preloadNodeImages();
-    this.inputImageList = preloadInputImages();
-    this.outputImageList = preloadOutputImages();
+    this._signalGraph = signalGraph;
+    this._editorRenderer = renderer;
   }
 
   /* Getters e Setters */
@@ -108,6 +101,10 @@ class EditorEnvironment {
 
   get signalGraph(): SignalGraph {
     return this._signalGraph;
+  }
+
+  get editorRenderer(): Renderer | undefined {
+    return this._editorRenderer;
   }
 
   addComponent(component: Component): number {

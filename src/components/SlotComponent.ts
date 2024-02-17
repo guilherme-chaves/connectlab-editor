@@ -6,7 +6,8 @@ import ConnectionComponent from './ConnectionComponent';
 
 export default class SlotComponent implements Component {
   public readonly id: number;
-  public position: Point2i;
+  public position: Point2i; // local
+  public parentPosition: Point2i;
   public readonly componentType: ComponentType;
   private _parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
@@ -38,6 +39,7 @@ export default class SlotComponent implements Component {
   constructor(
     id: number,
     position: Point2i,
+    parentPosition: Point2i,
     parent: Component,
     connections: Array<ConnectionComponent> = [],
     inSlot = true,
@@ -45,6 +47,7 @@ export default class SlotComponent implements Component {
   ) {
     this.id = id;
     this.position = position;
+    this.parentPosition = parentPosition;
     this.componentType = ComponentType.SLOT;
     this._parent = parent;
     this._slotConnections = connections;

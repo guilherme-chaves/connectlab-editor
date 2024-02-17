@@ -3,7 +3,6 @@ import Vector2Interface from '../interfaces/Vector2';
 import Point2f from './Point2f';
 
 export default class Vector2f implements Vector2Interface {
-  static readonly ZERO = new Vector2f();
   public point: Point2f;
 
   constructor(xOrVector2: number | Point = 0, y = 0) {
