@@ -1,7 +1,4 @@
-import {
-  CollisionShape,
-  Sprite as SpriteInterface,
-} from '../../../interfaces/renderObjects';
+import {Sprite as SpriteInterface} from '../../../interfaces/renderObjects';
 import Point2f from '../../../types/Point2f';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
@@ -9,7 +6,6 @@ import {ImageListObject} from '../../../types/types';
 
 export default class Sprite implements SpriteInterface {
   public position: Point2i;
-  public collisionShapes: Set<CollisionShape>;
   public selected: boolean;
   public imageSet: ImageListObject;
   public currentSpriteId: string;
@@ -20,12 +16,10 @@ export default class Sprite implements SpriteInterface {
     position: Point2i,
     imageSet: ImageListObject,
     currentSpriteId: string,
-    collisionShapes: Set<CollisionShape> = new Set(),
     canvasWidth: number,
     canvasHeight: number
   ) {
     this.position = position;
-    this.collisionShapes = collisionShapes;
     this.imageSet = imageSet;
     this.currentSpriteId = currentSpriteId;
     this.selected = false;
@@ -51,9 +45,6 @@ export default class Sprite implements SpriteInterface {
       this.position.x,
       this.position.y
     );
-    for (const cShape of this.collisionShapes) {
-      cShape.draw(ctx);
-    }
   }
 
   move(nPos: Point2i, isDelta: boolean): void {
@@ -68,9 +59,6 @@ export default class Sprite implements SpriteInterface {
         ),
         this.position
       );
-    }
-    for (const cShape of this.collisionShapes) {
-      cShape.move(nPos, isDelta);
     }
   }
 }

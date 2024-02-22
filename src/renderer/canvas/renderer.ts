@@ -1,11 +1,8 @@
-import Component from '../../interfaces/componentInterface';
-import Node from '../../interfaces/nodeInterface';
 import Renderer from '../../interfaces/renderer';
 import Point2i from '../../types/Point2i';
 import ComponentType, {
   ImageListObject,
   RenderGraph,
-  RenderGraphData,
   RenderObjectType,
 } from '../../types/types';
 import {
@@ -13,8 +10,8 @@ import {
   nodeImageList,
   outputImageList,
 } from './imageListObjects';
+import RenderObject, {CollisionShape} from '../../interfaces/renderObjects';
 import CircleCollisionShape from './objects/CircleCollision';
-import CircleCollision from '../../collision/CircleCollision';
 import Line from './objects/Line';
 import Point from './objects/Point';
 import Sprite from './objects/Sprite';
@@ -22,9 +19,7 @@ import Text from './objects/Text';
 import Texture from './objects/Texture';
 import preload from './preload';
 import RectCollision from './objects/RectCollision';
-import BBCollision from '../../collision/BBCollision';
-import ConnectionComponent from '../../components/ConnectionComponent';
-import SlotComponent from '../../components/SlotComponent';
+import Point2f from '../../types/Point2f';
 
 export default class CanvasRenderer implements Renderer {
   public ctx: CanvasRenderingContext2D;
@@ -34,7 +29,15 @@ export default class CanvasRenderer implements Renderer {
   public readonly renderGraph: RenderGraph;
 
   constructor(canvas: HTMLCanvasElement) {
-    this.renderGraph = new Map();
+    this.renderGraph = {
+      textures: new Map(),
+      sprites: new Map(),
+      lines: new Map(),
+      texts: new Map(),
+      points: new Map(),
+      rectCollisions: new Map(),
+      circleCollisions: new Map(),
+    };
     this.nodeImages = preload.imageList(nodeImageList);
     this.inputImages = preload.imageList(inputImageList);
     this.outputImages = preload.imageList(outputImageList);
@@ -45,15 +48,159 @@ export default class CanvasRenderer implements Renderer {
     return canvas.getContext('2d')!;
   }
 
+  makeCircleCollision(
+    componentId: number,
+    position: Point2i,
+    radius?: number,
+    borderColor?: string
+  ): CircleCollisionShape {
+    const newCC = new CircleCollisionShape(position, radius, borderColor);
+    const currentArr = this.renderGraph.circleCollisions.get(componentId) ?? [];
+    currentArr.push(newCC);
+    this.renderGraph.circleCollisions.set(componentId, currentArr);
+    return newCC;
+  }
+
+  makeLine(
+    componentId: number,
+    position: Point2i,
+    endPosition: Point2i,
+    anchors?: Point2f[]
+  ): Line {
+    const newLine = new Line(position, endPosition, anchors);
+    this.renderGraph.lines.set(componentId, newLine);
+    return newLine;
+  }
+
+  makePoint(
+    componentId: number,
+    position: Point2i,
+    parentPosition: Point2i,
+    size?: number,
+    color?: string,
+    colorSelected?: string
+  ): Point {
+    const newPoint = new Point(
+      position,
+      parentPosition,
+      size,
+      color,
+      colorSelected
+    );
+    this.renderGraph.points.set(componentId, newPoint);
+    return newPoint;
+  }
+
+  makeRectCollision(
+    componentId: number,
+    position: Point2i,
+    size: Point2i,
+    borderColor?: string
+  ): RectCollision {
+    const newRC = new RectCollision(position, size, borderColor);
+    const currentArr = this.renderGraph.rectCollisions.get(componentId) ?? [];
+    currentArr.push(newRC);
+    this.renderGraph.rectCollisions.set(componentId, currentArr);
+    return newRC;
+  }
+
+  makeSprite(
+    componentId: number,
+    componentType: ComponentType,
+    imagePaths: string[],
+    position: Point2i,
+    currentSpriteId: string
+  ): Sprite {
+    let newSprite: Sprite;
+    switch (componentType) {
+      case ComponentType.INPUT:
+        newSprite = new Sprite(
+          position,
+          preload.getImageSublist(this.inputImages, imagePaths),
+          currentSpriteId,
+          this.ctx.canvas.width,
+          this.ctx.canvas.height
+        );
+        break;
+      case ComponentType.OUTPUT:
+        newSprite = new Sprite(
+          position,
+          preload.getImageSublist(this.outputImages, imagePaths),
+          currentSpriteId,
+          this.ctx.canvas.width,
+          this.ctx.canvas.height
+        );
+        break;
+      default:
+        newSprite = new Sprite(
+          position,
+          preload.getImageSublist(this.nodeImages, imagePaths),
+          currentSpriteId,
+          this.ctx.canvas.width,
+          this.ctx.canvas.height
+        );
+        break;
+    }
+    this.renderGraph.sprites.set(componentId, newSprite);
+    return newSprite;
+  }
+
+  makeText(
+    componentId: number,
+    position: Point2i,
+    label: string,
+    textSize?: number,
+    color?: string,
+    font?: string
+  ): Text {
+    const newText = new Text(position, label, textSize, color, font);
+    this.renderGraph.texts.set(componentId, newText);
+    return newText;
+  }
+
+  makeTexture(
+    componentId: number,
+    position: Point2i,
+    textureSrc: string,
+    repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
+  ): Texture {
+    const newTexture = new Texture(position, textureSrc, this, repeat);
+    this.renderGraph.textures.set(componentId, newTexture);
+    return newTexture;
+  }
+
+  removeObject(componentId: number, type: RenderObjectType): boolean {
+    switch (type) {
+      case RenderObjectType.CIRCLE_COLLISION:
+        return this.renderGraph.circleCollisions.delete(componentId);
+      case RenderObjectType.LINE:
+        return this.renderGraph.lines.delete(componentId);
+      case RenderObjectType.POINT:
+        return this.renderGraph.points.delete(componentId);
+      case RenderObjectType.RECT_COLLISION:
+        return this.renderGraph.rectCollisions.delete(componentId);
+      case RenderObjectType.SPRITE:
+        return this.renderGraph.sprites.delete(componentId);
+      case RenderObjectType.TEXT:
+        return this.renderGraph.texts.delete(componentId);
+      case RenderObjectType.TEXTURE:
+        return this.renderGraph.textures.delete(componentId);
+      default:
+        return false;
+    }
+  }
+
   draw(): void {
     this.clear();
-    for (const element of this.renderGraph) {
-      switch (element[1].type) {
-        case RenderObjectType.LINE:
-          element[1].line!.draw(this.ctx);
-          break;
-        default:
-          element[1].object!.draw(this.ctx);
+    for (const [, value] of Object.entries(this.renderGraph)) {
+      for (let i = 0; i < value.size; i++) {
+        if (Array.isArray(value)) {
+          for (let j = 0; j < (value.get(i) as CollisionShape[])?.length; j++) {
+            (value.get(i) as CollisionShape[])[j].draw(this.ctx);
+          }
+        } else {
+          (value.get(i) as RenderObject | Line | undefined)?.draw(this.ctx);
+        }
       }
     }
   }
@@ -63,170 +210,6 @@ export default class CanvasRenderer implements Renderer {
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.restore();
-  }
-
-  addElement(
-    component?: Component,
-    textureData?: {
-      src: string;
-      position: Point2i;
-      repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
-    },
-    textData?: {label: string; size: number; color: string; font: string},
-    connectionComponent?: ConnectionComponent,
-    collisionData?: {
-      componentId: number;
-      shapes: [BBCollision[], CircleCollision[]];
-    }
-  ): void {
-    if (!component && textureData) {
-      this.renderGraph.set(this.renderGraph.size + 1, {
-        type: RenderObjectType.TEXTURE,
-        object: new Texture(
-          textureData.position,
-          textureData.src,
-          this,
-          textureData.repeat
-        ),
-      });
-      return;
-    }
-    switch (component?.componentType) {
-      case ComponentType.NODE:
-        this.renderGraph.set(component.id, {
-          type: RenderObjectType.SPRITE,
-          object: new Sprite(
-            component.position,
-            this.nodeImages,
-            (component as Node).nodeType.imgPaths[0],
-            undefined,
-            this.ctx.canvas.width,
-            this.ctx.canvas.height
-          ),
-        });
-        break;
-      case ComponentType.OUTPUT:
-        this.renderGraph.set(component.id, {
-          type: RenderObjectType.SPRITE,
-          object: new Sprite(
-            component.position,
-            this.outputImages,
-            (component as Node).nodeType.imgPaths[0],
-            undefined,
-            this.ctx.canvas.width,
-            this.ctx.canvas.height
-          ),
-        });
-        break;
-      case ComponentType.INPUT:
-        this.renderGraph.set(component.id, {
-          type: RenderObjectType.SPRITE,
-          object: new Sprite(
-            component.position,
-            this.inputImages,
-            (component as Node).nodeType.imgPaths[0],
-            undefined,
-            this.ctx.canvas.width,
-            this.ctx.canvas.height
-          ),
-        });
-        break;
-      case ComponentType.LINE:
-        if (connectionComponent)
-          this.renderGraph.set(component.id, {
-            type: RenderObjectType.LINE,
-            line: new Line(
-              connectionComponent.position,
-              connectionComponent.endPosition,
-              connectionComponent.anchors
-            ),
-          });
-        break;
-      case ComponentType.TEXT:
-        if (textData)
-          this.renderGraph.set(component.id, {
-            type: RenderObjectType.TEXT,
-            object: new Text(
-              component.position,
-              textData.label,
-              textData.size,
-              textData.color,
-              textData.font,
-              undefined
-            ),
-          });
-        break;
-      case ComponentType.SLOT:
-        this.renderGraph.set(component.id, {
-          type: RenderObjectType.POINT,
-          object: new Point(
-            component.position,
-            (component as SlotComponent).parent.position,
-            4,
-            undefined,
-            undefined,
-            undefined
-          ),
-        });
-        break;
-    }
-    if (!component && collisionData) {
-      const comp = this.renderGraph.get(collisionData.componentId);
-      switch (comp?.type) {
-        case RenderObjectType.POINT:
-          comp.object!.collisionShapes.clear();
-          for (let i = 0; i < collisionData.shapes[1].length; i++) {
-            comp.object!.collisionShapes.add(
-              new CircleCollisionShape(
-                collisionData.shapes[1][i].position,
-                collisionData.shapes[1][i].radius,
-                undefined,
-                collisionData.shapes[1][i]
-              )
-            );
-          }
-          break;
-        case RenderObjectType.LINE:
-          comp.line!.collisionShapes.clear();
-          for (let i = 0; i < collisionData.shapes[0].length; i++) {
-            comp.line!.collisionShapes.add(
-              new RectCollision(
-                collisionData.shapes[0][i].position,
-                collisionData.shapes[0][i].size,
-                collisionData.shapes[0][i]
-              )
-            );
-          }
-          break;
-        case RenderObjectType.SPRITE:
-        case RenderObjectType.TEXT:
-        case RenderObjectType.TEXTURE:
-          comp.object!.collisionShapes.clear();
-          for (let i = 0; i < collisionData.shapes[0].length; i++) {
-            comp.object!.collisionShapes.add(
-              new RectCollision(
-                collisionData.shapes[0][i].position,
-                collisionData.shapes[0][i].size,
-                collisionData.shapes[0][i]
-              )
-            );
-          }
-      }
-    }
-  }
-
-  updateElement(id: number, newObject: RenderGraphData): void {
-    if (this.renderGraph.has(id)) {
-      this.renderGraph.set(id, newObject);
-    } else {
-      console.warn(
-        `Elemento ${id} não existe dentro do grafo do renderizador. Ignorando...`
-      );
-    }
-  }
-
-  removeElement(id: number): boolean {
-    return this.renderGraph.delete(id);
   }
 
   resize(width: number, height: number): void {

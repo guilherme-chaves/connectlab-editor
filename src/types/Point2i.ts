@@ -1,26 +1,26 @@
 import Point from '../interfaces/Point';
 
 export default class Point2i implements Point {
-  private readonly point: Int32Array;
+  private _x: number;
+  private _y: number;
   constructor(x: number = 0, y: number = 0) {
-    this.point = new Int32Array(2);
-    this.point[0] = Math.floor(x);
-    this.point[1] = Math.floor(y);
+    this._x = Math.floor(x);
+    this._y = Math.floor(y);
   }
 
   get x(): number {
-    return this.point[0];
+    return this._x;
   }
 
   set x(newValue: number) {
-    this.point[0] = Math.floor(newValue);
+    this._x = Math.floor(newValue);
   }
 
   get y(): number {
-    return this.point[1];
+    return this._y;
   }
 
   set y(newValue: number) {
-    this.point[1] = Math.floor(newValue);
+    this._y = Math.floor(newValue);
   }
 }

@@ -1,7 +1,4 @@
-import {
-  CollisionShape,
-  Texture as TextureInterface,
-} from '../../../interfaces/renderObjects';
+import {Texture as TextureInterface} from '../../../interfaces/renderObjects';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
 import CanvasRenderer from '../renderer';
@@ -11,18 +8,15 @@ export default class Texture implements TextureInterface {
   public image: ImageBitmap | undefined;
   private texture: CanvasPattern | null;
   public selected: boolean;
-  public collisionShapes: Set<CollisionShape>;
   public repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
 
   constructor(
     position: Point2i,
     imageSrc: string,
     render: CanvasRenderer,
-    repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat',
-    collisionShapes: Set<CollisionShape> = new Set()
+    repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
   ) {
     this.position = position;
-    this.collisionShapes = collisionShapes;
     this.repeat = repeat;
     this.loadImage(imageSrc, render);
     this.texture = null;
@@ -51,9 +45,6 @@ export default class Texture implements TextureInterface {
     ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.fillStyle = this.texture ?? '#C0C0C0';
     ctx.fill();
-    for (const cShape of this.collisionShapes) {
-      cShape.draw(ctx);
-    }
   }
 
   move(nPos: Point2i, isDelta: boolean): void {
@@ -66,9 +57,6 @@ export default class Texture implements TextureInterface {
         new Point2i(this.image.width / 2.0, this.image.height / 2.0),
         this.position
       );
-    }
-    for (const cShape of this.collisionShapes) {
-      cShape.move(nPos, isDelta);
     }
   }
 }

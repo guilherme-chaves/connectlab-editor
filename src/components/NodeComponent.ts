@@ -1,4 +1,4 @@
-import ComponentType, {NodeTypes} from '../types/types';
+import ComponentType, {NodeTypes, SignalGraphData} from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
@@ -13,6 +13,8 @@ import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import Point2i from '../types/Point2i';
+import RenderObject from '../interfaces/renderObjects';
+import Renderer from '../interfaces/renderer';
 
 class NodeComponent implements Node {
   public readonly id: number;
@@ -20,7 +22,9 @@ class NodeComponent implements Node {
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
   private _slotComponents: Array<SlotComponent>;
-  private _collisionShape: BBCollision;
+  public collisionShape: BBCollision;
+  public drawShape: RenderObject | undefined;
+  public signalData: SignalGraphData;
 
   get slotComponents() {
     return this._slotComponents;
@@ -30,28 +34,36 @@ class NodeComponent implements Node {
     this._slotComponents = value;
   }
 
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
-  }
-
   constructor(
     id: number,
     position: Point2i,
     nodeType: NodeTypes,
     slots: Array<SlotComponent>,
     width: number,
-    height: number
+    height: number,
+    signalData: SignalGraphData,
+    renderer?: Renderer
   ) {
     this.id = id;
     this.position = position;
     this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this._slotComponents = slots;
-    this._collisionShape = new BBCollision(this.position, width, height);
+    this.signalData = signalData;
+    this.drawShape = renderer?.makeSprite(
+      this.id,
+      this.componentType,
+      this.nodeType.imgPaths,
+      this.position,
+      this.nodeType.imgPaths[0]
+    );
+    this.collisionShape = new BBCollision(
+      this.id,
+      this.position,
+      width,
+      height,
+      renderer
+    );
   }
 
   static getNodeTypeObject(type: NodeTypes): NodeTypeObject {

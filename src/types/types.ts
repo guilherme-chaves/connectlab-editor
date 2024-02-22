@@ -1,5 +1,3 @@
-import BBCollision from '../collision/BBCollision';
-import CircleCollision from '../collision/CircleCollision';
 import ConnectionComponent from '../components/ConnectionComponent';
 import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
@@ -7,7 +5,16 @@ import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
-import RenderObject, {Line} from '../interfaces/renderObjects';
+import RenderObject, {
+  Line,
+  Sprite,
+  CircleCollision,
+  Point,
+  RectCollision,
+  Text,
+  Texture,
+  CollisionShape,
+} from '../interfaces/renderObjects';
 import Point2i from './Point2i';
 
 enum ComponentType {
@@ -58,10 +65,6 @@ export type TextList = Map<number, TextComponent>;
 export type InputList = Map<number, InputComponent>;
 
 export type OutputList = Map<number, OutputComponent>;
-
-export type BBCollisionList = Map<number, BBCollision>;
-
-export type CircleCollisionList = Map<number, CircleCollision>;
 
 export interface FullComponentList {
   [index: string]: Map<number, Component>;
@@ -143,7 +146,16 @@ export interface RenderGraphData {
   line?: Line;
 }
 
-export type RenderGraph = Map<number, RenderGraphData>;
+export interface RenderGraph {
+  [index: string]: Map<number, RenderObject | Line | CollisionShape[]>;
+  textures: Map<number, Texture>;
+  sprites: Map<number, Sprite>;
+  lines: Map<number, Line>;
+  texts: Map<number, Text>;
+  points: Map<number, Point>;
+  rectCollisions: Map<number, RectCollision[]>;
+  circleCollisions: Map<number, CircleCollision[]>;
+}
 
 export enum RendererType {
   NONE = 0,

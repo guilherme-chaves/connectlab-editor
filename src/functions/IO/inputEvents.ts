@@ -13,7 +13,6 @@ export default {
   },
   move(
     inputId: number,
-    renderGraph: RenderGraph,
     inputList: InputList,
     collisionList: CollisionList,
     mouseEvents: MouseEvents,
@@ -28,16 +27,11 @@ export default {
       return false;
 
     mouseEvents.movingObject = 'input';
-    renderGraph.get(inputId)!.object!.move(v, useDelta);
-    this.moveLinkedElements(renderGraph, inputList.get(inputId)!, v, useDelta);
+    inputList.get(inputId)!.drawShape?.move(v, useDelta);
+    this.moveLinkedElements(inputList.get(inputId)!, v, useDelta);
     return true;
   },
-  moveLinkedElements(
-    renderGraph: RenderGraph,
-    input: InputComponent,
-    v: Point2i,
-    useDelta = true
-  ): void {
+  moveLinkedElements(input: InputComponent, v: Point2i, useDelta = true): void {
     if (input.slotComponents !== undefined) {
       renderGraph.get(input.slotComponents[0].id)!.object!.move(v, false);
       input.slotComponents[0].slotConnections.forEach(connection => {

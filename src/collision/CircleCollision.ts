@@ -1,4 +1,6 @@
 import Collision from '../interfaces/collisionInterface';
+import {CollisionShape} from '../interfaces/renderObjects';
+import Renderer from '../interfaces/renderer';
 import Point2i from '../types/Point2i';
 import Vector2i from '../types/Vector2i';
 import BBCollision from './BBCollision';
@@ -7,11 +9,24 @@ export default class CircleCollision implements Collision {
   public position: Point2i;
   public readonly radius: number;
   private readonly radiusSquared: number;
+  public drawShape?: CollisionShape | undefined;
 
-  constructor(position: Point2i, radius: number) {
+  constructor(
+    componentId: number,
+    position: Point2i,
+    radius: number,
+    borderColor?: string,
+    renderer?: Renderer
+  ) {
     this.position = position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
+    this.drawShape = renderer?.makeCircleCollision(
+      componentId,
+      this.position,
+      this.radius,
+      borderColor
+    );
   }
 
   collisionWithPoint(point: Point2i): boolean {

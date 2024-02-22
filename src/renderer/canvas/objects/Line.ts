@@ -1,7 +1,4 @@
-import {
-  CollisionShape,
-  Line as LineInterface,
-} from '../../../interfaces/renderObjects';
+import {Line as LineInterface} from '../../../interfaces/renderObjects';
 import Point2f from '../../../types/Point2f';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
@@ -10,23 +7,29 @@ import ConnectionPathFunctions from '../../../functions/Connection/connectionPat
 export default class Line implements LineInterface {
   public position: Point2i;
   public endPosition: Point2i;
-  public anchors: Point2f[];
-  public collisionShapes: Set<CollisionShape>;
+  private _anchors: Point2f[];
   public selected: boolean;
   private path: Path2D;
   private regenConnectionPath: boolean;
 
+  get anchors(): Point2f[] {
+    return this._anchors;
+  }
+
+  set anchors(value: Point2f[]) {
+    this._anchors = value;
+    this.regenConnectionPath = true;
+  }
+
   constructor(
     position: Point2i,
     endPosition: Point2i,
-    anchors: Point2f[] = [],
-    collisionShapes: Set<CollisionShape> = new Set()
+    anchors: Point2f[] = []
   ) {
     this.position = position;
     this.endPosition = endPosition;
-    this.anchors = anchors;
+    this._anchors = anchors;
     this.selected = false;
-    this.collisionShapes = collisionShapes;
     this.regenConnectionPath = false;
     this.path = this.generatePath();
   }
@@ -37,11 +40,8 @@ export default class Line implements LineInterface {
       if (movePoint !== 0)
         Vector2i.add(this.endPosition, nPos, this.endPosition);
     } else {
-      if (movePoint !== 1) this.position = nPos;
-      if (movePoint !== 0) this.endPosition = nPos;
-    }
-    for (const cShape of this.collisionShapes) {
-      cShape.move(nPos, isDelta);
+      if (movePoint !== 1) Vector2i.copy(this.position, nPos);
+      if (movePoint !== 0) Vector2i.copy(this.endPosition, nPos);
     }
     this.anchors = ConnectionPathFunctions.generateAnchors(this);
     this.regenConnectionPath = true;
@@ -54,9 +54,6 @@ export default class Line implements LineInterface {
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke(this.path);
-    for (const cShape of this.collisionShapes) {
-      cShape.draw(ctx);
-    }
   }
 
   generatePath(): Path2D {

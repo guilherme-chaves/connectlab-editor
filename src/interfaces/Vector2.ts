@@ -22,4 +22,5 @@ export default interface Vector2Interface {
   rotate(angle: number): Vector2Interface;
   getAngle(other: Vector2Interface): number;
   normalize(): Vector2Interface;
+  copy(other: Vector2Interface): Vector2Interface;
 }

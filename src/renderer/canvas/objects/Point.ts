@@ -1,7 +1,4 @@
-import {
-  CollisionShape,
-  Point as PointInterface,
-} from '../../../interfaces/renderObjects';
+import {Point as PointInterface} from '../../../interfaces/renderObjects';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
 
@@ -10,7 +7,6 @@ export default class Point implements PointInterface {
   public size: number;
   public color: string;
   public colorSelected: string;
-  public collisionShapes: Set<CollisionShape>;
   public selected: boolean;
   private path: Path2D;
   private parentPosition: Point2i;
@@ -20,15 +16,13 @@ export default class Point implements PointInterface {
     parentPosition: Point2i,
     size: number = 4,
     color: string = '#0080ff',
-    colorSelected: string | undefined,
-    collisionShapes: Set<CollisionShape> = new Set()
+    colorSelected: string | undefined
   ) {
     this.position = position;
     this.parentPosition = parentPosition;
     this.size = size;
     this.color = color;
     this.colorSelected = colorSelected ?? color;
-    this.collisionShapes = collisionShapes;
     this.selected = false;
     this.path = this.generatePath();
   }
@@ -38,19 +32,12 @@ export default class Point implements PointInterface {
     ctx.fillStyle = this.selected ? this.colorSelected : this.color;
     ctx.fill(this.path);
     ctx.fillStyle = oldFillStyle;
-    for (const cShape of this.collisionShapes) {
-      cShape.draw(ctx);
-    }
   }
 
   move(nPos: Point2i, isDelta: boolean): void {
-    // if (isDelta)
-    //   this.position = Vector2i.add(this.position, nPos, this.position);
-    // else this.position = nPos;
-    this.path = this.generatePath();
-    for (const cShape of this.collisionShapes) {
-      cShape.move(nPos, isDelta);
-    }
+    if (isDelta)
+      this.position = Vector2i.add(this.position, nPos, this.position);
+    else Vector2i.copy(this.position, nPos);
   }
 
   private generatePath(): Path2D {

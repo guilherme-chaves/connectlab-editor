@@ -2,36 +2,43 @@ import ComponentType from '../types/types';
 import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
 import Point2i from '../types/Point2i';
+import RenderObject from '../interfaces/renderObjects';
+import Renderer from '../interfaces/renderer';
 
 export default class TextComponent implements Component {
   public readonly id: number;
   public position: Point2i;
   public readonly componentType: ComponentType;
-  public parentNode: Component | null;
-  private _collisionShape: BBCollision;
-
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
-  }
+  public collisionShape: BBCollision;
+  public drawShape?: RenderObject | undefined;
 
   constructor(
     id: number,
     position: Point2i,
-    parent: Component | null = null,
-    textDimensions: Point2i
+    label: string,
+    textDimensions: Point2i,
+    textSize?: number,
+    textFont?: string,
+    textColor?: string,
+    renderer?: Renderer
   ) {
     this.id = id;
     this.position = position;
     this.componentType = ComponentType.TEXT;
-    this.parentNode = parent;
-    this._collisionShape = new BBCollision(
-      position,
+    this.drawShape = renderer?.makeText(
+      this.id,
+      this.position,
+      label,
+      textSize,
+      textColor,
+      textFont
+    );
+    this.collisionShape = new BBCollision(
+      this.id,
+      this.position,
       textDimensions.x,
-      textDimensions.y
+      textDimensions.y,
+      renderer
     );
   }
 

@@ -253,4 +253,16 @@ export default class Vector2i implements Vector2Interface {
     Vector2i.divS(p1, Vector2i.mag(p1), out);
     return out;
   }
+
+  copy(other: Vector2Interface): Vector2Interface {
+    this.point.x = other.point.x;
+    this.point.y = other.point.y;
+    return this;
+  }
+
+  static copy(p1: Point, p2: Point): Point {
+    p1.x = p2.x;
+    p1.y = p2.y;
+    return p1;
+  }
 }

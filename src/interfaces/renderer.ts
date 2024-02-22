@@ -1,9 +1,19 @@
-import BBCollision from '../collision/BBCollision';
-import CircleCollision from '../collision/CircleCollision';
-import ConnectionComponent from '../components/ConnectionComponent';
+import Point2f from '../types/Point2f';
 import Point2i from '../types/Point2i';
-import {ImageListObject, RenderGraph, RenderGraphData} from '../types/types';
-import Component from './componentInterface';
+import ComponentType, {
+  ImageListObject,
+  RenderGraph,
+  RenderObjectType,
+} from '../types/types';
+import {
+  CircleCollision as CircleCollisionShape,
+  Line,
+  Point,
+  RectCollision,
+  Sprite,
+  Text,
+  Texture,
+} from './renderObjects';
 
 export default interface Renderer {
   nodeImages: ImageListObject;
@@ -12,22 +22,54 @@ export default interface Renderer {
   ctx?: CanvasRenderingContext2D;
   gl?: WebGL2RenderingContext;
   renderGraph: RenderGraph;
-  addElement(
-    component?: Component,
-    textureData?: {
-      src: string;
-      position: Point2i;
-      repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
-    },
-    textData?: {label: string; size: number; color: string; font: string},
-    connectionComponent?: ConnectionComponent,
-    collisionData?: {
-      componentId: number;
-      shapes: [BBCollision[], CircleCollision[]];
-    }
-  ): void;
-  updateElement(id: number, newObject: RenderGraphData): void;
-  removeElement(id: number): boolean;
+  makeCircleCollision(
+    componentId: number,
+    position: Point2i,
+    radius?: number,
+    borderColor?: string
+  ): CircleCollisionShape;
+  makeLine(
+    componentId: number,
+    position: Point2i,
+    endPosition: Point2i,
+    anchors?: Point2f[]
+  ): Line;
+  makePoint(
+    componentId: number,
+    position: Point2i,
+    parentPosition: Point2i,
+    size?: number,
+    color?: string,
+    colorSelected?: string
+  ): Point;
+  makeRectCollision(
+    componentId: number,
+    position: Point2i,
+    size: Point2i,
+    borderColor?: string
+  ): RectCollision;
+  makeSprite(
+    componentId: number,
+    componentType: ComponentType,
+    imagePaths: string[],
+    position: Point2i,
+    currentSpriteId: string
+  ): Sprite;
+  makeText(
+    componentId: number,
+    position: Point2i,
+    label: string,
+    textSize?: number,
+    color?: string,
+    font?: string
+  ): Text;
+  makeTexture(
+    componentId: number,
+    position: Point2i,
+    textureSrc: string,
+    repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
+  ): Texture;
+  removeObject(componentId: number, type: RenderObjectType): boolean;
   draw(): void;
   clear(): void;
   resize(width: number, height: number): void;

@@ -1,4 +1,3 @@
-import BBCollision from '../../../collision/BBCollision';
 import {RectCollision as RectCollisionInterface} from '../../../interfaces/renderObjects';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
@@ -9,20 +8,17 @@ export default class RectCollision implements RectCollisionInterface {
   public display: boolean;
   public borderColor: string;
   public selected: boolean;
-  public collisionObject: BBCollision;
   private path: Path2D;
 
   constructor(
     position: Point2i,
     size: Point2i,
-    collisionObject: BBCollision,
     borderColor: string = '#ff8000'
   ) {
     this.position = position;
     this.size = size;
     this.display = true;
     this.borderColor = borderColor;
-    this.collisionObject = collisionObject;
     this.selected = false;
     this.path = this.generatePath();
   }
@@ -37,7 +33,7 @@ export default class RectCollision implements RectCollisionInterface {
 
   move(nPos: Point2i, isDelta: boolean): void {
     if (isDelta) {
-      Vector2i.add(this.collisionObject.position, nPos, this.position);
+      Vector2i.add(this.position, nPos, this.position);
     } else {
       Vector2i.sub(nPos, Vector2i.divS(this.size, 2.0), this.position);
     }
@@ -46,12 +42,7 @@ export default class RectCollision implements RectCollisionInterface {
 
   private generatePath(): Path2D {
     const path = new Path2D();
-    path.rect(
-      this.collisionObject.position.x,
-      this.collisionObject.position.y,
-      this.collisionObject.size.x,
-      this.collisionObject.size.y
-    );
+    path.rect(this.position.x, this.position.y, this.size.x, this.size.y);
     return path;
   }
 }
