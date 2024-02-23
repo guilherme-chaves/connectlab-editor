@@ -117,4 +117,10 @@ export interface SignalGraphData {
 
 export type SignalGraph = Map<number, SignalGraphData>;
 
+export enum RendererType {
+  NONE = 0,
+  CANVAS = 1,
+  GL = 2,
+}
+
 export default ComponentType;

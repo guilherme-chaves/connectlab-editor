@@ -1,20 +1,11 @@
 import Vector2 from './Vector2';
 
 export default class Mouse {
-  private _mousePosition = Vector2.ZERO;
+  public position = Vector2.ZERO;
   private _mouseClicked = false;
-  private _mouseDragged = false;
-  private _mouseClickPosition = Vector2.ZERO;
-  private _mouseStateChanged = false;
-  private _mouseClickThreshold = 6; // pixels
-
-  get position() {
-    return this._mousePosition;
-  }
-
-  set position(value: Vector2) {
-    this._mousePosition = value;
-  }
+  public clickStartPosition = Vector2.ZERO;
+  public stateChanged = false;
+  private _mouseClickThreshold = new Vector2(6, 6); // pixels
 
   get clicked() {
     return this._mouseClicked;
@@ -22,34 +13,21 @@ export default class Mouse {
 
   set clicked(value: boolean) {
     this._mouseClicked = value;
-    this._mouseStateChanged = true;
+    this.stateChanged = true;
   }
 
   get dragged() {
-    return this._mouseDragged;
-  }
-
-  set dragged(value: boolean) {
-    this._mouseDragged = value;
-  }
-
-  get clickStartPosition() {
-    return this._mouseClickPosition;
-  }
-
-  set clickStartPosition(value: Vector2) {
-    this._mouseClickPosition = value;
+    if (!this._mouseClicked) return false;
+    const mouseMovement = this.position.sub(this._mouseClickThreshold);
+    return (
+      mouseMovement.x > this._mouseClickThreshold.x ||
+      mouseMovement.x < -this._mouseClickThreshold.x ||
+      mouseMovement.y > this._mouseClickThreshold.y ||
+      mouseMovement.y < -this._mouseClickThreshold.y
+    );
   }
 
   get clickToDragThreshold() {
     return this._mouseClickThreshold;
-  }
-
-  get stateChanged() {
-    return this._mouseStateChanged;
-  }
-
-  set stateChanged(value: boolean) {
-    this._mouseStateChanged = value;
   }
 }

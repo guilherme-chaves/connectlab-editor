@@ -3,9 +3,8 @@ import {
   InputTypes,
   NodeTypes,
   OutputTypes,
+  RendererType,
 } from './types/types';
-import bgTexturePath from './assets/bg-texture.svg';
-import {updateBackground, updateCanvas} from './functions/canvasDraw';
 import EditorEnvironment from './EditorEnvironment';
 import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
@@ -19,6 +18,9 @@ import KeyboardEvents from './functions/keyboardEvents';
 import InputComponent from './components/InputComponent';
 import Keyboard from './types/Keyboard';
 import OutputComponent from './components/OutputComponent';
+import Two from 'two.js';
+import {Texture} from 'two.js/src/effects/texture';
+import BG_TEXTURE from './assets/bg-texture.svg';
 
 export default class Editor {
   // Lista de componentes
@@ -29,23 +31,17 @@ export default class Editor {
   private readonly mouseEvents: MouseEvents;
   private readonly keyboardEvents: KeyboardEvents;
   // Contextos dos canvas
-  private readonly canvasId: string;
-  private readonly canvasCtx: CanvasRenderingContext2D;
-  private readonly backgroundCtx: CanvasRenderingContext2D;
+  private readonly canvasRenderer: Two | undefined;
+  private backgroundTexture: Texture | undefined;
   // Propriedades dos canvas
-  private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
-  private backgroundPattern: CanvasPattern | null;
-  private windowArea: DOMPoint;
-  private windowResized: boolean;
-  public readonly frameRate: number;
+  public readonly tickRate: number;
 
   constructor(
     documentId: string,
     canvasID: string,
     backgroundID: string,
-    canvasVw = 1,
-    canvasVh = 1,
-    frameRate = 60.0
+    renderer: RendererType,
+    tickRate = 60.0
   ) {
     this.editorEnv = new EditorEnvironment(documentId);
     this.mouse = new Mouse();
@@ -57,26 +53,42 @@ export default class Editor {
     const backgroundDOM = <HTMLCanvasElement>(
       document.getElementById(backgroundID)
     );
-    this.canvasId = canvasID;
-    this.canvasCtx = this.createContext(canvasDOM);
-    this.backgroundCtx = this.createContext(backgroundDOM);
     this.createEditorEvents(canvasDOM, backgroundDOM);
-    this.backgroundPattern = null;
-    this.canvasArea = new DOMPoint(canvasVw, canvasVh);
-    this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
-    this.loadBackgroundPattern(bgTexturePath);
-    this.windowResized = true;
-    this.frameRate = frameRate;
+    this.tickRate = tickRate;
+    if (renderer !== RendererType.NONE) {
+      try {
+        this.canvasRenderer = new Two({
+          autostart: false,
+          domElement: canvasDOM,
+          fitted: true,
+          type: Two.Types.webgl,
+        });
+      } catch (err) {
+        console.warn(
+          'Não foi possível criar contexto utilizando WebGL. Renderização via Canvas2D será utilizada'
+        );
+        this.canvasRenderer = new Two({
+          autostart: false,
+          domElement: canvasDOM,
+          fitted: true,
+          type: Two.Types.canvas,
+        });
+      } finally {
+        this.loadBackgroundPattern(BG_TEXTURE);
+      }
+    }
   }
 
   // static loadFile(jsonData): Editor
 
   // saveToFile()
 
-  private createContext(
-    domElement: HTMLCanvasElement
-  ): CanvasRenderingContext2D {
-    return domElement.getContext('2d')!;
+  loadBackgroundPattern(bgPath: string) {
+    const backgroundImg = new Image();
+    backgroundImg.onload = () => {
+      this.backgroundTexture = this.canvasRenderer?.makeTexture(backgroundImg);
+    };
+    backgroundImg.src = bgPath;
   }
 
   private createEditorEvents(
@@ -85,23 +97,23 @@ export default class Editor {
     _backgroundDOM: HTMLCanvasElement
   ) {
     window.addEventListener('load', () => {
-      this.resize();
       this.compute();
-      this.update();
-    });
-    window.addEventListener('resize', () => {
-      this.resize();
+      this.canvasRenderer?.play();
     });
     canvasDOM.addEventListener('mousedown', ({x, y}) => {
       this.mouse.clicked = true;
-      if (this.mouse.stateChanged)
+      if (this.mouse.stateChanged) {
         this.mouse.clickStartPosition = this.computePositionInCanvas(x, y);
+        this.mouseEvents.onMouseClick(this);
+      }
     });
     canvasDOM.addEventListener('mouseup', () => {
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     canvasDOM.addEventListener('mouseout', () => {
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     window.addEventListener('mousemove', ({x, y}) => {
       this.mouse.position = this.computePositionInCanvas(x, y);
@@ -114,71 +126,17 @@ export default class Editor {
     });
   }
 
-  getContext(canvas = true): CanvasRenderingContext2D {
-    if (canvas) return this.canvasCtx;
-    return this.backgroundCtx;
-  }
-
-  loadBackgroundPattern(bgPath: string) {
-    const backgroundImg = new Image();
-    backgroundImg.onload = () => {
-      this.backgroundPattern = this.backgroundCtx.createPattern(
-        backgroundImg,
-        'repeat'
-      );
-    };
-    backgroundImg.src = bgPath;
-  }
-
-  computeWindowArea() {
-    const canvasParentEl = document.getElementById(this.canvasId)
-      ?.parentElement;
-    if (canvasParentEl !== undefined && canvasParentEl !== null) {
-      const computedStyle = window.getComputedStyle(canvasParentEl);
-      this.windowArea.x = parseFloat(
-        computedStyle.width.substring(0, computedStyle.length - 2)
-      );
-      this.windowArea.y = parseFloat(
-        computedStyle.height.substring(0, computedStyle.length - 2)
-      );
-    } else {
-      this.windowArea.x = window.innerWidth;
-      this.windowArea.y = window.innerHeight;
-    }
-  }
-
   computePositionInCanvas(x: number, y: number) {
-    const rect = this.canvasCtx.canvas.getBoundingClientRect();
-    return new Vector2(x - rect.left, y - rect.top);
+    return new Vector2(
+      x - (this.canvasRenderer?.width ?? 0),
+      y - (this.canvasRenderer?.height ?? 0)
+    );
   }
-
-  draw(canvas = true, background = false) {
-    if (background)
-      updateBackground(this.backgroundCtx, this.backgroundPattern);
-    if (canvas) updateCanvas(this.canvasCtx, this.editorEnv.components);
-  }
-
-  resize() {
-    this.computeWindowArea();
-    this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    this.windowResized = true;
-  }
-
-  update = () => {
-    requestAnimationFrame(this.update);
-    this.draw(true, this.windowResized);
-    if (this.windowResized) this.windowResized = false;
-  };
 
   compute() {
     setInterval(() => {
       this.mouseEvents.onMouseMove(this.editorEnv);
-      this.mouseEvents.onMouseClick(this);
-      this.mouseEvents.onMouseRelease(this.editorEnv);
-    }, 1000.0 / this.frameRate);
+    }, 1000.0 / this.tickRate);
   }
 
   node(

@@ -1,94 +1,76 @@
 import Collision from '../interfaces/collisionInterface';
-import Vector2 from '../types/Vector2';
+import {Vector} from 'two.js/src/vector';
 import CircleCollision from './CircleCollision';
+import {Rectangle} from 'two.js/src/shapes/rectangle';
+import Two from 'two.js';
 
 interface BBPoints {
-  a: Vector2;
-  b: Vector2;
+  a: Vector;
+  b: Vector;
 }
 
 export default class BBCollision implements Collision {
-  private _position: Vector2;
-  private _points: BBPoints;
+  public position: Vector;
+  public readonly localPoints: BBPoints;
   public readonly width: number;
   public readonly height: number;
-  private drawPath: Path2D;
-  private _borderColor: string;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get localPoints(): BBPoints {
-    return this._points;
-  }
-
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
+  public readonly drawShape: Rectangle | undefined;
 
   constructor(
-    position: Vector2,
+    position: Vector,
     width = 2,
     height = 2,
-    borderColor = '#FF8008DC'
+    borderColor = '#FF8008DC',
+    renderer: Two | undefined
   ) {
-    this._position = position;
+    if (renderer)
+      this.drawShape = renderer.makeRectangle(
+        position.x,
+        position.y,
+        width,
+        height
+      );
+    if (this.drawShape) this.drawShape.stroke = borderColor;
+    this.position = this.drawShape?.position ?? position;
     this.width = width;
     this.height = height;
-    this._borderColor = borderColor;
-    this._points = this.setPoints();
-    this.drawPath = this.generatePath();
+    this.localPoints = this.setPoints();
   }
 
   get globalPoints(): BBPoints {
     return {
-      a: this._position,
-      b: this._position.add(this._points.b),
+      a: this.position,
+      b: Vector.add(this.position, this.localPoints.b),
     };
+  }
+
+  get displayShape(): boolean {
+    if (this.drawShape === undefined) return false;
+    return this.drawShape.visible;
+  }
+
+  set displayShape(value: boolean) {
+    if (this.drawShape !== undefined) this.drawShape.visible = value;
   }
 
   private setPoints(): BBPoints {
     return {
-      a: Vector2.ZERO,
-      b: new Vector2(this.width, this.height),
+      a: Vector.zero,
+      b: new Vector(this.width, this.height),
     };
   }
 
-  private generatePath(): Path2D {
-    const path = new Path2D();
-    path.rect(this._position.x, this._position.y, this.width, this.height);
-    return path;
+  moveShape(v: Vector, useDelta = true): void {
+    if (useDelta) this.position = this.position.addSelf(v);
+    else this.position.copy(v);
   }
 
-  draw(ctx: CanvasRenderingContext2D, selected: boolean) {
-    if (!selected) return;
-    const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this.borderColor;
-    ctx.stroke(this.drawPath);
-    ctx.strokeStyle = oldStrokeStyle;
-  }
-
-  moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
-    this.drawPath = this.generatePath();
-  }
-
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(x: number, y: number): boolean {
     return (
-      point.x > this.globalPoints.a.x &&
-      point.x < this.globalPoints.b.x &&
-      point.y > this.globalPoints.a.y &&
-      point.y < this.globalPoints.b.y
+      x > this.globalPoints.a.x &&
+      x < this.globalPoints.b.x &&
+      y > this.globalPoints.a.y &&
+      y < this.globalPoints.b.y
     );
   }
 

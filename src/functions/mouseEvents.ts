@@ -37,50 +37,50 @@ export default class MouseEvents {
   }
 
   onMouseClick(editor: Editor) {
-    if (this._mouse.stateChanged && this._mouse.clicked) {
-      // Obtêm uma lista com todas as colisões encontradas
-      const nodeId = nodeEvents.checkNodeClick(
-        editor.editorEnv.nodes,
-        this._mouse.position
-      );
-      const slotId = slotEvents.checkSlotClick(
-        editor.editorEnv.slots,
-        this._mouse.position
-      );
-      const connectionId = connectionEvents.checkConnectionClick(
-        editor.editorEnv.connections,
-        this._mouse.position
-      );
-      const textId = textEvents.checkTextClick(
-        editor.editorEnv.texts,
-        this._mouse.position
-      );
-      const inputId = inputEvents.checkInputClick(
-        editor.editorEnv.inputs,
-        this._mouse.position
-      );
-      const outputId = outputEvents.checkOutputClick(
-        editor.editorEnv.outputs,
-        this._mouse.position
-      );
+    // if (this._mouse.stateChanged && this._mouse.clicked) {
+    // Obtêm uma lista com todas as colisões encontradas
+    const nodeId = nodeEvents.checkNodeClick(
+      editor.editorEnv.nodes,
+      this._mouse.position
+    );
+    const slotId = slotEvents.checkSlotClick(
+      editor.editorEnv.slots,
+      this._mouse.position
+    );
+    const connectionId = connectionEvents.checkConnectionClick(
+      editor.editorEnv.connections,
+      this._mouse.position
+    );
+    const textId = textEvents.checkTextClick(
+      editor.editorEnv.texts,
+      this._mouse.position
+    );
+    const inputId = inputEvents.checkInputClick(
+      editor.editorEnv.inputs,
+      this._mouse.position
+    );
+    const outputId = outputEvents.checkOutputClick(
+      editor.editorEnv.outputs,
+      this._mouse.position
+    );
 
-      // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      if (slotId !== undefined) {
-        editor.editorEnv.slots.get(slotId[0])!.selected = true;
-        connectionEvents.addLine(editor, this._mouse.position);
-      }
-      this.clearUnselectedComponents(editor.editorEnv, undefined, slotId);
-
-      this.collisionList = {
-        nodes: nodeId,
-        slots: slotId,
-        connections: connectionId,
-        texts: textId,
-        inputs: inputId,
-        outputs: outputId,
-      };
-      this._mouse.stateChanged = false;
+    // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
+    if (slotId !== undefined) {
+      editor.editorEnv.slots.get(slotId[0])!.selected = true;
+      connectionEvents.addLine(editor, this._mouse.position);
     }
+    this.clearUnselectedComponents(editor.editorEnv, undefined, slotId);
+
+    this.collisionList = {
+      nodes: nodeId,
+      slots: slotId,
+      connections: connectionId,
+      texts: textId,
+      inputs: inputId,
+      outputs: outputId,
+    };
+    this._mouse.stateChanged = false;
+    // }
   }
 
   onMouseRelease(editorEnv: EditorEnvironment) {
@@ -100,22 +100,11 @@ export default class MouseEvents {
       if (!connectionEvents.fixLine(editorEnv, this._mouse.position)) {
         this.clearDragCollisions();
       }
-      this._mouse.dragged = false;
       this._mouse.stateChanged = false;
     }
   }
 
   onMouseMove(editorEnv: EditorEnvironment) {
-    if (!this._mouse.dragged && this._mouse.clicked) {
-      const mouseMovement = this._mouse.position.sub(
-        this._mouse.clickStartPosition
-      );
-      this._mouse.dragged =
-        mouseMovement.x > this._mouse.clickToDragThreshold ||
-        mouseMovement.x < -this._mouse.clickToDragThreshold ||
-        mouseMovement.y > this._mouse.clickToDragThreshold ||
-        mouseMovement.y < -this._mouse.clickToDragThreshold;
-    }
     if (this._mouse.dragged) {
       return (
         connectionEvents.move(editorEnv, this._mouse.position) ||

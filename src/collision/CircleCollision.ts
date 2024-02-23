@@ -1,60 +1,40 @@
 import Collision from '../interfaces/collisionInterface';
-import Vector2 from '../types/Vector2';
+import {Vector} from 'two.js/src/vector';
 import BBCollision from './BBCollision';
+import Two from 'two.js';
+import {Circle} from 'two.js/src/shapes/circle';
 
 export default class CircleCollision implements Collision {
-  private _position: Vector2;
+  public position: Vector;
   public readonly radius: number;
   private readonly radiusSquared: number;
-  private drawPath: Path2D;
-  private _borderColor: string;
+  public drawShape: Circle | undefined;
 
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
-
-  constructor(position: Vector2, radius: number, borderColor = '#FF8008DC') {
-    this._position = position;
+  constructor(
+    position: Vector,
+    radius: number,
+    borderColor = '#FF8008DC',
+    renderer: Two | undefined
+  ) {
+    if (renderer) {
+      this.drawShape = renderer.makeCircle(position.x, position.y, radius);
+      this.drawShape.stroke = borderColor;
+    }
+    this.position = this.drawShape?.position ?? position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
-    this._borderColor = borderColor;
-    this.drawPath = this.generatePath();
   }
 
-  protected generatePath(): Path2D {
-    const path = new Path2D();
-    path.arc(this._position.x, this._position.y, this.radius, 0, Math.PI * 2);
-    return path;
+  moveShape(v: Vector, useDelta = true): void {
+    if (useDelta) this.position = this.position.add(v);
+    else this.position.copy(v);
   }
 
-  draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
-    if (!selected) return;
-    const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this._borderColor;
-    ctx.stroke(this.drawPath);
-    ctx.strokeStyle = oldStrokeStyle;
-  }
-
-  moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this._position.add(v);
-    else this._position = v;
-    this.drawPath = this.generatePath();
-  }
-
-  collisionWithPoint(point: Vector2): boolean {
-    return this._position.sub(point).magSq() < this.radiusSquared;
+  collisionWithPoint(x: number, y: number): boolean {
+    return (
+      Vector.sub(this.position, new Vector(x, y)).lengthSquared() <
+      this.radiusSquared
+    );
   }
 
   collisionWithAABB(other: BBCollision): boolean {
@@ -73,6 +53,9 @@ export default class CircleCollision implements Collision {
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
-    return this.position.sub(other.position).mag() < this.radius + other.radius;
+    return (
+      Vector.sub(this.position, other.position).length() <
+      this.radius + other.radius
+    );
   }
 }
