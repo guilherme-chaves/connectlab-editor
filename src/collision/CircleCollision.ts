@@ -1,5 +1,5 @@
 import Collision from '../interfaces/collisionInterface';
-import {CollisionShape} from '../interfaces/renderObjects';
+import {CircleCollision as CircleCollisionShape} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 import Point2i from '../types/Point2i';
 import Vector2i from '../types/Vector2i';
@@ -7,22 +7,30 @@ import BBCollision from './BBCollision';
 
 export default class CircleCollision implements Collision {
   public position: Point2i;
+  private parentPosition: Point2i;
   public readonly radius: number;
   private readonly radiusSquared: number;
-  public drawShape?: CollisionShape | undefined;
+  public drawShape?: CircleCollisionShape | undefined;
+
+  get globalPosition(): Point2i {
+    return Vector2i.add(this.parentPosition, this.position);
+  }
 
   constructor(
     componentId: number,
-    position: Point2i,
+    localPosition: Point2i,
+    parentPosition: Point2i,
     radius: number,
     borderColor?: string,
     renderer?: Renderer
   ) {
-    this.position = position;
+    this.position = localPosition;
+    this.parentPosition = parentPosition;
     this.radius = radius;
     this.radiusSquared = radius * radius;
     this.drawShape = renderer?.makeCircleCollision(
       componentId,
+      this.parentPosition,
       this.position,
       this.radius,
       borderColor
@@ -31,7 +39,8 @@ export default class CircleCollision implements Collision {
 
   collisionWithPoint(point: Point2i): boolean {
     return (
-      Vector2i.magSq(Vector2i.sub(this.position, point)) < this.radiusSquared
+      Vector2i.magSq(Vector2i.sub(this.globalPosition, point)) <
+      this.radiusSquared
     );
   }
 
@@ -52,7 +61,7 @@ export default class CircleCollision implements Collision {
 
   collisionWithCircle(other: CircleCollision): boolean {
     return (
-      Vector2i.mag(Vector2i.sub(this.position, other.position)) <
+      Vector2i.mag(Vector2i.sub(this.globalPosition, other.globalPosition)) <
       this.radius + other.radius
     );
   }

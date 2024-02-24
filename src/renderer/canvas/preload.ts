@@ -1,22 +1,22 @@
 import {ImageListObject} from '../../types/types';
 
 export default {
-  imageList(list: string[]) {
-    const images: ImageListObject = new Map();
+  imageList(list: string[]): ImageListObject {
+    const images: ImageListObject = {};
     for (let i = 0; i < list.length; i++) {
       const image = new Image();
       image.onload = async () => {
-        images.set(list[i], await createImageBitmap(image));
+        images[list[i]] = await createImageBitmap(image);
       };
       image.src = list[i];
     }
     return images;
   },
   getImageSublist(list: ImageListObject, ids: string[]): ImageListObject {
-    const newList: ImageListObject = new Map();
-    for (const [key, value] of list.entries()) {
+    const newList: ImageListObject = {};
+    for (const [key, value] of Object.entries(list)) {
       if (ids.find(arrkey => arrkey === key)) {
-        newList.set(key, value);
+        newList[key] = value;
       }
     }
     return newList;

@@ -1,6 +1,6 @@
 import CircleCollision from '../collision/CircleCollision';
 import Component from '../interfaces/componentInterface';
-import RenderObject from '../interfaces/renderObjects';
+import {Point} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 import Point2i from '../types/Point2i';
 import ComponentType from '../types/types';
@@ -15,7 +15,7 @@ export default class SlotComponent implements Component {
   public readonly inSlot: boolean;
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
   public collisionShape: CircleCollision;
-  public drawShape?: RenderObject | undefined;
+  public drawShape?: Point | undefined;
 
   get slotConnections() {
     return this._slotConnections;
@@ -55,6 +55,7 @@ export default class SlotComponent implements Component {
     this.collisionShape = new CircleCollision(
       this.id,
       this.position,
+      this.parent.position,
       this.attractionRadius,
       borderColor,
       renderer

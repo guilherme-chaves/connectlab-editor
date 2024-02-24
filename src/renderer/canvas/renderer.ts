@@ -10,7 +10,6 @@ import {
   nodeImageList,
   outputImageList,
 } from './imageListObjects';
-import RenderObject, {CollisionShape} from '../../interfaces/renderObjects';
 import CircleCollisionShape from './objects/CircleCollision';
 import Line from './objects/Line';
 import Point from './objects/Point';
@@ -51,10 +50,17 @@ export default class CanvasRenderer implements Renderer {
   makeCircleCollision(
     componentId: number,
     position: Point2i,
+    parentPosition: Point2i,
     radius?: number,
     borderColor?: string
   ): CircleCollisionShape {
-    const newCC = new CircleCollisionShape(position, radius, borderColor);
+    const newCC = new CircleCollisionShape(
+      this,
+      position,
+      parentPosition,
+      radius,
+      borderColor
+    );
     const currentArr = this.renderGraph.circleCollisions.get(componentId) ?? [];
     currentArr.push(newCC);
     this.renderGraph.circleCollisions.set(componentId, currentArr);
@@ -67,7 +73,7 @@ export default class CanvasRenderer implements Renderer {
     endPosition: Point2i,
     anchors?: Point2f[]
   ): Line {
-    const newLine = new Line(position, endPosition, anchors);
+    const newLine = new Line(this, position, endPosition, anchors);
     this.renderGraph.lines.set(componentId, newLine);
     return newLine;
   }
@@ -81,6 +87,7 @@ export default class CanvasRenderer implements Renderer {
     colorSelected?: string
   ): Point {
     const newPoint = new Point(
+      this,
       position,
       parentPosition,
       size,
@@ -94,10 +101,17 @@ export default class CanvasRenderer implements Renderer {
   makeRectCollision(
     componentId: number,
     position: Point2i,
+    parentPosition: Point2i,
     size: Point2i,
     borderColor?: string
   ): RectCollision {
-    const newRC = new RectCollision(position, size, borderColor);
+    const newRC = new RectCollision(
+      this,
+      position,
+      parentPosition,
+      size,
+      borderColor
+    );
     const currentArr = this.renderGraph.rectCollisions.get(componentId) ?? [];
     currentArr.push(newRC);
     this.renderGraph.rectCollisions.set(componentId, currentArr);
@@ -115,6 +129,7 @@ export default class CanvasRenderer implements Renderer {
     switch (componentType) {
       case ComponentType.INPUT:
         newSprite = new Sprite(
+          this,
           position,
           preload.getImageSublist(this.inputImages, imagePaths),
           currentSpriteId,
@@ -124,6 +139,7 @@ export default class CanvasRenderer implements Renderer {
         break;
       case ComponentType.OUTPUT:
         newSprite = new Sprite(
+          this,
           position,
           preload.getImageSublist(this.outputImages, imagePaths),
           currentSpriteId,
@@ -133,6 +149,7 @@ export default class CanvasRenderer implements Renderer {
         break;
       default:
         newSprite = new Sprite(
+          this,
           position,
           preload.getImageSublist(this.nodeImages, imagePaths),
           currentSpriteId,
@@ -153,7 +170,7 @@ export default class CanvasRenderer implements Renderer {
     color?: string,
     font?: string
   ): Text {
-    const newText = new Text(position, label, textSize, color, font);
+    const newText = new Text(this, position, label, textSize, color, font);
     this.renderGraph.texts.set(componentId, newText);
     return newText;
   }
@@ -164,7 +181,7 @@ export default class CanvasRenderer implements Renderer {
     textureSrc: string,
     repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
   ): Texture {
-    const newTexture = new Texture(position, textureSrc, this, repeat);
+    const newTexture = new Texture(this, position, textureSrc, repeat);
     this.renderGraph.textures.set(componentId, newTexture);
     return newTexture;
   }
@@ -174,6 +191,7 @@ export default class CanvasRenderer implements Renderer {
       case RenderObjectType.CIRCLE_COLLISION:
         return this.renderGraph.circleCollisions.delete(componentId);
       case RenderObjectType.LINE:
+        this.removeObject(componentId, RenderObjectType.RECT_COLLISION);
         return this.renderGraph.lines.delete(componentId);
       case RenderObjectType.POINT:
         return this.renderGraph.points.delete(componentId);
@@ -192,14 +210,14 @@ export default class CanvasRenderer implements Renderer {
 
   draw(): void {
     this.clear();
-    for (const [, value] of Object.entries(this.renderGraph)) {
-      for (let i = 0; i < value.size; i++) {
-        if (Array.isArray(value)) {
-          for (let j = 0; j < (value.get(i) as CollisionShape[])?.length; j++) {
-            (value.get(i) as CollisionShape[])[j].draw(this.ctx);
+    for (const value of Object.values(this.renderGraph)) {
+      for (const element of value.values()) {
+        if (Array.isArray(element)) {
+          for (let i = 0; i < element.length; i++) {
+            element[i].draw();
           }
         } else {
-          (value.get(i) as RenderObject | Line | undefined)?.draw(this.ctx);
+          element.draw();
         }
       }
     }

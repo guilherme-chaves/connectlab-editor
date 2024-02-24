@@ -7,6 +7,7 @@ import ComponentType, {
   InputList,
   OutputList,
   SignalGraph,
+  RenderObjectType,
 } from './types/types';
 import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
@@ -21,14 +22,14 @@ import Renderer from './interfaces/renderer';
 class EditorEnvironment {
   public documentId: string;
   private _nextComponentId: number;
-  private nodeList: NodeList;
-  private slotList: SlotList;
-  private connectionList: ConnectionList;
-  private textList: TextList;
-  private inputList: InputList;
-  private outputList: OutputList;
-  private _signalGraph: SignalGraph;
-  private _editorRenderer: Renderer | undefined;
+  public readonly nodes: NodeList;
+  public readonly slots: SlotList;
+  public readonly connections: ConnectionList;
+  public readonly texts: TextList;
+  public readonly inputs: InputList;
+  public readonly outputs: OutputList;
+  public readonly signalGraph: SignalGraph;
+  public readonly editorRenderer: Renderer | undefined;
 
   constructor(
     documentId: string,
@@ -44,14 +45,14 @@ class EditorEnvironment {
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
-    this.nodeList = nodeList;
-    this.slotList = slotList;
-    this.connectionList = connectionList;
-    this.textList = textList;
-    this.inputList = inputList;
-    this.outputList = outputList;
-    this._signalGraph = signalGraph;
-    this._editorRenderer = renderer;
+    this.nodes = nodeList;
+    this.slots = slotList;
+    this.connections = connectionList;
+    this.texts = textList;
+    this.inputs = inputList;
+    this.outputs = outputList;
+    this.signalGraph = signalGraph;
+    this.editorRenderer = renderer;
   }
 
   /* Getters e Setters */
@@ -62,55 +63,23 @@ class EditorEnvironment {
 
   get components(): FullComponentList {
     return {
-      nodes: this.nodeList,
-      slots: this.slotList,
-      connections: this.connectionList,
-      texts: this.textList,
-      inputs: this.inputList,
-      outputs: this.outputList,
+      nodes: this.nodes,
+      slots: this.slots,
+      connections: this.connections,
+      texts: this.texts,
+      inputs: this.inputs,
+      outputs: this.outputs,
     };
-  }
-
-  get nodes(): NodeList {
-    return this.nodeList;
-  }
-
-  get slots(): SlotList {
-    return this.slotList;
-  }
-
-  get connections(): ConnectionList {
-    return this.connectionList;
-  }
-
-  get texts(): TextList {
-    return this.textList;
-  }
-
-  get inputs(): InputList {
-    return this.inputList;
-  }
-
-  get outputs(): OutputList {
-    return this.outputList;
   }
 
   get nextComponentId(): number {
     return this._nextComponentId;
   }
 
-  get signalGraph(): SignalGraph {
-    return this._signalGraph;
-  }
-
-  get editorRenderer(): Renderer | undefined {
-    return this._editorRenderer;
-  }
-
   addComponent(component: Component): number {
     switch (component.componentType) {
       case ComponentType.NODE:
-        this.nodeList.set(this._nextComponentId, component as NodeComponent);
+        this.nodes.set(this._nextComponentId, component as NodeComponent);
         signalEvents.addVertex(
           this,
           this._nextComponentId,
@@ -123,19 +92,19 @@ class EditorEnvironment {
         );
         break;
       case ComponentType.SLOT:
-        this.slotList.set(this._nextComponentId, component as SlotComponent);
+        this.slots.set(this._nextComponentId, component as SlotComponent);
         break;
       case ComponentType.LINE:
-        this.connectionList.set(
+        this.connections.set(
           this._nextComponentId,
           component as ConnectionComponent
         );
         break;
       case ComponentType.TEXT:
-        this.textList.set(this._nextComponentId, component as TextComponent);
+        this.texts.set(this._nextComponentId, component as TextComponent);
         break;
       case ComponentType.INPUT:
-        this.inputList.set(this._nextComponentId, component as InputComponent);
+        this.inputs.set(this._nextComponentId, component as InputComponent);
         signalEvents.addVertex(
           this,
           this._nextComponentId,
@@ -148,10 +117,7 @@ class EditorEnvironment {
         );
         break;
       case ComponentType.OUTPUT:
-        this.outputList.set(
-          this._nextComponentId,
-          component as OutputComponent
-        );
+        this.outputs.set(this._nextComponentId, component as OutputComponent);
         signalEvents.addVertex(
           this,
           this._nextComponentId,
@@ -177,31 +143,34 @@ class EditorEnvironment {
       switch (type) {
         case ComponentType.NODE:
           signalEvents.removeVertex(this, componentId);
-          return this.nodeList.delete(componentId);
+          return this.nodes.delete(componentId);
         case ComponentType.SLOT:
-          return this.slotList.delete(componentId);
+          return this.slots.delete(componentId);
         case ComponentType.LINE:
-          signalEvents.removeEdge(this, this.connectionList.get(componentId));
-          return this.connectionList.delete(componentId);
+          signalEvents.removeEdge(this, this.connections.get(componentId));
+          this.connections.get(componentId)!.collisionShape.length = 0;
+          this.connections.delete(componentId);
+          this.editorRenderer?.removeObject(componentId, RenderObjectType.LINE);
+          return true;
         case ComponentType.TEXT:
-          return this.textList.delete(componentId);
+          return this.texts.delete(componentId);
         case ComponentType.INPUT:
           signalEvents.removeVertex(this, componentId);
-          return this.inputList.delete(componentId);
+          return this.inputs.delete(componentId);
         case ComponentType.OUTPUT:
           signalEvents.removeVertex(this, componentId);
-          return this.outputList.delete(componentId);
+          return this.outputs.delete(componentId);
         default:
           return false;
       }
     } else {
       const component =
-        this.connectionList.get(componentId) ??
-        this.nodeList.get(componentId) ??
-        this.inputList.get(componentId) ??
-        this.outputList.get(componentId) ??
-        this.slotList.get(componentId) ??
-        this.textList.get(componentId);
+        this.connections.get(componentId) ??
+        this.nodes.get(componentId) ??
+        this.inputs.get(componentId) ??
+        this.outputs.get(componentId) ??
+        this.slots.get(componentId) ??
+        this.texts.get(componentId);
       if (component !== undefined)
         return this.removeComponent(component.id, component.componentType);
       else return false;

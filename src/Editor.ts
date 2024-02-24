@@ -74,11 +74,12 @@ export default class Editor {
           background: new CanvasRenderer(this.backgroundDOM),
           editor: new CanvasRenderer(this.canvasDOM),
         };
-        this.renderers.background.addElement(undefined, {
-          src: bgTexturePath,
-          position: new Point2i(),
-          repeat: 'repeat',
-        });
+        this.renderers.background.makeTexture(
+          1,
+          new Point2i(),
+          bgTexturePath,
+          'repeat'
+        );
         break;
     }
 
@@ -124,12 +125,12 @@ export default class Editor {
       this.mouseEvents.onMouseClick(this);
     });
     canvasDOM.addEventListener('mouseup', () => {
-      this.mouseEvents.onMouseRelease(this.editorEnv);
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     canvasDOM.addEventListener('mouseout', () => {
-      this.mouseEvents.onMouseRelease(this.editorEnv);
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     window.addEventListener('mousemove', ({x, y}) => {
       this.mouse.position = this.computePositionInCanvas(
@@ -192,10 +193,10 @@ export default class Editor {
   }
 
   update = () => {
-    if (this.renderers === undefined) return;
-    requestAnimationFrame(this.update);
+    if (!this.renderers) return;
     this.draw(true, this.windowResized);
     if (this.windowResized) this.windowResized = false;
+    requestAnimationFrame(this.update);
   };
 
   compute() {
@@ -216,7 +217,8 @@ export default class Editor {
       type,
       slots,
       88,
-      50
+      50,
+      this.renderers?.editor
     );
     const newNodeId = this.editorEnv.addComponent(newNode);
     NodeComponent.getNodeTypeObject(type).connectionSlot.forEach(slot => {
@@ -227,32 +229,9 @@ export default class Editor {
         slot.in
       );
       const slotComponent = this.editorEnv.slots.get(slotKey)!;
-      this.renderers?.editor.addElement(slotComponent);
       slots.push(slotComponent);
     });
     this.editorEnv.nodes.get(newNodeId)!.slotComponents = slots;
-    if (this.renderers !== null) {
-      this.renderers.editor.addElement(newNode);
-      // for (let i = 0; i < newNode.slotComponents.length; i++) {
-      //   this.renderers.editor.addElement(newNode.slotComponents[i]);
-      // }
-      newNode.collisionShape.size.x = this.renderers.editor.nodeImages.get(
-        newNode.nodeType.imgPaths[0]
-      )!.width;
-      newNode.collisionShape.size.y = this.renderers.editor.nodeImages.get(
-        newNode.nodeType.imgPaths[0]
-      )!.height;
-      this.renderers.editor.addElement(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          componentId: newNodeId,
-          shapes: [[newNode.collisionShape], []],
-        }
-      );
-    }
     return newNodeId;
   }
 
@@ -266,8 +245,9 @@ export default class Editor {
       new Point2i(x, y),
       type,
       undefined,
-      this.renderers?.editor.ctx?.canvas.width ?? 1920,
-      this.renderers?.editor.ctx?.canvas.height ?? 1080
+      88,
+      50,
+      this.renderers?.editor
     );
     const newInputId = this.editorEnv.addComponent(newInput);
     const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
@@ -280,28 +260,6 @@ export default class Editor {
     this.editorEnv.inputs.get(newInputId)!.slotComponents = [
       this.editorEnv.slots.get(slotId)!,
     ];
-    if (this.renderers !== null) {
-      this.renderers.editor.addElement(newInput);
-      newInput.collisionShape.size.x = this.renderers.editor.inputImages.get(
-        newInput.nodeType.imgPaths[0]
-      )!.width;
-      newInput.collisionShape.size.y = this.renderers.editor.inputImages.get(
-        newInput.nodeType.imgPaths[0]
-      )!.height;
-      for (let i = 0; i < newInput.slotComponents.length; i++) {
-        this.renderers.editor.addElement(newInput.slotComponents[i]);
-      }
-      this.renderers.editor.addElement(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          componentId: newInputId,
-          shapes: [[newInput.collisionShape], []],
-        }
-      );
-    }
     return newInputId;
   }
 
@@ -315,12 +273,12 @@ export default class Editor {
       new Point2i(x, y),
       type,
       undefined,
-      this.renderers?.editor.ctx?.canvas.width ?? 1920,
-      this.renderers?.editor.ctx?.canvas.height ?? 1080
+      88,
+      50,
+      this.renderers?.editor
     );
     const newOutputId = this.editorEnv.addComponent(newOutput);
-    const slotInfo =
-      OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
+    const slotInfo = OutputComponent.getOutputTypeObject(type).connectionSlot;
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
@@ -330,28 +288,6 @@ export default class Editor {
     this.editorEnv.outputs.get(newOutputId)!.slotComponents = [
       this.editorEnv.slots.get(slotId)!,
     ];
-    if (this.renderers !== null) {
-      this.renderers.editor.addElement(newOutput);
-      newOutput.collisionShape.size.x = this.renderers.editor.outputImages.get(
-        newOutput.nodeType.imgPaths[0]
-      )!.width;
-      newOutput.collisionShape.size.y = this.renderers.editor.outputImages.get(
-        newOutput.nodeType.imgPaths[0]
-      )!.height;
-      for (let i = 0; i < newOutput.slotComponents.length; i++) {
-        this.renderers.editor.addElement(newOutput.slotComponents[i]);
-      }
-      this.renderers.editor.addElement(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          componentId: newOutputId,
-          shapes: [[newOutput.collisionShape], []],
-        }
-      );
-    }
     return newOutputId;
   }
 
@@ -360,25 +296,10 @@ export default class Editor {
       this.editorEnv.nextComponentId,
       new Point2i(x1, y1),
       new Point2i(x1, y1),
-      {start: from, end: to}
+      {start: from, end: to},
+      this.renderers?.editor
     );
     const newLineId = this.editorEnv.addComponent(newLine);
-    if (this.renderers !== null) {
-      this.renderers.editor.addElement(newLine, undefined, undefined, newLine);
-      this.renderers.editor.addElement(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          componentId: newLineId,
-          shapes: [
-            [...this.editorEnv.connections.get(newLineId)!.collisionShape],
-            [],
-          ],
-        }
-      );
-    }
     return newLineId;
   }
 
@@ -388,35 +309,22 @@ export default class Editor {
     y: number,
     size: number = 32,
     font: string = 'sans-serif',
-    color: string = '#000000',
-    parent?: Component
+    color: string = '#000000'
   ): number {
     if (this.renderers?.editor.ctx) {
       const newText = new TextComponent(
         this.editorEnv.nextComponentId,
         new Point2i(x, y),
-        parent,
+        text,
         TextComponent.measureText(
           this.renderers.editor.ctx,
           text,
           size + 'px ' + font
-        )
-      );
-      this.renderers.editor.addElement(newText, undefined, {
-        label: text,
+        ),
         size,
-        color,
         font,
-      });
-      this.renderers.editor.addElement(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        {
-          componentId: newText.id,
-          shapes: [[newText.collisionShape], []],
-        }
+        color,
+        this.renderers?.editor
       );
       return this.editorEnv.addComponent(newText);
     }
@@ -433,25 +341,14 @@ export default class Editor {
     const newSlot = new SlotComponent(
       this.editorEnv.nextComponentId,
       new Point2i(x, y),
-      parent.position,
       parent,
       undefined,
       inSlot,
-      attractionRadius
+      attractionRadius,
+      undefined,
+      undefined,
+      this.renderers?.editor
     );
-    if (this.renderers !== null) {
-      this.renderers.editor.addElement(newSlot);
-      // this.renderers.editor.addElement(
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   undefined,
-      //   {
-      //     componentId: newSlot.id,
-      //     shapes: [[], [newSlot.collisionShape]],
-      //   }
-      // );
-    }
     return this.editorEnv.addComponent(newSlot);
   }
 }

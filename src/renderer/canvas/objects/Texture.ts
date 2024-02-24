@@ -4,6 +4,7 @@ import Vector2i from '../../../types/Vector2i';
 import CanvasRenderer from '../renderer';
 
 export default class Texture implements TextureInterface {
+  public renderer: CanvasRenderer;
   public position: Point2i;
   public image: ImageBitmap | undefined;
   private texture: CanvasPattern | null;
@@ -11,14 +12,15 @@ export default class Texture implements TextureInterface {
   public repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat';
 
   constructor(
+    renderer: CanvasRenderer,
     position: Point2i,
     imageSrc: string,
-    render: CanvasRenderer,
     repeat: 'repeat' | 'repeat-x' | 'repeat-y' | 'no-repeat'
   ) {
+    this.renderer = renderer;
     this.position = position;
     this.repeat = repeat;
-    this.loadImage(imageSrc, render);
+    this.loadImage(imageSrc, renderer);
     this.texture = null;
     this.selected = false;
   }
@@ -35,16 +37,21 @@ export default class Texture implements TextureInterface {
     image.src = src;
   }
 
-  private loadTexture(ctx: CanvasRenderingContext2D): CanvasPattern | null {
+  private loadTexture(): CanvasPattern | null {
     if (this.image === undefined) return null;
-    return ctx.createPattern(this.image, this.repeat);
+    return this.renderer.ctx.createPattern(this.image, this.repeat);
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
-    this.texture ??= this.loadTexture(ctx);
-    ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.fillStyle = this.texture ?? '#C0C0C0';
-    ctx.fill();
+  draw(): void {
+    this.texture ??= this.loadTexture();
+    this.renderer.ctx.rect(
+      0,
+      0,
+      this.renderer.ctx.canvas.width,
+      this.renderer.ctx.canvas.height
+    );
+    this.renderer.ctx.fillStyle = this.texture ?? '#C0C0C0';
+    this.renderer.ctx.fill();
   }
 
   move(nPos: Point2i, isDelta: boolean): void {

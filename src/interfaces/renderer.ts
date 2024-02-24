@@ -25,6 +25,7 @@ export default interface Renderer {
   makeCircleCollision(
     componentId: number,
     position: Point2i,
+    parentPosition: Point2i,
     radius?: number,
     borderColor?: string
   ): CircleCollisionShape;
@@ -45,6 +46,7 @@ export default interface Renderer {
   makeRectCollision(
     componentId: number,
     position: Point2i,
+    parentPosition: Point2i,
     size: Point2i,
     borderColor?: string
   ): RectCollision;

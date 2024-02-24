@@ -18,7 +18,6 @@ export default class Mouse {
   }
 
   get dragged() {
-    if (!this._mouseClicked) return false;
     const mouseMovement = Vector2i.sub(this.position, this.clickStartPosition);
     return (
       mouseMovement.x > this.clickToDragThreshold ||

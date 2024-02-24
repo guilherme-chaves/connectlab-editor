@@ -1,15 +1,11 @@
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import {LEDROutput} from '../objects/outputTypeObjects';
-import ComponentType, {
-  OutputTypeObject,
-  OutputTypes,
-  SignalGraphData,
-} from '../types/types';
+import ComponentType, {OutputTypeObject, OutputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 import Point2i from '../types/Point2i';
 import Renderer from '../interfaces/renderer';
-import RenderObject from '../interfaces/renderObjects';
+import {Sprite} from '../interfaces/renderObjects';
 
 class OutputComponent implements Node {
   public readonly id: number;
@@ -18,8 +14,7 @@ class OutputComponent implements Node {
   public readonly nodeType: OutputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   public collisionShape: BBCollision;
-  public drawShape?: RenderObject | undefined;
-  public signalData: SignalGraphData;
+  public drawShape?: Sprite | undefined;
 
   get slotComponents() {
     return this._slotComponent !== undefined ? [this._slotComponent] : [];
@@ -36,7 +31,6 @@ class OutputComponent implements Node {
     slot: SlotComponent | undefined,
     width: number,
     height: number,
-    signalData: SignalGraphData,
     renderer?: Renderer
   ) {
     this.id = id;
@@ -44,7 +38,6 @@ class OutputComponent implements Node {
     this.componentType = ComponentType.OUTPUT;
     this.nodeType = OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
-    this.signalData = signalData;
     this.drawShape = renderer?.makeSprite(
       this.id,
       this.componentType,
@@ -55,8 +48,8 @@ class OutputComponent implements Node {
     this.collisionShape = new BBCollision(
       this.id,
       this.position,
-      width,
-      height,
+      this.drawShape?.imageWidth ?? width,
+      this.drawShape?.imageHeight ?? height,
       renderer
     );
   }

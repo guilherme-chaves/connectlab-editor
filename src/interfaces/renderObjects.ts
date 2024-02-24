@@ -1,11 +1,13 @@
 import Point2f from '../types/Point2f';
 import Point2i from '../types/Point2i';
 import {ImageListObject} from '../types/types';
+import Renderer from './renderer';
 
 export default interface RenderObject {
+  renderer: Renderer;
   position: Point2i;
   selected: boolean;
-  draw(ctx: CanvasRenderingContext2D): void;
+  draw(): void;
   move(nPos: Point2i, isDelta: boolean): void;
 }
 
@@ -17,6 +19,8 @@ export interface Line extends Omit<RenderObject, 'move'> {
 
 export interface Sprite extends RenderObject {
   imageSet: ImageListObject;
+  imageWidth: number;
+  imageHeight: number;
   currentSpriteId: string;
 }
 
@@ -41,6 +45,7 @@ export interface Text extends RenderObject {
 export interface CollisionShape extends Omit<RenderObject, 'collisionShapes'> {
   display: boolean;
   borderColor: string;
+  update(): void;
 }
 
 export interface RectCollision extends CollisionShape {

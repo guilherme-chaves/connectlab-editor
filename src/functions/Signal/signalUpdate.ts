@@ -2,12 +2,7 @@ import EditorEnvironment from '../../EditorEnvironment';
 import InputComponent from '../../components/InputComponent';
 import NodeComponent from '../../components/NodeComponent';
 import OutputComponent from '../../components/OutputComponent';
-import {Sprite} from '../../interfaces/renderObjects';
-import ComponentType, {
-  RenderObjectType,
-  SignalGraph,
-  SignalGraphData,
-} from '../../types/types';
+import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
 
 export default {
   updateGraph(editorEnv: EditorEnvironment): void {
@@ -35,14 +30,11 @@ export default {
               editorEnv.signalGraph.get(stack[0])!,
               nodeObj
             );
-            const renderObj = editorEnv.editorRenderer?.renderGraph.get(
-              stack[0]
-            );
             if (
-              renderObj !== undefined &&
-              renderObj.type === RenderObjectType.SPRITE
+              nodeObj.drawShape !== undefined &&
+              nodeObj.componentType === ComponentType.OUTPUT
             ) {
-              (renderObj.object! as Sprite).currentSpriteId =
+              nodeObj.drawShape.currentSpriteId =
                 nodeObj.nodeType.imgPaths[
                   editorEnv.signalGraph.get(stack[0])!.state ? 1 : 0
                 ];
@@ -71,12 +63,8 @@ export default {
       nodeObj.componentType !== ComponentType.INPUT
     ) {
       this.computeState(editorEnv.signalGraph, node, nodeObj);
-      const renderObj = editorEnv.editorRenderer?.renderGraph.get(nodeId);
-      if (
-        renderObj !== undefined &&
-        renderObj.type === RenderObjectType.SPRITE
-      ) {
-        (renderObj.object! as Sprite).currentSpriteId =
+      if (nodeObj.drawShape !== undefined) {
+        nodeObj.drawShape.currentSpriteId =
           nodeObj.nodeType.imgPaths[
             editorEnv.signalGraph.get(nodeId)!.state ? 1 : 0
           ];

@@ -1,4 +1,4 @@
-import ComponentType, {NodeTypes, SignalGraphData} from '../types/types';
+import ComponentType, {NodeTypes} from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
   ADDNode,
@@ -13,7 +13,7 @@ import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import Point2i from '../types/Point2i';
-import RenderObject from '../interfaces/renderObjects';
+import {Sprite} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 
 class NodeComponent implements Node {
@@ -21,18 +21,9 @@ class NodeComponent implements Node {
   public position: Point2i;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
-  private _slotComponents: Array<SlotComponent>;
+  public slotComponents: Array<SlotComponent>;
   public collisionShape: BBCollision;
-  public drawShape: RenderObject | undefined;
-  public signalData: SignalGraphData;
-
-  get slotComponents() {
-    return this._slotComponents;
-  }
-
-  set slotComponents(value: Array<SlotComponent>) {
-    this._slotComponents = value;
-  }
+  public drawShape: Sprite | undefined;
 
   constructor(
     id: number,
@@ -41,15 +32,13 @@ class NodeComponent implements Node {
     slots: Array<SlotComponent>,
     width: number,
     height: number,
-    signalData: SignalGraphData,
     renderer?: Renderer
   ) {
     this.id = id;
     this.position = position;
     this.componentType = ComponentType.NODE;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
-    this._slotComponents = slots;
-    this.signalData = signalData;
+    this.slotComponents = slots;
     this.drawShape = renderer?.makeSprite(
       this.id,
       this.componentType,
@@ -60,8 +49,8 @@ class NodeComponent implements Node {
     this.collisionShape = new BBCollision(
       this.id,
       this.position,
-      width,
-      height,
+      this.drawShape?.imageSet[this.nodeType.imgPaths[0]].width ?? width,
+      this.drawShape?.imageSet[this.nodeType.imgPaths[0]].height ?? height,
       renderer
     );
   }

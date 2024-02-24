@@ -6,6 +6,7 @@ import Vector2f from '../../types/Vector2f';
 import {Line} from '../../interfaces/renderObjects';
 import Point2i from '../../types/Point2i';
 import ConnectionComponent from '../../components/ConnectionComponent';
+import {RenderObjectType} from '../../types/types';
 
 export default {
   alignConnectionWithAxis(
@@ -30,7 +31,7 @@ export default {
     const anchorsArr: Array<Point2f> = [];
     let lastAnchorAdded: Point2f = new Point2f();
     const startPos = connection.position;
-    const currentPos = connection.position;
+    const currentPos = new Vector2i(connection.position).point;
     const endPosition = connection.endPosition;
     // const defaultXStepDivisor = 2.0;
     // const defaultYStepDivisor = 1.0;
@@ -58,7 +59,7 @@ export default {
         Vector2f.div(Vector2i.abs(stepTo, stepTo), stepDivisor, newAnchor);
       } else {
         Vector2f.add(
-          Vector2f.div(Vector2i.abs(stepTo, stepTo), stepDivisor),
+          Vector2f.div(Vector2f.abs(stepTo, stepTo), stepDivisor),
           lastAnchorAdded,
           newAnchor
         );
@@ -81,18 +82,23 @@ export default {
   },
 
   generateCollisionShapes(connection: ConnectionComponent) {
-    if (connection.anchors.length === 0) return [];
+    if (
+      connection.drawShape === undefined ||
+      connection.drawShape.anchors.length === 0
+    )
+      return [];
 
-    const collisionArr = [];
+    // debugger;
+    this.removeOldCollisionShapes(connection);
     let pPos = connection.position;
     // 0 => Ponto inicial à primeira âncora, length => última âncora à ponto final
-    for (let i = 0; i <= connection.anchors.length; i++) {
+    for (let i = 0; i <= connection.drawShape.anchors.length; i++) {
       let nPos = new Point2i();
-      if (i < connection.anchors.length)
+      if (i < connection.drawShape.anchors.length)
         Vector2i.bilinear(
           connection.position,
           connection.endPosition,
-          connection.anchors[i],
+          connection.drawShape.anchors[i],
           nPos
         );
       else nPos = connection.endPosition;
@@ -104,11 +110,28 @@ export default {
         2,
         nPos.y - pPos.y
       );
-      collisionArr.push(
-        new BBCollision(Vector2i.sub(pPos, new Point2i(1, 1)), size.x, size.y)
+      connection.collisionShape.push(
+        new BBCollision(
+          connection.id,
+          Vector2i.sub(pPos, new Point2i(1, 1)),
+          size.x,
+          size.y,
+          connection.drawShape.renderer
+        )
       );
       pPos = nPos;
     }
-    return collisionArr;
+    return connection.collisionShape;
+  },
+  removeOldCollisionShapes(connection: ConnectionComponent) {
+    if (!connection.drawShape) return;
+    for (let i = 0; i < connection.collisionShape.length; i++) {
+      connection.collisionShape[i].drawShape = undefined;
+      connection.collisionShape.splice(0, connection.collisionShape.length);
+    }
+    connection.drawShape.renderer.removeObject(
+      connection.id,
+      RenderObjectType.RECT_COLLISION
+    );
   },
 };

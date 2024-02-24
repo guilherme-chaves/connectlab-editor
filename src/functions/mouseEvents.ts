@@ -75,10 +75,9 @@ export default class MouseEvents {
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slotId.length > 0) {
-        editor.editorEnv.editorRenderer!.renderGraph.get(
-          slotId[0]
-        )!.object!.selected = true;
-        connectionEvents.addLine(editor, this._mouse.position);
+        if (editor.editorEnv.slots.get(slotId[0])!.drawShape !== undefined)
+          editor.editorEnv.slots.get(slotId[0])!.drawShape!.selected = true;
+        connectionEvents.addLine(editor, slotId);
       }
       this.clearUnselectedComponents(editor.editorEnv, undefined, slotId);
 
@@ -111,6 +110,7 @@ export default class MouseEvents {
       }
       this._mouse.stateChanged = false;
     }
+    this.movingObject = 'none';
   }
 
   onMouseMove(editorEnv: EditorEnvironment): boolean {
@@ -119,7 +119,6 @@ export default class MouseEvents {
       if (this.collisionList.nodes.length > 0) {
         return nodeEvents.move(
           this.collisionList!.nodes[0],
-          editorEnv.editorRenderer!.renderGraph,
           editorEnv.nodes,
           this.collisionList,
           this,
@@ -129,7 +128,6 @@ export default class MouseEvents {
       } else if (this.collisionList.inputs.length > 0) {
         return inputEvents.move(
           this.collisionList!.inputs[0],
-          editorEnv.editorRenderer!.renderGraph,
           editorEnv.inputs,
           this.collisionList,
           this,
@@ -139,7 +137,6 @@ export default class MouseEvents {
       } else if (this.collisionList.outputs.length > 0) {
         return outputEvents.move(
           this.collisionList!.outputs[0] ?? -1,
-          editorEnv.editorRenderer!.renderGraph,
           editorEnv.outputs,
           this.collisionList,
           this,
@@ -150,7 +147,6 @@ export default class MouseEvents {
         return connectionEvents.move(editorEnv, this, this._mouse.position);
       }
     }
-    this.movingObject = 'none';
     return false;
   }
 
@@ -166,50 +162,52 @@ export default class MouseEvents {
   ): void {
     if (this.collisionList.nodes.length > 0) {
       this.collisionList.nodes.forEach(node => {
-        if (newNodeIds.includes(node)) {
-          editorEnv.editorRenderer!.renderGraph.get(node)!.object!.selected =
-            false;
+        if (newNodeIds.includes(node) && editorEnv.nodes.get(node)!.drawShape) {
+          editorEnv.nodes.get(node)!.drawShape!.selected = false;
         }
       });
     }
     if (this.collisionList.slots.length > 0) {
       this.collisionList.slots.forEach(slot => {
-        if (newSlotIds.includes(slot)) {
-          editorEnv.editorRenderer!.renderGraph.get(slot)!.object!.selected =
-            false;
+        if (newSlotIds.includes(slot) && editorEnv.slots.get(slot)!.drawShape) {
+          editorEnv.slots.get(slot)!.drawShape!.selected = false;
         }
       });
     }
     if (this.collisionList.connections.length > 0) {
       this.collisionList.connections.forEach(connection => {
-        if (newConnectionIds.includes(connection)) {
-          editorEnv.editorRenderer!.renderGraph.get(
-            connection
-          )!.line!.selected = false;
+        if (
+          newConnectionIds.includes(connection) &&
+          editorEnv.connections.get(connection)!.drawShape
+        ) {
+          editorEnv.connections.get(connection)!.drawShape!.selected = false;
         }
       });
     }
     if (this.collisionList.texts.length > 0) {
       this.collisionList.texts.forEach(text => {
-        if (newTextIds.includes(text)) {
-          editorEnv.editorRenderer!.renderGraph.get(text)!.object!.selected =
-            false;
+        if (newTextIds.includes(text) && editorEnv.texts.get(text)!.drawShape) {
+          editorEnv.texts.get(text)!.drawShape!.selected = false;
         }
       });
     }
     if (this.collisionList.inputs.length > 0) {
       this.collisionList.inputs.forEach(input => {
-        if (newInputIds.includes(input)) {
-          editorEnv.editorRenderer!.renderGraph.get(input)!.object!.selected =
-            false;
+        if (
+          newInputIds.includes(input) &&
+          editorEnv.inputs.get(input)!.drawShape
+        ) {
+          editorEnv.inputs.get(input)!.drawShape!.selected = false;
         }
       });
     }
     if (this.collisionList.outputs.length > 0) {
       this.collisionList.outputs.forEach(output => {
-        if (newOutputIds.includes(output)) {
-          editorEnv.editorRenderer!.renderGraph.get(output)!.object!.selected =
-            false;
+        if (
+          newOutputIds.includes(output) &&
+          editorEnv.outputs.get(output)!.drawShape
+        ) {
+          editorEnv.outputs.get(output)!.drawShape!.selected = false;
         }
       });
     }

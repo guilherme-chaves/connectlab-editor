@@ -7,6 +7,7 @@ import EditorEnvironment from '../../EditorEnvironment';
 import Point2i from '../../types/Point2i';
 import connectionPath from './connectionPath';
 import MouseEvents from '../mouseEvents';
+import Vector2i from '../../types/Vector2i';
 
 export default {
   editingLineId: -1,
@@ -30,18 +31,19 @@ export default {
     return collidedWith;
   },
 
-  addLine(editor: Editor, position: Point2i) {
-    if (this.editingLine && this.editingLineId !== -1) return true;
-    const slotCollisions = slotEvents.checkSlotClick(
-      editor.editorEnv.slots,
-      position
-    );
+  addLine(editor: Editor, slotCollisions: number[]) {
     if (slotCollisions.length > 0) {
       const slot = editor.editorEnv.slots.get(slotCollisions[0])!;
-      this.editingLineId = editor.line(slot.position.x, slot.position.y, {
-        type: ComponentType.SLOT,
-        id: slotCollisions[0],
-      });
+      const slotPosition = Vector2i.add(slot.parent.position, slot.position);
+      this.editingLineId = editor.line(
+        slotPosition.x,
+        slotPosition.y,
+        {
+          type: ComponentType.SLOT,
+          id: slotCollisions[0],
+        },
+        undefined
+      );
       this.editingLine = true;
       this.oldSlotCollision = this.slotCollision;
       this.slotCollision = slotCollisions[0];
@@ -69,9 +71,9 @@ export default {
       return false;
 
     mouseEvents.movingObject = 'connection';
-    editorEnv.editorRenderer?.renderGraph
+    editorEnv.connections
       .get(this.editingLineId)!
-      .line!.move(position, false, 1);
+      .drawShape?.move(position, false, 1);
     this.bindConnection(editorEnv, position);
     return true;
   },
@@ -122,15 +124,14 @@ export default {
         // Define as posições inicial e final da conexão para os dois slots
         this.changeConnectionParams(
           editorEnv,
-          startSlot.position,
-          currentSlot.position,
+          Vector2i.add(startSlot.parent.position, startSlot.position),
+          Vector2i.add(currentSlot.parent.position, currentSlot.position),
           this.lineStartSlot,
           currentSlotCollisions[0]
         );
         // Cria conjunto de caixas de colisão para a conexão
         signalEvents.addEdge(editorEnv, currentLine);
-        currentLine.collisionShape =
-          connectionPath.generateCollisionShapes(currentLine);
+        connectionPath.generateCollisionShapes(currentLine);
 
         // Retorna a lista de parâmetros do objeto para seus valores padrão
         this.resetConnEventParams();
@@ -161,9 +162,9 @@ export default {
           this.oldSlotCollision = this.slotCollision;
           this.slotCollision = slotCollisions[0];
           // Fixa a posição da linha para o slot
-          currentLine.endPosition = new Point2i(
-            slotCollided.position.x,
-            slotCollided.position.y
+          currentLine.endPosition = Vector2i.add(
+            slotCollided.parent.position,
+            slotCollided.position
           );
         }
       } else {
@@ -183,13 +184,13 @@ export default {
     endSlotId?: number
   ) {
     if (startPos !== undefined)
-      editorEnv.editorRenderer?.renderGraph
+      editorEnv.connections
         .get(this.editingLineId)!
-        .line!.move(startPos, false, 0);
+        .drawShape?.move(startPos, false, 0);
     if (endPos !== undefined)
-      editorEnv.editorRenderer?.renderGraph
+      editorEnv.connections
         .get(this.editingLineId)!
-        .line!.move(endPos, false, 1);
+        .drawShape?.move(endPos, false, 1);
     if (startSlotId !== undefined)
       editorEnv.connections
         .get(this.editingLineId)!

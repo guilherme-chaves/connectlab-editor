@@ -8,13 +8,31 @@ import Renderer from '../interfaces/renderer';
 
 class ConnectionComponent implements Component {
   public readonly id: number;
-  public position: Point2i;
+  private _position: Point2i;
   public readonly componentType: ComponentType;
-  public endPosition: Point2i;
+  private _endPosition: Point2i;
   public connectedTo: ConnectionVertices;
   public collisionShape: Array<BBCollision>;
   public regenerateConnectionPath: boolean;
   public drawShape: Line | undefined;
+
+  get position(): Point2i {
+    return this.drawShape?.position ?? this._position;
+  }
+
+  set position(value: Point2i) {
+    if (this.drawShape) this.drawShape.position = value;
+    else this._position = value;
+  }
+
+  get endPosition(): Point2i {
+    return this.drawShape?.endPosition ?? this._endPosition;
+  }
+
+  set endPosition(value: Point2i) {
+    if (this.drawShape) this.drawShape.endPosition = value;
+    else this._endPosition = value;
+  }
 
   constructor(
     id: number,
@@ -25,9 +43,9 @@ class ConnectionComponent implements Component {
   ) {
     // A variável position funciona como startPoint
     this.id = id;
-    this.position = startPoint;
+    this._position = startPoint;
     this.componentType = ComponentType.LINE;
-    this.endPosition = endPosition;
+    this._endPosition = endPosition;
     this.connectedTo = connections;
     this.regenerateConnectionPath = false;
     this.collisionShape = ConnectionPathFunctions.generateCollisionShapes(this);

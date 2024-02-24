@@ -1,8 +1,11 @@
 import OutputComponent from '../../components/OutputComponent';
 import MouseEvents, {CollisionList} from '../mouseEvents';
 import componentEvents from '../Component/componentEvents';
-import {OutputList, RenderGraph} from '../../types/types';
+import {OutputList} from '../../types/types';
 import Point2i from '../../types/Point2i';
+import nodeEvents from '../Node/nodeEvents';
+import Vector2i from '../../types/Vector2i';
+import connectionPath from '../Connection/connectionPath';
 
 export default {
   editingOutput: false,
@@ -11,7 +14,6 @@ export default {
   },
   move(
     outputId: number,
-    renderGraph: RenderGraph,
     outputList: OutputList,
     collisionList: CollisionList,
     mouseEvents: MouseEvents,
@@ -26,31 +28,31 @@ export default {
       return false;
 
     mouseEvents.movingObject = 'output';
-    renderGraph.get(outputId)!.object!.move(v, useDelta);
-    this.moveLinkedElements(
-      renderGraph,
-      outputList.get(outputId)!,
-      v,
-      useDelta
-    );
+    const output = outputList.get(outputId)!;
+    output.collisionShape.drawShape?.update();
+    v = nodeEvents.centerMovePosition(output, v);
+    output.drawShape?.move(v, useDelta);
+    this.moveLinkedElements(output, v, useDelta);
     return true;
   },
   moveLinkedElements(
-    renderGraph: RenderGraph,
     output: OutputComponent,
     v: Point2i,
     useDelta = true
   ): void {
-    if (output.slotComponents !== undefined) {
-      renderGraph.get(output.slotComponents[0].id)!.object!.move(v, false);
-      output.slotComponents[0].slotConnections.forEach(connection => {
-        if (connection.connectedTo.start?.id === output.slotComponents[0]!.id)
-          renderGraph.get(connection.id)!.line!.move(v, useDelta, 0);
-        else if (
-          connection.connectedTo.end?.id === output.slotComponents[0]!.id
-        )
-          renderGraph.get(connection.id)!.line!.move(v, useDelta, 1);
-      });
+    for (let i = 0; i < output.slotComponents.length; i++) {
+      const slot = output.slotComponents[i];
+      slot.drawShape?.move(v, useDelta);
+      slot.collisionShape.drawShape?.update();
+      for (let j = 0; j < slot.slotConnections.length; j++) {
+        const connection = slot.slotConnections[j];
+        const slotPosition = Vector2i.add(v, slot.position);
+        if (connection.connectedTo.start?.id === slot.id)
+          connection.drawShape?.move(slotPosition, useDelta, 0);
+        else if (connection.connectedTo.end?.id === slot.id)
+          connection.drawShape?.move(slotPosition, useDelta, 1);
+        connectionPath.generateCollisionShapes(connection);
+      }
     }
   },
 };

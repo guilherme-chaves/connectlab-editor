@@ -1,14 +1,10 @@
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
-import RenderObject from '../interfaces/renderObjects';
+import {Sprite} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import Point2i from '../types/Point2i';
-import ComponentType, {
-  InputTypeObject,
-  InputTypes,
-  SignalGraphData,
-} from '../types/types';
+import ComponentType, {InputTypeObject, InputTypes} from '../types/types';
 import SlotComponent from './SlotComponent';
 
 class InputComponent implements Node {
@@ -18,8 +14,7 @@ class InputComponent implements Node {
   public readonly nodeType: InputTypeObject;
   private _slotComponent: SlotComponent | undefined;
   public collisionShape: BBCollision;
-  public drawShape: RenderObject | undefined;
-  public signalData: SignalGraphData;
+  public drawShape: Sprite | undefined;
 
   get slotComponents() {
     return this._slotComponent !== undefined ? [this._slotComponent] : [];
@@ -36,7 +31,6 @@ class InputComponent implements Node {
     slot: SlotComponent | undefined,
     width: number,
     height: number,
-    signalData: SignalGraphData,
     renderer?: Renderer
   ) {
     this.id = id;
@@ -44,7 +38,6 @@ class InputComponent implements Node {
     this.componentType = ComponentType.INPUT;
     this.nodeType = InputComponent.getInputTypeObject(inputType);
     this._slotComponent = slot;
-    this.signalData = signalData;
     this.drawShape = renderer?.makeSprite(
       this.id,
       this.componentType,
@@ -55,8 +48,8 @@ class InputComponent implements Node {
     this.collisionShape = new BBCollision(
       this.id,
       this.position,
-      width,
-      height,
+      this.drawShape?.imageSet[this.nodeType.imgPaths[0]].width ?? width,
+      this.drawShape?.imageSet[this.nodeType.imgPaths[0]].height ?? height,
       renderer
     );
   }

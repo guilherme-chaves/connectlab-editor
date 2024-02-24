@@ -2,7 +2,7 @@ import ComponentType from '../types/types';
 import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
 import Point2i from '../types/Point2i';
-import RenderObject from '../interfaces/renderObjects';
+import {Text} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 
 export default class TextComponent implements Component {
@@ -10,7 +10,7 @@ export default class TextComponent implements Component {
   public position: Point2i;
   public readonly componentType: ComponentType;
   public collisionShape: BBCollision;
-  public drawShape?: RenderObject | undefined;
+  public drawShape?: Text | undefined;
 
   constructor(
     id: number,

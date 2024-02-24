@@ -52,7 +52,7 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export type ImageListObject = Map<string, ImageBitmap>;
+export type ImageListObject = Record<string, ImageBitmap>;
 
 export type NodeList = Map<number, NodeComponent>;
 

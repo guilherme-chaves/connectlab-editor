@@ -3,12 +3,14 @@ import Point2f from '../../../types/Point2f';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
 import ConnectionPathFunctions from '../../../functions/Connection/connectionPath';
+import CanvasRenderer from '../renderer';
 
 export default class Line implements LineInterface {
   public position: Point2i;
   public endPosition: Point2i;
   private _anchors: Point2f[];
   public selected: boolean;
+  public renderer: CanvasRenderer;
   private path: Path2D;
   private regenConnectionPath: boolean;
 
@@ -22,10 +24,12 @@ export default class Line implements LineInterface {
   }
 
   constructor(
+    renderer: CanvasRenderer,
     position: Point2i,
     endPosition: Point2i,
     anchors: Point2f[] = []
   ) {
+    this.renderer = renderer;
     this.position = position;
     this.endPosition = endPosition;
     this._anchors = anchors;
@@ -47,13 +51,13 @@ export default class Line implements LineInterface {
     this.regenConnectionPath = true;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
+  draw(): void {
     if (Vector2i.equals(this.endPosition, this.position)) return;
     if (this.regenConnectionPath) this.path = this.generatePath();
-    ctx.strokeStyle = '#101010';
-    ctx.lineWidth = 2;
-    ctx.lineJoin = 'round';
-    ctx.stroke(this.path);
+    this.renderer.ctx.strokeStyle = '#101010';
+    this.renderer.ctx.lineWidth = 2;
+    this.renderer.ctx.lineJoin = 'round';
+    this.renderer.ctx.stroke(this.path);
   }
 
   generatePath(): Path2D {

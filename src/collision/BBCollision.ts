@@ -1,5 +1,5 @@
 import Collision from '../interfaces/collisionInterface';
-import {CollisionShape} from '../interfaces/renderObjects';
+import {RectCollision} from '../interfaces/renderObjects';
 import Renderer from '../interfaces/renderer';
 import Point2i from '../types/Point2i';
 import Vector2i from '../types/Vector2i';
@@ -8,7 +8,7 @@ import CircleCollision from './CircleCollision';
 export default class BBCollision implements Collision {
   public position: Point2i;
   public readonly size: Point2i;
-  public drawShape?: CollisionShape | undefined;
+  public drawShape?: RectCollision | undefined;
 
   get globalPoints(): {a: Point2i; b: Point2i} {
     return {
@@ -28,6 +28,7 @@ export default class BBCollision implements Collision {
     this.size = new Point2i(width, height);
     this.drawShape = renderer?.makeRectCollision(
       componentId,
+      new Point2i(),
       this.position,
       this.size
     );

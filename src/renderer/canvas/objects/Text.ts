@@ -1,8 +1,10 @@
 import {Text as TextInterface} from '../../../interfaces/renderObjects';
+import CanvasRenderer from '../renderer';
 import Point2i from '../../../types/Point2i';
 import Vector2i from '../../../types/Vector2i';
 
 export default class Text implements TextInterface {
+  public renderer: CanvasRenderer;
   public position: Point2i;
   public label: string;
   public textSize: number;
@@ -11,12 +13,14 @@ export default class Text implements TextInterface {
   public selected: boolean;
 
   constructor(
+    renderer: CanvasRenderer,
     position: Point2i,
     label: string,
     textSize: number = 12,
     color: string = '#000000',
     font: string = 'sans-serif'
   ) {
+    this.renderer = renderer;
     this.position = position;
     this.label = label;
     this.textSize = textSize;
@@ -25,14 +29,14 @@ export default class Text implements TextInterface {
     this.selected = false;
   }
 
-  draw(ctx: CanvasRenderingContext2D): void {
-    const oldFillStyle = ctx.fillStyle;
-    ctx.font = `${this.textSize}px ${this.font}`;
-    ctx.fillStyle = this.color;
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    ctx.fillText(this.label, this.position.x, this.position.y);
-    ctx.fillStyle = oldFillStyle;
+  draw(): void {
+    const oldFillStyle = this.renderer.ctx.fillStyle;
+    this.renderer.ctx.font = `${this.textSize}px ${this.font}`;
+    this.renderer.ctx.fillStyle = this.color;
+    this.renderer.ctx.textBaseline = 'top';
+    this.renderer.ctx.textAlign = 'left';
+    this.renderer.ctx.fillText(this.label, this.position.x, this.position.y);
+    this.renderer.ctx.fillStyle = oldFillStyle;
   }
 
   move(nPos: Point2i, isDelta: boolean): void {
