@@ -1,37 +1,28 @@
 import OutputComponent from '../../components/OutputComponent';
-import Vector2 from '../../types/Vector2';
-import connectionEvents from '../Connection/connectionEvents';
-import nodeEvents from '../Node/nodeEvents';
-import inputEvents from './inputEvents';
-import {CollisionList} from '../mouseEvents';
+import MouseEvents, {CollisionList} from '../mouseEvents';
 import componentEvents from '../Component/componentEvents';
 import {OutputList} from '../../types/types';
+import {Vector} from 'two.js/src/vector';
 
 export default {
-  editingOutput: false,
-  checkOutputClick(
-    outputs: OutputList,
-    position: Vector2
-  ): number[] | undefined {
+  checkOutputClick(outputs: OutputList, position: Vector): number[] {
     return componentEvents.checkComponentClick(position, outputs);
   },
   move(
     outputs: OutputList,
     collisionList: CollisionList,
-    v: Vector2,
+    mouseEvents: MouseEvents,
+    v: Vector,
     useDelta = true
   ): boolean {
     if (
-      collisionList.outputs === undefined ||
-      connectionEvents.editingLine ||
-      nodeEvents.editingNode ||
-      inputEvents.editingInput
-    ) {
-      this.editingOutput = false;
+      collisionList.outputs.length === 0 ||
+      (mouseEvents.movingObject !== 'none' &&
+        mouseEvents.movingObject !== 'output')
+    )
       return false;
-    }
 
-    this.editingOutput = true;
+    mouseEvents.movingObject = 'output';
     const output = outputs.get(collisionList.outputs[0])!;
     output.move(v, useDelta);
     this.moveLinkedElements(output, useDelta);

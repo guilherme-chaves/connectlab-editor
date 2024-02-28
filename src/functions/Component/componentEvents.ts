@@ -1,4 +1,4 @@
-import Vector2 from '../../types/Vector2';
+import {Vector} from 'two.js/src/vector';
 import {
   NodeList,
   InputList,
@@ -9,16 +9,17 @@ import {
 
 export default {
   checkComponentClick(
-    position: Vector2,
+    position: Vector,
     elementsList: NodeList | InputList | OutputList | SlotList | TextList
-  ): number[] | undefined {
-    let collided = false;
+  ): number[] {
     const collidedWith: Array<number> = [];
     elementsList.forEach((component, key) => {
-      const collision = component.collisionShape.collisionWithPoint(position);
+      const collision = component.collisionShape.collisionWithPoint(
+        position.x,
+        position.y
+      );
       if (collision) collidedWith.push(key);
-      collided = collided || collision;
     });
-    return collided ? collidedWith : undefined;
+    return collidedWith;
   },
 };

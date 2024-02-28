@@ -1,85 +1,93 @@
 import ComponentType from '../types/types';
-import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
+import {Vector} from 'two.js/src/vector';
+import {Text} from 'two.js/src/text';
+import Two from 'two.js';
 
-class TextComponent implements Component {
+export default class TextComponent implements Component {
   public readonly id: number;
-  private _position: Vector2;
+  private _position: Vector;
   public readonly componentType: ComponentType;
   public text: string;
-  public parentNode: Component | null;
+  private textSize: Vector;
   public style: string;
-  private textSize: Vector2;
-  private _collisionShape: BBCollision;
-  private canvasContext: CanvasRenderingContext2D;
-  public selected: boolean;
+  public collisionShape: BBCollision;
+  private _selected: boolean;
+  public drawShape: Text | undefined;
 
-  get position(): Vector2 {
-    return this._position;
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
   }
 
-  set position(value: Vector2) {
-    this._position = value;
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
   }
 
-  get collisionShape() {
-    return this._collisionShape;
+  get selected(): boolean {
+    return this._selected;
   }
 
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
+  set selected(value: boolean) {
+    this._selected = value;
+    if (this.collisionShape.drawShape)
+      this.collisionShape.drawShape.visible = this._selected;
   }
 
   constructor(
     id: number,
-    position: Vector2,
+    position: Vector,
     text = '',
     style = '12px sans-serif',
-    parent: Component | null = null,
-    ctx: CanvasRenderingContext2D
+    renderer: Two | undefined = undefined
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.TEXT;
     this.text = text;
     this.style = style;
-    this.parentNode = parent;
-    this.canvasContext = ctx;
-    this.textSize = this.measureText(text, style);
-    this._collisionShape = new BBCollision(
+    this.drawShape = renderer?.makeText(
+      this.text,
+      this._position.x,
+      this._position.y,
+      this.style
+    );
+    this.textSize = this.measureText(this.text, this.style, renderer);
+    this.collisionShape = new BBCollision(
       position,
       this.textSize.x,
-      this.textSize.y
+      this.textSize.y,
+      undefined,
+      renderer
     );
-    this.selected = false;
+    this._selected = false;
   }
 
-  private measureText(text: string, style: string): Vector2 {
-    this.canvasContext.font = style;
-    this.canvasContext.textBaseline = 'top';
-    this.canvasContext.textAlign = 'left';
-    const textDimensions = this.canvasContext.measureText(text);
-    return new Vector2(
+  private measureText(text: string, style: string, renderer?: Two): Vector {
+    if (renderer === undefined) return new Vector();
+    const canvas = new OffscreenCanvas(renderer.width, renderer.height);
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return new Vector();
+    ctx.font = style;
+    ctx.textBaseline = 'top';
+    ctx.textAlign = 'left';
+    const textDimensions = ctx.measureText(text);
+    return new Vector(
       textDimensions.width,
       textDimensions.actualBoundingBoxDescent -
         textDimensions.actualBoundingBoxAscent
     );
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.font = this.style;
-    ctx.textBaseline = 'top';
-    ctx.textAlign = 'left';
-    ctx.fillText(this.text, this.position.x, this.position.y);
-    this.collisionShape.draw(ctx, true);
+  move(v: Vector, useDelta = true) {
+    if (useDelta) this.position.add(v);
+    else this.position.copy(v);
+    this.collisionShape.moveShape(v, useDelta);
   }
 
-  move(v: Vector2, useDelta = true) {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
-    this._collisionShape.moveShape(v, useDelta);
+  destroy(): void {
+    this.drawShape?.remove();
+    this.collisionShape.drawShape?.remove();
   }
 }
-
-export default TextComponent;

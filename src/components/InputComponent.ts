@@ -1,35 +1,35 @@
+import {Vector} from 'two.js/src/vector';
 import BBCollision from '../collision/BBCollision';
-import signalEvents from '../functions/Signal/signalEvents';
 import Node from '../interfaces/nodeInterface';
 import {SwitchInput} from '../objects/inputTypeObjects';
-import Vector2 from '../types/Vector2';
 import ComponentType, {
-  ImageListObject,
   InputTypeObject,
   InputTypes,
   SignalGraph,
+  SignalGraphData,
 } from '../types/types';
 import SlotComponent from './SlotComponent';
+import {ImageSequence} from 'two.js/src/effects/image-sequence';
+import Two from 'two.js';
 
-class InputComponent implements Node {
+export default class InputComponent implements Node {
   public readonly id: number;
-  private _position: Vector2;
+  private _position: Vector;
   public readonly componentType: ComponentType;
   public readonly nodeType: InputTypeObject;
   private _slotComponent: SlotComponent | undefined;
-  private _collisionShape: BBCollision;
-  private _images: ImageListObject;
-  private imageWidth: number;
-  private imageHeight: number;
-  private readonly _signalGraph: SignalGraph;
-  public selected: boolean;
+  public collisionShape: BBCollision;
+  private readonly _signalNode: SignalGraphData;
+  private _selected: boolean;
+  public drawShape: ImageSequence | undefined;
 
-  get position(): Vector2 {
-    return this._position;
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
   }
 
-  set position(value: Vector2) {
-    this._position = value;
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
   }
 
   get slotComponents() {
@@ -40,66 +40,53 @@ class InputComponent implements Node {
     this._slotComponent = value[0];
   }
 
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
-  }
-
   get state() {
-    return signalEvents.getVertexState(this._signalGraph, this.id);
+    return this._signalNode.state;
   }
 
   set state(value: boolean) {
-    signalEvents.setVertexState(this._signalGraph, this.id, value);
+    this._signalNode.state = value;
   }
 
-  get image() {
-    return this._images.get(this.nodeType.id * 10);
+  get selected(): boolean {
+    return this._selected;
   }
 
-  get images() {
-    // Valores de ID das imagens são arbitrariamente multiplicados para permitir multiplas imagens para o mesmo componente
-    return [
-      this._images.get(this.nodeType.id * 10),
-      this._images.get(this.nodeType.id * 10 + 1),
-    ];
+  set selected(value: boolean) {
+    this._selected = value;
+    if (this.collisionShape.drawShape)
+      this.collisionShape.drawShape.visible = this._selected;
   }
 
   constructor(
     id: number,
-    position: Vector2,
-    canvasWidth: number,
-    canvasHeight: number,
+    position: Vector,
     inputType: InputTypes,
     slot: SlotComponent | undefined,
-    images: ImageListObject,
-    signalGraph: SignalGraph
+    signalGraph: SignalGraph,
+    renderer: Two | undefined
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.INPUT;
     this.nodeType = InputComponent.getInputTypeObject(inputType);
     this._slotComponent = slot;
-    this._images = images;
-    this._signalGraph = signalGraph;
-    this.imageWidth = this.images[0]!.width;
-    this.imageHeight = this.images[0]!.height;
-    this._position = this._position.sub(
-      new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+    this._signalNode = signalGraph.get(this.id)!;
+    this.drawShape = renderer?.makeImageSequence(
+      this.nodeType.imgPaths,
+      this._position.x,
+      this._position.y,
+      0,
+      false
     );
-    const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
-      new Vector2(this.imageWidth, this.imageHeight)
-    );
-    this.position = this.position.min(canvasBound).max(Vector2.ZERO);
-    this._collisionShape = new BBCollision(
+    this.collisionShape = new BBCollision(
       this.position,
-      this.imageWidth,
-      this.imageHeight
+      this.drawShape?.width ?? 88,
+      this.drawShape?.height ?? 50,
+      undefined,
+      renderer
     );
-    this.selected = false;
+    this._selected = false;
   }
 
   static getInputTypeObject(type: InputTypes): InputTypeObject {
@@ -111,26 +98,23 @@ class InputComponent implements Node {
     }
   }
 
-  move(v: Vector2, useDelta = true): void {
+  move(v: Vector, useDelta = true): void {
     if (useDelta) {
-      this.position = this.position.add(v);
+      this.position.add(v);
       this.collisionShape.moveShape(v);
     } else {
-      this.position = v.sub(
-        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      this.position.copy(
+        v.sub(
+          (this.drawShape?.width ?? 0) / 2.0,
+          (this.drawShape?.height ?? 0) / 2.0
+        )
       );
       this.collisionShape.moveShape(this.position, false);
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(
-      this.images[this.state ? 1 : 0]!,
-      this.position.x,
-      this.position.y
-    );
-    if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
+  destroy(): void {
+    this.drawShape?.remove();
+    this.collisionShape.drawShape?.remove();
   }
 }
-
-export default InputComponent;

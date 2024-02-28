@@ -7,16 +7,36 @@ import {Path} from 'two.js/src/path';
 import {Anchor} from 'two.js/src/anchor';
 import Two from 'two.js';
 
-class ConnectionComponent implements Component {
+export default class ConnectionComponent implements Component {
   public readonly id: number;
-  public position: Vector;
+  private _position: Vector;
   public readonly componentType: ComponentType;
   public endPosition: Vector;
   public anchors: Anchor[];
   public drawShape: Path | undefined;
   public connectedTo: ConnectionVertices;
   public collisionShape: Array<BBCollision>;
-  public selected: boolean;
+  private _selected: boolean;
+
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
+  }
+
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
+  }
+
+  get selected(): boolean {
+    return this._selected;
+  }
+
+  set selected(value: boolean) {
+    this._selected = value;
+    for (const collision of this.collisionShape) {
+      if (collision.drawShape) collision.drawShape.visible = this._selected;
+    }
+  }
 
   constructor(
     id: number,
@@ -28,17 +48,17 @@ class ConnectionComponent implements Component {
     // A variável position funciona como startPoint
     this.id = id;
     this.anchors = [];
-    this.position = startPoint;
+    this._position = startPoint;
     if (renderer) {
       this.anchors = ConnectionPathFunctions.generateAnchors(this);
       this.drawShape = renderer.makePath();
-      this.position = this.drawShape.position;
+      this._position = this.drawShape.position;
     }
     this.componentType = ComponentType.LINE;
     this.endPosition = endPosition;
     this.connectedTo = connections;
     this.collisionShape = ConnectionPathFunctions.generateCollisionShapes(this);
-    this.selected = false;
+    this._selected = false;
   }
 
   generateCollisionShapes() {
@@ -79,6 +99,13 @@ class ConnectionComponent implements Component {
       this.connectedTo.start = {type: componentType, id: componentId};
     }
   }
-}
 
-export default ConnectionComponent;
+  clearCollisionShapes(): void {
+    for (const collision of this.collisionShape) collision.drawShape?.remove();
+  }
+
+  destroy(): void {
+    this.drawShape?.remove();
+    for (const collision of this.collisionShape) collision.drawShape?.remove();
+  }
+}

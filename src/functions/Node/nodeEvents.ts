@@ -1,35 +1,29 @@
 import {NodeList} from '../../types/types';
-import Vector2 from '../../types/Vector2';
-import {CollisionList} from '../mouseEvents';
-import connectionEvents from '../Connection/connectionEvents';
+import MouseEvents, {CollisionList} from '../mouseEvents';
 import NodeComponent from '../../components/NodeComponent';
-import inputEvents from '../IO/inputEvents';
-import outputEvents from '../IO/outputEvents';
 import componentEvents from '../Component/componentEvents';
+import {Vector} from 'two.js/src/vector';
 
 export default {
-  editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(nodes: NodeList, position: Vector2): number[] | undefined {
+  checkNodeClick(nodes: NodeList, position: Vector): number[] {
     return componentEvents.checkComponentClick(position, nodes);
   },
   move(
     nodes: NodeList,
     collisionList: CollisionList,
-    v: Vector2,
+    mouseEvents: MouseEvents,
+    v: Vector,
     useDelta = true
   ): boolean {
     if (
-      collisionList.nodes === undefined ||
-      connectionEvents.editingLine ||
-      inputEvents.editingInput ||
-      outputEvents.editingOutput
-    ) {
-      this.editingNode = false;
+      collisionList.nodes.length === 0 ||
+      (mouseEvents.movingObject !== 'none' &&
+        mouseEvents.movingObject !== 'node')
+    )
       return false;
-    }
 
-    this.editingNode = true;
+    mouseEvents.movingObject = 'node';
     const node = nodes.get(collisionList.nodes[0])!;
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);

@@ -87,7 +87,7 @@ export default {
 
   generateCollisionShapes(connection: ConnectionComponent) {
     if (connection.anchors.length === 0) return [];
-
+    connection.clearCollisionShapes();
     const collisionArr = [];
     for (let i = 1; i <= connection.anchors.length; i++) {
       const size = this.alignConnectionWithAxis(

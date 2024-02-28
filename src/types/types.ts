@@ -1,3 +1,4 @@
+import {Vector} from 'two.js/src/vector';
 import ConnectionComponent from '../components/ConnectionComponent';
 import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
@@ -5,7 +6,6 @@ import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
-import Vector2 from './Vector2';
 
 enum ComponentType {
   LINE = 1,
@@ -80,10 +80,11 @@ export interface ConnectionVertices {
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
   readonly id: NodeTypes;
+  imgPaths: Array<string>;
   readonly connectionSlot: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
-    localPos: Vector2; // Posição do slot, relativo ao elemento-pai
+    localPos: Vector; // Posição do slot, relativo ao elemento-pai
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
   readonly op: (slotState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
@@ -91,20 +92,22 @@ export interface NodeTypeObject {
 
 export interface InputTypeObject {
   readonly id: InputTypes;
+  imgPaths: Array<string>;
   readonly connectionSlot: {
     id: number;
     name: string;
-    localPos: Vector2;
+    localPos: Vector;
   };
   readonly op: (slotState: Array<boolean>) => boolean;
 }
 
 export interface OutputTypeObject {
   readonly id: OutputTypes;
+  imgPaths: Array<string>;
   readonly connectionSlot: {
     id: number;
     name: string;
-    localPos: Vector2;
+    localPos: Vector;
   };
   readonly op: (slotState: Array<boolean>) => boolean;
 }

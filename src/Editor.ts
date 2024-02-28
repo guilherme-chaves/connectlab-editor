@@ -9,7 +9,6 @@ import EditorEnvironment from './EditorEnvironment';
 import ConnectionComponent from './components/ConnectionComponent';
 import TextComponent from './components/TextComponent';
 import NodeComponent from './components/NodeComponent';
-import Vector2 from './types/Vector2';
 import Component from './interfaces/componentInterface';
 import SlotComponent from './components/SlotComponent';
 import MouseEvents from './functions/mouseEvents';
@@ -21,6 +20,7 @@ import OutputComponent from './components/OutputComponent';
 import Two from 'two.js';
 import {Texture} from 'two.js/src/effects/texture';
 import BG_TEXTURE from './assets/bg-texture.svg';
+import {Vector} from 'two.js/src/vector';
 
 export default class Editor {
   // Lista de componentes
@@ -61,7 +61,7 @@ export default class Editor {
           autostart: false,
           domElement: canvasDOM,
           fitted: true,
-          type: Two.Types.webgl,
+          type: Two.Types.canvas,
         });
       } catch (err) {
         console.warn(
@@ -127,7 +127,7 @@ export default class Editor {
   }
 
   computePositionInCanvas(x: number, y: number) {
-    return new Vector2(
+    return new Vector(
       x - (this.canvasRenderer?.width ?? 0),
       y - (this.canvasRenderer?.height ?? 0)
     );
@@ -147,13 +147,11 @@ export default class Editor {
     const slots: Array<SlotComponent> = [];
     const newNode = new NodeComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x, y),
+      new Vector(x, y),
       type,
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
       slots,
-      this.editorEnv.nodeImageList,
-      this.editorEnv.signalGraph
+      this.editorEnv.signalGraph,
+      this.canvasRenderer
     );
     const newNodeId = this.editorEnv.addComponent(newNode);
     NodeComponent.getNodeTypeObject(type).connectionSlot.forEach(slot => {
@@ -176,13 +174,11 @@ export default class Editor {
   ) {
     const newInput = new InputComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
+      new Vector(x, y),
       type,
       undefined,
-      this.editorEnv.inputImageList,
-      this.editorEnv.signalGraph
+      this.editorEnv.signalGraph,
+      this.canvasRenderer
     );
     const newInputId = this.editorEnv.addComponent(newInput);
     const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
@@ -204,17 +200,14 @@ export default class Editor {
   ) {
     const newOutput = new OutputComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
+      new Vector(x, y),
       type,
       undefined,
-      this.editorEnv.outputImageList,
-      this.editorEnv.signalGraph
+      this.editorEnv.signalGraph,
+      this.canvasRenderer
     );
     const newOutputId = this.editorEnv.addComponent(newOutput);
-    const slotInfo =
-      OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
+    const slotInfo = OutputComponent.getOutputTypeObject(type).connectionSlot;
     const slotId = this.slot(
       slotInfo.localPos.x,
       slotInfo.localPos.y,
@@ -226,24 +219,31 @@ export default class Editor {
     ];
   }
 
-  line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {
+  line(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    from?: ConnectionVertex,
+    to?: ConnectionVertex
+  ) {
     const newLine = new ConnectionComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x1, y1),
-      new Vector2(x1, y1),
-      {start: from, end: to}
+      new Vector(x1, y1),
+      new Vector(x2, y2),
+      {start: from, end: to},
+      this.canvasRenderer
     );
     return this.editorEnv.addComponent(newLine);
   }
 
-  text(text: string, x: number, y: number, style?: string, parent?: Component) {
+  text(text: string, x: number, y: number, style?: string) {
     const newText = new TextComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x, y),
+      new Vector(x, y),
       text,
       style,
-      parent,
-      this.canvasCtx
+      this.canvasRenderer
     );
     return this.editorEnv.addComponent(newText);
   }
@@ -254,20 +254,17 @@ export default class Editor {
     parent: Component,
     inSlot?: boolean,
     radius?: number,
-    attractionRadius?: number,
-    color?: string,
-    colorActive?: string
+    attractionRadius?: number
   ) {
     const newSlot = new SlotComponent(
       this.editorEnv.nextComponentId,
-      new Vector2(x, y),
+      new Vector(x, y),
       parent,
       undefined,
       inSlot,
       radius,
       attractionRadius,
-      color,
-      colorActive
+      this.canvasRenderer
     );
     return this.editorEnv.addComponent(newSlot);
   }

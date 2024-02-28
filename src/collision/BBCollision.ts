@@ -10,11 +10,20 @@ interface BBPoints {
 }
 
 export default class BBCollision implements Collision {
-  public position: Vector;
+  private _position: Vector;
   public readonly localPoints: BBPoints;
   public readonly width: number;
   public readonly height: number;
   public readonly drawShape: Rectangle | undefined;
+
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
+  }
+
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
+  }
 
   constructor(
     position: Vector,
@@ -31,7 +40,7 @@ export default class BBCollision implements Collision {
         height
       );
     if (this.drawShape) this.drawShape.stroke = borderColor;
-    this.position = this.drawShape?.position ?? position;
+    this._position = this.drawShape?.position ?? position;
     this.width = width;
     this.height = height;
     this.localPoints = this.setPoints();

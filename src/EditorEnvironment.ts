@@ -1,5 +1,4 @@
 import ComponentType, {
-  ImageListObject,
   FullComponentList,
   NodeList,
   ConnectionList,
@@ -13,11 +12,6 @@ import ConnectionComponent from './components/ConnectionComponent';
 import NodeComponent from './components/NodeComponent';
 import SlotComponent from './components/SlotComponent';
 import TextComponent from './components/TextComponent';
-import preloadNodeImages from './functions/Node/preloadNodeImages';
-import {
-  preloadInputImages,
-  preloadOutputImages,
-} from './functions/IO/preloadIOImages';
 import Component from './interfaces/componentInterface';
 import InputComponent from './components/InputComponent';
 import OutputComponent from './components/OutputComponent';
@@ -32,9 +26,6 @@ class EditorEnvironment {
   private textList: TextList;
   private inputList: InputList;
   private outputList: OutputList;
-  public readonly nodeImageList: ImageListObject;
-  public readonly inputImageList: ImageListObject;
-  public readonly outputImageList: ImageListObject;
   private _signalGraph: SignalGraph;
 
   constructor(
@@ -56,9 +47,6 @@ class EditorEnvironment {
     this.inputList = inputList;
     this.outputList = outputList;
     this._signalGraph = new Map();
-    this.nodeImageList = preloadNodeImages();
-    this.inputImageList = preloadInputImages();
-    this.outputImageList = preloadOutputImages();
   }
 
   /* Getters e Setters */
@@ -180,19 +168,25 @@ class EditorEnvironment {
       switch (type) {
         case ComponentType.NODE:
           signalEvents.removeVertex(this, componentId);
+          this.nodeList.get(componentId)?.destroy();
           return this.nodeList.delete(componentId);
         case ComponentType.SLOT:
+          this.slotList.get(componentId)?.destroy();
           return this.slotList.delete(componentId);
         case ComponentType.LINE:
           signalEvents.removeEdge(this, this.connectionList.get(componentId));
+          this.connectionList.get(componentId)?.destroy();
           return this.connectionList.delete(componentId);
         case ComponentType.TEXT:
+          this.textList.get(componentId)?.destroy();
           return this.textList.delete(componentId);
         case ComponentType.INPUT:
           signalEvents.removeVertex(this, componentId);
+          this.inputList.get(componentId)?.destroy();
           return this.inputList.delete(componentId);
         case ComponentType.OUTPUT:
           signalEvents.removeVertex(this, componentId);
+          this.outputList.get(componentId)?.destroy();
           return this.outputList.delete(componentId);
         default:
           return false;

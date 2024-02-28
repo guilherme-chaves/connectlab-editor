@@ -1,38 +1,35 @@
+import {Vector} from 'two.js/src/vector';
 import CircleCollision from '../collision/CircleCollision';
 import Component from '../interfaces/componentInterface';
-import Vector2 from '../types/Vector2';
 import ComponentType from '../types/types';
 import ConnectionComponent from './ConnectionComponent';
+import {Circle} from 'two.js/src/shapes/circle';
+import Two from 'two.js';
 
 export default class SlotComponent implements Component {
   public readonly id: number;
-  private _position: Vector2;
+  private _position: Vector;
   public readonly componentType: ComponentType;
-  private _parent: Component;
+  public readonly parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
-  private drawPath: Path2D;
-  public selected: boolean;
+  private _selected: boolean;
   public readonly inSlot: boolean;
-  private color: string;
-  private colorActive: string;
   private radius: number;
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
-  private _collisionShape: CircleCollision;
+  public collisionShape: CircleCollision;
+  public drawShape: Circle | undefined;
 
-  get position(): Vector2 {
-    return this._position;
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
   }
 
-  set position(value: Vector2) {
-    this._position = value;
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
   }
 
   get globalPosition() {
-    return this._position.add(this.parent.position);
-  }
-
-  get parent() {
-    return this._parent;
+    return Vector.add(this.position, this.parent.position);
   }
 
   get slotConnections() {
@@ -44,73 +41,60 @@ export default class SlotComponent implements Component {
     else this._slotConnections = value;
   }
 
-  get collisionShape() {
-    return this._collisionShape;
+  get selected(): boolean {
+    return this._selected;
   }
 
-  set collisionShape(value: CircleCollision) {
-    this._collisionShape = value;
+  set selected(value: boolean) {
+    this._selected = value;
+    if (this.collisionShape.drawShape)
+      this.collisionShape.drawShape.visible = this._selected;
   }
 
   constructor(
     id: number,
-    position: Vector2,
+    position: Vector,
     parent: Component,
     connections: Array<ConnectionComponent> = [],
     inSlot = true,
     radius = 4,
     attractionRadius = 12,
-    color = '#0880FF',
-    colorActive = '#FF0000'
+    renderer: Two | undefined
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.SLOT;
-    this._parent = parent;
+    this.parent = parent;
     this._slotConnections = connections;
-    this.color = color;
-    this.colorActive = colorActive;
-    this.selected = false;
+    this._selected = false;
     this.inSlot = inSlot;
     this.radius = radius;
     this.attractionRadius = attractionRadius;
-    this._collisionShape = new CircleCollision(
-      this.globalPosition,
-      this.attractionRadius
+    this.drawShape = renderer?.makeCircle(
+      this._position.x,
+      this._position.y,
+      this.radius
     );
-    this.drawPath = this.generatePath();
+    this.collisionShape = new CircleCollision(
+      this.globalPosition,
+      this.attractionRadius,
+      undefined,
+      renderer
+    );
   }
 
-  move(v: Vector2, useDelta = true) {
-    if (useDelta) this._position = this._position.add(v);
-    else this._position = v;
+  move(v: Vector, useDelta = true) {
+    if (useDelta) this.position.add(v);
+    else this.position.copy(v);
     this.collisionShape.moveShape(this.globalPosition, false);
-    this.drawPath = this.generatePath();
   }
 
   update() {
     this.collisionShape.moveShape(this.globalPosition, false);
-    this.drawPath = this.generatePath();
   }
 
-  // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
-  private generatePath(): Path2D {
-    const path = new Path2D();
-    path.arc(
-      this.globalPosition.x,
-      this.globalPosition.y,
-      this.radius,
-      0,
-      Math.PI * 2
-    );
-    return path;
-  }
-
-  draw(ctx: CanvasRenderingContext2D): void {
-    const oldFillStyle = ctx.fillStyle;
-    ctx.fillStyle = this.selected ? this.colorActive : this.color;
-    ctx.fill(this.drawPath);
-    ctx.fillStyle = oldFillStyle;
-    this.collisionShape.draw(ctx, true);
+  destroy(): void {
+    this.drawShape?.remove();
+    this.collisionShape.drawShape?.remove();
   }
 }

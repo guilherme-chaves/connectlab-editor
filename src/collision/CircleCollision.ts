@@ -5,10 +5,19 @@ import Two from 'two.js';
 import {Circle} from 'two.js/src/shapes/circle';
 
 export default class CircleCollision implements Collision {
-  public position: Vector;
+  private _position: Vector;
   public readonly radius: number;
   private readonly radiusSquared: number;
   public drawShape: Circle | undefined;
+
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
+  }
+
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
+  }
 
   constructor(
     position: Vector,
@@ -20,7 +29,7 @@ export default class CircleCollision implements Collision {
       this.drawShape = renderer.makeCircle(position.x, position.y, radius);
       this.drawShape.stroke = borderColor;
     }
-    this.position = this.drawShape?.position ?? position;
+    this._position = this.drawShape?.position ?? position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
   }

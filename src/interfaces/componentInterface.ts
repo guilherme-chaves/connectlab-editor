@@ -11,4 +11,5 @@ export default interface Component {
   collisionShape: Collision | Array<Collision>;
   selected: boolean;
   move(v: Vector, useDelta: boolean): void;
+  destroy(): void;
 }

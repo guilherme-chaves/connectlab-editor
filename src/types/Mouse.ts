@@ -1,11 +1,11 @@
-import Vector2 from './Vector2';
+import {Vector} from 'two.js/src/vector';
 
 export default class Mouse {
-  public position = Vector2.ZERO;
+  public position = new Vector();
   private _mouseClicked = false;
-  public clickStartPosition = Vector2.ZERO;
+  public clickStartPosition = new Vector();
   public stateChanged = false;
-  private _mouseClickThreshold = new Vector2(6, 6); // pixels
+  private _mouseClickThreshold = new Vector(6, 6); // pixels
 
   get clicked() {
     return this._mouseClicked;

@@ -1,36 +1,35 @@
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import {LEDROutput} from '../objects/outputTypeObjects';
-import Vector2 from '../types/Vector2';
 import ComponentType, {
-  ImageListObject,
   OutputTypeObject,
   OutputTypes,
   SignalGraph,
+  SignalGraphData,
 } from '../types/types';
 import SlotComponent from './SlotComponent';
-import signalEvents from '../functions/Signal/signalEvents';
+import {Vector} from 'two.js/src/vector';
+import {ImageSequence} from 'two.js/src/effects/image-sequence';
+import Two from 'two.js';
 
-class OutputComponent implements Node {
+export default class OutputComponent implements Node {
   public readonly id: number;
-  private _position: Vector2;
+  private _position: Vector;
   public readonly componentType: ComponentType;
   public readonly nodeType: OutputTypeObject;
   private _slotComponent: SlotComponent | undefined;
-  private _collisionShape: BBCollision;
-  private _images: ImageListObject;
-  private imageWidth: number;
-  private imageHeight: number;
-  private _isLEDOutput: boolean;
-  private readonly _signalGraph: SignalGraph;
-  public selected: boolean;
+  public collisionShape: BBCollision;
+  private readonly _signalNode: SignalGraphData;
+  private _selected: boolean;
+  public drawShape: ImageSequence | undefined;
 
-  get position(): Vector2 {
-    return this._position;
+  get position(): Vector {
+    return this.drawShape?.position ?? this._position;
   }
 
-  set position(value: Vector2) {
-    this._position = value;
+  set position(value: Vector) {
+    if (this.drawShape) this.drawShape.position.copy(value);
+    else this._position.copy(value);
   }
 
   get slotComponents() {
@@ -41,91 +40,82 @@ class OutputComponent implements Node {
     this._slotComponent = value[0];
   }
 
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
-  }
-
   get state() {
-    return signalEvents.getVertexState(this._signalGraph, this.id);
+    return this._signalNode.state;
   }
 
   set state(value: boolean) {
-    signalEvents.setVertexState(this._signalGraph, this.id, value);
+    this._signalNode.state = value;
+    if (this.drawShape) this.drawShape.index = value ? 1 : 0;
   }
 
-  get image() {
-    return this._images.get(this.nodeType.id);
+  get selected(): boolean {
+    return this._selected;
+  }
+
+  set selected(value: boolean) {
+    this._selected = value;
+    if (this.collisionShape.drawShape)
+      this.collisionShape.drawShape.visible = this._selected;
   }
 
   constructor(
     id: number,
-    position: Vector2,
-    canvasWidth: number,
-    canvasHeight: number,
+    position: Vector,
     outputType: OutputTypes,
     slot: SlotComponent | undefined,
-    images: ImageListObject,
-    signalGraph: SignalGraph
+    signalGraph: SignalGraph,
+    renderer: Two | undefined
   ) {
     this.id = id;
     this._position = position;
     this.componentType = ComponentType.OUTPUT;
-    [this.nodeType, this._isLEDOutput] =
-      OutputComponent.getOutputTypeObject(outputType);
+    this.nodeType = OutputComponent.getOutputTypeObject(outputType);
     this._slotComponent = slot;
-    this._images = images;
-    this._signalGraph = signalGraph;
-    this.imageWidth = this.image!.width;
-    this.imageHeight = this.image!.height;
-    this._position = this._position.sub(
-      new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+    this._signalNode = signalGraph.get(this.id)!;
+    this.drawShape = renderer?.makeImageSequence(
+      this.nodeType.imgPaths,
+      this._position.x,
+      this._position.y,
+      0,
+      false
     );
-    const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
-      new Vector2(this.imageWidth, this.imageHeight)
-    );
-    this.position = this.position.min(canvasBound).max(Vector2.ZERO);
-    this._collisionShape = new BBCollision(
+    this.collisionShape = new BBCollision(
       this.position,
-      this.imageWidth,
-      this.imageHeight
+      this.drawShape?.width ?? 88,
+      this.drawShape?.height ?? 50,
+      undefined,
+      renderer
     );
-    this.selected = false;
+    this._selected = false;
   }
 
-  static getOutputTypeObject(type: OutputTypes): [OutputTypeObject, boolean] {
+  static getOutputTypeObject(type: OutputTypes): OutputTypeObject {
     switch (type) {
       case OutputTypes.MONO_LED_RED:
-        return [LEDROutput, true];
+        return LEDROutput;
       default:
-        return [LEDROutput, true];
+        return LEDROutput;
     }
   }
 
-  move(v: Vector2, useDelta = true): void {
+  move(v: Vector, useDelta = true): void {
     if (useDelta) {
-      this.position = this.position.add(v);
-      this.collisionShape.moveShape(v);
+      this.position.add(v);
+      this.collisionShape.moveShape(v, true);
     } else {
-      this.position = v.sub(
-        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      this.position.copy(
+        v.sub(
+          (this.drawShape?.width ?? 0) / 2.0,
+          (this.drawShape?.height ?? 0) / 2.0
+        )
       );
       this.collisionShape.moveShape(this.position, false);
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
-    let imgId = this.nodeType.id;
-    if (this._isLEDOutput && !this.state) {
-      imgId = OutputTypes.MONO_LED_OFF;
-    }
-
-    ctx.drawImage(this._images.get(imgId)!, this.position.x, this.position.y);
-    if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
+  destroy(): void {
+    this.drawShape?.remove();
+    this.collisionShape.drawShape?.remove();
   }
 }
-
-export default OutputComponent;
