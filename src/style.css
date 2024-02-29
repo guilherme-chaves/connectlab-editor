@@ -9,17 +9,20 @@ body {
 #app {
   margin: 0 0;
   width: 100vw;
-  height: 80vh;
+  height: 85vh;
   text-align: center;
   position: relative;
   display: flex;
   justify-content: center;
 }
 
+#app > * {
+  font-family: monospace;
+}
+
 #app-sidebar {
-  width: 10vw;
+  width: 15vw;
   border: 1px solid black;
-  margin-right: 1em;
 }
 
 #app-key-list {
@@ -30,18 +33,19 @@ body {
 }
 
 .app-key-item {
-  display: inline-flex;
-  justify-content: space-around;
+  display: flex;
+  justify-content: space-evenly;
   align-items: center;
-}
-
-.app-key-item > * {
-  padding-left: 0.2em;
-  padding-right: 0.2em;
+  font-size: 1.2em;
 }
 
 .app-key-gate-img {
-  width: 4em;
+  max-width: 5em;
+  object-fit: contain;
+}
+
+.app-key-io-img {
+  max-width: 3.75em;
   object-fit: contain;
 }
 
@@ -49,7 +53,7 @@ body {
   display: grid;
   grid-template: 1fr / 1fr;
   place-items: center;
-  width: 70vw;
+  width: 80vw;
 }
 
 .app-canvas-el > * {
