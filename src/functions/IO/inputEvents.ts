@@ -29,7 +29,8 @@ export default {
     }
 
     this.editingInput = true;
-    const input = inputs.get(collisionList.inputs[0])!;
+    const input = inputs.get(collisionList.inputs[0]);
+    if (input === undefined) return false;
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);
     return true;
@@ -38,15 +39,15 @@ export default {
     if (input.slotComponents !== undefined) {
       input.slotComponents[0].update();
       input.slotComponents[0].slotConnections.forEach(connection => {
-        if (connection.connectedTo.start?.id === input.slotComponents[0]!.id)
+        if (connection.connectedTo.start?.id === input.slotComponents[0].id)
           connection.move(input.slotComponents[0]!.globalPosition, useDelta, 0);
-        else if (connection.connectedTo.end?.id === input.slotComponents[0]!.id)
+        else if (connection.connectedTo.end?.id === input.slotComponents[0].id)
           connection.move(input.slotComponents[0]!.globalPosition, useDelta, 1);
       });
     }
   },
   switchInputState(inputs: InputList, inputId: number): void {
-    const input = inputs.get(inputId)!;
-    input.state = !input.state;
+    const input = inputs.get(inputId);
+    if (input) input.state = !input.state;
   },
 };

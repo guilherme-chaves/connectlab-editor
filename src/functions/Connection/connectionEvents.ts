@@ -45,6 +45,8 @@ export default {
       this.editingLineId = editor.line(
         slot.globalPosition.x,
         slot.globalPosition.y,
+        slot.globalPosition.x,
+        slot.globalPosition.y,
         {
           type: ComponentType.SLOT,
           id: slotCollisions[0],

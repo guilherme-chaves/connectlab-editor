@@ -43,24 +43,18 @@ export default {
       const slot = editorEnv.slots.get(connection.connectedTo.end.id);
       if (slot !== undefined) endNodeId = slot.parent.id;
     }
+    const startNode = editorEnv.signalGraph.get(startNodeId);
+    const endNode = editorEnv.signalGraph.get(endNodeId);
 
-    if (editorEnv.signalGraph.has(startNodeId)) {
-      if (
-        editorEnv.signalGraph
-          .get(startNodeId)!
-          .signalTo.find(el => endNodeId === el) === undefined
-      )
-        editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
+    if (startNode) {
+      if (startNode.signalTo.find(el => endNodeId === el) === undefined)
+        startNode.signalTo.push(endNodeId);
     } else {
       this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
     }
-    if (editorEnv.signalGraph.has(endNodeId)) {
-      if (
-        editorEnv.signalGraph
-          .get(endNodeId)!
-          .signalFrom.find(el => startNodeId === el) === undefined
-      )
-        editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
+    if (endNode) {
+      if (endNode.signalFrom.find(el => startNodeId === el) === undefined)
+        endNode.signalFrom.push(startNodeId);
     } else {
       this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
@@ -75,19 +69,15 @@ export default {
     const endSlotId = connection.connectedTo.end?.id ?? -1;
     const startNodeId = editorEnv.slots.get(startSlotId)?.parent.id ?? -1;
     const endNodeId = editorEnv.slots.get(endSlotId)?.parent.id ?? -1;
-    if (endNodeId !== -1) {
-      const indexSF = editorEnv.signalGraph
-        .get(endNodeId)!
-        .signalFrom.indexOf(startNodeId);
-      if (indexSF !== -1)
-        editorEnv.signalGraph.get(endNodeId)!.signalFrom.splice(indexSF, 1);
+    const startNode = editorEnv.signalGraph.get(startNodeId);
+    const endNode = editorEnv.signalGraph.get(endNodeId);
+    if (endNode) {
+      const indexSF = endNode.signalFrom.indexOf(startNodeId);
+      if (indexSF !== -1) endNode.signalFrom.splice(indexSF, 1);
     }
-    if (startNodeId !== -1) {
-      const indexST = editorEnv.signalGraph
-        .get(startNodeId)!
-        .signalTo.indexOf(endNodeId);
-      if (indexST !== -1)
-        editorEnv.signalGraph.get(startNodeId)!.signalTo.splice(indexST, 1);
+    if (startNode) {
+      const indexST = startNode.signalTo.indexOf(endNodeId);
+      if (indexST !== -1) startNode.signalTo.splice(indexST, 1);
     }
     signalUpdate.updateGraph(editorEnv);
   },
@@ -131,7 +121,7 @@ export default {
           slots = editorEnv.outputs.get(nodeId)!.slotComponents;
       }
       for (let i = 0; i < slots.length; i++) {
-        if (slots[i].inSlot) {
+        if (slots[i].inSlot && slots[i].slotConnections.length > 0) {
           signalFrom.push(slots[i].slotConnections[0].id);
         } else {
           slots[i].slotConnections.forEach(connection =>

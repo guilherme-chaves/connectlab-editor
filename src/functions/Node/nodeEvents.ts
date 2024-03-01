@@ -30,7 +30,8 @@ export default {
     }
 
     this.editingNode = true;
-    const node = nodes.get(collisionList.nodes[0])!;
+    const node = nodes.get(collisionList.nodes[0]);
+    if (node === undefined) return false;
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);
     return true;

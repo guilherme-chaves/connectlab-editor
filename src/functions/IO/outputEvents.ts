@@ -32,7 +32,8 @@ export default {
     }
 
     this.editingOutput = true;
-    const output = outputs.get(collisionList.outputs[0])!;
+    const output = outputs.get(collisionList.outputs[0]);
+    if (output === undefined) return false;
     output.move(v, useDelta);
     this.moveLinkedElements(output, useDelta);
     return true;
@@ -41,15 +42,13 @@ export default {
     if (output.slotComponents[0] !== undefined) {
       output.slotComponents[0].update();
       output.slotComponents[0].slotConnections.forEach(connection => {
-        if (connection.connectedTo.start?.id === output.slotComponents[0]!.id)
+        if (connection.connectedTo.start?.id === output.slotComponents[0].id)
           connection.move(
             output.slotComponents[0]!.globalPosition,
             useDelta,
             0
           );
-        else if (
-          connection.connectedTo.end?.id === output.slotComponents[0]!.id
-        )
+        else if (connection.connectedTo.end?.id === output.slotComponents[0].id)
           connection.move(
             output.slotComponents[0]!.globalPosition,
             useDelta,

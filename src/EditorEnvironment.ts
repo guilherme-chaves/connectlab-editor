@@ -9,33 +9,33 @@ import ComponentType, {
   OutputList,
   SignalGraph,
 } from './types/types';
-import ConnectionComponent from './components/ConnectionComponent';
-import NodeComponent from './components/NodeComponent';
-import SlotComponent from './components/SlotComponent';
-import TextComponent from './components/TextComponent';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
 import {
   preloadInputImages,
   preloadOutputImages,
 } from './functions/IO/preloadIOImages';
-import Component from './interfaces/componentInterface';
-import InputComponent from './components/InputComponent';
-import OutputComponent from './components/OutputComponent';
-import signalEvents from './functions/Signal/signalEvents';
+import {
+  removeNode,
+  removeSlot,
+  removeConnection,
+  removeInput,
+  removeOutput,
+  removeText,
+} from './functions/Component/removeComponent';
 
 class EditorEnvironment {
   public documentId: string;
   private _nextComponentId: number;
-  private nodeList: NodeList;
-  private slotList: SlotList;
-  private connectionList: ConnectionList;
-  private textList: TextList;
-  private inputList: InputList;
-  private outputList: OutputList;
+  public nodes: NodeList;
+  public slots: SlotList;
+  public connections: ConnectionList;
+  public texts: TextList;
+  public inputs: InputList;
+  public outputs: OutputList;
   public readonly nodeImageList: ImageListObject;
   public readonly inputImageList: ImageListObject;
   public readonly outputImageList: ImageListObject;
-  private _signalGraph: SignalGraph;
+  public signalGraph: SignalGraph;
 
   constructor(
     documentId: string,
@@ -49,13 +49,13 @@ class EditorEnvironment {
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
-    this.nodeList = nodeList;
-    this.slotList = slotList;
-    this.connectionList = connectionList;
-    this.textList = textList;
-    this.inputList = inputList;
-    this.outputList = outputList;
-    this._signalGraph = new Map();
+    this.nodes = nodeList;
+    this.slots = slotList;
+    this.connections = connectionList;
+    this.texts = textList;
+    this.inputs = inputList;
+    this.outputs = outputList;
+    this.signalGraph = new Map();
     this.nodeImageList = preloadNodeImages();
     this.inputImageList = preloadInputImages();
     this.outputImageList = preloadOutputImages();
@@ -69,107 +69,23 @@ class EditorEnvironment {
 
   get components(): FullComponentList {
     return {
-      nodes: this.nodeList,
-      slots: this.slotList,
-      connections: this.connectionList,
-      texts: this.textList,
-      inputs: this.inputList,
-      outputs: this.outputList,
+      nodes: this.nodes,
+      slots: this.slots,
+      connections: this.connections,
+      texts: this.texts,
+      inputs: this.inputs,
+      outputs: this.outputs,
     };
-  }
-
-  get nodes(): NodeList {
-    return this.nodeList;
-  }
-
-  get slots(): SlotList {
-    return this.slotList;
-  }
-
-  get connections(): ConnectionList {
-    return this.connectionList;
-  }
-
-  get texts(): TextList {
-    return this.textList;
-  }
-
-  get inputs(): InputList {
-    return this.inputList;
-  }
-
-  get outputs(): OutputList {
-    return this.outputList;
   }
 
   get nextComponentId(): number {
     return this._nextComponentId;
   }
 
-  get signalGraph(): SignalGraph {
-    return this._signalGraph;
-  }
-
-  addComponent(component: Component): number {
-    switch (component.componentType) {
-      case ComponentType.NODE:
-        this.nodeList.set(this._nextComponentId, component as NodeComponent);
-        signalEvents.addVertex(
-          this,
-          this._nextComponentId,
-          undefined,
-          signalEvents.convertToSignalFromList(
-            this,
-            this._nextComponentId,
-            ComponentType.NODE
-          )
-        );
-        break;
-      case ComponentType.SLOT:
-        this.slotList.set(this._nextComponentId, component as SlotComponent);
-        break;
-      case ComponentType.LINE:
-        this.connectionList.set(
-          this._nextComponentId,
-          component as ConnectionComponent
-        );
-        break;
-      case ComponentType.TEXT:
-        this.textList.set(this._nextComponentId, component as TextComponent);
-        break;
-      case ComponentType.INPUT:
-        this.inputList.set(this._nextComponentId, component as InputComponent);
-        signalEvents.addVertex(
-          this,
-          this._nextComponentId,
-          undefined,
-          signalEvents.convertToSignalFromList(
-            this,
-            this._nextComponentId,
-            ComponentType.INPUT
-          )
-        );
-        break;
-      case ComponentType.OUTPUT:
-        this.outputList.set(
-          this._nextComponentId,
-          component as OutputComponent
-        );
-        signalEvents.addVertex(
-          this,
-          this._nextComponentId,
-          undefined,
-          signalEvents.convertToSignalFromList(
-            this,
-            this._nextComponentId,
-            ComponentType.OUTPUT
-          )
-        );
-        break;
-    }
-    console.log(component);
-    this._nextComponentId += 1;
-    return this._nextComponentId - 1;
+  updateComponentId(): number {
+    const ret = this._nextComponentId;
+    this._nextComponentId++;
+    return ret;
   }
 
   removeComponent(
@@ -179,32 +95,28 @@ class EditorEnvironment {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
-          signalEvents.removeVertex(this, componentId);
-          return this.nodeList.delete(componentId);
+          return removeNode(this, componentId);
         case ComponentType.SLOT:
-          return this.slotList.delete(componentId);
+          return removeSlot(this, componentId);
         case ComponentType.LINE:
-          signalEvents.removeEdge(this, this.connectionList.get(componentId));
-          return this.connectionList.delete(componentId);
+          return removeConnection(this, componentId);
         case ComponentType.TEXT:
-          return this.textList.delete(componentId);
+          return removeText(this, componentId);
         case ComponentType.INPUT:
-          signalEvents.removeVertex(this, componentId);
-          return this.inputList.delete(componentId);
+          return removeInput(this, componentId);
         case ComponentType.OUTPUT:
-          signalEvents.removeVertex(this, componentId);
-          return this.outputList.delete(componentId);
+          return removeOutput(this, componentId);
         default:
           return false;
       }
     } else {
       const component =
-        this.connectionList.get(componentId) ??
-        this.nodeList.get(componentId) ??
-        this.inputList.get(componentId) ??
-        this.outputList.get(componentId) ??
-        this.slotList.get(componentId) ??
-        this.textList.get(componentId);
+        this.connections.get(componentId) ??
+        this.nodes.get(componentId) ??
+        this.inputs.get(componentId) ??
+        this.outputs.get(componentId) ??
+        this.slots.get(componentId) ??
+        this.texts.get(componentId);
       if (component !== undefined)
         return this.removeComponent(component.id, component.componentType);
       else return false;

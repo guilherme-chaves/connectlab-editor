@@ -7,18 +7,20 @@ import {
 import bgTexturePath from './assets/bg-texture.svg';
 import {updateBackground, updateCanvas} from './functions/canvasDraw';
 import EditorEnvironment from './EditorEnvironment';
-import ConnectionComponent from './components/ConnectionComponent';
-import TextComponent from './components/TextComponent';
-import NodeComponent from './components/NodeComponent';
 import Vector2 from './types/Vector2';
 import Component from './interfaces/componentInterface';
-import SlotComponent from './components/SlotComponent';
 import MouseEvents from './functions/mouseEvents';
 import Mouse from './types/Mouse';
 import KeyboardEvents from './functions/keyboardEvents';
-import InputComponent from './components/InputComponent';
 import Keyboard from './types/Keyboard';
-import OutputComponent from './components/OutputComponent';
+import {
+  addConnection,
+  addInput,
+  addNode,
+  addOutput,
+  addSlot,
+  addText,
+} from './functions/Component/addComponent';
 
 export default class Editor {
   // Lista de componentes
@@ -186,109 +188,45 @@ export default class Editor {
     type = NodeTypes.ADD,
     x = this.mouse.position.x,
     y = this.mouse.position.y
-  ) {
-    const slots: Array<SlotComponent> = [];
-    const newNode = new NodeComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      type,
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
-      slots,
-      this.editorEnv.nodeImageList,
-      this.editorEnv.signalGraph
-    );
-    const newNodeId = this.editorEnv.addComponent(newNode);
-    NodeComponent.getNodeTypeObject(type).connectionSlot.forEach(slot => {
-      const slotKey = this.slot(
-        slot.localPos.x,
-        slot.localPos.y,
-        this.editorEnv.nodes.get(newNodeId)!,
-        slot.in
-      );
-      slots.push(this.editorEnv.slots.get(slotKey)!);
-    });
-    this.editorEnv.nodes.get(newNodeId)!.slotComponents = slots;
-    return newNodeId;
+  ): number {
+    return addNode(this.editorEnv, this.canvasCtx, type, x, y);
   }
 
   input(
     type = InputTypes.SWITCH,
     x = this.mouse.position.x,
     y = this.mouse.position.y
-  ) {
-    const newInput = new InputComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
-      type,
-      undefined,
-      this.editorEnv.inputImageList,
-      this.editorEnv.signalGraph
-    );
-    const newInputId = this.editorEnv.addComponent(newInput);
-    const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
-    const slotId = this.slot(
-      slotInfo.localPos.x,
-      slotInfo.localPos.y,
-      this.editorEnv.inputs.get(newInputId)!,
-      false
-    );
-    this.editorEnv.inputs.get(newInputId)!.slotComponents = [
-      this.editorEnv.slots.get(slotId)!,
-    ];
+  ): number {
+    return addInput(this.editorEnv, this.canvasCtx, type, x, y);
   }
 
   output(
     type = OutputTypes.MONO_LED_RED,
     x = this.mouse.position.x,
     y = this.mouse.position.y
-  ) {
-    const newOutput = new OutputComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
-      type,
-      undefined,
-      this.editorEnv.outputImageList,
-      this.editorEnv.signalGraph
-    );
-    const newOutputId = this.editorEnv.addComponent(newOutput);
-    const slotInfo =
-      OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
-    const slotId = this.slot(
-      slotInfo.localPos.x,
-      slotInfo.localPos.y,
-      this.editorEnv.outputs.get(newOutputId)!,
-      true
-    );
-    this.editorEnv.outputs.get(newOutputId)!.slotComponents = [
-      this.editorEnv.slots.get(slotId)!,
-    ];
+  ): number {
+    return addOutput(this.editorEnv, this.canvasCtx, type, x, y);
   }
 
-  line(x1: number, y1: number, from?: ConnectionVertex, to?: ConnectionVertex) {
-    const newLine = new ConnectionComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x1, y1),
-      new Vector2(x1, y1),
-      {start: from, end: to}
-    );
-    return this.editorEnv.addComponent(newLine);
+  line(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    from?: ConnectionVertex,
+    to?: ConnectionVertex
+  ): number {
+    return addConnection(this.editorEnv, x1, y1, x2, y2, from, to);
   }
 
-  text(text: string, x: number, y: number, style?: string, parent?: Component) {
-    const newText = new TextComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x, y),
-      text,
-      style,
-      parent,
-      this.canvasCtx
-    );
-    return this.editorEnv.addComponent(newText);
+  text(
+    text: string,
+    x: number,
+    y: number,
+    style?: string,
+    parent?: Component
+  ): number {
+    return addText(this.editorEnv, this.canvasCtx, text, x, y, style, parent);
   }
 
   slot(
@@ -301,17 +239,40 @@ export default class Editor {
     color?: string,
     colorActive?: string
   ) {
-    const newSlot = new SlotComponent(
-      this.editorEnv.nextComponentId,
-      new Vector2(x, y),
+    return addSlot(
+      this.editorEnv,
+      x,
+      y,
       parent,
-      undefined,
       inSlot,
       radius,
       attractionRadius,
       color,
       colorActive
     );
-    return this.editorEnv.addComponent(newSlot);
+  }
+
+  remove(): boolean {
+    if (this.mouseEvents.getCollisionList().nodes !== undefined)
+      return this.editorEnv.removeComponent(
+        this.mouseEvents.getCollisionList().nodes![0]
+      );
+    else if (this.mouseEvents.getCollisionList().inputs !== undefined)
+      return this.editorEnv.removeComponent(
+        this.mouseEvents.getCollisionList().inputs![0]
+      );
+    else if (this.mouseEvents.getCollisionList().outputs !== undefined)
+      return this.editorEnv.removeComponent(
+        this.mouseEvents.getCollisionList().outputs![0]
+      );
+    else if (this.mouseEvents.getCollisionList().connections !== undefined)
+      return this.editorEnv.removeComponent(
+        this.mouseEvents.getCollisionList().connections![0]
+      );
+    else if (this.mouseEvents.getCollisionList().texts !== undefined)
+      return this.editorEnv.removeComponent(
+        this.mouseEvents.getCollisionList().texts![0]
+      );
+    return false;
   }
 }

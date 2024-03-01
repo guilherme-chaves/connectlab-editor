@@ -35,6 +35,10 @@ enum outputKeycodes {
   LED_RED_u = 'L',
 }
 
+enum specialKeycodes {
+  DELETE = 'Delete',
+}
+
 export default class KeyboardEvents {
   private _keyboard: Keyboard;
   constructor(keyboard: Keyboard) {
@@ -48,10 +52,10 @@ export default class KeyboardEvents {
       this._keyboard.keyPressed = true;
       this._keyboard.keyHold = false;
     }
-    if (!this._keyboard.keyHold) this.addComponentByKeyPressed(editor);
+    if (!this._keyboard.keyHold) this.handleKeyPressed(editor);
   }
 
-  addComponentByKeyPressed(editor: Editor) {
+  handleKeyPressed(editor: Editor) {
     switch (this._keyboard.key) {
       case nodeKeycodes.ADD:
       case nodeKeycodes.ADD_u:
@@ -88,6 +92,10 @@ export default class KeyboardEvents {
       case outputKeycodes.LED_RED:
       case outputKeycodes.LED_RED_u:
         editor.output(OutputTypes.MONO_LED_RED);
+        break;
+      case specialKeycodes.DELETE:
+        editor.remove();
+        break;
     }
   }
 
