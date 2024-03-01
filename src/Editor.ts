@@ -131,8 +131,9 @@ export default class Editor {
   }
 
   computeWindowArea() {
-    const canvasParentEl = document.getElementById(this.canvasId)
-      ?.parentElement;
+    const canvasParentEl = document.getElementById(
+      this.canvasId
+    )?.parentElement;
     if (canvasParentEl !== undefined && canvasParentEl !== null) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
       this.windowArea.x = parseFloat(
