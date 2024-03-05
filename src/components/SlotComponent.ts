@@ -6,9 +6,9 @@ import ConnectionComponent from './ConnectionComponent';
 
 export default class SlotComponent implements Component {
   public readonly id: number;
-  private _position: Vector2;
+  public position: Vector2;
   public readonly componentType: ComponentType;
-  private _parent: Component;
+  public readonly parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
   private drawPath: Path2D;
   public selected: boolean;
@@ -17,22 +17,10 @@ export default class SlotComponent implements Component {
   private colorActive: string;
   private radius: number;
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
-  private _collisionShape: CircleCollision;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
+  public collisionShape: CircleCollision;
 
   get globalPosition() {
-    return this._position.add(this.parent.position);
-  }
-
-  get parent() {
-    return this._parent;
+    return this.position.add(this.parent.position);
   }
 
   get slotConnections() {
@@ -42,14 +30,6 @@ export default class SlotComponent implements Component {
   set slotConnections(value: Array<ConnectionComponent>) {
     if (this.inSlot) this._slotConnections = [value[0]];
     else this._slotConnections = value;
-  }
-
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: CircleCollision) {
-    this._collisionShape = value;
   }
 
   constructor(
@@ -64,9 +44,9 @@ export default class SlotComponent implements Component {
     colorActive = '#FF0000'
   ) {
     this.id = id;
-    this._position = position;
+    this.position = position;
     this.componentType = ComponentType.SLOT;
-    this._parent = parent;
+    this.parent = parent;
     this._slotConnections = connections;
     this.color = color;
     this.colorActive = colorActive;
@@ -74,7 +54,7 @@ export default class SlotComponent implements Component {
     this.inSlot = inSlot;
     this.radius = radius;
     this.attractionRadius = attractionRadius;
-    this._collisionShape = new CircleCollision(
+    this.collisionShape = new CircleCollision(
       this.globalPosition,
       this.attractionRadius
     );
@@ -82,8 +62,8 @@ export default class SlotComponent implements Component {
   }
 
   move(v: Vector2, useDelta = true) {
-    if (useDelta) this._position = this._position.add(v);
-    else this._position = v;
+    if (useDelta) this.position = this.position.add(v);
+    else this.position = v;
     this.collisionShape.moveShape(this.globalPosition, false);
     this.drawPath = this.generatePath();
   }

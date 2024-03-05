@@ -5,31 +5,15 @@ import Component from '../interfaces/componentInterface';
 
 class TextComponent implements Component {
   public readonly id: number;
-  private _position: Vector2;
+  public position: Vector2;
   public readonly componentType: ComponentType;
   public text: string;
   public parentNode: Component | null;
   public style: string;
   private textSize: Vector2;
-  private _collisionShape: BBCollision;
+  public collisionShape: BBCollision;
   private canvasContext: CanvasRenderingContext2D;
   public selected: boolean;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: BBCollision) {
-    this._collisionShape = value;
-  }
 
   constructor(
     id: number,
@@ -40,14 +24,14 @@ class TextComponent implements Component {
     ctx: CanvasRenderingContext2D
   ) {
     this.id = id;
-    this._position = position;
+    this.position = position;
     this.componentType = ComponentType.TEXT;
     this.text = text;
     this.style = style;
     this.parentNode = parent;
     this.canvasContext = ctx;
     this.textSize = this.measureText(text, style);
-    this._collisionShape = new BBCollision(
+    this.collisionShape = new BBCollision(
       position,
       this.textSize.x,
       this.textSize.y
@@ -78,7 +62,7 @@ class TextComponent implements Component {
   move(v: Vector2, useDelta = true) {
     if (useDelta) this.position = this.position.add(v);
     else this.position = v;
-    this._collisionShape.moveShape(v, useDelta);
+    this.collisionShape.moveShape(v, useDelta);
   }
 }
 

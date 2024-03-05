@@ -8,32 +8,12 @@ interface BBPoints {
 }
 
 export default class BBCollision implements Collision {
-  private _position: Vector2;
-  private _points: BBPoints;
+  public position: Vector2;
+  public readonly points: BBPoints;
   public readonly width: number;
   public readonly height: number;
   private drawPath: Path2D;
-  private _borderColor: string;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get localPoints(): BBPoints {
-    return this._points;
-  }
-
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
+  public borderColor: string;
 
   constructor(
     position: Vector2,
@@ -41,18 +21,18 @@ export default class BBCollision implements Collision {
     height = 2,
     borderColor = '#FF8008DC'
   ) {
-    this._position = position;
+    this.position = position;
     this.width = width;
     this.height = height;
-    this._borderColor = borderColor;
-    this._points = this.setPoints();
+    this.borderColor = borderColor;
+    this.points = this.setPoints();
     this.drawPath = this.generatePath();
   }
 
   get globalPoints(): BBPoints {
     return {
-      a: this._position,
-      b: this._position.add(this._points.b),
+      a: this.position,
+      b: this.position.add(this.points.b),
     };
   }
 
@@ -65,7 +45,7 @@ export default class BBCollision implements Collision {
 
   private generatePath(): Path2D {
     const path = new Path2D();
-    path.rect(this._position.x, this._position.y, this.width, this.height);
+    path.rect(this.position.x, this.position.y, this.width, this.height);
     return path;
   }
 

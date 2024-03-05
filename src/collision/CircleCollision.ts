@@ -3,58 +3,42 @@ import Vector2 from '../types/Vector2';
 import BBCollision from './BBCollision';
 
 export default class CircleCollision implements Collision {
-  private _position: Vector2;
+  public position: Vector2;
   public readonly radius: number;
   private readonly radiusSquared: number;
   private drawPath: Path2D;
-  private _borderColor: string;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get borderColor() {
-    return this._borderColor;
-  }
-
-  set borderColor(value: string) {
-    this._borderColor = value;
-  }
+  public borderColor: string;
 
   constructor(position: Vector2, radius: number, borderColor = '#FF8008DC') {
-    this._position = position;
+    this.position = position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
-    this._borderColor = borderColor;
+    this.borderColor = borderColor;
     this.drawPath = this.generatePath();
   }
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    path.arc(this._position.x, this._position.y, this.radius, 0, Math.PI * 2);
+    path.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
     return path;
   }
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
     const oldStrokeStyle = ctx.strokeStyle;
-    ctx.strokeStyle = this._borderColor;
+    ctx.strokeStyle = this.borderColor;
     ctx.stroke(this.drawPath);
     ctx.strokeStyle = oldStrokeStyle;
   }
 
   moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this._position.add(v);
-    else this._position = v;
+    if (useDelta) this.position.add(v);
+    else this.position = v;
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Vector2): boolean {
-    return this._position.sub(point).magSq() < this.radiusSquared;
+    return this.position.sub(point).magSq() < this.radiusSquared;
   }
 
   collisionWithAABB(other: BBCollision): boolean {

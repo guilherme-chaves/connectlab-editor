@@ -6,7 +6,7 @@ import Component from '../interfaces/componentInterface';
 
 class ConnectionComponent implements Component {
   public readonly id: number;
-  private _position: Vector2;
+  public position: Vector2;
   public readonly componentType: ComponentType;
   public endPosition: Vector2;
   // Pesos (valores de 0 a 1) relativos a interpolação bilinear entre os pontos inicial e final
@@ -15,24 +15,8 @@ class ConnectionComponent implements Component {
   private drawPath: Path2D;
   private regenConnectionPath: boolean;
   public readonly minDistFromConnection: number;
-  private _collisionShape: Array<BBCollision>;
+  public collisionShape: Array<BBCollision>;
   public selected: boolean;
-
-  get position(): Vector2 {
-    return this._position;
-  }
-
-  set position(value: Vector2) {
-    this._position = value;
-  }
-
-  get collisionShape() {
-    return this._collisionShape;
-  }
-
-  set collisionShape(value: Array<BBCollision>) {
-    this._collisionShape = value;
-  }
 
   constructor(
     id: number,
@@ -42,7 +26,7 @@ class ConnectionComponent implements Component {
   ) {
     // A variável position funciona como startPoint
     this.id = id;
-    this._position = startPoint;
+    this.position = startPoint;
     this.componentType = ComponentType.LINE;
     this.endPosition = endPosition;
     this.anchors = [
@@ -55,8 +39,7 @@ class ConnectionComponent implements Component {
     this.minDistFromConnection = 64;
     this.drawPath = this.generatePath();
     this.regenConnectionPath = false;
-    this._collisionShape =
-      ConnectionPathFunctions.generateCollisionShapes(this);
+    this.collisionShape = ConnectionPathFunctions.generateCollisionShapes(this);
     this.selected = false;
   }
 

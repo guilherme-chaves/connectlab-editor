@@ -34,11 +34,11 @@ export default class Mouse {
 
   set stateChanged(value: boolean) {
     this._mouseStateChanged = value;
-    // if (this.alreadyClicked) {
-    //   this.doubleClicked = this._mouseClicked;
-    // } else {
-    //   this.alreadyClicked = true;
-    //   setTimeout(() => (this.alreadyClicked = false), this.doubleClickTimer);
-    // }
+    if (this.alreadyClicked) {
+      this.doubleClicked = this._mouseClicked;
+    } else {
+      this.alreadyClicked = true;
+      setTimeout(() => (this.alreadyClicked = false), this.doubleClickTimer);
+    }
   }
 }
