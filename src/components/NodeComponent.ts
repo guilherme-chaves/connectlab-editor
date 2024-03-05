@@ -138,7 +138,8 @@ class NodeComponent implements Node {
 
   draw(ctx: CanvasRenderingContext2D) {
     ctx.drawImage(this.image!, this.position.x, this.position.y);
-    if (this.collisionShape !== undefined) this.collisionShape.draw(ctx, true);
+    if (this.collisionShape !== undefined)
+      this.collisionShape.draw(ctx, this.selected);
   }
 }
 

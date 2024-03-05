@@ -53,7 +53,7 @@ export function addNode(
     editorEnv,
     editorEnv.nextComponentId,
     undefined,
-    signalEvents.convertToSignalFromList(
+    ...signalEvents.convertToSignalFromList(
       editorEnv,
       newNode.id,
       ComponentType.NODE
@@ -95,7 +95,7 @@ export function addInput(
     editorEnv,
     editorEnv.nextComponentId,
     undefined,
-    signalEvents.convertToSignalFromList(
+    ...signalEvents.convertToSignalFromList(
       editorEnv,
       newInput.id,
       ComponentType.INPUT
@@ -138,7 +138,7 @@ export function addOutput(
     editorEnv,
     editorEnv.nextComponentId,
     undefined,
-    signalEvents.convertToSignalFromList(
+    ...signalEvents.convertToSignalFromList(
       editorEnv,
       newOutput.id,
       ComponentType.OUTPUT

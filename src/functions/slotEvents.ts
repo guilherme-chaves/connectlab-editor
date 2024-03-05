@@ -4,7 +4,7 @@ import componentEvents from './Component/componentEvents';
 
 export default {
   // Busca na lista de slots quais possuem uma colisão com o ponto do mouse
-  checkSlotClick(slots: SlotList, position: Vector2): number[] | undefined {
+  checkSlotClick(slots: SlotList, position: Vector2): number[] {
     return componentEvents.checkComponentClick(position, slots);
   },
 };

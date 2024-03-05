@@ -72,7 +72,7 @@ class TextComponent implements Component {
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     ctx.fillText(this.text, this.position.x, this.position.y);
-    this.collisionShape.draw(ctx, true);
+    this.collisionShape.draw(ctx, this.selected);
   }
 
   move(v: Vector2, useDelta = true) {

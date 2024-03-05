@@ -1,7 +1,5 @@
 import EditorEnvironment from '../../EditorEnvironment';
-import InputComponent from '../../components/InputComponent';
-import NodeComponent from '../../components/NodeComponent';
-import OutputComponent from '../../components/OutputComponent';
+import Node from '../../interfaces/nodeInterface';
 import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
 
 export default {
@@ -20,7 +18,7 @@ export default {
         visited.add(stack[0]);
         const nodeObj = this.getNodeObject(editorEnv, stack[0]);
         if (nodeObj !== undefined) {
-          stack.push(...editorEnv.signalGraph.get(stack[0])!.signalTo);
+          stack.push(...(editorEnv.signalGraph.get(stack[0])?.signalTo ?? []));
           if (
             stack[0] !== nodeId &&
             nodeObj.componentType !== ComponentType.INPUT
@@ -55,18 +53,14 @@ export default {
   getNodeObject(
     editorEnv: EditorEnvironment,
     nodeId: number
-  ): NodeComponent | InputComponent | OutputComponent | undefined {
+  ): Node | undefined {
     return (
       editorEnv.nodes.get(nodeId) ??
       editorEnv.inputs.get(nodeId) ??
       editorEnv.outputs.get(nodeId)
     );
   },
-  computeState(
-    signalGraph: SignalGraph,
-    node: SignalGraphData,
-    nodeObj: NodeComponent | InputComponent | OutputComponent
-  ) {
+  computeState(signalGraph: SignalGraph, node: SignalGraphData, nodeObj: Node) {
     const op: (slotState: Array<boolean>) => boolean = nodeObj.nodeType.op;
     const slotStatus: Array<boolean> = [];
     for (let i = 0; i < node.signalFrom.length; i++)

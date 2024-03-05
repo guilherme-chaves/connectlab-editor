@@ -11,14 +11,12 @@ export default {
   checkComponentClick(
     position: Vector2,
     elementsList: NodeList | InputList | OutputList | SlotList | TextList
-  ): number[] | undefined {
-    let collided = false;
+  ): number[] {
     const collidedWith: Array<number> = [];
     elementsList.forEach((component, key) => {
       const collision = component.collisionShape.collisionWithPoint(position);
       if (collision) collidedWith.push(key);
-      collided = collided || collision;
     });
-    return collided ? collidedWith : undefined;
+    return collidedWith;
   },
 };

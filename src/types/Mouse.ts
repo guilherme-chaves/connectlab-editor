@@ -1,20 +1,14 @@
 import Vector2 from './Vector2';
 
 export default class Mouse {
-  private _mousePosition = Vector2.ZERO;
+  public position = new Vector2();
   private _mouseClicked = false;
-  private _mouseDragged = false;
-  private _mouseClickPosition = Vector2.ZERO;
+  public doubleClicked = false;
+  public clickStartPosition = new Vector2();
   private _mouseStateChanged = false;
-  private _mouseClickThreshold = 6; // pixels
-
-  get position() {
-    return this._mousePosition;
-  }
-
-  set position(value: Vector2) {
-    this._mousePosition = value;
-  }
+  public readonly clickToDragThreshold = 6; // pixels
+  public readonly doubleClickTimer = 300; // ms
+  private alreadyClicked = false;
 
   get clicked() {
     return this._mouseClicked;
@@ -23,26 +17,15 @@ export default class Mouse {
   set clicked(value: boolean) {
     this._mouseClicked = value;
     this._mouseStateChanged = true;
+    this.clickStartPosition = new Vector2(this.position);
   }
 
   get dragged() {
-    return this._mouseDragged;
-  }
-
-  set dragged(value: boolean) {
-    this._mouseDragged = value;
-  }
-
-  get clickStartPosition() {
-    return this._mouseClickPosition;
-  }
-
-  set clickStartPosition(value: Vector2) {
-    this._mouseClickPosition = value;
-  }
-
-  get clickToDragThreshold() {
-    return this._mouseClickThreshold;
+    const mouseMovement = this.position.sub(this.clickStartPosition);
+    return (
+      Math.abs(mouseMovement.x) > this.clickToDragThreshold ||
+      Math.abs(mouseMovement.y) > this.clickToDragThreshold
+    );
   }
 
   get stateChanged() {
@@ -51,5 +34,11 @@ export default class Mouse {
 
   set stateChanged(value: boolean) {
     this._mouseStateChanged = value;
+    // if (this.alreadyClicked) {
+    //   this.doubleClicked = this._mouseClicked;
+    // } else {
+    //   this.alreadyClicked = true;
+    //   setTimeout(() => (this.alreadyClicked = false), this.doubleClickTimer);
+    // }
   }
 }

@@ -2,34 +2,30 @@ import InputComponent from '../../components/InputComponent';
 import Vector2 from '../../types/Vector2';
 import {InputList} from '../../types/types';
 import componentEvents from '../Component/componentEvents';
-import connectionEvents from '../Connection/connectionEvents';
-import nodeEvents from '../Node/nodeEvents';
-import {CollisionList} from '../mouseEvents';
-import outputEvents from './outputEvents';
+import MouseEvents from '../mouseEvents';
 
 export default {
-  editingInput: false,
-  checkInputClick(inputs: InputList, position: Vector2): number[] | undefined {
+  checkInputClick(inputs: InputList, position: Vector2): number[] {
     return componentEvents.checkComponentClick(position, inputs);
   },
   move(
     inputs: InputList,
-    collisionList: CollisionList,
+    mouseEvents: MouseEvents,
     v: Vector2,
     useDelta = true
   ): boolean {
+    const inputCollisions = mouseEvents.getCollisionList().inputs;
     if (
-      collisionList.inputs === undefined ||
-      connectionEvents.editingLine ||
-      nodeEvents.editingNode ||
-      outputEvents.editingOutput
-    ) {
-      this.editingInput = false;
+      inputCollisions.length === 0 ||
+      !(
+        mouseEvents.movingObject === 'none' ||
+        mouseEvents.movingObject === 'input'
+      )
+    )
       return false;
-    }
 
-    this.editingInput = true;
-    const input = inputs.get(collisionList.inputs[0]);
+    mouseEvents.movingObject = 'input';
+    const input = inputs.get(inputCollisions[0]);
     if (input === undefined) return false;
     input.move(v, useDelta);
     this.moveLinkedElements(input, useDelta);

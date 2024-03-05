@@ -3,11 +3,9 @@ import Vector2 from '../../types/Vector2';
 import ComponentType, {ConnectionList} from '../../types/types';
 import slotEvents from '../slotEvents';
 import SlotComponent from '../../components/SlotComponent';
-import nodeEvents from '../Node/nodeEvents';
-import inputEvents from '../IO/inputEvents';
-import outputEvents from '../IO/outputEvents';
 import signalEvents from '../Signal/signalEvents';
 import EditorEnvironment from '../../EditorEnvironment';
+import MouseEvents from '../mouseEvents';
 
 export default {
   editingLineId: -1,
@@ -20,28 +18,23 @@ export default {
   checkConnectionClick(
     connections: ConnectionList,
     position: Vector2
-  ): number[] | undefined {
-    let collided = false;
+  ): number[] {
     const collidedWith: Array<number> = [];
     connections.forEach((connection, key) => {
       const collision = connection.collisionShape.find(collisionShape => {
         return collisionShape.collisionWithPoint(position);
       });
       if (collision !== undefined) collidedWith.push(key);
-      collided = collided || collision !== undefined;
     });
-    return collided ? collidedWith : undefined;
+    return collidedWith;
   },
 
-  addLine(editor: Editor, position: Vector2) {
+  addLine(editor: Editor, mouseEvents: MouseEvents) {
     if (this.editingLine && this.editingLineId !== -1) return true;
-    if (nodeEvents.editingNode) return false;
-    const slotCollisions = slotEvents.checkSlotClick(
-      editor.editorEnv.slots,
-      position
-    );
-    if (slotCollisions !== undefined) {
-      const slot = editor.editorEnv.slots.get(slotCollisions[0])!;
+    const slotCollisions = mouseEvents.getCollisionList().slots;
+    if (slotCollisions.length > 0) {
+      const slot = editor.editorEnv.slots.get(slotCollisions[0]);
+      if (!slot) return false;
       this.editingLineId = editor.line(
         slot.globalPosition.x,
         slot.globalPosition.y,
@@ -49,13 +42,13 @@ export default {
         slot.globalPosition.y,
         {
           type: ComponentType.SLOT,
-          id: slotCollisions[0],
+          id: slot.id,
         }
       );
       this.editingLine = true;
       this.oldSlotCollision = this.slotCollision;
-      this.slotCollision = slotCollisions[0];
-      this.lineStartSlot = slotCollisions[0];
+      this.slotCollision = slot.id;
+      this.lineStartSlot = slot.id;
       return true;
     } else {
       this.oldSlotCollision = this.slotCollision;
@@ -64,22 +57,31 @@ export default {
     return false;
   },
 
-  move(editorEnv: EditorEnvironment, position: Vector2) {
+  move(
+    editorEnv: EditorEnvironment,
+    mouseEvents: MouseEvents,
+    position: Vector2
+  ) {
     if (
       !this.editingLine ||
       this.editingLineId === -1 ||
-      nodeEvents.editingNode ||
-      inputEvents.editingInput ||
-      outputEvents.editingOutput ||
+      !(
+        mouseEvents.movingObject === 'none' ||
+        mouseEvents.movingObject === 'connection'
+      ) ||
       !editorEnv.connections.has(this.editingLineId)
     )
       return false;
 
-    editorEnv.connections
-      .get(this.editingLineId)!
-      .move(position, false, 1, false);
-    this.bindConnection(editorEnv, position);
-    return true;
+    mouseEvents.movingObject = 'connection';
+
+    const connection = editorEnv.connections.get(this.editingLineId);
+    if (connection) {
+      connection.move(position, false, 1, false);
+      this.bindConnection(editorEnv, position);
+      return true;
+    }
+    return false;
   },
 
   fixLine(editorEnv: EditorEnvironment, position: Vector2) {
@@ -91,7 +93,7 @@ export default {
       );
       if (
         this.slotCollision !== -1 &&
-        currentSlotCollisions !== undefined &&
+        currentSlotCollisions.length > 0 &&
         currentSlotCollisions[0] !== this.lineStartSlot
       ) {
         // Comparação para evitar conexões entre o mesmo slot
@@ -159,7 +161,7 @@ export default {
         position
       );
       const currentLine = editorEnv.connections.get(this.editingLineId)!;
-      if (slotCollisions !== undefined) {
+      if (slotCollisions.length > 0) {
         // Evitar colisões com o slot de onde a linha se origina
         if (currentLine.connectedTo.start?.id !== slotCollisions[0]) {
           const slotCollided = editorEnv.slots.get(slotCollisions[0])!;
@@ -205,7 +207,7 @@ export default {
     if (!slot.inSlot) return;
     const oldConnection = slot.slotConnections[0];
     if (oldConnection !== undefined) {
-      slot.slotConnections.shift();
+      slot.slotConnections.splice(0, slot.slotConnections.length);
       if (oldConnection.connectedTo.start)
         editorEnv.slots
           .get(oldConnection.connectedTo.start.id)!

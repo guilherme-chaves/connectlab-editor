@@ -23,6 +23,7 @@ body {
 #app-sidebar {
   width: 15vw;
   border: 1px solid black;
+  overflow-y: auto;
 }
 
 #app-key-list {

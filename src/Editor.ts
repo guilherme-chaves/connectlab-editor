@@ -96,14 +96,17 @@ export default class Editor {
     });
     canvasDOM.addEventListener('mousedown', ({x, y}) => {
       this.mouse.clicked = true;
+      this.mouseEvents.onMouseClick(this);
       if (this.mouse.stateChanged)
         this.mouse.clickStartPosition = this.computePositionInCanvas(x, y);
     });
     canvasDOM.addEventListener('mouseup', () => {
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     canvasDOM.addEventListener('mouseout', () => {
       this.mouse.clicked = false;
+      this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     window.addEventListener('mousemove', ({x, y}) => {
       this.mouse.position = this.computePositionInCanvas(x, y);
@@ -179,8 +182,6 @@ export default class Editor {
   compute() {
     setInterval(() => {
       this.mouseEvents.onMouseMove(this.editorEnv);
-      this.mouseEvents.onMouseClick(this);
-      this.mouseEvents.onMouseRelease(this.editorEnv);
     }, 1000.0 / this.frameRate);
   }
 
@@ -253,23 +254,23 @@ export default class Editor {
   }
 
   remove(): boolean {
-    if (this.mouseEvents.getCollisionList().nodes !== undefined)
+    if (this.mouseEvents.getCollisionList().nodes.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().nodes![0]
       );
-    else if (this.mouseEvents.getCollisionList().inputs !== undefined)
+    else if (this.mouseEvents.getCollisionList().inputs.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().inputs![0]
       );
-    else if (this.mouseEvents.getCollisionList().outputs !== undefined)
+    else if (this.mouseEvents.getCollisionList().outputs.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().outputs![0]
       );
-    else if (this.mouseEvents.getCollisionList().connections !== undefined)
+    else if (this.mouseEvents.getCollisionList().connections.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().connections![0]
       );
-    else if (this.mouseEvents.getCollisionList().texts !== undefined)
+    else if (this.mouseEvents.getCollisionList().texts.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().texts![0]
       );

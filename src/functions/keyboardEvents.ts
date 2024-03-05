@@ -37,6 +37,7 @@ enum outputKeycodes {
 
 enum specialKeycodes {
   DELETE = 'Delete',
+  BACKSPACE = 'Backspace',
 }
 
 export default class KeyboardEvents {
@@ -94,6 +95,7 @@ export default class KeyboardEvents {
         editor.output(OutputTypes.MONO_LED_RED);
         break;
       case specialKeycodes.DELETE:
+      case specialKeycodes.BACKSPACE:
         editor.remove();
         break;
     }

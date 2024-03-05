@@ -111,6 +111,6 @@ export default class SlotComponent implements Component {
     ctx.fillStyle = this.selected ? this.colorActive : this.color;
     ctx.fill(this.drawPath);
     ctx.fillStyle = oldFillStyle;
-    this.collisionShape.draw(ctx, true);
+    this.collisionShape.draw(ctx, this.selected);
   }
 }

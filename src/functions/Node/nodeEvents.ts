@@ -1,36 +1,32 @@
 import {NodeList} from '../../types/types';
 import Vector2 from '../../types/Vector2';
-import {CollisionList} from '../mouseEvents';
-import connectionEvents from '../Connection/connectionEvents';
+import MouseEvents from '../mouseEvents';
 import NodeComponent from '../../components/NodeComponent';
-import inputEvents from '../IO/inputEvents';
-import outputEvents from '../IO/outputEvents';
 import componentEvents from '../Component/componentEvents';
 
 export default {
-  editingNode: false,
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(nodes: NodeList, position: Vector2): number[] | undefined {
+  checkNodeClick(nodes: NodeList, position: Vector2): number[] {
     return componentEvents.checkComponentClick(position, nodes);
   },
   move(
     nodes: NodeList,
-    collisionList: CollisionList,
+    mouseEvents: MouseEvents,
     v: Vector2,
     useDelta = true
   ): boolean {
+    const nodeCollisions = mouseEvents.getCollisionList().nodes;
     if (
-      collisionList.nodes === undefined ||
-      connectionEvents.editingLine ||
-      inputEvents.editingInput ||
-      outputEvents.editingOutput
-    ) {
-      this.editingNode = false;
+      nodeCollisions.length === 0 ||
+      !(
+        mouseEvents.movingObject === 'none' ||
+        mouseEvents.movingObject === 'node'
+      )
+    )
       return false;
-    }
 
-    this.editingNode = true;
-    const node = nodes.get(collisionList.nodes[0]);
+    mouseEvents.movingObject = 'node';
+    const node = nodes.get(nodeCollisions[0]);
     if (node === undefined) return false;
     node.move(v, useDelta);
     this.moveLinkedElements(node, useDelta);
