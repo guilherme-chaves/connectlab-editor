@@ -15,6 +15,6 @@ export const SwitchInput: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState[0] === undefined ? undefined : slotState[0];
+    return slotState[0];
   },
 };

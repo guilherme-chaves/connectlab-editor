@@ -1,4 +1,4 @@
-import {NodeTypeObject, NodeTypes, slotStates} from '../types/types';
+import {NodeTypeObject, NodeTypes} from '../types/types';
 import Vector2 from '../types/Vector2';
 import ADDPath from '../assets/gates/AND_ANSI.svg';
 import NANDPath from '../assets/gates/NAND_ANSI.svg';
@@ -7,11 +7,6 @@ import NOTPath from '../assets/gates/NOT_ANSI.svg';
 import ORPath from '../assets/gates/OR_ANSI.svg';
 import XNORPath from '../assets/gates/XNOR_ANSI.svg';
 import XORPath from '../assets/gates/XOR_ANSI.svg';
-
-export function hasUndefined(slotState: [slotStates, slotStates]) {
-  if (slotState[0] === undefined || slotState[1] === undefined) return true;
-  return false;
-}
 
 export const ADDNode: NodeTypeObject = {
   id: NodeTypes.G_ADD,
@@ -37,7 +32,7 @@ export const ADDNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState) ? undefined : slotState[0] && slotState[1];
+    return slotState[0] && slotState[1];
   },
 };
 
@@ -65,9 +60,7 @@ export const NANDNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState)
-      ? undefined
-      : !(slotState[0] && slotState[1]);
+    return !(slotState[0] && slotState[1]);
   },
 };
 
@@ -95,9 +88,7 @@ export const NORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState)
-      ? undefined
-      : !(slotState[0] || slotState[1]);
+    return !(slotState[0] || slotState[1]);
   },
 };
 
@@ -119,7 +110,7 @@ export const NOTNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState[0] === undefined ? undefined : !slotState[0];
+    return !slotState[0];
   },
 };
 
@@ -147,7 +138,7 @@ export const ORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState) ? undefined : slotState[0] || slotState[1];
+    return slotState[0] || slotState[1];
   },
 };
 
@@ -175,7 +166,7 @@ export const XNORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState) ? undefined : slotState[0] === slotState[1];
+    return slotState[0] === slotState[1];
   },
 };
 
@@ -203,6 +194,6 @@ export const XORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return hasUndefined(slotState) ? undefined : slotState[0] !== slotState[1];
+    return slotState[0] !== slotState[1];
   },
 };

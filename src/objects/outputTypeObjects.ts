@@ -15,7 +15,7 @@ const LEDROutput: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState[0] === undefined ? false : slotState[0];
+    return slotState[0];
   },
 };
 
