@@ -101,7 +101,6 @@ export default class Editor {
     });
     canvasDOM.addEventListener('mouseout', () => {
       this.mouse.clicked = false;
-      this.mouse.mouseOut = true;
       this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     window.addEventListener('mousemove', ({x, y}) => {

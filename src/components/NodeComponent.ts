@@ -2,6 +2,7 @@ import ComponentType, {
   ImageListObject,
   NodeTypes,
   SignalGraph,
+  slotStates,
 } from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
@@ -44,7 +45,7 @@ class NodeComponent implements Node {
     return signalEvents.getVertexState(this._signalGraph, this.id);
   }
 
-  set state(value: boolean) {
+  set state(value: slotStates) {
     signalEvents.setVertexState(this._signalGraph, this.id, value);
   }
 

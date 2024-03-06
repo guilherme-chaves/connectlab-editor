@@ -9,7 +9,6 @@ export default class Mouse {
   public readonly clickToDragThreshold = 6; // pixels
   public readonly doubleClickTimer = 300; // ms
   private alreadyClicked = false;
-  public mouseOut = false;
 
   get clicked() {
     return this._mouseClicked;
@@ -18,14 +17,16 @@ export default class Mouse {
   set clicked(value: boolean) {
     this._mouseClicked = value;
     this._mouseStateChanged = true;
-    this.clickStartPosition = new Vector2(this.position);
+    if (value) this.clickStartPosition = new Vector2(this.position);
   }
 
   get dragged() {
     const mouseMovement = this.position.sub(this.clickStartPosition);
     return (
-      Math.abs(mouseMovement.x) > this.clickToDragThreshold ||
-      Math.abs(mouseMovement.y) > this.clickToDragThreshold
+      mouseMovement.x > this.clickToDragThreshold ||
+      mouseMovement.x < -this.clickToDragThreshold ||
+      mouseMovement.y > this.clickToDragThreshold ||
+      mouseMovement.y < -this.clickToDragThreshold
     );
   }
 

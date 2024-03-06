@@ -1,14 +1,14 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
 import SlotComponent from '../../components/SlotComponent';
-import ComponentType, {SignalGraph} from '../../types/types';
+import ComponentType, {SignalGraph, slotStates} from '../../types/types';
 import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
     editorEnv: EditorEnvironment,
     nodeId: number,
-    state: boolean = false,
+    state: slotStates,
     signalFrom: Array<number> = [],
     signalTo: Array<number> = []
   ): void {
@@ -52,7 +52,7 @@ export default {
       )
         editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
     } else {
-      this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
+      this.addVertex(editorEnv, startNodeId, undefined, undefined, [endNodeId]);
     }
     if (editorEnv.signalGraph.has(endNodeId)) {
       if (
@@ -62,7 +62,7 @@ export default {
       )
         editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
     } else {
-      this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
+      this.addVertex(editorEnv, endNodeId, undefined, [startNodeId]);
     }
     signalUpdate.updateGraphPartial(editorEnv, startNodeId);
   },
@@ -91,13 +91,13 @@ export default {
     }
     signalUpdate.updateGraph(editorEnv);
   },
-  getVertexState(signalGraph: SignalGraph, nodeId: number): boolean {
-    return signalGraph.get(nodeId)?.state ?? false;
+  getVertexState(signalGraph: SignalGraph, nodeId: number): slotStates {
+    return signalGraph.get(nodeId)?.state;
   },
   setVertexState(
     signalGraph: SignalGraph,
     nodeId: number,
-    state: boolean
+    state: slotStates
   ): void {
     if (signalGraph.has(nodeId)) {
       signalGraph.get(nodeId)!.state = state;
