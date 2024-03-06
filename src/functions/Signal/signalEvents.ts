@@ -53,19 +53,14 @@ export default {
       )
         editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
     } else {
-      this.addVertex(editorEnv, startNodeId, undefined, undefined, [endNodeId]);
+      this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
     }
     if (editorEnv.signalGraph.has(endNodeId)) {
-      if (
-        editorEnv.signalGraph
-          .get(endNodeId)!
-          .signalFrom.find(el => startNodeId === el) === undefined
-      )
-        editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
+      editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
     } else {
-      this.addVertex(editorEnv, endNodeId, undefined, [startNodeId]);
+      this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
-    signalUpdate.updateGraphPartial(editorEnv, startNodeId);
+    signalUpdate.updateGraph(editorEnv);
   },
   removeEdge(
     editorEnv: EditorEnvironment,
@@ -93,7 +88,7 @@ export default {
     signalUpdate.updateGraph(editorEnv);
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): slotStates {
-    return signalGraph.get(nodeId)?.state;
+    return signalGraph.get(nodeId)?.state ?? false;
   },
   setVertexState(
     signalGraph: SignalGraph,

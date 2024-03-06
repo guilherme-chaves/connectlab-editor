@@ -56,9 +56,9 @@ export default {
   },
   computeState(signalGraph: SignalGraph, node: SignalGraphData, nodeObj: Node) {
     const op = nodeObj.nodeType.op;
-    const slotStatus: [slotStates, slotStates] = [undefined, undefined];
-    slotStatus[0] = signalGraph.get(node.signalFrom[0])?.state;
-    slotStatus[1] = signalGraph.get(node.signalFrom[1])?.state;
+    const slotStatus: [slotStates, slotStates] = [false, false];
+    slotStatus[0] = signalGraph.get(node.signalFrom[0])?.state ?? false;
+    slotStatus[1] = signalGraph.get(node.signalFrom[1])?.state ?? false;
     node.state = op(slotStatus);
   },
 };

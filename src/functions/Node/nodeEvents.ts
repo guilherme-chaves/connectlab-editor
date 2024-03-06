@@ -46,7 +46,7 @@ export default {
   switchInputState(nodes: NodeList, inputId: number): boolean {
     const input = nodes.get(inputId);
     if (input && input.componentType === ComponentType.INPUT) {
-      input.state = input.state === undefined ? true : !input.state;
+      input.state = !input.state;
       return true;
     }
     return false;

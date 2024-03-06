@@ -54,7 +54,7 @@ export function addNode(
   signalEvents.addVertex(
     editorEnv,
     editorEnv.nextComponentId,
-    undefined,
+    false,
     ...signalEvents.convertToSignalFromList(
       editorEnv,
       newNode.id,

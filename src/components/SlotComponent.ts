@@ -28,8 +28,10 @@ export default class SlotComponent implements Component {
   }
 
   set slotConnections(value: Array<ConnectionComponent>) {
-    if (this.inSlot) this._slotConnections = [value[0]];
-    else this._slotConnections = value;
+    if (this.inSlot) {
+      this._slotConnections.splice(0, this._slotConnections.length);
+      this._slotConnections.push(value[0]);
+    } else this._slotConnections = value;
   }
 
   constructor(

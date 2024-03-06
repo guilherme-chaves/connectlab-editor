@@ -94,13 +94,13 @@ export default {
       const size = this.alignConnectionWithAxis(
         pPos,
         nPos,
-        2,
+        6,
         nPos.x - pPos.x,
-        2,
+        6,
         nPos.y - pPos.y
       );
       collisionArr.push(
-        new BBCollision(pPos.sub(new Vector2(1, 1)), size.x, size.y)
+        new BBCollision(pPos.sub(new Vector2(3, 3)), size.x, size.y)
       );
       pPos = nPos;
     }

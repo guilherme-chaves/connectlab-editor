@@ -63,7 +63,7 @@ export interface ConnectionVertices {
   end: ConnectionVertex | undefined;
 }
 
-export type slotStates = boolean | undefined;
+export type slotStates = boolean;
 
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
