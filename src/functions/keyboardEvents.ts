@@ -38,6 +38,7 @@ enum outputKeycodes {
 enum specialKeycodes {
   DELETE = 'Delete',
   BACKSPACE = 'Backspace',
+  INSERT = 'Insert',
 }
 
 export default class KeyboardEvents {
@@ -98,6 +99,8 @@ export default class KeyboardEvents {
       case specialKeycodes.BACKSPACE:
         editor.remove();
         break;
+      case specialKeycodes.INSERT:
+        editor.saveToFile();
     }
   }
 

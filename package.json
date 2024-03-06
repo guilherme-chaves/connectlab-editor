@@ -3,6 +3,13 @@
   "private": true,
   "version": "0.1.0",
   "type": "commonjs",
+  "engines":{
+    "node": ">=10.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guilherme-chaves/connectlab-editor.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",

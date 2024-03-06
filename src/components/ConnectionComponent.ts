@@ -1,8 +1,17 @@
 import ComponentType, {ConnectionVertices} from '../types/types';
-import Vector2 from '../types/Vector2';
+import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';
 import Component from '../interfaces/componentInterface';
+
+type ConnectionObject = {
+  id: number;
+  componentType: ComponentType;
+  position: VectorObject;
+  endPosition: VectorObject;
+  anchors: {x: number; y: number}[];
+  connectedTo: ConnectionVertices;
+};
 
 class ConnectionComponent implements Component {
   public readonly id: number;
@@ -14,7 +23,6 @@ class ConnectionComponent implements Component {
   public connectedTo: ConnectionVertices;
   private drawPath: Path2D;
   private regenConnectionPath: boolean;
-  public readonly minDistFromConnection: number;
   public collisionShape: Array<BBCollision>;
   public selected: boolean;
 
@@ -36,7 +44,6 @@ class ConnectionComponent implements Component {
       new DOMPoint(0.5, 1),
     ];
     this.connectedTo = connections;
-    this.minDistFromConnection = 64;
     this.drawPath = this.generatePath();
     this.regenConnectionPath = false;
     this.collisionShape = ConnectionPathFunctions.generateCollisionShapes(this);
@@ -145,6 +152,23 @@ class ConnectionComponent implements Component {
       }
       this.connectedTo.start = {type: componentType, id: componentId};
     }
+  }
+
+  toObject(): Object {
+    const connectionObj: ConnectionObject = {
+      id: this.id,
+      componentType: this.componentType,
+      position: this.position.toPlainObject(),
+      endPosition: this.endPosition.toPlainObject(),
+      anchors: [],
+      connectedTo: this.connectedTo,
+    };
+
+    connectionObj.anchors = this.anchors.map(value => {
+      return {x: value.x, y: value.y};
+    });
+
+    return connectionObj;
   }
 }
 

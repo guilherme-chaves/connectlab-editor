@@ -1,7 +1,16 @@
 import ComponentType from '../types/types';
-import Vector2 from '../types/Vector2';
+import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Component from '../interfaces/componentInterface';
+
+type TextObject = {
+  id: number;
+  componentType: ComponentType;
+  position: VectorObject;
+  text: string;
+  parentId: number | undefined;
+  style: string;
+};
 
 class TextComponent implements Component {
   public readonly id: number;
@@ -63,6 +72,18 @@ class TextComponent implements Component {
     if (useDelta) this.position = this.position.add(v);
     else this.position = v;
     this.collisionShape.moveShape(v, useDelta);
+  }
+
+  toObject(): Object {
+    const textObj: TextObject = {
+      id: this.id,
+      componentType: this.componentType,
+      position: this.position.toPlainObject(),
+      text: this.text,
+      parentId: this.parentNode?.id,
+      style: this.style,
+    };
+    return textObj;
   }
 }
 

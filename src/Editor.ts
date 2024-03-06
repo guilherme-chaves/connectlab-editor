@@ -68,7 +68,13 @@ export default class Editor {
 
   // static loadFile(jsonData): Editor
 
-  // saveToFile()
+  saveToFile() {
+    const a = document.createElement('a');
+    const file = new Blob([this.editorEnv.saveAsJson()], {type: 'text/plain'});
+    a.href = URL.createObjectURL(file);
+    a.download = `${this.editorEnv.documentId}-save-${Date.now()}.txt`;
+    a.click();
+  }
 
   private createContext(
     domElement: HTMLCanvasElement

@@ -98,5 +98,15 @@ class EditorEnvironment {
       else return false;
     }
   }
+
+  saveAsJson(): string {
+    let jsonOutput = '';
+    for (const category of Object.values(this.components)) {
+      for (const component of category.values()) {
+        jsonOutput += JSON.stringify(component.toObject());
+      }
+    }
+    return jsonOutput;
+  }
 }
 export default EditorEnvironment;

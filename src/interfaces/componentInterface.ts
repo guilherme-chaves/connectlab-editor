@@ -10,4 +10,5 @@ export default interface Component {
   selected: boolean;
   move(v: Vector2, useDelta: boolean): void;
   draw(ctx: CanvasRenderingContext2D): void;
+  toObject(): Object;
 }

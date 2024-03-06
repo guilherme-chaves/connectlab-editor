@@ -58,7 +58,6 @@ export interface ConnectionVertex {
 }
 
 export interface ConnectionVertices {
-  [index: symbol]: ConnectionVertex | undefined;
   start: ConnectionVertex | undefined;
   end: ConnectionVertex | undefined;
 }

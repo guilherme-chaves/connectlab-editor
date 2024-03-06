@@ -17,7 +17,10 @@ interface Vector2Interface {
   rotate(angle: number): Vector2;
   getAngle(other: Vector2): number;
   normalize(): Vector2;
+  toPlainObject(): VectorObject;
 }
+
+export type VectorObject = {x: number; y: number; float: boolean};
 
 class Vector2 implements Vector2Interface {
   private forceFloat: boolean;
@@ -149,6 +152,14 @@ class Vector2 implements Vector2Interface {
 
   normalize(): Vector2 {
     return this.divS(Math.sqrt(this.magSq()), true);
+  }
+
+  toPlainObject(): VectorObject {
+    return {
+      x: this._x,
+      y: this._y,
+      float: this.forceFloat,
+    };
   }
 }
 

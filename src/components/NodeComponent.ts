@@ -14,7 +14,7 @@ import {
   XNORNode,
   XORNode,
 } from '../objects/nodeTypeObjects';
-import Vector2 from '../types/Vector2';
+import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
@@ -22,6 +22,14 @@ import signalEvents from '../functions/Signal/signalEvents';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import {getImageSublist} from '../functions/preloadImage';
+
+type NodeObject = {
+  id: number;
+  componentType: ComponentType;
+  nodeType: NodeTypes;
+  position: VectorObject;
+  slotIds: number[];
+};
 
 class NodeComponent implements Node {
   public readonly id: number;
@@ -126,6 +134,17 @@ class NodeComponent implements Node {
     ctx.drawImage(this.image!, this.position.x, this.position.y);
     if (this.collisionShape !== undefined)
       this.collisionShape.draw(ctx, this.selected);
+  }
+
+  toObject(): Object {
+    const nodeObj: NodeObject = {
+      id: this.id,
+      componentType: this.componentType,
+      nodeType: this.nodeType.id,
+      position: this.position.toPlainObject(),
+      slotIds: this.slotComponents.map(value => value.id),
+    };
+    return nodeObj;
   }
 }
 
