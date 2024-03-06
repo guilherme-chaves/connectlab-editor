@@ -83,7 +83,7 @@ export default class MouseEvents {
   onMouseRelease(editorEnv: EditorEnvironment) {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
-        if (this.collisionList.nodes.length !== 0 && !this._mouse.mouseOut) {
+        if (this.collisionList.nodes.length !== 0) {
           if (
             nodeEvents.switchInputState(
               editorEnv.nodes,
