@@ -19,13 +19,14 @@ export default {
   },
   removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
     if (editorEnv.signalGraph.has(nodeId)) {
-      editorEnv.signalGraph.get(nodeId)!.signalTo.forEach(connection => {
-        if (editorEnv.signalGraph.has(connection)) {
-          const index = editorEnv.signalGraph
-            .get(connection)!
-            .signalFrom.indexOf(nodeId);
-          if (index !== -1)
-            editorEnv.signalGraph.get(connection)!.signalFrom.splice(index, 1);
+      editorEnv.signalGraph.get(nodeId)!.signalTo.forEach(connectedNode => {
+        const index =
+          editorEnv.signalGraph
+            .get(connectedNode)
+            ?.signalFrom.indexOf(nodeId) ?? -1;
+        if (index !== -1) {
+          editorEnv.signalGraph.get(connectedNode)!.signalFrom.splice(index, 1);
+          editorEnv.signalGraph.get(connectedNode)!.state = undefined;
         }
       });
       editorEnv.signalGraph.delete(nodeId);
