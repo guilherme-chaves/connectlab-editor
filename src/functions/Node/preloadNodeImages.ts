@@ -5,18 +5,28 @@ import NOTPath from '../../assets/gates/NOT_ANSI.svg';
 import ORPath from '../../assets/gates/OR_ANSI.svg';
 import XNORPath from '../../assets/gates/XNOR_ANSI.svg';
 import XORPath from '../../assets/gates/XOR_ANSI.svg';
-import {NodeTypes} from '../../types/types';
+
+import INPUT_ON from '../../assets/gates/INPUT_ON.svg';
+import INPUT_OFF from '../../assets/gates/INPUT_OFF.svg';
+
+import LED_OFF from '../../assets/gates/LED_OFF.svg';
+import LED_RED from '../../assets/gates/LED_RED_ON.svg';
+
 import preloadImage from '../preloadImage';
 
-const imageList: Map<number, string> = new Map([
-  [NodeTypes.ADD, ADDPath],
-  [NodeTypes.NAND, NANDPath],
-  [NodeTypes.NOR, NORPath],
-  [NodeTypes.NOT, NOTPath],
-  [NodeTypes.OR, ORPath],
-  [NodeTypes.XNOR, XNORPath],
-  [NodeTypes.XOR, XORPath],
-]);
+const imageList: Array<string> = [
+  ADDPath,
+  NANDPath,
+  NORPath,
+  NOTPath,
+  ORPath,
+  XNORPath,
+  XORPath,
+  INPUT_ON,
+  INPUT_OFF,
+  LED_OFF,
+  LED_RED,
+];
 
 export default function preloadNodeImages() {
   return preloadImage(imageList);

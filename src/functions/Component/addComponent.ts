@@ -1,18 +1,11 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
-import InputComponent from '../../components/InputComponent';
 import NodeComponent from '../../components/NodeComponent';
-import OutputComponent from '../../components/OutputComponent';
 import SlotComponent from '../../components/SlotComponent';
 import TextComponent from '../../components/TextComponent';
 import Component from '../../interfaces/componentInterface';
 import Vector2 from '../../types/Vector2';
-import ComponentType, {
-  ConnectionVertex,
-  InputTypes,
-  NodeTypes,
-  OutputTypes,
-} from '../../types/types';
+import ComponentType, {ConnectionVertex, NodeTypes} from '../../types/types';
 import signalEvents from '../Signal/signalEvents';
 
 export function addNode(
@@ -20,12 +13,21 @@ export function addNode(
   ctx: CanvasRenderingContext2D,
   type: NodeTypes,
   x: number,
-  y: number
+  y: number,
+  componentType = ComponentType.NODE
 ): number {
+  if (
+    componentType === ComponentType.LINE ||
+    componentType === ComponentType.SLOT ||
+    componentType === ComponentType.TEXT
+  )
+    componentType = ComponentType.NODE;
+
   const slots: Array<SlotComponent> = [];
   let newNode = new NodeComponent(
     editorEnv.nextComponentId,
     new Vector2(x, y),
+    componentType,
     type,
     ctx.canvas.width,
     ctx.canvas.height,
@@ -65,86 +67,21 @@ export function addNode(
 export function addInput(
   editorEnv: EditorEnvironment,
   ctx: CanvasRenderingContext2D,
-  type: InputTypes,
+  type: NodeTypes,
   x: number,
   y: number
 ): number {
-  let newInput = new InputComponent(
-    editorEnv.nextComponentId,
-    new Vector2(x, y),
-    ctx.canvas.width,
-    ctx.canvas.height,
-    type,
-    undefined,
-    editorEnv.inputImageList,
-    editorEnv.signalGraph
-  );
-  editorEnv.inputs.set(editorEnv.nextComponentId, newInput);
-  newInput = editorEnv.inputs.get(editorEnv.nextComponentId)!;
-
-  const slotInfo = InputComponent.getInputTypeObject(type).connectionSlot;
-  const slotId = addSlot(
-    editorEnv,
-    slotInfo.localPos.x,
-    slotInfo.localPos.y,
-    newInput,
-    false
-  );
-  newInput.slotComponents = [editorEnv.slots.get(slotId)!];
-  signalEvents.addVertex(
-    editorEnv,
-    editorEnv.nextComponentId,
-    undefined,
-    ...signalEvents.convertToSignalFromList(
-      editorEnv,
-      newInput.id,
-      ComponentType.INPUT
-    )
-  );
-  return editorEnv.updateComponentId();
+  return addNode(editorEnv, ctx, type, x, y, ComponentType.INPUT);
 }
 
 export function addOutput(
   editorEnv: EditorEnvironment,
   ctx: CanvasRenderingContext2D,
-  type: OutputTypes,
+  type: NodeTypes,
   x: number,
   y: number
 ): number {
-  let newOutput = new OutputComponent(
-    editorEnv.nextComponentId,
-    new Vector2(x, y),
-    ctx.canvas.width,
-    ctx.canvas.height,
-    type,
-    undefined,
-    editorEnv.outputImageList,
-    editorEnv.signalGraph
-  );
-  editorEnv.outputs.set(editorEnv.nextComponentId, newOutput);
-  newOutput = editorEnv.outputs.get(editorEnv.nextComponentId)!;
-
-  const slotInfo = OutputComponent.getOutputTypeObject(type)[0].connectionSlot;
-  const slotId = addSlot(
-    editorEnv,
-    slotInfo.localPos.x,
-    slotInfo.localPos.y,
-    newOutput,
-    true
-  );
-  newOutput.slotComponents = [editorEnv.slots.get(slotId)!];
-
-  signalEvents.addVertex(
-    editorEnv,
-    editorEnv.nextComponentId,
-    undefined,
-    ...signalEvents.convertToSignalFromList(
-      editorEnv,
-      newOutput.id,
-      ComponentType.OUTPUT
-    )
-  );
-  return editorEnv.updateComponentId();
+  return addNode(editorEnv, ctx, type, x, y, ComponentType.OUTPUT);
 }
 
 export function addSlot(

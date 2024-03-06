@@ -1,9 +1,4 @@
-import {
-  ConnectionVertex,
-  InputTypes,
-  NodeTypes,
-  OutputTypes,
-} from './types/types';
+import {ConnectionVertex, NodeTypes} from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
 import {updateBackground, updateCanvas} from './functions/canvasDraw';
 import EditorEnvironment from './EditorEnvironment';
@@ -106,6 +101,7 @@ export default class Editor {
     });
     canvasDOM.addEventListener('mouseout', () => {
       this.mouse.clicked = false;
+      this.mouse.mouseOut = true;
       this.mouseEvents.onMouseRelease(this.editorEnv);
     });
     window.addEventListener('mousemove', ({x, y}) => {
@@ -186,7 +182,7 @@ export default class Editor {
   }
 
   node(
-    type = NodeTypes.ADD,
+    type = NodeTypes.G_ADD,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
@@ -194,7 +190,7 @@ export default class Editor {
   }
 
   input(
-    type = InputTypes.SWITCH,
+    type = NodeTypes.I_SWITCH,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
@@ -202,7 +198,7 @@ export default class Editor {
   }
 
   output(
-    type = OutputTypes.MONO_LED_RED,
+    type = NodeTypes.O_LED_RED,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
@@ -257,14 +253,6 @@ export default class Editor {
     if (this.mouseEvents.getCollisionList().nodes.length !== 0)
       return this.editorEnv.removeComponent(
         this.mouseEvents.getCollisionList().nodes![0]
-      );
-    else if (this.mouseEvents.getCollisionList().inputs.length !== 0)
-      return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().inputs![0]
-      );
-    else if (this.mouseEvents.getCollisionList().outputs.length !== 0)
-      return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().outputs![0]
       );
     else if (this.mouseEvents.getCollisionList().connections.length !== 0)
       return this.editorEnv.removeComponent(

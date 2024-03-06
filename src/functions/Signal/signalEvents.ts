@@ -122,14 +122,9 @@ export default {
     if (!editorEnv.signalGraph.has(nodeId)) {
       let slots: Array<SlotComponent> = [];
       switch (componentType) {
-        case ComponentType.INPUT:
-          slots = editorEnv.inputs.get(nodeId)?.slotComponents ?? [];
-          break;
         case ComponentType.NODE:
           slots = editorEnv.nodes.get(nodeId)?.slotComponents ?? [];
           break;
-        case ComponentType.OUTPUT:
-          slots = editorEnv.outputs.get(nodeId)?.slotComponents ?? [];
       }
       for (let i = 0; i < slots.length; i++) {
         if (slots[i].inSlot) {

@@ -18,6 +18,9 @@ import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
 import signalEvents from '../functions/Signal/signalEvents';
+import {SwitchInput} from '../objects/inputTypeObjects';
+import {LEDROutput} from '../objects/outputTypeObjects';
+import {getImageSublist} from '../functions/preloadImage';
 
 class NodeComponent implements Node {
   public readonly id: number;
@@ -32,8 +35,9 @@ class NodeComponent implements Node {
   private readonly _signalGraph: SignalGraph;
   public selected: boolean;
 
-  get image() {
-    return this._images.get(this.nodeType.id);
+  get image(): ImageBitmap {
+    if (this.componentType === ComponentType.NODE) return this._images[0];
+    return this._images[this.state ? 1 : 0];
   }
 
   get state() {
@@ -47,6 +51,7 @@ class NodeComponent implements Node {
   constructor(
     id: number,
     position: Vector2,
+    componentType: ComponentType,
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
@@ -56,10 +61,10 @@ class NodeComponent implements Node {
   ) {
     this.id = id;
     this.position = position;
-    this.componentType = ComponentType.NODE;
+    this.componentType = componentType;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slots;
-    this._images = images;
+    this._images = getImageSublist(images, this.nodeType.imgPath);
     this._signalGraph = signalGraph;
     this.imageWidth = this.image!.width;
     this.imageHeight = this.image!.height;
@@ -81,20 +86,24 @@ class NodeComponent implements Node {
   static getNodeTypeObject(type: NodeTypes): NodeTypeObject {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
-      case NodeTypes.ADD:
+      case NodeTypes.G_ADD:
         return ADDNode;
-      case NodeTypes.NAND:
+      case NodeTypes.G_NAND:
         return NANDNode;
-      case NodeTypes.NOR:
+      case NodeTypes.G_NOR:
         return NORNode;
-      case NodeTypes.NOT:
+      case NodeTypes.G_NOT:
         return NOTNode;
-      case NodeTypes.OR:
+      case NodeTypes.G_OR:
         return ORNode;
-      case NodeTypes.XNOR:
+      case NodeTypes.G_XNOR:
         return XNORNode;
-      case NodeTypes.XOR:
+      case NodeTypes.G_XOR:
         return XORNode;
+      case NodeTypes.I_SWITCH:
+        return SwitchInput;
+      case NodeTypes.O_LED_RED:
+        return LEDROutput;
       default:
         return NOTNode;
     }

@@ -1,4 +1,4 @@
-import {NodeList} from '../../types/types';
+import ComponentType, {NodeList} from '../../types/types';
 import Vector2 from '../../types/Vector2';
 import MouseEvents from '../mouseEvents';
 import NodeComponent from '../../components/NodeComponent';
@@ -42,5 +42,13 @@ export default {
           connection.move(slot.globalPosition, useDelta, 1);
       });
     });
+  },
+  switchInputState(nodes: NodeList, inputId: number): boolean {
+    const input = nodes.get(inputId);
+    if (input && input.componentType === ComponentType.INPUT) {
+      input.state = !input.state;
+      return true;
+    }
+    return false;
   },
 };

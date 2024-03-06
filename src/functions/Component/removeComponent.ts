@@ -15,30 +15,6 @@ export function removeNode(
   return editorEnv.nodes.delete(componentId);
 }
 
-export function removeInput(
-  editorEnv: EditorEnvironment,
-  componentId: number
-): boolean {
-  const input = editorEnv.inputs.get(componentId);
-  if (input === undefined) return false;
-  for (let i = 0; i < input.slotComponents.length; i++)
-    editorEnv.removeComponent(input.slotComponents[i].id, ComponentType.SLOT);
-  signalEvents.removeVertex(editorEnv, componentId);
-  return editorEnv.inputs.delete(componentId);
-}
-
-export function removeOutput(
-  editorEnv: EditorEnvironment,
-  componentId: number
-): boolean {
-  const output = editorEnv.outputs.get(componentId);
-  if (output === undefined) return false;
-  for (let i = 0; i < output.slotComponents.length; i++)
-    editorEnv.removeComponent(output.slotComponents[i].id, ComponentType.SLOT);
-  signalEvents.removeVertex(editorEnv, componentId);
-  return editorEnv.outputs.delete(componentId);
-}
-
 export function removeSlot(
   editorEnv: EditorEnvironment,
   componentId: number

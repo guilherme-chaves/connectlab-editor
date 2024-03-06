@@ -1,8 +1,21 @@
-import {NodeTypeObject, NodeTypes} from '../types/types';
+import {NodeTypeObject, NodeTypes, slotStates} from '../types/types';
 import Vector2 from '../types/Vector2';
+import ADDPath from '../assets/gates/AND_ANSI.svg';
+import NANDPath from '../assets/gates/NAND_ANSI.svg';
+import NORPath from '../assets/gates/NOR_ANSI.svg';
+import NOTPath from '../assets/gates/NOT_ANSI.svg';
+import ORPath from '../assets/gates/OR_ANSI.svg';
+import XNORPath from '../assets/gates/XNOR_ANSI.svg';
+import XORPath from '../assets/gates/XOR_ANSI.svg';
 
-const ADDNode: NodeTypeObject = {
-  id: NodeTypes.ADD,
+export function hasUndefined(slotState: [slotStates, slotStates]) {
+  if (slotState[0] === undefined || slotState[1] === undefined) return true;
+  return false;
+}
+
+export const ADDNode: NodeTypeObject = {
+  id: NodeTypes.G_ADD,
+  imgPath: [ADDPath],
   connectionSlot: [
     {
       id: 0,
@@ -24,12 +37,13 @@ const ADDNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? slotState[0] && slotState[1] : false;
+    return hasUndefined(slotState) ? undefined : slotState[0] && slotState[1];
   },
 };
 
-const NANDNode: NodeTypeObject = {
-  id: NodeTypes.NAND,
+export const NANDNode: NodeTypeObject = {
+  id: NodeTypes.G_NAND,
+  imgPath: [NANDPath],
   connectionSlot: [
     {
       id: 0,
@@ -51,12 +65,15 @@ const NANDNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? !(slotState[0] && slotState[1]) : false;
+    return hasUndefined(slotState)
+      ? undefined
+      : !(slotState[0] && slotState[1]);
   },
 };
 
-const NORNode: NodeTypeObject = {
-  id: NodeTypes.NOR,
+export const NORNode: NodeTypeObject = {
+  id: NodeTypes.G_NOR,
+  imgPath: [NORPath],
   connectionSlot: [
     {
       id: 0,
@@ -78,12 +95,15 @@ const NORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? !(slotState[0] || slotState[1]) : false;
+    return hasUndefined(slotState)
+      ? undefined
+      : !(slotState[0] || slotState[1]);
   },
 };
 
-const NOTNode: NodeTypeObject = {
-  id: NodeTypes.NOT,
+export const NOTNode: NodeTypeObject = {
+  id: NodeTypes.G_NOT,
+  imgPath: [NOTPath],
   connectionSlot: [
     {
       id: 0,
@@ -99,12 +119,13 @@ const NOTNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 1 ? !slotState[0] : true;
+    return slotState[0] === undefined ? undefined : !slotState[0];
   },
 };
 
-const ORNode: NodeTypeObject = {
-  id: NodeTypes.OR,
+export const ORNode: NodeTypeObject = {
+  id: NodeTypes.G_OR,
+  imgPath: [ORPath],
   connectionSlot: [
     {
       id: 0,
@@ -126,12 +147,13 @@ const ORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? slotState[0] || slotState[1] : false;
+    return hasUndefined(slotState) ? undefined : slotState[0] || slotState[1];
   },
 };
 
-const XNORNode: NodeTypeObject = {
-  id: NodeTypes.XNOR,
+export const XNORNode: NodeTypeObject = {
+  id: NodeTypes.G_XNOR,
+  imgPath: [XNORPath],
   connectionSlot: [
     {
       id: 0,
@@ -153,12 +175,13 @@ const XNORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? slotState[0] === slotState[1] : false;
+    return hasUndefined(slotState) ? undefined : slotState[0] === slotState[1];
   },
 };
 
-const XORNode: NodeTypeObject = {
-  id: NodeTypes.XOR,
+export const XORNode: NodeTypeObject = {
+  id: NodeTypes.G_XOR,
+  imgPath: [XORPath],
   connectionSlot: [
     {
       id: 0,
@@ -180,8 +203,6 @@ const XORNode: NodeTypeObject = {
     },
   ],
   op(slotState) {
-    return slotState.length >= 2 ? slotState[0] !== slotState[1] : false;
+    return hasUndefined(slotState) ? undefined : slotState[0] !== slotState[1];
   },
 };
-
-export {ADDNode, NANDNode, NORNode, NOTNode, ORNode, XNORNode, XORNode};

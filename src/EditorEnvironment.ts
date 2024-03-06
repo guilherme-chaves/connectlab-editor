@@ -5,21 +5,13 @@ import ComponentType, {
   ConnectionList,
   SlotList,
   TextList,
-  InputList,
-  OutputList,
   SignalGraph,
 } from './types/types';
 import preloadNodeImages from './functions/Node/preloadNodeImages';
 import {
-  preloadInputImages,
-  preloadOutputImages,
-} from './functions/IO/preloadIOImages';
-import {
   removeNode,
   removeSlot,
   removeConnection,
-  removeInput,
-  removeOutput,
   removeText,
 } from './functions/Component/removeComponent';
 
@@ -30,11 +22,7 @@ class EditorEnvironment {
   public slots: SlotList;
   public connections: ConnectionList;
   public texts: TextList;
-  public inputs: InputList;
-  public outputs: OutputList;
   public readonly nodeImageList: ImageListObject;
-  public readonly inputImageList: ImageListObject;
-  public readonly outputImageList: ImageListObject;
   public signalGraph: SignalGraph;
 
   constructor(
@@ -43,9 +31,7 @@ class EditorEnvironment {
     nodeList = new Map(),
     slotList = new Map(),
     connectionList = new Map(),
-    textList = new Map(),
-    inputList = new Map(),
-    outputList = new Map()
+    textList = new Map()
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
@@ -53,12 +39,8 @@ class EditorEnvironment {
     this.slots = slotList;
     this.connections = connectionList;
     this.texts = textList;
-    this.inputs = inputList;
-    this.outputs = outputList;
     this.signalGraph = new Map();
     this.nodeImageList = preloadNodeImages();
-    this.inputImageList = preloadInputImages();
-    this.outputImageList = preloadOutputImages();
   }
 
   /* Getters e Setters */
@@ -73,8 +55,6 @@ class EditorEnvironment {
       slots: this.slots,
       connections: this.connections,
       texts: this.texts,
-      inputs: this.inputs,
-      outputs: this.outputs,
     };
   }
 
@@ -95,6 +75,8 @@ class EditorEnvironment {
     if (type) {
       switch (type) {
         case ComponentType.NODE:
+        case ComponentType.INPUT:
+        case ComponentType.OUTPUT:
           return removeNode(this, componentId);
         case ComponentType.SLOT:
           return removeSlot(this, componentId);
@@ -102,10 +84,6 @@ class EditorEnvironment {
           return removeConnection(this, componentId);
         case ComponentType.TEXT:
           return removeText(this, componentId);
-        case ComponentType.INPUT:
-          return removeInput(this, componentId);
-        case ComponentType.OUTPUT:
-          return removeOutput(this, componentId);
         default:
           return false;
       }
@@ -113,8 +91,6 @@ class EditorEnvironment {
       const component =
         this.connections.get(componentId) ??
         this.nodes.get(componentId) ??
-        this.inputs.get(componentId) ??
-        this.outputs.get(componentId) ??
         this.slots.get(componentId) ??
         this.texts.get(componentId);
       if (component !== undefined)

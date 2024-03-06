@@ -1,6 +1,10 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import Node from '../../interfaces/nodeInterface';
-import ComponentType, {SignalGraph, SignalGraphData} from '../../types/types';
+import ComponentType, {
+  SignalGraph,
+  SignalGraphData,
+  slotStates,
+} from '../../types/types';
 
 export default {
   updateGraph(editorEnv: EditorEnvironment): void {
@@ -16,7 +20,7 @@ export default {
     do {
       if (!visited.has(stack[0])) {
         visited.add(stack[0]);
-        const nodeObj = this.getNodeObject(editorEnv, stack[0]);
+        const nodeObj = editorEnv.nodes.get(stack[0]);
         if (nodeObj !== undefined) {
           stack.push(...(editorEnv.signalGraph.get(stack[0])?.signalTo ?? []));
           if (
@@ -46,25 +50,15 @@ export default {
     if (node.signalFrom.length < 1) return;
     for (let i = 0; i < node.signalFrom.length; i++)
       this.updateVertexStatus(editorEnv, node.signalFrom[i], visited);
-    const nodeObj = this.getNodeObject(editorEnv, nodeId);
+    const nodeObj = editorEnv.nodes.get(nodeId);
     if (nodeObj !== undefined && nodeObj.componentType !== ComponentType.INPUT)
       this.computeState(editorEnv.signalGraph, node, nodeObj);
   },
-  getNodeObject(
-    editorEnv: EditorEnvironment,
-    nodeId: number
-  ): Node | undefined {
-    return (
-      editorEnv.nodes.get(nodeId) ??
-      editorEnv.inputs.get(nodeId) ??
-      editorEnv.outputs.get(nodeId)
-    );
-  },
   computeState(signalGraph: SignalGraph, node: SignalGraphData, nodeObj: Node) {
-    const op: (slotState: Array<boolean>) => boolean = nodeObj.nodeType.op;
-    const slotStatus: Array<boolean> = [];
-    for (let i = 0; i < node.signalFrom.length; i++)
-      slotStatus.push(signalGraph.get(node.signalFrom[i])?.state ?? false);
+    const op = nodeObj.nodeType.op;
+    const slotStatus: [slotStates, slotStates] = [undefined, undefined];
+    slotStatus[0] = signalGraph.get(node.signalFrom[0])?.state ?? undefined;
+    slotStatus[1] = signalGraph.get(node.signalFrom[1])?.state ?? undefined;
     node.state = op(slotStatus);
   },
 };

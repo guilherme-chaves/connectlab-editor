@@ -1,13 +1,6 @@
 import {FullComponentList} from '../types/types';
 
-const drawOrder = [
-  'connections',
-  'nodes',
-  'inputs',
-  'outputs',
-  'slots',
-  'texts',
-];
+const drawOrder = ['connections', 'nodes', 'slots', 'texts'];
 
 // Limpa o canvas antes de desenhar um novo quadro
 export function clearFrame(ctx: CanvasRenderingContext2D) {

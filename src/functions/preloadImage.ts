@@ -6,16 +6,31 @@ import {ImageListObject} from '../types/types';
  * @argument Array(s) com chave da imagem e caminho (path) da imagem, no formato [chave, chaminho]
  * @returns Objeto com a lista de imagens
  */
-export default function preloadImage(list: Map<number, string>) {
-  const images: ImageListObject = new Map();
-  list.forEach((value, key) => {
+export default function preloadImage(list: string[]) {
+  const images: ImageListObject = {};
+  for (const key of list) {
     const image = new Image();
     image.onload = () => {
       Promise.all([createImageBitmap(image)]).then(bitmap => {
-        images.set(key, bitmap[0]);
+        images[key] = bitmap[0];
       });
     };
-    image.src = value;
-  });
+    image.src = key;
+  }
   return images;
+}
+
+export function getImageSublist(
+  imageList: ImageListObject,
+  imgPaths: string[]
+): ImageListObject {
+  const subArr: ImageListObject = {};
+  let i = 0;
+  for (const path of imgPaths) {
+    if (Object.keys(imageList).includes(path)) {
+      subArr[i] = imageList[path];
+      i++;
+    }
+  }
+  return subArr;
 }

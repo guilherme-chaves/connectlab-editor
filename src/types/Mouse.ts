@@ -9,6 +9,7 @@ export default class Mouse {
   public readonly clickToDragThreshold = 6; // pixels
   public readonly doubleClickTimer = 300; // ms
   private alreadyClicked = false;
+  public mouseOut = false;
 
   get clicked() {
     return this._mouseClicked;

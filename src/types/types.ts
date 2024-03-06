@@ -1,7 +1,5 @@
 import ConnectionComponent from '../components/ConnectionComponent';
-import InputComponent from '../components/InputComponent';
 import NodeComponent from '../components/NodeComponent';
-import OutputComponent from '../components/OutputComponent';
 import SlotComponent from '../components/SlotComponent';
 import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
@@ -16,23 +14,17 @@ enum ComponentType {
   OUTPUT = 6,
 }
 
+// G(ate)_*, I(nput)_*, O(utput)_*
 export enum NodeTypes {
-  ADD = 0,
-  NAND = 1,
-  NOR = 2,
-  NOT = 3,
-  OR = 4,
-  XNOR = 5,
-  XOR = 6,
-}
-
-export enum InputTypes {
-  SWITCH = 0,
-}
-
-export enum OutputTypes {
-  MONO_LED_OFF = 0,
-  MONO_LED_RED = 1,
+  G_ADD = 0,
+  G_NAND = 1,
+  G_NOR = 2,
+  G_NOT = 3,
+  G_OR = 4,
+  G_XNOR = 5,
+  G_XOR = 6,
+  I_SWITCH = 100,
+  O_LED_RED = 200,
 }
 
 export enum EditorMode {
@@ -42,7 +34,7 @@ export enum EditorMode {
   PROP = 3,
 }
 
-export type ImageListObject = Map<number, ImageBitmap>;
+export type ImageListObject = Record<string, ImageBitmap>;
 
 export type NodeList = Map<number, NodeComponent>;
 
@@ -52,18 +44,12 @@ export type ConnectionList = Map<number, ConnectionComponent>;
 
 export type TextList = Map<number, TextComponent>;
 
-export type InputList = Map<number, InputComponent>;
-
-export type OutputList = Map<number, OutputComponent>;
-
 export interface FullComponentList {
   [index: string]: Map<number, Component>;
   nodes: NodeList;
   slots: SlotList;
   connections: ConnectionList;
   texts: TextList;
-  inputs: InputList;
-  outputs: OutputList;
 }
 
 export interface ConnectionVertex {
@@ -77,40 +63,23 @@ export interface ConnectionVertices {
   end: ConnectionVertex | undefined;
 }
 
+export type slotStates = boolean | undefined;
+
 // Modelo para criação de objetos do tipo NODE
 export interface NodeTypeObject {
   readonly id: NodeTypes;
+  readonly imgPath: string[];
   readonly connectionSlot: Array<{
     id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
     name: string; // Nome do slot (adiciona textNode?)
     localPos: Vector2; // Posição do slot, relativo ao elemento-pai
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
-  readonly op: (slotState: Array<boolean>) => boolean; // Operação booleana envolvendo o valor atual dos slots
-}
-
-export interface InputTypeObject {
-  readonly id: InputTypes;
-  readonly connectionSlot: {
-    id: number;
-    name: string;
-    localPos: Vector2;
-  };
-  readonly op: (slotState: Array<boolean>) => boolean;
-}
-
-export interface OutputTypeObject {
-  readonly id: OutputTypes;
-  readonly connectionSlot: {
-    id: number;
-    name: string;
-    localPos: Vector2;
-  };
-  readonly op: (slotState: Array<boolean>) => boolean;
+  readonly op: (slotState: [slotStates, slotStates]) => slotStates; // Operação booleana envolvendo o valor atual dos slots
 }
 
 export interface SignalGraphData {
-  state: boolean;
+  state: boolean | undefined;
   signalFrom: Array<number>;
   signalTo: Array<number>;
 }
