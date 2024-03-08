@@ -26,6 +26,13 @@ body {
   overflow-y: auto;
 }
 
+#app-toolbar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 #app-key-list {
   list-style-type: none;
   margin: 0;

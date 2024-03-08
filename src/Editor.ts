@@ -20,7 +20,7 @@ import {gzipSync} from 'fflate';
 
 export default class Editor {
   // Lista de componentes
-  public readonly editorEnv;
+  public editorEnv;
   // Controle de eventos do canvas
   private readonly mouse: Mouse;
   private readonly keyboard: Keyboard;
@@ -67,9 +67,9 @@ export default class Editor {
     this.frameRate = frameRate;
   }
 
-  // static loadFile(jsonData): Editor
+  // loadFile(ev: Event): void {}
 
-  saveToFile() {
+  saveToFile(editor: Editor) {
     const a = document.createElement('a');
     const file = new TextEncoder().encode(editor.editorEnv.saveAsJson());
     const compressed = gzipSync(file, {level: 6});
@@ -122,6 +122,13 @@ export default class Editor {
     window.addEventListener('keyup', () => {
       this.keyboardEvents.onKeyUp();
     });
+    document
+      .getElementById('save-editor')
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ?.addEventListener('click', _ => this.saveToFile(this));
+    // document
+    //   .getElementById('load-project')
+    //   ?.addEventListener('change', this.loadFile, false);
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
