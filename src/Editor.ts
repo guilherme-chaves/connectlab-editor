@@ -16,6 +16,7 @@ import {
   addSlot,
   addText,
 } from './functions/Component/addComponent';
+import {gzipSync} from 'fflate';
 
 export default class Editor {
   // Lista de componentes
@@ -70,9 +71,12 @@ export default class Editor {
 
   saveToFile() {
     const a = document.createElement('a');
-    const file = new Blob([this.editorEnv.saveAsJson()], {type: 'text/plain'});
-    a.href = URL.createObjectURL(file);
-    a.download = `${this.editorEnv.documentId}-save-${Date.now()}.txt`;
+    const file = new TextEncoder().encode(editor.editorEnv.saveAsJson());
+    const compressed = gzipSync(file, {level: 6});
+    a.href = URL.createObjectURL(
+      new Blob([compressed], {type: 'application/gzip'})
+    );
+    a.download = `${this.editorEnv.documentId}-save-${Date.now()}.save`;
     a.click();
   }
 

@@ -15,6 +15,11 @@ import {
   removeText,
 } from './functions/Component/removeComponent';
 
+type EditorEnvironmentObject = {
+  id: string;
+  data: Object[];
+};
+
 class EditorEnvironment {
   public documentId: string;
   private _nextComponentId: number;
@@ -100,13 +105,16 @@ class EditorEnvironment {
   }
 
   saveAsJson(): string {
-    let jsonOutput = '';
+    const env: EditorEnvironmentObject = {
+      id: this.documentId,
+      data: [],
+    };
     for (const category of Object.values(this.components)) {
       for (const component of category.values()) {
-        jsonOutput += JSON.stringify(component.toObject());
+        env.data.push(component.toObject());
       }
     }
-    return jsonOutput;
+    return JSON.stringify(env);
   }
 }
 export default EditorEnvironment;
