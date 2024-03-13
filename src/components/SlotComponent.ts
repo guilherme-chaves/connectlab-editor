@@ -1,10 +1,10 @@
 import CircleCollision from '../collision/CircleCollision';
-import Component from '../interfaces/componentInterface';
+import Component, {ComponentObject} from '../interfaces/componentInterface';
 import Vector2, {VectorObject} from '../types/Vector2';
 import ComponentType from '../types/types';
 import ConnectionComponent from './ConnectionComponent';
 
-type SlotObject = {
+export interface SlotObject extends ComponentObject {
   id: number;
   componentType: ComponentType;
   position: VectorObject;
@@ -15,7 +15,7 @@ type SlotObject = {
   colorActive: string;
   radius: number;
   attractionRadius: number;
-};
+}
 
 export default class SlotComponent implements Component {
   public readonly id: number;
@@ -109,7 +109,7 @@ export default class SlotComponent implements Component {
     this.collisionShape.draw(ctx, this.selected);
   }
 
-  toObject(): Object {
+  toObject(): SlotObject {
     const slotObj: SlotObject = {
       id: this.id,
       componentType: this.componentType,

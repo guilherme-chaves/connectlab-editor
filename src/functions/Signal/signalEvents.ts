@@ -12,24 +12,23 @@ export default {
     signalFrom: Array<number> = [],
     signalTo: Array<number> = []
   ): void {
-    if (!editorEnv.signalGraph.has(nodeId)) {
-      editorEnv.signalGraph.set(nodeId, {state, signalFrom, signalTo});
+    if (!editorEnv.signalGraph[nodeId]) {
+      editorEnv.signalGraph[nodeId] = {state, signalFrom, signalTo};
       signalUpdate.updateGraph(editorEnv);
     }
   },
   removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
-    if (editorEnv.signalGraph.has(nodeId)) {
-      editorEnv.signalGraph.get(nodeId)!.signalTo.forEach(connectedNode => {
+    if (editorEnv.signalGraph[nodeId]) {
+      editorEnv.signalGraph[nodeId].signalTo.forEach(connectedNode => {
         const index =
-          editorEnv.signalGraph
-            .get(connectedNode)
-            ?.signalFrom.indexOf(nodeId) ?? -1;
+          editorEnv.signalGraph[connectedNode]?.signalFrom.indexOf(nodeId) ??
+          -1;
         if (index !== -1) {
-          editorEnv.signalGraph.get(connectedNode)!.signalFrom.splice(index, 1);
-          editorEnv.signalGraph.get(connectedNode)!.state = undefined;
+          editorEnv.signalGraph[connectedNode].signalFrom.splice(index, 1);
+          editorEnv.signalGraph[connectedNode].state = undefined;
         }
       });
-      editorEnv.signalGraph.delete(nodeId);
+      delete editorEnv.signalGraph[nodeId];
       signalUpdate.updateGraph(editorEnv);
     }
   },
@@ -45,18 +44,18 @@ export default {
       if (slot !== undefined) endNodeId = slot.parent.id;
     }
 
-    if (editorEnv.signalGraph.has(startNodeId)) {
+    if (editorEnv.signalGraph[startNodeId]) {
       if (
-        editorEnv.signalGraph
-          .get(startNodeId)!
-          .signalTo.find(el => endNodeId === el) === undefined
+        editorEnv.signalGraph[startNodeId].signalTo.find(
+          el => endNodeId === el
+        ) === undefined
       )
-        editorEnv.signalGraph.get(startNodeId)!.signalTo.push(endNodeId);
+        editorEnv.signalGraph[startNodeId].signalTo.push(endNodeId);
     } else {
       this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
     }
-    if (editorEnv.signalGraph.has(endNodeId)) {
-      editorEnv.signalGraph.get(endNodeId)!.signalFrom.push(startNodeId);
+    if (editorEnv.signalGraph[endNodeId]) {
+      editorEnv.signalGraph[endNodeId].signalFrom.push(startNodeId);
     } else {
       this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
     }
@@ -73,37 +72,35 @@ export default {
     const endNodeId = editorEnv.slots.get(endSlotId)?.parent.id ?? -1;
     if (endNodeId !== -1) {
       const indexSF =
-        editorEnv.signalGraph.get(endNodeId)?.signalFrom.indexOf(startNodeId) ??
-        -1;
+        editorEnv.signalGraph[endNodeId]?.signalFrom.indexOf(startNodeId) ?? -1;
       if (indexSF !== -1)
-        editorEnv.signalGraph.get(endNodeId)!.signalFrom.splice(indexSF, 1);
+        editorEnv.signalGraph[endNodeId].signalFrom.splice(indexSF, 1);
     }
     if (startNodeId !== -1) {
       const indexST =
-        editorEnv.signalGraph.get(startNodeId)?.signalTo.indexOf(endNodeId) ??
-        -1;
+        editorEnv.signalGraph[startNodeId]?.signalTo.indexOf(endNodeId) ?? -1;
       if (indexST !== -1)
-        editorEnv.signalGraph.get(startNodeId)!.signalTo.splice(indexST, 1);
+        editorEnv.signalGraph[startNodeId].signalTo.splice(indexST, 1);
     }
     signalUpdate.updateGraph(editorEnv);
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): slotStates {
-    return signalGraph.get(nodeId)?.state ?? false;
+    return signalGraph[nodeId]?.state ?? false;
   },
   setVertexState(
     signalGraph: SignalGraph,
     nodeId: number,
     state: slotStates
   ): void {
-    if (signalGraph.has(nodeId)) {
-      signalGraph.get(nodeId)!.state = state;
+    if (signalGraph[nodeId]) {
+      signalGraph[nodeId].state = state;
     }
   },
   getVertexConnections(
     signalGraph: SignalGraph,
     nodeId: number
   ): Array<number> {
-    return signalGraph.get(nodeId)?.signalFrom ?? [];
+    return signalGraph[nodeId]?.signalFrom ?? [];
   },
   // setVertexConnections(nodeId: number, signalFrom: Array<number>): void {
 
@@ -115,7 +112,7 @@ export default {
   ): [Array<number>, Array<number>] {
     const signalFrom: Array<number> = [];
     const signalTo: Array<number> = [];
-    if (!editorEnv.signalGraph.has(nodeId)) {
+    if (!editorEnv.signalGraph[nodeId]) {
       let slots: Array<SlotComponent> = [];
       switch (componentType) {
         case ComponentType.NODE:

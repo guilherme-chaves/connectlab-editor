@@ -9,9 +9,9 @@ import ComponentType, {
 export default {
   updateGraph(editorEnv: EditorEnvironment): void {
     const visited: Set<number> = new Set();
-    editorEnv.signalGraph.forEach((_node, key) => {
-      this.updateVertexStatus(editorEnv, key, visited);
-    });
+    for (const key of Object.keys(editorEnv.signalGraph)) {
+      this.updateVertexStatus(editorEnv, parseInt(key), visited);
+    }
     visited.clear();
   },
   updateGraphPartial(editorEnv: EditorEnvironment, nodeId: number): void {
@@ -22,14 +22,14 @@ export default {
         visited.add(stack[0]);
         const nodeObj = editorEnv.nodes.get(stack[0]);
         if (nodeObj !== undefined) {
-          stack.push(...(editorEnv.signalGraph.get(stack[0])?.signalTo ?? []));
+          stack.push(...(editorEnv.signalGraph[stack[0]]?.signalTo ?? []));
           if (
             stack[0] !== nodeId &&
             nodeObj.componentType !== ComponentType.INPUT
           ) {
             this.computeState(
               editorEnv.signalGraph,
-              editorEnv.signalGraph.get(stack[0])!,
+              editorEnv.signalGraph[stack[0]],
               nodeObj
             );
           }
@@ -45,7 +45,7 @@ export default {
   ): void {
     if (visited.has(nodeId)) return;
     visited.add(nodeId);
-    const node = editorEnv.signalGraph.get(nodeId);
+    const node = editorEnv.signalGraph[nodeId];
     if (node === undefined) return;
     if (node.signalFrom.length < 1) return;
     for (let i = 0; i < node.signalFrom.length; i++)
@@ -57,8 +57,8 @@ export default {
   computeState(signalGraph: SignalGraph, node: SignalGraphData, nodeObj: Node) {
     const op = nodeObj.nodeType.op;
     const slotStatus: [slotStates, slotStates] = [false, false];
-    slotStatus[0] = signalGraph.get(node.signalFrom[0])?.state ?? false;
-    slotStatus[1] = signalGraph.get(node.signalFrom[1])?.state ?? false;
+    slotStatus[0] = signalGraph[node.signalFrom[0]]?.state ?? false;
+    slotStatus[1] = signalGraph[node.signalFrom[1]]?.state ?? false;
     node.state = op(slotStatus);
   },
 };

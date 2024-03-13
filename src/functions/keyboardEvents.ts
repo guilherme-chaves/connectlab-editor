@@ -100,7 +100,7 @@ export default class KeyboardEvents {
         editor.remove();
         break;
       case specialKeycodes.INSERT:
-        editor.saveToFile();
+        editor.saveToFile(editor);
     }
   }
 

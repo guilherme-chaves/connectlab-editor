@@ -1,16 +1,16 @@
 import ComponentType from '../types/types';
 import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
-import Component from '../interfaces/componentInterface';
+import Component, {ComponentObject} from '../interfaces/componentInterface';
 
-type TextObject = {
+export interface TextObject extends ComponentObject {
   id: number;
   componentType: ComponentType;
   position: VectorObject;
   text: string;
   parentId: number | undefined;
   style: string;
-};
+}
 
 class TextComponent implements Component {
   public readonly id: number;
@@ -74,7 +74,7 @@ class TextComponent implements Component {
     this.collisionShape.moveShape(v, useDelta);
   }
 
-  toObject(): Object {
+  toObject(): TextObject {
     const textObj: TextObject = {
       id: this.id,
       componentType: this.componentType,

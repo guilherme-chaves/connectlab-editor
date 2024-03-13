@@ -16,7 +16,8 @@ import {
   addSlot,
   addText,
 } from './functions/Component/addComponent';
-import {gzipSync} from 'fflate';
+import {gzipSync, gunzipSync} from 'fflate';
+import preloadNodeImages from './functions/Node/preloadNodeImages';
 
 export default class Editor {
   // Lista de componentes
@@ -45,7 +46,7 @@ export default class Editor {
     canvasVh = 1,
     frameRate = 60.0
   ) {
-    this.editorEnv = new EditorEnvironment(documentId);
+    this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
     this.mouse = new Mouse();
     this.keyboard = new Keyboard();
     this.mouseEvents = new MouseEvents(this.mouse);
@@ -67,7 +68,26 @@ export default class Editor {
     this.frameRate = frameRate;
   }
 
-  // loadFile(ev: Event): void {}
+  loadFile(ev: Event): void {
+    if (!ev.target) {
+      console.error('Falha ao tentar carregar os dados da entrada de dados');
+      return;
+    }
+    const input = ev.target as HTMLInputElement;
+    if (!input.files) return;
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(input.files[0]);
+    reader.onload = () => {
+      if (!reader.result || typeof reader.result === 'string') return;
+      const unzipped = gunzipSync(new Uint8Array(reader.result));
+      const jsonData = JSON.parse(new TextDecoder().decode(unzipped));
+      this.editorEnv = EditorEnvironment.createFromJson(
+        jsonData,
+        this.canvasCtx,
+        this.editorEnv.nodeImageList
+      );
+    };
+  }
 
   saveToFile(editor: Editor) {
     const a = document.createElement('a');
@@ -124,11 +144,14 @@ export default class Editor {
     });
     document
       .getElementById('save-editor')
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      ?.addEventListener('click', _ => this.saveToFile(this));
-    // document
-    //   .getElementById('load-project')
-    //   ?.addEventListener('change', this.loadFile, false);
+      ?.addEventListener('click', () => this.saveToFile(this));
+    document.getElementById('load-editor')?.addEventListener('click', () => {
+      document.getElementById('load-editor-file')?.click();
+      return;
+    });
+    document
+      .getElementById('load-editor-file')
+      ?.addEventListener('change', ev => this.loadFile(ev));
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
@@ -202,7 +225,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addNode(this.editorEnv, this.canvasCtx, type, x, y);
+    return addNode(undefined, this.editorEnv, this.canvasCtx, type, x, y);
   }
 
   input(
@@ -210,7 +233,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addInput(this.editorEnv, this.canvasCtx, type, x, y);
+    return addInput(undefined, this.editorEnv, this.canvasCtx, type, x, y);
   }
 
   output(
@@ -218,7 +241,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addOutput(this.editorEnv, this.canvasCtx, type, x, y);
+    return addOutput(undefined, this.editorEnv, this.canvasCtx, type, x, y);
   }
 
   line(
@@ -229,7 +252,7 @@ export default class Editor {
     from?: ConnectionVertex,
     to?: ConnectionVertex
   ): number {
-    return addConnection(this.editorEnv, x1, y1, x2, y2, from, to);
+    return addConnection(undefined, this.editorEnv, x1, y1, x2, y2, from, to);
   }
 
   text(
@@ -239,7 +262,16 @@ export default class Editor {
     style?: string,
     parent?: Component
   ): number {
-    return addText(this.editorEnv, this.canvasCtx, text, x, y, style, parent);
+    return addText(
+      undefined,
+      this.editorEnv,
+      this.canvasCtx,
+      text,
+      x,
+      y,
+      style,
+      parent
+    );
   }
 
   slot(
@@ -253,6 +285,7 @@ export default class Editor {
     colorActive?: string
   ) {
     return addSlot(
+      undefined,
       this.editorEnv,
       x,
       y,

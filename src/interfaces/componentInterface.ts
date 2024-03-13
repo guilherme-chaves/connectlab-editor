@@ -1,6 +1,12 @@
-import Vector2 from '../types/Vector2';
+import Vector2, {VectorObject} from '../types/Vector2';
 import ComponentType from '../types/types';
 import Collision from './collisionInterface';
+
+export interface ComponentObject {
+  readonly id: number;
+  readonly componentType: ComponentType;
+  readonly position: VectorObject;
+}
 
 export default interface Component {
   readonly id: number;
@@ -10,5 +16,5 @@ export default interface Component {
   selected: boolean;
   move(v: Vector2, useDelta: boolean): void;
   draw(ctx: CanvasRenderingContext2D): void;
-  toObject(): Object;
+  toObject(): ComponentObject;
 }

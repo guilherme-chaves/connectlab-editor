@@ -83,6 +83,6 @@ export interface SignalGraphData {
   signalTo: Array<number>;
 }
 
-export type SignalGraph = Map<number, SignalGraphData>;
+export type SignalGraph = Record<number, SignalGraphData>;
 
 export default ComponentType;

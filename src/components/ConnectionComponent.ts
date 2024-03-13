@@ -2,16 +2,16 @@ import ComponentType, {ConnectionVertices} from '../types/types';
 import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';
-import Component from '../interfaces/componentInterface';
+import Component, {ComponentObject} from '../interfaces/componentInterface';
 
-type ConnectionObject = {
+export interface ConnectionObject extends ComponentObject {
   id: number;
   componentType: ComponentType;
   position: VectorObject;
   endPosition: VectorObject;
   anchors: {x: number; y: number}[];
   connectedTo: ConnectionVertices;
-};
+}
 
 class ConnectionComponent implements Component {
   public readonly id: number;
@@ -154,7 +154,7 @@ class ConnectionComponent implements Component {
     }
   }
 
-  toObject(): Object {
+  toObject(): ConnectionObject {
     const connectionObj: ConnectionObject = {
       id: this.id,
       componentType: this.componentType,
