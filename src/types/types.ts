@@ -5,7 +5,7 @@ import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
 import Vector2 from './Vector2';
 
-enum ComponentType {
+export enum ComponentType {
   LINE = 1,
   NODE = 2,
   TEXT = 3,
@@ -84,5 +84,3 @@ export interface SignalGraphData {
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;
-
-export default ComponentType;

@@ -1,4 +1,4 @@
-import ComponentType, {ConnectionVertices} from '../types/types';
+import {ComponentType, ConnectionVertices} from '../types/types';
 import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';

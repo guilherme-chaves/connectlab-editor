@@ -1,4 +1,5 @@
-import ComponentType, {
+import {
+  ComponentType,
   ImageListObject,
   NodeTypes,
   SignalGraph,

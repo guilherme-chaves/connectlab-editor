@@ -1,7 +1,7 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
 import SlotComponent from '../../components/SlotComponent';
-import ComponentType, {SignalGraph, slotStates} from '../../types/types';
+import {ComponentType, SignalGraph, slotStates} from '../../types/types';
 import signalUpdate from './signalUpdate';
 
 export default {

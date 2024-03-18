@@ -1,6 +1,6 @@
 import Editor from '../../Editor';
 import Vector2 from '../../types/Vector2';
-import ComponentType, {ConnectionList} from '../../types/types';
+import {ComponentType, ConnectionList} from '../../types/types';
 import slotEvents from '../slotEvents';
 import SlotComponent from '../../components/SlotComponent';
 import signalEvents from '../Signal/signalEvents';

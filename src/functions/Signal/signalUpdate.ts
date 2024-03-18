@@ -1,6 +1,7 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import Node from '../../interfaces/nodeInterface';
-import ComponentType, {
+import {
+  ComponentType,
   SignalGraph,
   SignalGraphData,
   slotStates,

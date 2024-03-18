@@ -5,7 +5,7 @@ import SlotComponent from '../../components/SlotComponent';
 import TextComponent from '../../components/TextComponent';
 import Component from '../../interfaces/componentInterface';
 import Vector2 from '../../types/Vector2';
-import ComponentType, {ConnectionVertex, NodeTypes} from '../../types/types';
+import {ComponentType, ConnectionVertex, NodeTypes} from '../../types/types';
 import signalEvents from '../Signal/signalEvents';
 
 export function addNode(

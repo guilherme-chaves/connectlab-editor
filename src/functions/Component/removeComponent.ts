@@ -1,5 +1,5 @@
 import EditorEnvironment from '../../EditorEnvironment';
-import ComponentType from '../../types/types';
+import {ComponentType} from '../../types/types';
 import signalEvents from '../Signal/signalEvents';
 
 export function removeNode(

@@ -1,4 +1,4 @@
-import ComponentType, {NodeList} from '../../types/types';
+import {ComponentType, NodeList} from '../../types/types';
 import Vector2 from '../../types/Vector2';
 import MouseEvents from '../mouseEvents';
 import NodeComponent from '../../components/NodeComponent';
