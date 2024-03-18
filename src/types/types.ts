@@ -84,3 +84,5 @@ export interface SignalGraphData {
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;
+
+export type VectorObject = {x: number; y: number; float?: boolean};

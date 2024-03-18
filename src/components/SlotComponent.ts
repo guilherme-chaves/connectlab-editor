@@ -1,7 +1,7 @@
 import CircleCollision from '../collision/CircleCollision';
 import Component, {ComponentObject} from '../interfaces/componentInterface';
-import Vector2, {VectorObject} from '../types/Vector2';
-import {ComponentType} from '../types/types';
+import Vector2 from '../types/Vector2';
+import {ComponentType, VectorObject} from '../types/types';
 import ConnectionComponent from './ConnectionComponent';
 
 export interface SlotObject extends ComponentObject {

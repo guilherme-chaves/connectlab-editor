@@ -4,6 +4,7 @@ import {
   NodeTypes,
   SignalGraph,
   slotStates,
+  VectorObject,
 } from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
@@ -15,7 +16,7 @@ import {
   XNORNode,
   XORNode,
 } from '../objects/nodeTypeObjects';
-import Vector2, {VectorObject} from '../types/Vector2';
+import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';

@@ -1,35 +1,12 @@
-interface Vector2Interface {
-  add(other: Vector2, forceFloat: boolean): Vector2;
-  sub(other: Vector2, forceFloat: boolean): Vector2;
-  multS(s: number, forceFloat: boolean): Vector2;
-  mult(other: Vector2, forceFloat: boolean): Vector2;
-  div(other: Vector2, forceFloat: boolean): Vector2;
-  dot(other: Vector2): number;
-  cross(other: Vector2): number;
-  mag(): number;
-  magSq(): number;
-  madd(other: Vector2, s: number, forceFloat: boolean): Vector2;
-  lerp(other: Vector2, t: number, forceFloat: boolean): Vector2;
-  bilinear(other: Vector2, bt: Vector2, forceFloat: boolean): Vector2;
-  equals(other: Vector2): boolean;
-  min(other: Vector2): Vector2;
-  max(other: Vector2): Vector2;
-  rotate(angle: number): Vector2;
-  getAngle(other: Vector2): number;
-  normalize(): Vector2;
-  toPlainObject(): VectorObject;
-}
-
-export type VectorObject = {x: number; y: number; float: boolean};
+import {Vector2 as Vector2Interface} from '../interfaces/Vector2';
+import {VectorObject} from './types';
 
 class Vector2 implements Vector2Interface {
-  private forceFloat: boolean;
-  private _x = 0;
-  private _y = 0;
+  public x: number = 0;
+  public y: number = 0;
   static readonly ZERO = new Vector2();
 
-  constructor(xOrVector2: number | Vector2 = 0, y = 0, forceFloat = false) {
-    this.forceFloat = forceFloat;
+  constructor(xOrVector2: number | Vector2 = 0, y = 0) {
     if (typeof xOrVector2 === 'number') {
       this.x = xOrVector2;
       this.y = y;
@@ -39,51 +16,35 @@ class Vector2 implements Vector2Interface {
     }
   }
 
-  get x(): number {
-    return this._x;
+  add(other: Vector2Interface): Vector2 {
+    return new Vector2(this.x + other.x, this.y + other.y);
   }
 
-  set x(value: number) {
-    this._x = this.forceFloat ? value : Math.floor(value);
+  sub(other: Vector2Interface): Vector2 {
+    return new Vector2(this.x - other.x, this.y - other.y);
   }
 
-  get y(): number {
-    return this._y;
+  multS(s: number): Vector2 {
+    return new Vector2(this.x * s, this.y * s);
   }
 
-  set y(value: number) {
-    this._y = this.forceFloat ? value : Math.floor(value);
+  mult(other: Vector2Interface): Vector2 {
+    return new Vector2(this.x * other.x, this.y * other.y);
   }
 
-  add(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x + other.x, this.y + other.y, forceFloat);
+  div(other: Vector2Interface): Vector2 {
+    return new Vector2(this.x / other.x, this.y / other.y);
   }
 
-  sub(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x - other.x, this.y - other.y, forceFloat);
+  divS(s: number): Vector2 {
+    return new Vector2(this.x / s, this.y / s);
   }
 
-  multS(s: number, forceFloat = false): Vector2 {
-    return new Vector2(this.x * s, this.y * s, forceFloat);
-  }
-
-  mult(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x * other.x, this.y * other.y, forceFloat);
-  }
-
-  div(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(this.x / other.x, this.y / other.y, forceFloat);
-  }
-
-  divS(s: number, forceFloat = false): Vector2 {
-    return new Vector2(this.x / s, this.y / s, forceFloat);
-  }
-
-  dot(other: Vector2): number {
+  dot(other: Vector2Interface): number {
     return this.x * other.x + this.y * other.y;
   }
 
-  cross(other: Vector2): number {
+  cross(other: Vector2Interface): number {
     return this.x * other.y - this.y * other.x;
   }
 
@@ -95,46 +56,30 @@ class Vector2 implements Vector2Interface {
     return this.dot(this);
   }
 
-  madd(other: Vector2, s: number, forceFloat = false): Vector2 {
-    return new Vector2(this.x + s * other.x, this.y + s * other.y, forceFloat);
+  madd(other: Vector2Interface, s: number): Vector2 {
+    return new Vector2(this.x + s * other.x, this.y + s * other.y);
   }
 
   // Interpolação linear
-  lerp(other: Vector2, t: number, forceFloat = false): Vector2 {
-    return this.madd(other.sub(this), t, forceFloat);
+  lerp(other: Vector2Interface, t: number): Vector2 {
+    return this.madd(other.sub(this), t);
   }
 
   // Interpolação bilinear
-  bilinear(
-    other: Vector2,
-    bt: Vector2 | DOMPoint,
-    forceFloat = false
-  ): Vector2 {
-    return new Vector2(
-      this.lerp(other, bt.x, forceFloat).x,
-      this.lerp(other, bt.y, forceFloat).y,
-      forceFloat
-    );
+  bilinear(other: Vector2Interface, bt: Vector2Interface | DOMPoint): Vector2 {
+    return new Vector2(this.lerp(other, bt.x).x, this.lerp(other, bt.y).y);
   }
 
   equals(other: Vector2): boolean {
     return this.x === other.x && this.y === other.y;
   }
 
-  min(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(
-      Math.min(this.x, other.x),
-      Math.min(this.y, other.y),
-      forceFloat
-    );
+  min(other: Vector2): Vector2 {
+    return new Vector2(Math.min(this.x, other.x), Math.min(this.y, other.y));
   }
 
-  max(other: Vector2, forceFloat = false): Vector2 {
-    return new Vector2(
-      Math.max(this.x, other.x),
-      Math.max(this.y, other.y),
-      forceFloat
-    );
+  max(other: Vector2): Vector2 {
+    return new Vector2(Math.max(this.x, other.x), Math.max(this.y, other.y));
   }
 
   rotate(angle: number): Vector2 {
@@ -147,18 +92,17 @@ class Vector2 implements Vector2Interface {
   }
 
   getAngle(other: Vector2): number {
-    return Math.atan2(other.y - this.y, other.x - this._x);
+    return Math.atan2(other.y - this.y, other.x - this.x);
   }
 
   normalize(): Vector2 {
-    return this.divS(Math.sqrt(this.magSq()), true);
+    return this.divS(Math.sqrt(this.magSq()));
   }
 
   toPlainObject(): VectorObject {
     return {
-      x: this._x,
-      y: this._y,
-      float: this.forceFloat,
+      x: this.x,
+      y: this.y,
     };
   }
 }

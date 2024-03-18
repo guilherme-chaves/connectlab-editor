@@ -1,5 +1,5 @@
-import {ComponentType, ConnectionVertices} from '../types/types';
-import Vector2, {VectorObject} from '../types/Vector2';
+import {ComponentType, ConnectionVertices, VectorObject} from '../types/types';
+import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import ConnectionPathFunctions from '../functions/Connection/connectionPath';
 import Component, {ComponentObject} from '../interfaces/componentInterface';
@@ -136,7 +136,7 @@ class ConnectionComponent implements Component {
     }
     const nAnchor = position
       .sub(this.position)
-      .div(this.endPosition.sub(this.position), true);
+      .div(this.endPosition.sub(this.position));
     this.anchors[index] = new DOMPoint(nAnchor.x, nAnchor.y);
     this.regenConnectionPath = true;
   }

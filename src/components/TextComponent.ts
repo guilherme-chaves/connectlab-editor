@@ -1,5 +1,5 @@
-import {ComponentType} from '../types/types';
-import Vector2, {VectorObject} from '../types/Vector2';
+import {ComponentType, VectorObject} from '../types/types';
+import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Component, {ComponentObject} from '../interfaces/componentInterface';
 
