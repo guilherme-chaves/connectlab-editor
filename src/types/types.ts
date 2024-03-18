@@ -58,7 +58,6 @@ export interface ConnectionVertex {
 }
 
 export interface ConnectionVertices {
-  [index: symbol]: ConnectionVertex | undefined;
   start: ConnectionVertex | undefined;
   end: ConnectionVertex | undefined;
 }
@@ -84,6 +83,6 @@ export interface SignalGraphData {
   signalTo: Array<number>;
 }
 
-export type SignalGraph = Map<number, SignalGraphData>;
+export type SignalGraph = Record<number, SignalGraphData>;
 
 export default ComponentType;

@@ -1,8 +1,15 @@
 {
   "name": "connectlab-editor",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "commonjs",
+  "engines": {
+    "node": ">=11.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/guilherme-chaves/connectlab-editor.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -24,5 +31,8 @@
     "prettier": ">=3.1.1",
     "typescript": ">=5.3.3",
     "vite": ">=5.0.12"
+  },
+  "dependencies": {
+    "fflate": "^0.8.2"
   }
 }

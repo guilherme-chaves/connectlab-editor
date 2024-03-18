@@ -14,7 +14,7 @@ import {
   XNORNode,
   XORNode,
 } from '../objects/nodeTypeObjects';
-import Vector2 from '../types/Vector2';
+import Vector2, {VectorObject} from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
@@ -22,6 +22,16 @@ import signalEvents from '../functions/Signal/signalEvents';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import {getImageSublist} from '../functions/preloadImage';
+import {ComponentObject} from '../interfaces/componentInterface';
+
+export interface NodeObject extends ComponentObject {
+  id: number;
+  componentType: ComponentType;
+  nodeType: NodeTypes;
+  position: VectorObject;
+  slotIds: number[];
+  state: boolean;
+}
 
 class NodeComponent implements Node {
   public readonly id: number;
@@ -58,7 +68,8 @@ class NodeComponent implements Node {
     canvasHeight: number,
     slots: Array<SlotComponent>,
     images: ImageListObject,
-    signalGraph: SignalGraph
+    signalGraph: SignalGraph,
+    shiftPosition = true
   ) {
     this.id = id;
     this.position = position;
@@ -69,13 +80,15 @@ class NodeComponent implements Node {
     this._signalGraph = signalGraph;
     this.imageWidth = this.image!.width;
     this.imageHeight = this.image!.height;
-    this.position = this.position.sub(
-      new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
-    );
-    const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
-      new Vector2(this.imageWidth, this.imageHeight)
-    );
-    this.position = this.position.min(canvasBound).max(Vector2.ZERO);
+    if (shiftPosition) {
+      this.position = this.position.sub(
+        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      );
+      const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
+        new Vector2(this.imageWidth, this.imageHeight)
+      );
+      this.position = this.position.min(canvasBound).max(Vector2.ZERO);
+    }
     this.collisionShape = new BBCollision(
       this.position,
       this.imageWidth,
@@ -126,6 +139,18 @@ class NodeComponent implements Node {
     ctx.drawImage(this.image!, this.position.x, this.position.y);
     if (this.collisionShape !== undefined)
       this.collisionShape.draw(ctx, this.selected);
+  }
+
+  toObject(): NodeObject {
+    const nodeObj: NodeObject = {
+      id: this.id,
+      componentType: this.componentType,
+      nodeType: this.nodeType.id,
+      position: this.position.toPlainObject(),
+      slotIds: this.slotComponents.map(value => value.id),
+      state: this.state,
+    };
+    return nodeObj;
   }
 }
 
