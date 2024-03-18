@@ -210,7 +210,8 @@ class EditorEnvironment {
         lineObj.endPosition.x,
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
-        lineObj.connectedTo.end
+        lineObj.connectedTo.end,
+        lineObj.anchors
       );
       if (lineObj.connectedTo.start)
         newEnv.slots

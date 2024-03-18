@@ -9,7 +9,7 @@ export interface ConnectionObject extends ComponentObject {
   componentType: ComponentType;
   position: VectorObject;
   endPosition: VectorObject;
-  anchors: {x: number; y: number}[];
+  anchors: Array<DOMPoint>;
   connectedTo: ConnectionVertices;
 }
 
@@ -30,14 +30,15 @@ class ConnectionComponent implements Component {
     id: number,
     startPoint: Vector2,
     endPosition: Vector2,
-    connections: ConnectionVertices = {start: undefined, end: undefined}
+    connections: ConnectionVertices = {start: undefined, end: undefined},
+    anchors?: Array<DOMPoint>
   ) {
     // A variável position funciona como startPoint
     this.id = id;
     this.position = startPoint;
     this.componentType = ComponentType.LINE;
     this.endPosition = endPosition;
-    this.anchors = [
+    this.anchors = anchors ?? [
       new DOMPoint(0.25, 0),
       new DOMPoint(0.25, 0.5),
       new DOMPoint(0.5, 0.5),
@@ -160,13 +161,9 @@ class ConnectionComponent implements Component {
       componentType: this.componentType,
       position: this.position.toPlainObject(),
       endPosition: this.endPosition.toPlainObject(),
-      anchors: [],
+      anchors: this.anchors,
       connectedTo: this.connectedTo,
     };
-
-    connectionObj.anchors = this.anchors.map(value => {
-      return {x: value.x, y: value.y};
-    });
 
     return connectionObj;
   }
