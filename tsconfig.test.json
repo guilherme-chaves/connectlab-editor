@@ -1,6 +1,13 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "declaration": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitReturns": true,
+    "pretty": true,
+    "sourceMap": true,
+
     "rootDir": ".",
     "outDir": "./build",
     "target": "ES2020",
@@ -12,7 +19,7 @@
     "removeComments": true,
 
     /* Bundler mode */
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -25,7 +32,7 @@
     "noFallthroughCasesInSwitch": true,
   },
   "include": [
-    "src/**/*.ts",
-    "test/**/*.ts"
-  ]
+    "test"
+  ],
+  "exclude": []
 }

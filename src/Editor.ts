@@ -32,10 +32,10 @@ export default class Editor {
   private readonly canvasCtx: CanvasRenderingContext2D;
   private readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: DOMPoint; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
-  private backgroundPattern: CanvasPattern | null;
-  private windowArea: DOMPoint;
-  private windowResized: boolean;
+  private canvasArea: DOMPoint | undefined; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private backgroundPattern: CanvasPattern | null = null;
+  private windowArea: DOMPoint | undefined;
+  private windowResized: boolean | undefined;
   public readonly frameRate: number;
 
   constructor(
@@ -64,12 +64,14 @@ export default class Editor {
     this.canvasId = canvasID;
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
-    this.createEditorEvents(canvasDOM, backgroundDOM);
-    this.backgroundPattern = null;
-    this.canvasArea = new DOMPoint(canvasVw, canvasVh);
-    this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
-    this.loadBackgroundPattern(bgTexturePath);
-    this.windowResized = true;
+    if (!testMode) {
+      this.createEditorEvents(canvasDOM, backgroundDOM);
+      this.backgroundPattern = null;
+      this.canvasArea = new DOMPoint(canvasVw, canvasVh);
+      this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
+      this.loadBackgroundPattern(bgTexturePath);
+      this.windowResized = true;
+    }
     this.frameRate = frameRate;
   }
 
@@ -206,11 +208,13 @@ export default class Editor {
 
   resize() {
     this.computeWindowArea();
-    this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    this.windowResized = true;
+    if (this.windowArea !== undefined && this.canvasArea !== undefined) {
+      this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+      this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+      this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+      this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+      this.windowResized = true;
+    }
   }
 
   update = () => {
