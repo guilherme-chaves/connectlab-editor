@@ -42,13 +42,14 @@ class NodeComponent implements Node {
   public readonly nodeType: NodeTypeObject;
   public slotComponents: Array<SlotComponent>;
   public collisionShape: BBCollision;
-  private _images: ImageListObject;
+  private _images: ImageListObject | undefined;
   private imageWidth: number;
   private imageHeight: number;
   private readonly _signalGraph: SignalGraph;
   public selected: boolean;
 
-  get image(): ImageBitmap {
+  get image(): ImageBitmap | undefined {
+    if (this._images === undefined) return undefined;
     if (this.componentType === ComponentType.NODE) return this._images[0];
     return this._images[this.state ? 1 : 0];
   }
@@ -69,7 +70,7 @@ class NodeComponent implements Node {
     canvasWidth: number,
     canvasHeight: number,
     slots: Array<SlotComponent>,
-    images: ImageListObject,
+    images: ImageListObject | undefined,
     signalGraph: SignalGraph,
     shiftPosition = true
   ) {
@@ -80,8 +81,8 @@ class NodeComponent implements Node {
     this.slotComponents = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
     this._signalGraph = signalGraph;
-    this.imageWidth = this.image!.width;
-    this.imageHeight = this.image!.height;
+    this.imageWidth = this.image?.width ?? 100;
+    this.imageHeight = this.image?.height ?? 100;
     if (shiftPosition) {
       this.position = this.position.sub(
         new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
@@ -138,7 +139,8 @@ class NodeComponent implements Node {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    ctx.drawImage(this.image!, this.position.x, this.position.y);
+    if (this.image === undefined) return;
+    ctx.drawImage(this.image, this.position.x, this.position.y);
     if (this.collisionShape !== undefined)
       this.collisionShape.draw(ctx, this.selected);
   }

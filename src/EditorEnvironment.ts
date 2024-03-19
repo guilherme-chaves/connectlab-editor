@@ -46,13 +46,13 @@ class EditorEnvironment {
   public slots: SlotList;
   public connections: ConnectionList;
   public texts: TextList;
-  public readonly nodeImageList: ImageListObject;
+  public readonly nodeImageList: ImageListObject | undefined;
   public signalGraph: SignalGraph;
 
   constructor(
     documentId: string,
     startId = 0,
-    imageList: ImageListObject,
+    imageList: ImageListObject | undefined,
     signalGraph: SignalGraph = {},
     nodeList = new Map(),
     slotList = new Map(),
@@ -167,7 +167,7 @@ class EditorEnvironment {
   static createFromJson(
     data: EditorEnvironmentObject,
     ctx: CanvasRenderingContext2D,
-    imageList: ImageListObject
+    imageList: ImageListObject | undefined
   ): EditorEnvironment {
     const newEnv = new EditorEnvironment(
       data.id,

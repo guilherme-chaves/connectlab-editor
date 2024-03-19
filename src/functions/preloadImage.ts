@@ -21,9 +21,15 @@ export default function preloadImage(list: string[]) {
 }
 
 export function getImageSublist(
-  imageList: ImageListObject,
-  imgPaths: string[]
-): ImageListObject {
+  imageList?: ImageListObject,
+  imgPaths?: string[]
+): ImageListObject | undefined {
+  if (
+    imageList === undefined ||
+    imgPaths === undefined ||
+    imgPaths.length === 0
+  )
+    return undefined;
   const subArr: ImageListObject = {};
   let i = 0;
   for (const path of imgPaths) {

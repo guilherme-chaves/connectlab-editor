@@ -44,9 +44,14 @@ export default class Editor {
     backgroundID: string,
     canvasVw = 1,
     canvasVh = 1,
-    frameRate = 60.0
+    frameRate = 60.0,
+    testMode = false
   ) {
-    this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
+    this.editorEnv = new EditorEnvironment(
+      documentId,
+      0,
+      testMode ? undefined : preloadNodeImages()
+    );
     this.mouse = new Mouse();
     this.keyboard = new Keyboard();
     this.mouseEvents = new MouseEvents(this.mouse);
