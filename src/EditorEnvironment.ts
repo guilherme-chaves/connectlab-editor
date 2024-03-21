@@ -27,6 +27,7 @@ import {
 } from './functions/Component/addComponent';
 import SlotComponent, {SlotObject} from './components/SlotComponent';
 import TextComponent, {TextObject} from './components/TextComponent';
+import Vector2 from './types/Vector2';
 
 type EditorEnvironmentObject = {
   id: string;
@@ -212,7 +213,7 @@ class EditorEnvironment {
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
         lineObj.connectedTo.end,
-        lineObj.anchors
+        lineObj.anchors.map(vo => new Vector2(vo.x, vo.y, vo.useInt))
       );
       if (lineObj.connectedTo.start)
         newEnv.slots
