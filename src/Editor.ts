@@ -178,6 +178,7 @@ export default class Editor {
   }
 
   computeWindowArea() {
+    if (this.windowArea === undefined) return;
     const canvasParentEl = document.getElementById(
       this.canvasId
     )?.parentElement;
