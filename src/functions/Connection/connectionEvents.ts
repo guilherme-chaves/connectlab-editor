@@ -6,6 +6,7 @@ import SlotComponent from '../../components/SlotComponent';
 import signalEvents from '../Signal/signalEvents';
 import EditorEnvironment from '../../EditorEnvironment';
 import MouseEvents from '../mouseEvents';
+import ConnectionComponent from '../../components/ConnectionComponent';
 
 export default {
   editingLineId: -1,
@@ -35,6 +36,7 @@ export default {
     if (slotCollisions.length > 0) {
       const slot = editor.editorEnv.slots.get(slotCollisions[0]);
       if (!slot) return false;
+      // debugger;
       this.editingLineId = editor.line(
         slot.globalPosition.x,
         slot.globalPosition.y,
@@ -129,7 +131,7 @@ export default {
 
         // Define as posições inicial e final da conexão para os dois slots
         this.changeConnectionParams(
-          editorEnv,
+          editorEnv.connections.get(this.editingLineId)!,
           startSlot.globalPosition,
           currentSlot.globalPosition,
           this.lineStartSlot,
@@ -180,28 +182,18 @@ export default {
     }
   },
   changeConnectionParams(
-    editorEnv: EditorEnvironment,
+    connection: ConnectionComponent,
     startPos?: Vector2,
     endPos?: Vector2,
     startSlotId?: number,
     endSlotId?: number
   ) {
-    if (startPos !== undefined)
-      editorEnv.connections
-        .get(this.editingLineId)!
-        .move(startPos, false, 0, false);
-    if (endPos !== undefined)
-      editorEnv.connections
-        .get(this.editingLineId)!
-        .move(endPos, false, 1, false);
+    if (startPos !== undefined) connection.move(startPos, false, 0, false);
+    if (endPos !== undefined) connection.move(endPos, false, 1, false);
     if (startSlotId !== undefined)
-      editorEnv.connections
-        .get(this.editingLineId)!
-        .changeConnection(startSlotId, ComponentType.SLOT, false);
+      connection.changeConnection(startSlotId, ComponentType.SLOT, false);
     if (endSlotId !== undefined)
-      editorEnv.connections
-        .get(this.editingLineId)!
-        .changeConnection(endSlotId, ComponentType.SLOT, true);
+      connection.changeConnection(endSlotId, ComponentType.SLOT, true);
   },
   removeOldInSlotConnection(editorEnv: EditorEnvironment, slot: SlotComponent) {
     if (!slot.inSlot) return;

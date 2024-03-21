@@ -84,13 +84,13 @@ class NodeComponent implements Node {
     this.imageWidth = this.image?.width ?? 100;
     this.imageHeight = this.image?.height ?? 100;
     if (shiftPosition) {
-      this.position = this.position.sub(
+      this.position.sub(
         new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
       );
       const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
         new Vector2(this.imageWidth, this.imageHeight)
       );
-      this.position = this.position.min(canvasBound).max(Vector2.ZERO);
+      this.position.min(canvasBound).max(Vector2.ZERO);
     }
     this.collisionShape = new BBCollision(
       this.position,
@@ -128,11 +128,13 @@ class NodeComponent implements Node {
 
   move(v: Vector2, useDelta = true): void {
     if (useDelta) {
-      this.position = this.position.add(v);
-      this.collisionShape.moveShape(v);
+      this.position.add(v);
+      this.collisionShape.moveShape(this.position, false);
     } else {
-      this.position = v.sub(
-        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      Vector2.sub(
+        v,
+        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0),
+        this.position
       );
       this.collisionShape.moveShape(this.position, false);
     }

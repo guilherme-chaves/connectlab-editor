@@ -33,12 +33,12 @@ export default class CircleCollision implements Collision {
 
   moveShape(v: Vector2, useDelta = true): void {
     if (useDelta) this.position.add(v);
-    else this.position = v;
+    else Vector2.copy(v, this.position);
     this.drawPath = this.generatePath();
   }
 
   collisionWithPoint(point: Vector2): boolean {
-    return this.position.sub(point).magSq() < this.radiusSquared;
+    return Vector2.sub(this.position, point).lenSquared() < this.radiusSquared;
   }
 
   collisionWithAABB(other: BBCollision): boolean {
@@ -57,6 +57,9 @@ export default class CircleCollision implements Collision {
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
-    return this.position.sub(other.position).mag() < this.radius + other.radius;
+    return (
+      Vector2.sub(this.position, other.position).len() <
+      this.radius + other.radius
+    );
   }
 }

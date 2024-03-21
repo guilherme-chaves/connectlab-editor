@@ -61,16 +61,18 @@ class TextComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
+    ctx.save();
     ctx.font = this.style;
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
     ctx.fillText(this.text, this.position.x, this.position.y);
+    ctx.restore();
     this.collisionShape.draw(ctx, this.selected);
   }
 
   move(v: Vector2, useDelta = true) {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
+    if (useDelta) this.position.add(v);
+    else Vector2.copy(v, this.position);
     this.collisionShape.moveShape(v, useDelta);
   }
 

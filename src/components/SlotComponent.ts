@@ -20,6 +20,7 @@ export interface SlotObject extends ComponentObject {
 export default class SlotComponent implements Component {
   public readonly id: number;
   public position: Vector2;
+  public globalPosition: Vector2;
   public readonly componentType: ComponentType;
   public readonly parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
@@ -31,10 +32,6 @@ export default class SlotComponent implements Component {
   private radius: number;
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
   public collisionShape: CircleCollision;
-
-  get globalPosition() {
-    return this.position.add(this.parent.position);
-  }
 
   get slotConnections() {
     return this._slotConnections;
@@ -60,6 +57,7 @@ export default class SlotComponent implements Component {
   ) {
     this.id = id;
     this.position = position;
+    this.globalPosition = Vector2.add(position, parent.position);
     this.componentType = ComponentType.SLOT;
     this.parent = parent;
     this._slotConnections = connections;
@@ -77,13 +75,15 @@ export default class SlotComponent implements Component {
   }
 
   move(v: Vector2, useDelta = true) {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
+    if (useDelta) this.position.add(v);
+    else Vector2.copy(v, this.position);
+    Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
     this.drawPath = this.generatePath();
   }
 
   update() {
+    Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
     this.drawPath = this.generatePath();
   }

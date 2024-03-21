@@ -10,6 +10,7 @@ interface BBPoints {
 export default class BBCollision implements Collision {
   public position: Vector2;
   public readonly points: BBPoints;
+  public readonly globalPoints: BBPoints;
   public readonly width: number;
   public readonly height: number;
   private drawPath: Path2D;
@@ -26,14 +27,15 @@ export default class BBCollision implements Collision {
     this.height = height;
     this.borderColor = borderColor;
     this.points = this.setPoints();
+    this.globalPoints = {
+      a: this.position,
+      b: Vector2.add(this.position, this.points.b),
+    };
     this.drawPath = this.generatePath();
   }
 
-  get globalPoints(): BBPoints {
-    return {
-      a: this.position,
-      b: this.position.add(this.points.b),
-    };
+  private setGlobalPoints(): void {
+    Vector2.add(this.position, this.points.b, this.globalPoints.b);
   }
 
   private setPoints(): BBPoints {
@@ -58,8 +60,9 @@ export default class BBCollision implements Collision {
   }
 
   moveShape(v: Vector2, useDelta = true): void {
-    if (useDelta) this.position = this.position.add(v);
-    else this.position = v;
+    if (useDelta) this.position.add(v);
+    else Vector2.copy(v, this.position);
+    this.setGlobalPoints();
     this.drawPath = this.generatePath();
   }
 

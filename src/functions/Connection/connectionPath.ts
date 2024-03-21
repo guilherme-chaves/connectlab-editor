@@ -1,6 +1,5 @@
 import BBCollision from '../../collision/BBCollision';
 import Vector2 from '../../types/Vector2';
-import ConnectionComponent from '../../components/ConnectionComponent';
 import {QUARTER_PI, THREE_QUARTER_PI} from '../../types/consts';
 
 export default {
@@ -22,23 +21,17 @@ export default {
   //   //Teste
   // },
 
-  generateAnchors(connection: ConnectionComponent): Array<DOMPoint> {
-    const anchorsArr: Array<DOMPoint> = [];
-    let lastAnchorAdded: DOMPoint = new DOMPoint(0, 0);
-    const startPos = connection.position;
-    let currentPos = connection.position;
-    const endPosition = connection.endPosition;
-    const defaultXStepDivisor = 2.0;
-    const defaultYStepDivisor = 1.0;
-    // eslint-disable-next-line prefer-const
-    let xStepDivisor = defaultXStepDivisor;
-    // eslint-disable-next-line prefer-const
-    let yStepDivisor = defaultYStepDivisor;
-    const stepTo = Vector2.ZERO;
+  generateAnchors(position: Vector2, endPosition: Vector2): Array<Vector2> {
+    const anchorsArr: Array<Vector2> = [];
+    let lastAnchorAdded = new Vector2();
+    const currentPos = position.copy();
+    const stepDivisor = new Vector2(2, 1, false);
+    let newAnchor: Vector2;
     let loopRuns = 0;
     // eslint-disable-next-line no-constant-condition
     while (true) {
-      const headedTowards = currentPos.getAngle(endPosition);
+      const stepTo = new Vector2(0, 0, false);
+      const headedTowards = currentPos.angleBetween(endPosition);
       stepTo.x =
         headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
           ? 1
@@ -52,15 +45,12 @@ export default {
           : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
             ? -1
             : 0;
-      const newAnchor = new DOMPoint(0, 0);
       if (anchorsArr.length === 0) {
-        newAnchor.x = Math.abs(stepTo.x) / xStepDivisor;
-        newAnchor.y = Math.abs(stepTo.y) / yStepDivisor;
+        newAnchor = stepTo.abs().div(stepDivisor);
       } else {
-        newAnchor.x = lastAnchorAdded.x + Math.abs(stepTo.x) / xStepDivisor;
-        newAnchor.y = lastAnchorAdded.y + Math.abs(stepTo.y) / yStepDivisor;
+        newAnchor = stepTo.abs().div(stepDivisor).add(lastAnchorAdded);
       }
-      currentPos = startPos.bilinear(endPosition, newAnchor);
+      Vector2.bilinear(position, endPosition, newAnchor, currentPos);
       anchorsArr.push(newAnchor);
       lastAnchorAdded = newAnchor;
 
@@ -77,20 +67,20 @@ export default {
     return anchorsArr;
   },
 
-  generateCollisionShapes(connection: ConnectionComponent) {
-    if (connection.anchors.length === 0) return [];
-
+  generateCollisionShapes(
+    position: Vector2,
+    endPosition: Vector2,
+    anchors: Vector2[]
+  ) {
+    if (anchors.length === 0) return [];
     const collisionArr = [];
-    let pPos = connection.position;
+    let pPos = position.copy();
+    const nPos = new Vector2();
     // 0 => Ponto inicial à primeira âncora, length => última âncora à ponto final
-    for (let i = 0; i <= connection.anchors.length; i++) {
-      let nPos = Vector2.ZERO;
-      if (i < connection.anchors.length)
-        nPos = connection.position.bilinear(
-          connection.endPosition,
-          connection.anchors[i]
-        );
-      else nPos = connection.endPosition;
+    for (let i = 0; i <= anchors.length; i++) {
+      if (i < anchors.length)
+        Vector2.bilinear(position, endPosition, anchors[i], nPos);
+      else Vector2.copy(endPosition, nPos);
       const size = this.alignConnectionWithAxis(
         pPos,
         nPos,
@@ -102,7 +92,7 @@ export default {
       collisionArr.push(
         new BBCollision(pPos.sub(new Vector2(3, 3)), size.x, size.y)
       );
-      pPos = nPos;
+      pPos = nPos.copy();
     }
     return collisionArr;
   },

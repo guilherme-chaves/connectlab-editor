@@ -168,7 +168,7 @@ export function addConnection(
   y2: number,
   from?: ConnectionVertex,
   to?: ConnectionVertex,
-  anchors?: Array<DOMPoint>
+  anchors?: Array<Vector2>
 ): number {
   const definedId = id >= 0 ? id : editorEnv.nextComponentId;
   const newLine = new ConnectionComponent(

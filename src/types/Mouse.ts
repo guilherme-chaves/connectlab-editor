@@ -17,11 +17,11 @@ export default class Mouse {
   set clicked(value: boolean) {
     this._mouseClicked = value;
     this._mouseStateChanged = true;
-    if (value) this.clickStartPosition = new Vector2(this.position);
+    if (value) this.clickStartPosition = this.position.copy();
   }
 
   get dragged() {
-    const mouseMovement = this.position.sub(this.clickStartPosition);
+    const mouseMovement = Vector2.sub(this.position, this.clickStartPosition);
     return (
       mouseMovement.x > this.clickToDragThreshold ||
       mouseMovement.x < -this.clickToDragThreshold ||
