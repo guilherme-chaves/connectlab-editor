@@ -102,10 +102,10 @@ export default class SlotComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
-    const oldFillStyle = ctx.fillStyle;
+    ctx.save();
     ctx.fillStyle = this.selected ? this.colorActive : this.color;
     ctx.fill(this.drawPath);
-    ctx.fillStyle = oldFillStyle;
+    ctx.restore();
     this.collisionShape.draw(ctx, this.selected);
   }
 

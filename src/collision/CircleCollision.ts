@@ -25,10 +25,10 @@ export default class CircleCollision implements Collision {
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
-    const oldStrokeStyle = ctx.strokeStyle;
+    ctx.save();
     ctx.strokeStyle = this.borderColor;
     ctx.stroke(this.drawPath);
-    ctx.strokeStyle = oldStrokeStyle;
+    ctx.restore();
   }
 
   moveShape(v: Vector2, useDelta = true): void {

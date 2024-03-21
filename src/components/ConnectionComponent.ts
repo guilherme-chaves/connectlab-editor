@@ -88,13 +88,16 @@ class ConnectionComponent implements Component {
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
     if (this.regenConnectionPath) this.drawPath = this.generatePath();
+    ctx.save();
     ctx.strokeStyle = '#101010';
     ctx.lineWidth = 2;
     ctx.lineJoin = 'round';
     ctx.stroke(this.drawPath);
+    ctx.restore();
     this.collisionShape.forEach(shape => shape.draw(ctx, this.selected));
   }
 
+  addAnchor(point: Vector2, arrIndex: number = this.anchors.length): void {
     this.anchors.splice(arrIndex, 0, point);
     this.regenConnectionPath = true;
   }
