@@ -21,6 +21,9 @@ export function addNode(
   state: boolean = false
 ): number {
   const definedId = id >= 0 ? id : editorEnv.nextComponentId;
+
+  signalEvents.addVertex(editorEnv, editorEnv.nextComponentId, state);
+
   if (
     componentType === ComponentType.LINE ||
     componentType === ComponentType.SLOT ||
@@ -59,16 +62,6 @@ export function addNode(
     newNode.slotComponents = slots;
   }
 
-  signalEvents.addVertex(
-    editorEnv,
-    editorEnv.nextComponentId,
-    state,
-    ...signalEvents.convertToSignalFromList(
-      editorEnv,
-      newNode.id,
-      ComponentType.NODE
-    )
-  );
   return editorEnv.updateComponentId(id >= 0 ? id : undefined);
 }
 

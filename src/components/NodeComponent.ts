@@ -3,8 +3,9 @@ import {
   ImageListObject,
   NodeTypes,
   SignalGraph,
-  slotStates,
+  SignalGraphData,
   VectorObject,
+  slotStates,
 } from '../types/types';
 import {NodeTypeObject} from '../types/types';
 import {
@@ -20,7 +21,6 @@ import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
 import SlotComponent from './SlotComponent';
-import signalEvents from '../functions/Signal/signalEvents';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import {getImageSublist} from '../functions/preloadImage';
@@ -45,7 +45,7 @@ class NodeComponent implements Node {
   private _images: ImageListObject | undefined;
   private imageWidth: number;
   private imageHeight: number;
-  private readonly _signalGraph: SignalGraph;
+  private readonly _signalData: SignalGraphData;
   public selected: boolean;
 
   get image(): ImageBitmap | undefined {
@@ -55,11 +55,11 @@ class NodeComponent implements Node {
   }
 
   get state() {
-    return signalEvents.getVertexState(this._signalGraph, this.id);
+    return this._signalData.state ?? false;
   }
 
   set state(value: slotStates) {
-    signalEvents.setVertexState(this._signalGraph, this.id, value);
+    this._signalData.state = value;
   }
 
   constructor(
@@ -80,7 +80,7 @@ class NodeComponent implements Node {
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
     this.slotComponents = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
-    this._signalGraph = signalGraph;
+    this._signalData = signalGraph[this.id];
     this.imageWidth = this.image?.width ?? 100;
     this.imageHeight = this.image?.height ?? 100;
     if (shiftPosition) {
