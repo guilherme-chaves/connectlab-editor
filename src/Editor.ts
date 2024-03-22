@@ -36,7 +36,7 @@ export default class Editor {
   private backgroundPattern: CanvasPattern | null = null;
   private windowArea: DOMPoint | undefined;
   private windowResized: boolean | undefined;
-  public readonly frameRate: number;
+  public readonly tickRate: number;
 
   constructor(
     documentId: string,
@@ -44,7 +44,7 @@ export default class Editor {
     backgroundID: string,
     canvasVw = 1,
     canvasVh = 1,
-    frameRate = 60.0,
+    tickRate = 60.0,
     testMode = false
   ) {
     this.editorEnv = new EditorEnvironment(
@@ -72,7 +72,7 @@ export default class Editor {
       this.loadBackgroundPattern(bgTexturePath);
       this.windowResized = true;
     }
-    this.frameRate = frameRate;
+    this.tickRate = tickRate;
   }
 
   loadFile(ev: Event): void {
@@ -227,7 +227,7 @@ export default class Editor {
   compute() {
     setInterval(() => {
       this.mouseEvents.onMouseMove(this.editorEnv);
-    }, 1000.0 / this.frameRate);
+    }, 1000.0 / this.tickRate);
   }
 
   node(

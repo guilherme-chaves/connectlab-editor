@@ -72,8 +72,8 @@ class TextComponent implements Component {
 
   move(v: Vector2, useDelta = true) {
     if (useDelta) this.position.add(v);
-    else Vector2.copy(v, this.position);
-    this.collisionShape.moveShape(v, useDelta);
+    else Vector2.sub(v, Vector2.div(this.textSize, 2), this.position);
+    this.collisionShape.moveShape(this.position, false);
   }
 
   toObject(): TextObject {

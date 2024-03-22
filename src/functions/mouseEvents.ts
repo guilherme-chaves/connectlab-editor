@@ -106,7 +106,8 @@ export default class MouseEvents {
     if (this._mouse.clicked && this._mouse.dragged) {
       return (
         connectionEvents.move(editorEnv, this, this._mouse.position) ||
-        nodeEvents.move(editorEnv.nodes, this, this._mouse.position, false)
+        nodeEvents.move(editorEnv.nodes, this, this._mouse.position, false) ||
+        textEvents.move(editorEnv.texts, this, this._mouse.position, false)
       );
     }
     return false;
