@@ -14,9 +14,6 @@ const LEDROutput: NodeTypeObject = {
       localPos: new Vector2(23, 64),
     },
   ],
-  op(slotState) {
-    return slotState[0];
-  },
 };
 
 export {LEDROutput};

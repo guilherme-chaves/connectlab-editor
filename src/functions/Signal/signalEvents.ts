@@ -1,20 +1,26 @@
 import EditorEnvironment from '../../EditorEnvironment';
 import ConnectionComponent from '../../components/ConnectionComponent';
 import SlotComponent from '../../components/SlotComponent';
-import {ComponentType, SignalGraph, slotStates} from '../../types/types';
+import {
+  ComponentType,
+  NodeTypes,
+  SignalGraph,
+  slotStates,
+} from '../../types/types';
 import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
     editorEnv: EditorEnvironment,
     nodeId: number,
+    nodeType: NodeTypes,
     state: slotStates,
     signalFrom: Array<number> = [],
     signalTo: Array<number> = []
   ): void {
     if (!editorEnv.signalGraph[nodeId]) {
-      editorEnv.signalGraph[nodeId] = {state, signalFrom, signalTo};
-      signalUpdate.updateGraph(editorEnv);
+      editorEnv.signalGraph[nodeId] = {state, signalFrom, signalTo, nodeType};
+      signalUpdate.updateGraph(editorEnv.signalGraph);
     }
   },
   removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
@@ -29,7 +35,7 @@ export default {
         }
       });
       delete editorEnv.signalGraph[nodeId];
-      signalUpdate.updateGraph(editorEnv);
+      signalUpdate.updateGraph(editorEnv.signalGraph);
     }
   },
   addEdge(editorEnv: EditorEnvironment, connection: ConnectionComponent): void {
@@ -52,14 +58,27 @@ export default {
       )
         editorEnv.signalGraph[startNodeId].signalTo.push(endNodeId);
     } else {
-      this.addVertex(editorEnv, startNodeId, false, undefined, [endNodeId]);
+      this.addVertex(
+        editorEnv,
+        startNodeId,
+        editorEnv.nodes.get(startNodeId)!.nodeType.id,
+        false,
+        undefined,
+        [endNodeId]
+      );
     }
     if (editorEnv.signalGraph[endNodeId]) {
       editorEnv.signalGraph[endNodeId].signalFrom.push(startNodeId);
     } else {
-      this.addVertex(editorEnv, endNodeId, false, [startNodeId]);
+      this.addVertex(
+        editorEnv,
+        endNodeId,
+        editorEnv.nodes.get(endNodeId)!.nodeType.id,
+        false,
+        [startNodeId]
+      );
     }
-    signalUpdate.updateGraph(editorEnv);
+    signalUpdate.updateGraph(editorEnv.signalGraph);
   },
   removeEdge(
     editorEnv: EditorEnvironment,
@@ -82,7 +101,7 @@ export default {
       if (indexST !== -1)
         editorEnv.signalGraph[startNodeId].signalTo.splice(indexST, 1);
     }
-    signalUpdate.updateGraph(editorEnv);
+    signalUpdate.updateGraph(editorEnv.signalGraph);
   },
   getVertexState(signalGraph: SignalGraph, nodeId: number): slotStates {
     return signalGraph[nodeId]?.state ?? false;

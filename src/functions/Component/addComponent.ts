@@ -22,7 +22,7 @@ export function addNode(
 ): number {
   const definedId = id >= 0 ? id : editorEnv.nextComponentId;
 
-  signalEvents.addVertex(editorEnv, editorEnv.nextComponentId, state);
+  signalEvents.addVertex(editorEnv, editorEnv.nextComponentId, type, state);
 
   if (
     componentType === ComponentType.LINE ||

@@ -31,9 +31,6 @@ export const ADDNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return slotState[0] && slotState[1];
-  },
 };
 
 export const NANDNode: NodeTypeObject = {
@@ -59,9 +56,6 @@ export const NANDNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return !(slotState[0] && slotState[1]);
-  },
 };
 
 export const NORNode: NodeTypeObject = {
@@ -87,9 +81,6 @@ export const NORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return !(slotState[0] || slotState[1]);
-  },
 };
 
 export const NOTNode: NodeTypeObject = {
@@ -109,9 +100,6 @@ export const NOTNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return !slotState[0];
-  },
 };
 
 export const ORNode: NodeTypeObject = {
@@ -137,9 +125,6 @@ export const ORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return slotState[0] || slotState[1];
-  },
 };
 
 export const XNORNode: NodeTypeObject = {
@@ -165,9 +150,6 @@ export const XNORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return slotState[0] === slotState[1];
-  },
 };
 
 export const XORNode: NodeTypeObject = {
@@ -193,7 +175,4 @@ export const XORNode: NodeTypeObject = {
       localPos: new Vector2(88, 25),
     },
   ],
-  op(slotState) {
-    return slotState[0] !== slotState[1];
-  },
 };

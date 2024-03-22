@@ -74,13 +74,13 @@ export interface NodeTypeObject {
     localPos: Vector2; // Posição do slot, relativo ao elemento-pai
     in: boolean; // Recebe informação de outro elemento (true)
   }>;
-  readonly op: (slotState: [slotStates, slotStates]) => slotStates; // Operação booleana envolvendo o valor atual dos slots
 }
 
 export interface SignalGraphData {
   state: boolean | undefined;
   signalFrom: Array<number>;
   signalTo: Array<number>;
+  nodeType: NodeTypes;
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;

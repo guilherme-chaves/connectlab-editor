@@ -14,7 +14,4 @@ export const SwitchInput: NodeTypeObject = {
       localPos: new Vector2(70, 25),
     },
   ],
-  op(slotState) {
-    return slotState[0];
-  },
 };
