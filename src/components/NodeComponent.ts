@@ -103,7 +103,7 @@ class NodeComponent implements Node {
   static getNodeTypeObject(type: NodeTypes): NodeTypeObject {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
-      case NodeTypes.G_ADD:
+      case NodeTypes.G_AND:
         return ADDNode;
       case NodeTypes.G_NAND:
         return NANDNode;

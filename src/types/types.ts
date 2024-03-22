@@ -16,7 +16,7 @@ export enum ComponentType {
 
 // G(ate)_*, I(nput)_*, O(utput)_*
 export enum NodeTypes {
-  G_ADD = 0,
+  G_AND = 0,
   G_NAND = 1,
   G_NOR = 2,
   G_NOT = 3,

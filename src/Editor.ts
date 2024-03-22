@@ -231,7 +231,7 @@ export default class Editor {
   }
 
   node(
-    type = NodeTypes.G_ADD,
+    type = NodeTypes.G_AND,
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {

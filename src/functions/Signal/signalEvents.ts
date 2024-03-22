@@ -11,16 +11,16 @@ import signalUpdate from './signalUpdate';
 
 export default {
   addVertex(
-    editorEnv: EditorEnvironment,
+    signalGraph: SignalGraph,
     nodeId: number,
     nodeType: NodeTypes,
     state: slotStates,
     signalFrom: Array<number> = [],
     signalTo: Array<number> = []
   ): void {
-    if (!editorEnv.signalGraph[nodeId]) {
-      editorEnv.signalGraph[nodeId] = {state, signalFrom, signalTo, nodeType};
-      signalUpdate.updateGraph(editorEnv.signalGraph);
+    if (!signalGraph[nodeId]) {
+      signalGraph[nodeId] = {state, signalFrom, signalTo, nodeType};
+      signalUpdate.updateGraph(signalGraph);
     }
   },
   removeVertex(editorEnv: EditorEnvironment, nodeId: number): void {
@@ -59,7 +59,7 @@ export default {
         editorEnv.signalGraph[startNodeId].signalTo.push(endNodeId);
     } else {
       this.addVertex(
-        editorEnv,
+        editorEnv.signalGraph,
         startNodeId,
         editorEnv.nodes.get(startNodeId)!.nodeType.id,
         false,
@@ -71,7 +71,7 @@ export default {
       editorEnv.signalGraph[endNodeId].signalFrom.push(startNodeId);
     } else {
       this.addVertex(
-        editorEnv,
+        editorEnv.signalGraph,
         endNodeId,
         editorEnv.nodes.get(endNodeId)!.nodeType.id,
         false,

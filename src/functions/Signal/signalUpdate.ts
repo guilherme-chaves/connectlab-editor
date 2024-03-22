@@ -5,7 +5,7 @@ import {
   slotStates,
 } from '../../types/types';
 import {
-  add,
+  and,
   input_output,
   nand,
   nor,
@@ -66,8 +66,8 @@ export default {
     type: NodeTypes
   ): (slotState: [slotStates, slotStates]) => boolean {
     switch (type) {
-      case NodeTypes.G_ADD:
-        return add;
+      case NodeTypes.G_AND:
+        return and;
       case NodeTypes.G_NAND:
         return nand;
       case NodeTypes.G_NOR:

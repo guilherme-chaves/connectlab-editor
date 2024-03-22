@@ -61,7 +61,7 @@ export default class KeyboardEvents {
     switch (this._keyboard.key) {
       case nodeKeycodes.ADD:
       case nodeKeycodes.ADD_u:
-        editor.node(NodeTypes.G_ADD);
+        editor.node(NodeTypes.G_AND);
         break;
       case nodeKeycodes.NAND:
       case nodeKeycodes.NAND_u:

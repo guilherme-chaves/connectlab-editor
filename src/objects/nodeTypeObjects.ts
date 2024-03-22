@@ -9,7 +9,7 @@ import XNORPath from '../assets/gates/XNOR_ANSI.svg';
 import XORPath from '../assets/gates/XOR_ANSI.svg';
 
 export const ADDNode: NodeTypeObject = {
-  id: NodeTypes.G_ADD,
+  id: NodeTypes.G_AND,
   imgPath: [ADDPath],
   connectionSlot: [
     {
