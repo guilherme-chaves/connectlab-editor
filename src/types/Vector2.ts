@@ -183,8 +183,8 @@ export default class Vector2 {
 
   // Interpolação bilinear
   bilinear(other: Vector2, bt: Vector2): Vector2 {
-    this.x = this.lerp(other, bt.x).x;
-    this.y = this.lerp(other, bt.y).y;
+    this.x = Vector2.lerp(this, other, bt.x).x;
+    this.y = Vector2.lerp(this, other, bt.y).y;
     return this;
   }
 
