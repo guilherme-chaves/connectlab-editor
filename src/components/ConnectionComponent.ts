@@ -21,8 +21,8 @@ class ConnectionComponent implements Component {
   // Pesos (valores de 0 a 1) relativos a interpolação bilinear entre os pontos inicial e final
   public anchors: Array<Vector2>;
   public connectedTo: ConnectionVertices;
-  private drawPath: Path2D;
-  private regenConnectionPath: boolean;
+  private drawPath: Path2D | undefined;
+  private regenPath: boolean;
   public collisionShape: Array<BBCollision>;
   public selected: boolean;
 
@@ -45,8 +45,7 @@ class ConnectionComponent implements Component {
       new Vector2(0.5, 1),
     ];
     this.connectedTo = connections;
-    this.drawPath = this.generatePath();
-    this.regenConnectionPath = false;
+    this.regenPath = true;
     this.collisionShape = this.generateCollisionShapes();
     this.selected = false;
   }
@@ -66,7 +65,7 @@ class ConnectionComponent implements Component {
       path.lineTo(globalPos.x, globalPos.y);
     }
     path.lineTo(this.endPosition.x, this.endPosition.y);
-    this.regenConnectionPath = false;
+    this.regenPath = false;
     return path;
   }
 
@@ -87,7 +86,7 @@ class ConnectionComponent implements Component {
 
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
-    if (this.regenConnectionPath) this.drawPath = this.generatePath();
+    if (this.regenPath || !this.drawPath) this.drawPath = this.generatePath();
     ctx.save();
     ctx.strokeStyle = '#101010';
     ctx.lineWidth = 2;
@@ -99,7 +98,7 @@ class ConnectionComponent implements Component {
 
   addAnchor(point: Vector2, arrIndex: number = this.anchors.length): void {
     this.anchors.splice(arrIndex, 0, point);
-    this.regenConnectionPath = true;
+    this.regenPath = true;
   }
 
   removePoint(index: number = this.anchors.length - 1) {
@@ -110,7 +109,7 @@ class ConnectionComponent implements Component {
       return;
     }
     this.anchors.splice(index, 1);
-    this.regenConnectionPath = true;
+    this.regenPath = true;
   }
 
   // Recebe um delta entre a posição anterior e a atual
@@ -131,7 +130,7 @@ class ConnectionComponent implements Component {
     this.anchors = this.generateAnchors();
     if (updateCollisionShapes)
       this.collisionShape = this.generateCollisionShapes();
-    this.regenConnectionPath = true;
+    this.regenPath = true;
   }
 
   changeAnchor(
@@ -150,7 +149,7 @@ class ConnectionComponent implements Component {
       undefined,
       false
     ).div(Vector2.sub(this.endPosition, this.position, undefined, false));
-    this.regenConnectionPath = true;
+    this.regenPath = true;
   }
 
   changeConnection(

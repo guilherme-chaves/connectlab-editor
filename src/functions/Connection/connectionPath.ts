@@ -3,18 +3,26 @@ import Vector2 from '../../types/Vector2';
 import {QUARTER_PI, THREE_QUARTER_PI} from '../../types/consts';
 
 export default {
-  alignConnectionWithAxis(
+  setCollisionShapeSize(
     v1: Vector2,
     v2: Vector2,
-    trueXSize = 0,
-    falseXSize = 0,
-    trueYSize = 0,
-    falseYSize = 0
+    ifEqualX = 0,
+    ifDiffX = 0,
+    ifEqualY = 0,
+    ifDiffY = 0,
+    precision = 1e-4
   ) {
-    return new Vector2(
-      v1.x === v2.x ? trueXSize : falseXSize,
-      v1.y === v2.y ? trueYSize : falseYSize
-    );
+    if (v1.useInt && v2.useInt)
+      return new Vector2(
+        v1.x === v2.x ? ifEqualX : ifDiffX,
+        v1.y === v2.y ? ifEqualY : ifDiffY
+      );
+    else
+      return new Vector2(
+        Math.abs(v1.x - v2.x) < precision ? ifEqualX : ifDiffX,
+        Math.abs(v1.y - v2.y) < precision ? ifEqualY : ifDiffY,
+        false
+      );
   },
 
   // checkAnchorCollision(p1: Vector2) {
@@ -28,8 +36,7 @@ export default {
     const stepDivisor = new Vector2(2, 1, false);
     let newAnchor: Vector2;
     let loopRuns = 0;
-    // eslint-disable-next-line no-constant-condition
-    while (true) {
+    while (loopRuns < 64) {
       const stepTo = new Vector2(0, 0, false);
       const headedTowards = currentPos.angleBetween(endPosition);
       stepTo.x =
@@ -52,15 +59,9 @@ export default {
       }
       Vector2.bilinear(position, endPosition, newAnchor, currentPos);
       anchorsArr.push(newAnchor);
-      lastAnchorAdded = newAnchor;
+      lastAnchorAdded = newAnchor.copy();
 
       if (currentPos.equals(endPosition)) break;
-      if (loopRuns > 64) {
-        console.error(
-          'O código atingiu o limite de iterações!! Saída forçada.'
-        );
-        break;
-      }
       loopRuns += 1;
     }
     // console.log(anchorsArr);
@@ -81,7 +82,7 @@ export default {
       if (i < anchors.length)
         Vector2.bilinear(position, endPosition, anchors[i], nPos);
       else Vector2.copy(endPosition, nPos);
-      const size = this.alignConnectionWithAxis(
+      const size = this.setCollisionShapeSize(
         pPos,
         nPos,
         6,

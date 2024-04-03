@@ -32,9 +32,9 @@ export default class Editor {
   private readonly canvasCtx: CanvasRenderingContext2D;
   private readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: DOMPoint | undefined; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private canvasArea: Vector2 | undefined; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null = null;
-  private windowArea: DOMPoint | undefined;
+  private windowArea: Vector2 | undefined;
   private windowResized: boolean | undefined;
   public readonly tickRate: number;
 
@@ -67,8 +67,12 @@ export default class Editor {
     if (!testMode) {
       this.createEditorEvents(canvasDOM, backgroundDOM);
       this.backgroundPattern = null;
-      this.canvasArea = new DOMPoint(canvasVw, canvasVh);
-      this.windowArea = new DOMPoint(window.innerWidth, window.innerHeight);
+      this.canvasArea = new Vector2(canvasVw, canvasVh, false);
+      this.windowArea = new Vector2(
+        window.innerWidth,
+        window.innerHeight,
+        false
+      );
       this.loadBackgroundPattern(bgTexturePath);
       this.windowResized = true;
     }

@@ -13,7 +13,8 @@ export default class BBCollision implements Collision {
   public readonly globalPoints: BBPoints;
   public readonly width: number;
   public readonly height: number;
-  private drawPath: Path2D;
+  private drawPath: Path2D | undefined;
+  private regenPath: boolean;
   public borderColor: string;
 
   constructor(
@@ -27,11 +28,11 @@ export default class BBCollision implements Collision {
     this.height = height;
     this.borderColor = borderColor;
     this.points = this.setPoints();
+    this.regenPath = false;
     this.globalPoints = {
       a: this.position,
       b: Vector2.add(this.position, this.points.b),
     };
-    this.drawPath = this.generatePath();
   }
 
   private setGlobalPoints(): void {
@@ -48,11 +49,13 @@ export default class BBCollision implements Collision {
   private generatePath(): Path2D {
     const path = new Path2D();
     path.rect(this.position.x, this.position.y, this.width, this.height);
+    this.regenPath = false;
     return path;
   }
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean) {
     if (!selected) return;
+    if (!this.drawPath || this.regenPath) this.drawPath = this.generatePath();
     ctx.save();
     ctx.strokeStyle = this.borderColor;
     ctx.stroke(this.drawPath);
@@ -63,7 +66,7 @@ export default class BBCollision implements Collision {
     if (useDelta) this.position.add(v);
     else Vector2.copy(v, this.position);
     this.setGlobalPoints();
-    this.drawPath = this.generatePath();
+    this.regenPath = true;
   }
 
   collisionWithPoint(point: Vector2): boolean {

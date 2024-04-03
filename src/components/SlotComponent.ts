@@ -24,7 +24,8 @@ export default class SlotComponent implements Component {
   public readonly componentType: ComponentType;
   public readonly parent: Component;
   private _slotConnections: Array<ConnectionComponent>;
-  private drawPath: Path2D;
+  private drawPath: Path2D | undefined;
+  private regenPath: boolean;
   public selected: boolean;
   public readonly inSlot: boolean;
   private color: string;
@@ -71,7 +72,7 @@ export default class SlotComponent implements Component {
       this.globalPosition,
       this.attractionRadius
     );
-    this.drawPath = this.generatePath();
+    this.regenPath = false;
   }
 
   move(v: Vector2, useDelta = true) {
@@ -79,13 +80,13 @@ export default class SlotComponent implements Component {
     else Vector2.copy(v, this.position);
     Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
-    this.drawPath = this.generatePath();
+    this.regenPath = true;
   }
 
   update() {
     Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
-    this.drawPath = this.generatePath();
+    this.regenPath = true;
   }
 
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
@@ -102,6 +103,7 @@ export default class SlotComponent implements Component {
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
+    if (!this.drawPath || this.regenPath) this.drawPath = this.generatePath();
     ctx.save();
     ctx.fillStyle = this.selected ? this.colorActive : this.color;
     ctx.fill(this.drawPath);
