@@ -8,7 +8,7 @@ export interface TextObject extends ComponentObject {
   componentType: ComponentType;
   position: VectorObject;
   text: string;
-  parentId: number | undefined;
+  parent: {id: number; type: ComponentType} | null;
   style: string;
 }
 
@@ -17,7 +17,7 @@ class TextComponent implements Component {
   public position: Vector2;
   public readonly componentType: ComponentType;
   public text: string;
-  public parentNode: Component | null;
+  public parent: {id: number; type: ComponentType} | null;
   public style: string;
   private textSize: Vector2;
   public collisionShape: BBCollision;
@@ -29,7 +29,7 @@ class TextComponent implements Component {
     position: Vector2,
     text = '',
     style = '12px sans-serif',
-    parent: Component | null = null,
+    parent: {id: number; type: ComponentType} | null,
     ctx: CanvasRenderingContext2D
   ) {
     this.id = id;
@@ -37,7 +37,7 @@ class TextComponent implements Component {
     this.componentType = ComponentType.TEXT;
     this.text = text;
     this.style = style;
-    this.parentNode = parent;
+    this.parent = parent;
     this.canvasContext = ctx;
     this.textSize = this.measureText(text, style);
     this.collisionShape = new BBCollision(
@@ -82,7 +82,7 @@ class TextComponent implements Component {
       componentType: this.componentType,
       position: this.position.toPlainObject(),
       text: this.text,
-      parentId: this.parentNode?.id,
+      parent: this.parent,
       style: this.style,
     };
     return textObj;
