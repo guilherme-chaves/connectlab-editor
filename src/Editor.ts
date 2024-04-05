@@ -1,6 +1,6 @@
 import {ConnectionVertex, NodeTypes} from './types/types';
 import bgTexturePath from './assets/bg-texture.svg';
-import {updateBackground, updateCanvas} from './functions/canvasDraw';
+import updateAll from './functions/canvasDraw';
 import EditorEnvironment from './EditorEnvironment';
 import Vector2 from './types/Vector2';
 import Component from './interfaces/componentInterface';
@@ -205,12 +205,6 @@ export default class Editor {
     return new Vector2(x - rect.left, y - rect.top);
   }
 
-  draw(canvas = true, background = false) {
-    if (background)
-      updateBackground(this.backgroundCtx, this.backgroundPattern);
-    if (canvas) updateCanvas(this.canvasCtx, this.editorEnv.components);
-  }
-
   resize() {
     this.computeWindowArea();
     if (this.windowArea !== undefined && this.canvasArea !== undefined) {
@@ -224,7 +218,13 @@ export default class Editor {
 
   update = () => {
     requestAnimationFrame(this.update);
-    this.draw(true, this.windowResized);
+    updateAll(
+      this.canvasCtx,
+      this.editorEnv.components,
+      this.windowResized ? this.backgroundCtx : null,
+      this.backgroundPattern
+    );
+
     if (this.windowResized) this.windowResized = false;
   };
 
@@ -239,7 +239,15 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addNode(undefined, this.editorEnv, this.canvasCtx, type, x, y);
+    return addNode(
+      undefined,
+      this.editorEnv,
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      type,
+      x,
+      y
+    );
   }
 
   input(
@@ -247,7 +255,15 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addInput(undefined, this.editorEnv, this.canvasCtx, type, x, y);
+    return addInput(
+      undefined,
+      this.editorEnv,
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      type,
+      x,
+      y
+    );
   }
 
   output(
@@ -255,7 +271,15 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addOutput(undefined, this.editorEnv, this.canvasCtx, type, x, y);
+    return addOutput(
+      undefined,
+      this.editorEnv,
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+      type,
+      x,
+      y
+    );
   }
 
   line(

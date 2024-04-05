@@ -20,7 +20,6 @@ import {
 import Vector2 from '../types/Vector2';
 import BBCollision from '../collision/BBCollision';
 import Node from '../interfaces/nodeInterface';
-import SlotComponent from './SlotComponent';
 import {SwitchInput} from '../objects/inputTypeObjects';
 import {LEDROutput} from '../objects/outputTypeObjects';
 import {getImageSublist} from '../functions/preloadImage';
@@ -40,7 +39,7 @@ class NodeComponent implements Node {
   public position: Vector2;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
-  public slotComponents: Array<SlotComponent>;
+  public slotIds: Array<number>;
   public collisionShape: BBCollision;
   private _images: ImageListObject | undefined;
   private imageWidth: number;
@@ -69,7 +68,7 @@ class NodeComponent implements Node {
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slots: Array<SlotComponent>,
+    slots: Array<number>,
     images: ImageListObject | undefined,
     signalGraph: SignalGraph,
     shiftPosition = true
@@ -78,7 +77,7 @@ class NodeComponent implements Node {
     this.position = position;
     this.componentType = componentType;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
-    this.slotComponents = slots;
+    this.slotIds = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
     this._signalData = signalGraph[this.id];
     this.imageWidth = this.image?.width ?? 100;
@@ -153,7 +152,7 @@ class NodeComponent implements Node {
       componentType: this.componentType,
       nodeType: this.nodeType.id,
       position: this.position.toPlainObject(),
-      slotIds: this.slotComponents.map(value => value.id),
+      slotIds: this.slotIds,
       state: this.state,
     };
     return nodeObj;

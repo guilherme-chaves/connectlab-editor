@@ -180,7 +180,8 @@ class EditorEnvironment {
       addNode(
         nodeObj.id,
         newEnv,
-        ctx,
+        ctx.canvas.width,
+        ctx.canvas.height,
         nodeObj.nodeType,
         nodeObj.position.x,
         nodeObj.position.y,

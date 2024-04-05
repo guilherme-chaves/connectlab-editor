@@ -1,9 +1,8 @@
-import SlotComponent from '../components/SlotComponent';
 import {NodeTypeObject, slotStates} from '../types/types';
 import Component from './componentInterface';
 
 export default interface Node extends Component {
-  slotComponents: Array<SlotComponent>;
+  slotIds: Array<number>;
   readonly nodeType: NodeTypeObject;
   image: ImageBitmap | undefined;
   state: slotStates;

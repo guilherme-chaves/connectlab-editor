@@ -3,6 +3,7 @@ import Vector2 from '../../types/Vector2';
 import MouseEvents from '../mouseEvents';
 import NodeComponent from '../../components/NodeComponent';
 import componentEvents from '../Component/componentEvents';
+import EditorEnvironment from '../../EditorEnvironment';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
@@ -10,7 +11,7 @@ export default {
     return componentEvents.checkComponentClick(position, nodes);
   },
   move(
-    nodes: NodeList,
+    editorEnv: EditorEnvironment,
     mouseEvents: MouseEvents,
     v: Vector2,
     useDelta = true
@@ -26,14 +27,20 @@ export default {
       return false;
 
     mouseEvents.movingObject = 'node';
-    const node = nodes.get(nodeCollisions[0]);
+    const node = editorEnv.nodes.get(nodeCollisions[0]);
     if (node === undefined) return false;
     node.move(v, useDelta);
-    this.moveLinkedElements(node, useDelta);
+    this.moveLinkedElements(editorEnv, node, useDelta);
     return true;
   },
-  moveLinkedElements(node: NodeComponent, useDelta = true): void {
-    node.slotComponents.forEach(slot => {
+  moveLinkedElements(
+    editorEnv: EditorEnvironment,
+    node: NodeComponent,
+    useDelta = true
+  ): void {
+    for (const slotId of node.slotIds) {
+      const slot = editorEnv.slots.get(slotId);
+      if (!slot) continue;
       slot.update();
       slot.slotConnections.forEach(connection => {
         if (connection.connectedTo.start?.slotId === slot.id)
@@ -41,7 +48,7 @@ export default {
         else if (connection.connectedTo.end?.slotId === slot.id)
           connection.move(slot.globalPosition, useDelta, 1);
       });
-    });
+    }
   },
   switchInputState(nodes: NodeList, inputId: number): boolean {
     const input = nodes.get(inputId);

@@ -16,8 +16,7 @@ export function updateCanvas(
 ) {
   clearFrame(ctx);
   for (const category of drawOrder) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    for (const [_key, component] of elements[category]) {
+    for (const component of elements[category].values()) {
       component.draw(ctx);
     }
   }

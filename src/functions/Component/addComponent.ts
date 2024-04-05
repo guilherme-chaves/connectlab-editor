@@ -11,12 +11,13 @@ import signalEvents from '../Signal/signalEvents';
 export function addNode(
   id: number = -1,
   editorEnv: EditorEnvironment,
-  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
   type: NodeTypes,
   x: number,
   y: number,
   componentType = ComponentType.NODE,
-  slotIds?: number[],
+  slotIds: number[] = [],
   shiftPosition = true,
   state: boolean = false
 ): number {
@@ -36,22 +37,23 @@ export function addNode(
   )
     componentType = ComponentType.NODE;
 
-  const slots: Array<SlotComponent> = [];
   let newNode = new NodeComponent(
     definedId,
     new Vector2(x, y),
     componentType,
     type,
-    ctx.canvas.width,
-    ctx.canvas.height,
-    slots,
+    canvasWidth,
+    canvasHeight,
+    slotIds,
     editorEnv.nodeImageList,
     editorEnv.signalGraph,
     shiftPosition
   );
   editorEnv.nodes.set(definedId, newNode);
   newNode = editorEnv.nodes.get(definedId)!;
-  if (slotIds === undefined) {
+  editorEnv.updateComponentId(id >= 0 ? id : undefined);
+
+  if (slotIds.length === 0) {
     const slotParams = NodeComponent.getNodeTypeObject(type).connectionSlot;
     for (const slot of Object.values(slotParams)) {
       const slotKey = addSlot(
@@ -62,18 +64,18 @@ export function addNode(
         newNode,
         slot.in
       );
-      slots.push(editorEnv.slots.get(slotKey)!);
+      newNode.slotIds.push(slotKey);
     }
-    newNode.slotComponents = slots;
   }
 
-  return editorEnv.updateComponentId(id >= 0 ? id : undefined);
+  return definedId;
 }
 
 export function addInput(
   id: number = -1,
   editorEnv: EditorEnvironment,
-  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
   type: NodeTypes,
   x: number,
   y: number,
@@ -84,7 +86,8 @@ export function addInput(
   return addNode(
     id,
     editorEnv,
-    ctx,
+    canvasWidth,
+    canvasHeight,
     type,
     x,
     y,
@@ -98,7 +101,8 @@ export function addInput(
 export function addOutput(
   id: number = -1,
   editorEnv: EditorEnvironment,
-  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
   type: NodeTypes,
   x: number,
   y: number,
@@ -109,7 +113,8 @@ export function addOutput(
   return addNode(
     id,
     editorEnv,
-    ctx,
+    canvasWidth,
+    canvasHeight,
     type,
     x,
     y,
@@ -148,11 +153,10 @@ export function addSlot(
   if (
     parent.componentType === ComponentType.INPUT ||
     parent.componentType === ComponentType.OUTPUT ||
-    parent.componentType === ComponentType.NODE
+    parent.componentType === ComponentType.NODE ||
+    !(parent as NodeComponent).slotIds.includes(definedId)
   ) {
-    (parent as NodeComponent).slotComponents.push(
-      editorEnv.slots.get(definedId)!
-    );
+    (parent as NodeComponent).slotIds.push(definedId);
   }
   return editorEnv.updateComponentId(id >= 0 ? id : undefined);
 }
@@ -196,7 +200,7 @@ export function addText(
     new Vector2(x, y),
     text,
     style,
-    parent,
+    parent ? {id: parent.id, type: parent.componentType} : null,
     ctx
   );
   editorEnv.texts.set(definedId, newText);

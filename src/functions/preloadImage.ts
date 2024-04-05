@@ -3,10 +3,10 @@ import {ImageListObject} from '../types/types';
 /**
  * Função que carrega um ou mais arrays contendo um par de chave da imagem e caminho para o arquivo,
  * retornando um objeto contendo uma lista de objetos, com a chave de nome especificado.
- * @argument Array(s) com chave da imagem e caminho (path) da imagem, no formato [chave, chaminho]
- * @returns Objeto com a lista de imagens
+ * @argument list Array de strings com a localização das imagens
+ * @returns Lista dos bitmaps das imagens carregadas, tendo como chave a localização da imagem, passada no array do parâmetro
  */
-export default function preloadImage(list: string[]) {
+export default function preloadImage(list: string[]): ImageListObject {
   const images: ImageListObject = {};
   for (const key of list) {
     const image = new Image();
