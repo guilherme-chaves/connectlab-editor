@@ -153,16 +153,16 @@ class ConnectionComponent implements Component {
   }
 
   changeConnection(
-    componentId: number | undefined,
-    componentType: ComponentType | undefined,
+    slotId: number | undefined,
+    nodeId: number | undefined,
     end = false
   ) {
-    if (componentId !== undefined && componentType !== undefined) {
-      if (end) {
-        this.connectedTo.end = {type: componentType, id: componentId};
-        return;
-      }
-      this.connectedTo.start = {type: componentType, id: componentId};
+    if (slotId !== undefined && nodeId !== undefined) {
+      if (end) this.connectedTo.end = {slotId, nodeId};
+      else this.connectedTo.start = {slotId, nodeId};
+    } else {
+      if (end) this.connectedTo.end = undefined;
+      else this.connectedTo.start = undefined;
     }
   }
 

@@ -53,8 +53,8 @@ export interface FullComponentList {
 }
 
 export interface ConnectionVertex {
-  type: ComponentType;
-  id: number;
+  slotId: number;
+  nodeId: number;
 }
 
 export interface ConnectionVertices {

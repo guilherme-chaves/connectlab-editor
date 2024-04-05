@@ -217,11 +217,11 @@ class EditorEnvironment {
       );
       if (lineObj.connectedTo.start)
         newEnv.slots
-          .get(lineObj.connectedTo.start.id)!
+          .get(lineObj.connectedTo.start.slotId)!
           .slotConnections.push(newEnv.connections.get(lineObj.id)!);
       if (lineObj.connectedTo.end)
         newEnv.slots
-          .get(lineObj.connectedTo.end.id)!
+          .get(lineObj.connectedTo.end.slotId)!
           .slotConnections.push(newEnv.connections.get(lineObj.id)!);
     }
     for (const textObj of data.data.texts) {

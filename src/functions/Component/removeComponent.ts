@@ -8,7 +8,7 @@ export function removeNode(
 ): boolean {
   const node = editorEnv.nodes.get(componentId);
   if (node === undefined) return false;
-  signalEvents.removeVertex(editorEnv, componentId);
+  signalEvents.removeVertex(editorEnv.signalGraph, componentId);
   for (const slot of Object.values(node.slotComponents))
     editorEnv.removeComponent(slot.id, ComponentType.SLOT);
   return editorEnv.nodes.delete(componentId);
@@ -31,8 +31,10 @@ export function removeConnection(
 ): boolean {
   const connection = editorEnv.connections.get(componentId);
   if (connection === undefined) return false;
-  const slotStart = editorEnv.slots.get(connection.connectedTo.start?.id ?? -1);
-  const slotEnd = editorEnv.slots.get(connection.connectedTo.end?.id ?? -1);
+  const slotStart = editorEnv.slots.get(
+    connection.connectedTo.start?.slotId ?? -1
+  );
+  const slotEnd = editorEnv.slots.get(connection.connectedTo.end?.slotId ?? -1);
   if (slotStart) {
     const index = slotStart.slotConnections.findIndex(
       value => value.id === componentId
@@ -45,7 +47,7 @@ export function removeConnection(
     );
     if (index !== -1) slotEnd.slotConnections.splice(index, 1);
   }
-  signalEvents.removeEdge(editorEnv, editorEnv.connections.get(componentId));
+  signalEvents.removeEdge(editorEnv.signalGraph, connection);
   return editorEnv.connections.delete(componentId);
 }
 

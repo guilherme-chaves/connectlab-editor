@@ -43,8 +43,8 @@ export default {
         slot.globalPosition.x,
         slot.globalPosition.y,
         {
-          type: ComponentType.SLOT,
-          id: slot.id,
+          slotId: slot.id,
+          nodeId: slot.parent.id,
         }
       );
       this.editingLine = true;
@@ -135,10 +135,12 @@ export default {
           startSlot.globalPosition,
           currentSlot.globalPosition,
           this.lineStartSlot,
-          currentSlotCollisions[0]
+          startSlot.parent.id,
+          currentSlotCollisions[0],
+          currentSlot.parent.id
         );
         // Cria conjunto de caixas de colisão para a conexão
-        signalEvents.addEdge(editorEnv, currentLine);
+        signalEvents.addEdge(editorEnv.signalGraph, currentLine);
         currentLine.collisionShape = currentLine.generateCollisionShapes();
 
         // Retorna a lista de parâmetros do objeto para seus valores padrão
@@ -165,7 +167,7 @@ export default {
       const currentLine = editorEnv.connections.get(this.editingLineId)!;
       if (slotCollisions.length > 0) {
         // Evitar colisões com o slot de onde a linha se origina
-        if (currentLine.connectedTo.start?.id !== slotCollisions[0]) {
+        if (currentLine.connectedTo.start?.slotId !== slotCollisions[0]) {
           const slotCollided = editorEnv.slots.get(slotCollisions[0])!;
           this.oldSlotCollision = this.slotCollision;
           this.slotCollision = slotCollisions[0];
@@ -186,14 +188,16 @@ export default {
     startPos?: Vector2,
     endPos?: Vector2,
     startSlotId?: number,
-    endSlotId?: number
+    startNodeId?: number,
+    endSlotId?: number,
+    endNodeId?: number
   ) {
     if (startPos !== undefined) connection.move(startPos, false, 0, false);
     if (endPos !== undefined) connection.move(endPos, false, 1, false);
-    if (startSlotId !== undefined)
-      connection.changeConnection(startSlotId, ComponentType.SLOT, false);
-    if (endSlotId !== undefined)
-      connection.changeConnection(endSlotId, ComponentType.SLOT, true);
+    if (startSlotId !== undefined && startNodeId !== undefined)
+      connection.changeConnection(startSlotId, startNodeId, false);
+    if (endSlotId !== undefined && endNodeId !== undefined)
+      connection.changeConnection(endSlotId, endNodeId, true);
   },
   removeOldInSlotConnection(editorEnv: EditorEnvironment, slot: SlotComponent) {
     if (!slot.inSlot) return;
@@ -202,18 +206,18 @@ export default {
       slot.slotConnections.splice(0, slot.slotConnections.length);
       if (oldConnection.connectedTo.start)
         editorEnv.slots
-          .get(oldConnection.connectedTo.start.id)!
+          .get(oldConnection.connectedTo.start.slotId)!
           .slotConnections.find((connection, index, arr) => {
-            if (connection.id === oldConnection.connectedTo.start?.id) {
+            if (connection.id === oldConnection.connectedTo.start?.slotId) {
               arr.splice(index, 1);
               return true;
             } else return false;
           });
       if (oldConnection.connectedTo.end)
         editorEnv.slots
-          .get(oldConnection.connectedTo.end.id)!
+          .get(oldConnection.connectedTo.end.slotId)!
           .slotConnections.find((connection, index, arr) => {
-            if (connection.id === oldConnection.connectedTo.end?.id) {
+            if (connection.id === oldConnection.connectedTo.end?.slotId) {
               arr.splice(index, 1);
               return true;
             } else return false;
