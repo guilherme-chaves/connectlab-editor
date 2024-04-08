@@ -1,5 +1,5 @@
 import EditorEnvironment from '../../src/EditorEnvironment';
-import {addNode} from '../../src/functions/Component/addComponent';
+import {addNode} from '../../src/functions/component/addComponent';
 import {NodeTypes} from '../../src/types/types';
 
 let editorEnv: EditorEnvironment | undefined;

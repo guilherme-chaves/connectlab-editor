@@ -1,4 +1,4 @@
-import Vector2 from './Vector2';
+import Vector2 from '@connectlab-editor/types/Vector2';
 
 export default class Mouse {
   public position = new Vector2();

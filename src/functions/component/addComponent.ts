@@ -1,12 +1,16 @@
-import EditorEnvironment from '../../EditorEnvironment';
-import ConnectionComponent from '../../components/ConnectionComponent';
-import NodeComponent from '../../components/NodeComponent';
-import SlotComponent from '../../components/SlotComponent';
-import TextComponent from '../../components/TextComponent';
-import Component from '../../interfaces/componentInterface';
-import Vector2 from '../../types/Vector2';
-import {ComponentType, ConnectionVertex, NodeTypes} from '../../types/types';
-import signalEvents from '../Signal/signalEvents';
+import EditorEnvironment from '@connectlab-editor/environment';
+import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
+import NodeComponent from '@connectlab-editor/components/NodeComponent';
+import SlotComponent from '@connectlab-editor/components/SlotComponent';
+import TextComponent from '@connectlab-editor/components/TextComponent';
+import Component from '@connectlab-editor/interfaces/componentInterface';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {
+  ComponentType,
+  ConnectionVertex,
+  NodeTypes,
+} from '@connectlab-editor/types';
+import signalEvents from '@connectlab-editor/signal/signalEvents';
 
 export function addNode(
   id: number = -1,

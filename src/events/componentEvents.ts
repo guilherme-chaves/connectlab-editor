@@ -1,5 +1,5 @@
-import Vector2 from '../../types/Vector2';
-import {NodeList, SlotList, TextList} from '../../types/types';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {NodeList, SlotList, TextList} from '@connectlab-editor/types';
 
 export default {
   checkComponentClick(

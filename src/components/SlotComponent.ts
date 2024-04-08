@@ -1,8 +1,10 @@
-import CircleCollision from '../collision/CircleCollision';
-import Component, {ComponentObject} from '../interfaces/componentInterface';
-import Vector2 from '../types/Vector2';
-import {ComponentType, VectorObject} from '../types/types';
-import ConnectionComponent from './ConnectionComponent';
+import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
+import Component, {
+  ComponentObject,
+} from '@connectlab-editor/interfaces/componentInterface';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {ComponentType, VectorObject} from '@connectlab-editor/types';
+import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
 
 export interface SlotObject extends ComponentObject {
   id: number;

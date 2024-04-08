@@ -1,6 +1,6 @@
-import BBCollision from '../../collision/BBCollision';
-import Vector2 from '../../types/Vector2';
-import {QUARTER_PI, THREE_QUARTER_PI} from '../../types/consts';
+import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {QUARTER_PI, THREE_QUARTER_PI} from '@connectlab-editor/types/consts';
 
 export default {
   setCollisionShapeSize(

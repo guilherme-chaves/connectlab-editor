@@ -3,7 +3,7 @@ import {
   SignalGraph,
   SignalGraphData,
   slotStates,
-} from '../../types/types';
+} from '@connectlab-editor/types';
 import {
   and,
   input_output,
@@ -13,7 +13,7 @@ import {
   or,
   xnor,
   xor,
-} from './signalOperations';
+} from '@connectlab-editor/signal/signalOperations';
 
 export default {
   updateGraph(signalGraph: SignalGraph): void {

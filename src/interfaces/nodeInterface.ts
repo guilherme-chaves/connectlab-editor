@@ -1,5 +1,5 @@
-import {NodeTypeObject, slotStates} from '../types/types';
-import Component from './componentInterface';
+import {NodeTypeObject, slotStates} from '@connectlab-editor/types';
+import Component from '@connectlab-editor/interfaces/componentInterface';
 
 export default interface Node extends Component {
   slotIds: Array<number>;

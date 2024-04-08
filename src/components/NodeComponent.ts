@@ -6,8 +6,8 @@ import {
   SignalGraphData,
   VectorObject,
   slotStates,
-} from '../types/types';
-import {NodeTypeObject} from '../types/types';
+} from '@connectlab-editor/types';
+import {NodeTypeObject} from '@connectlab-editor/types';
 import {
   ADDNode,
   NANDNode,
@@ -16,14 +16,14 @@ import {
   ORNode,
   XNORNode,
   XORNode,
-} from '../objects/nodeTypeObjects';
-import Vector2 from '../types/Vector2';
-import BBCollision from '../collision/BBCollision';
-import Node from '../interfaces/nodeInterface';
-import {SwitchInput} from '../objects/inputTypeObjects';
-import {LEDROutput} from '../objects/outputTypeObjects';
-import {getImageSublist} from '../functions/preloadImage';
-import {ComponentObject} from '../interfaces/componentInterface';
+} from '@connectlab-editor/objects/nodeTypeObjects';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Node from '@connectlab-editor/interfaces/nodeInterface';
+import {SwitchInput} from '@connectlab-editor/objects/inputTypeObjects';
+import {LEDROutput} from '@connectlab-editor/objects/outputTypeObjects';
+import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
+import {ComponentObject} from '@connectlab-editor/interfaces/componentInterface';
 
 export interface NodeObject extends ComponentObject {
   id: number;

@@ -1,9 +1,9 @@
-import {ComponentType, NodeList} from '../../types/types';
-import Vector2 from '../../types/Vector2';
-import MouseEvents from '../mouseEvents';
-import NodeComponent from '../../components/NodeComponent';
-import componentEvents from '../Component/componentEvents';
-import EditorEnvironment from '../../EditorEnvironment';
+import {ComponentType, NodeList} from '@connectlab-editor/types';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import MouseEvents from '@connectlab-editor/events/mouseEvents';
+import NodeComponent from '@connectlab-editor/components/NodeComponent';
+import componentEvents from '@connectlab-editor/events/componentEvents';
+import EditorEnvironment from '@connectlab-editor/environment';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse

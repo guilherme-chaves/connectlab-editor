@@ -1,5 +1,5 @@
 import BBCollision from '../../src/collision/BBCollision';
-import connectionPath from '../../src/functions/Connection/connectionPath';
+import connectionPath from '../../src/functions/connection/connectionPath';
 import Vector2 from '../../src/types/Vector2';
 
 describe('Testes com a geração da conexão entre componentes', () => {

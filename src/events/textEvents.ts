@@ -1,7 +1,7 @@
-import Vector2 from '../types/Vector2';
-import {TextList} from '../types/types';
-import componentEvents from './Component/componentEvents';
-import MouseEvents from './mouseEvents';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {TextList} from '@connectlab-editor/types';
+import componentEvents from '@connectlab-editor/events/componentEvents';
+import MouseEvents from '@connectlab-editor/events/mouseEvents';
 
 export default {
   // Busca na lista de textos quais possuem uma colisão com o ponto do mouse

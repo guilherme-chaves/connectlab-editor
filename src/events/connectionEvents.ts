@@ -1,12 +1,12 @@
-import Editor from '../../Editor';
-import Vector2 from '../../types/Vector2';
-import {ComponentType, ConnectionList} from '../../types/types';
-import slotEvents from '../slotEvents';
-import SlotComponent from '../../components/SlotComponent';
-import signalEvents from '../Signal/signalEvents';
-import EditorEnvironment from '../../EditorEnvironment';
-import MouseEvents from '../mouseEvents';
-import ConnectionComponent from '../../components/ConnectionComponent';
+import Editor from '@connectlab-editor';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {ComponentType, ConnectionList} from '@connectlab-editor/types';
+import slotEvents from '@connectlab-editor/events/slotEvents';
+import SlotComponent from '@connectlab-editor/components/SlotComponent';
+import signalEvents from '@connectlab-editor/signal/signalEvents';
+import EditorEnvironment from '@connectlab-editor/environment';
+import MouseEvents from '@connectlab-editor/events/mouseEvents';
+import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
 
 export default {
   editingLineId: -1,

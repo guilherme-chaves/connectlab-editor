@@ -1,6 +1,6 @@
-import Collision from '../interfaces/collisionInterface';
-import Vector2 from '../types/Vector2';
-import CircleCollision from './CircleCollision';
+import Collision from '@connectlab-editor/interfaces/collisionInterface';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
 
 interface BBPoints {
   a: Vector2;

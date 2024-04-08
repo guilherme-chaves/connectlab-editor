@@ -1,4 +1,4 @@
-import {VectorObject} from './types';
+import {VectorObject} from '@connectlab-editor/types';
 
 export default class Vector2 {
   private _x: number = 0;

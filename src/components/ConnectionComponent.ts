@@ -1,8 +1,14 @@
-import {ComponentType, ConnectionVertices, VectorObject} from '../types/types';
-import Vector2 from '../types/Vector2';
-import BBCollision from '../collision/BBCollision';
-import ConnectionPathFunctions from '../functions/Connection/connectionPath';
-import Component, {ComponentObject} from '../interfaces/componentInterface';
+import {
+  ComponentType,
+  ConnectionVertices,
+  VectorObject,
+} from '@connectlab-editor/types';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';
+import Component, {
+  ComponentObject,
+} from '@connectlab-editor/interfaces/componentInterface';
 
 export interface ConnectionObject extends ComponentObject {
   id: number;

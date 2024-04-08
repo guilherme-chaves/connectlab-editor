@@ -1,13 +1,13 @@
 /* eslint-disable no-case-declarations */
-import Editor from '../Editor';
-import connectionEvents from './Connection/connectionEvents';
-import nodeEvents from './Node/nodeEvents';
-import slotEvents from './slotEvents';
-import textEvents from './textEvents';
+import Editor from '@connectlab-editor';
+import connectionEvents from '@connectlab-editor/events/connectionEvents';
+import nodeEvents from '@connectlab-editor/events/nodeEvents';
+import slotEvents from '@connectlab-editor/events/slotEvents';
+import textEvents from '@connectlab-editor/events/textEvents';
 
-import Mouse from '../types/Mouse';
-import EditorEnvironment from '../EditorEnvironment';
-import signalUpdate from './Signal/signalUpdate';
+import Mouse from '@connectlab-editor/types/Mouse';
+import EditorEnvironment from '@connectlab-editor/environment';
+import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export interface CollisionList {
   [index: string]: Array<number>;

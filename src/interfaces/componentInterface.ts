@@ -1,6 +1,6 @@
-import Vector2 from '../types/Vector2';
-import {ComponentType, VectorObject} from '../types/types';
-import Collision from './collisionInterface';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {ComponentType, VectorObject} from '@connectlab-editor/types';
+import Collision from '@connectlab-editor/interfaces/collisionInterface';
 
 export interface ComponentObject {
   readonly id: number;

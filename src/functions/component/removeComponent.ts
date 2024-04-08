@@ -1,6 +1,6 @@
-import EditorEnvironment from '../../EditorEnvironment';
-import {ComponentType} from '../../types/types';
-import signalEvents from '../Signal/signalEvents';
+import EditorEnvironment from '@connectlab-editor/environment';
+import {ComponentType} from '@connectlab-editor/types';
+import signalEvents from '@connectlab-editor/signal/signalEvents';
 
 export function removeNode(
   editorEnv: EditorEnvironment,

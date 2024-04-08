@@ -1,4 +1,4 @@
-import {FullComponentList} from '../types/types';
+import {FullComponentList} from '@connectlab-editor/types';
 
 const drawOrder = ['connections', 'nodes', 'slots', 'texts'];
 

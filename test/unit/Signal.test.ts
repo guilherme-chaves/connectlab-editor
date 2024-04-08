@@ -1,6 +1,6 @@
 import {NodeTypes, SignalGraph} from '../../src/types/types';
-import signalEvents from '../../src/functions/Signal/signalEvents';
-import signalUpdate from '../../src/functions/Signal/signalUpdate';
+import signalEvents from '../../src/functions/signal/signalEvents';
+import signalUpdate from '../../src/functions/signal/signalUpdate';
 
 describe('Testes com o grafo de sinal lógico', () => {
   let graph: SignalGraph = {};

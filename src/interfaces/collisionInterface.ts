@@ -1,6 +1,6 @@
-import BBCollision from '../collision/BBCollision';
-import CircleCollision from '../collision/CircleCollision';
-import Vector2 from '../types/Vector2';
+import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
+import Vector2 from '@connectlab-editor/types/Vector2';
 
 export default interface Collision {
   position: Vector2;

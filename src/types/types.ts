@@ -5,7 +5,7 @@ import TextComponent from '../components/TextComponent';
 import Component from '../interfaces/componentInterface';
 import Vector2 from './Vector2';
 
-export enum ComponentType {
+export const enum ComponentType {
   LINE = 1,
   NODE = 2,
   TEXT = 3,
@@ -15,7 +15,7 @@ export enum ComponentType {
 }
 
 // G(ate)_*, I(nput)_*, O(utput)_*
-export enum NodeTypes {
+export const enum NodeTypes {
   G_AND = 0,
   G_NAND = 1,
   G_NOR = 2,
@@ -27,7 +27,7 @@ export enum NodeTypes {
   O_LED_RED = 200,
 }
 
-export enum EditorMode {
+export const enum EditorMode {
   ADD = 0,
   MOVE = 1,
   SELECT = 2,

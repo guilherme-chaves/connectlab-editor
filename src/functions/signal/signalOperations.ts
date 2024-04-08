@@ -1,4 +1,4 @@
-import {slotStates} from '../../types/types';
+import {slotStates} from '@connectlab-editor/types';
 
 export const input_output = (slotState: [slotStates, slotStates]) =>
   slotState[0];

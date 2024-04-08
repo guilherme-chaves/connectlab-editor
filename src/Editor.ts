@@ -1,13 +1,13 @@
-import {ConnectionVertex, NodeTypes} from './types/types';
-import bgTexturePath from './assets/bg-texture.svg';
-import updateAll from './functions/canvasDraw';
-import EditorEnvironment from './EditorEnvironment';
-import Vector2 from './types/Vector2';
-import Component from './interfaces/componentInterface';
-import MouseEvents from './functions/mouseEvents';
-import Mouse from './types/Mouse';
-import KeyboardEvents from './functions/keyboardEvents';
-import Keyboard from './types/Keyboard';
+import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types';
+import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
+import updateAll from '@connectlab-editor/functions/canvasDraw';
+import EditorEnvironment from '@connectlab-editor/environment';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import Component from '@connectlab-editor/interfaces/componentInterface';
+import MouseEvents from '@connectlab-editor/events/mouseEvents';
+import Mouse from '@connectlab-editor/types/Mouse';
+import KeyboardEvents from '@connectlab-editor/events/keyboardEvents';
+import Keyboard from '@connectlab-editor/types/Keyboard';
 import {
   addConnection,
   addInput,
@@ -15,9 +15,9 @@ import {
   addOutput,
   addSlot,
   addText,
-} from './functions/Component/addComponent';
+} from '@connectlab-editor/functions/addComponent';
 import {gzipSync, gunzipSync} from 'fflate';
-import preloadNodeImages from './functions/Node/preloadNodeImages';
+import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 
 export default class Editor {
   // Lista de componentes

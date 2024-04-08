@@ -8,26 +8,32 @@ import {
   TextList,
   SignalGraph,
   SignalGraphData,
-} from './types/types';
+} from '@connectlab-editor/types';
 import {
   removeNode,
   removeSlot,
   removeConnection,
   removeText,
-} from './functions/Component/removeComponent';
+} from '@connectlab-editor/functions/removeComponent';
 import ConnectionComponent, {
   ConnectionObject,
-} from './components/ConnectionComponent';
-import NodeComponent, {NodeObject} from './components/NodeComponent';
+} from '@connectlab-editor/components/ConnectionComponent';
+import NodeComponent, {
+  NodeObject,
+} from '@connectlab-editor/components/NodeComponent';
 import {
   addConnection,
   addNode,
   addSlot,
   addText,
-} from './functions/Component/addComponent';
-import SlotComponent, {SlotObject} from './components/SlotComponent';
-import TextComponent, {TextObject} from './components/TextComponent';
-import Vector2 from './types/Vector2';
+} from '@connectlab-editor/functions/addComponent';
+import SlotComponent, {
+  SlotObject,
+} from '@connectlab-editor/components/SlotComponent';
+import TextComponent, {
+  TextObject,
+} from '@connectlab-editor/components/TextComponent';
+import Vector2 from '@connectlab-editor/types/Vector2';
 
 type EditorEnvironmentObject = {
   id: string;

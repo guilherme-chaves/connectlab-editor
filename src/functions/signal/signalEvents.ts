@@ -1,6 +1,6 @@
-import ConnectionComponent from '../../components/ConnectionComponent';
-import {NodeTypes, SignalGraph, slotStates} from '../../types/types';
-import signalUpdate from './signalUpdate';
+import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
+import {NodeTypes, SignalGraph, slotStates} from '@connectlab-editor/types';
+import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {
   addVertex(

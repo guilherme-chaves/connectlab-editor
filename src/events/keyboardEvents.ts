@@ -1,6 +1,6 @@
-import Editor from '../Editor';
-import Keyboard from '../types/Keyboard';
-import {NodeTypes} from '../types/types';
+import Editor from '@connectlab-editor';
+import Keyboard from '@connectlab-editor/types/Keyboard';
+import {NodeTypes} from '@connectlab-editor/types';
 
 export enum keyboardMode {
   ADD_NODE = 0,
