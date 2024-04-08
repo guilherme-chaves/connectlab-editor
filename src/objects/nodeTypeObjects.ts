@@ -1,12 +1,12 @@
-import {NodeTypeObject, NodeTypes} from '../types/types';
-import Vector2 from '../types/Vector2';
-import ADDPath from '../assets/gates/AND_ANSI.svg';
-import NANDPath from '../assets/gates/NAND_ANSI.svg';
-import NORPath from '../assets/gates/NOR_ANSI.svg';
-import NOTPath from '../assets/gates/NOT_ANSI.svg';
-import ORPath from '../assets/gates/OR_ANSI.svg';
-import XNORPath from '../assets/gates/XNOR_ANSI.svg';
-import XORPath from '../assets/gates/XOR_ANSI.svg';
+import Vector2 from '@connectlab-editor/types/Vector2';
+import {NodeTypeObject, NodeTypes} from '@connectlab-editor/types';
+import ADDPath from '@connectlab-editor/gates/AND_ANSI.svg';
+import NANDPath from '@connectlab-editor/gates/NAND_ANSI.svg';
+import NORPath from '@connectlab-editor/gates/NOR_ANSI.svg';
+import NOTPath from '@connectlab-editor/gates/NOT_ANSI.svg';
+import ORPath from '@connectlab-editor/gates/OR_ANSI.svg';
+import XNORPath from '@connectlab-editor/gates/XNOR_ANSI.svg';
+import XORPath from '@connectlab-editor/gates/XOR_ANSI.svg';
 
 export const ADDNode: NodeTypeObject = {
   id: NodeTypes.G_AND,

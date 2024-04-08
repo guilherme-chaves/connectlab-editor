@@ -3,6 +3,26 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./build",
+    "baseUrl": ".",
+    "paths": {
+      "@connectlab-editor": ["src/Editor.ts"],
+      "@connectlab-editor/environment": ["src/EditorEnvironment.ts"],
+      "@connectlab-editor/assets/*": ["src/assets/*"],
+      "@connectlab-editor/gates/*": ["src/assets/gates/*"],
+      "@connectlab-editor/types": ["src/types/types.ts"],
+      "@connectlab-editor/types/*": ["src/types/*"],
+      "@connectlab-editor/collisionShapes/*": ["src/collision/*"],
+      "@connectlab-editor/components/*": ["src/components/*"],
+      "@connectlab-editor/functions/*": [
+        "src/functions/component/*",
+        "src/functions/connection/*",
+        "src/functions/misc/*"
+      ],
+      "@connectlab-editor/interfaces/*": ["src/interfaces/*"],
+      "@connectlab-editor/objects/*": ["src/objects/*"],
+      "@connectlab-editor/events/*": ["src/events/*"],
+      "@connectlab-editor/signal/*": ["src/functions/signal/*"]
+    },
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
