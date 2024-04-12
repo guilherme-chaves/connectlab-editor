@@ -9,8 +9,8 @@ export function removeNode(
   const node = editorEnv.nodes.get(componentId);
   if (node === undefined) return false;
   signalEvents.removeVertex(editorEnv.signalGraph, componentId);
-  for (let i = 0; i < node.slotIds.length; i++)
-    editorEnv.removeComponent(node.slotIds[i], ComponentType.SLOT);
+  for (let i = 0; i < node.slots.length; i++)
+    editorEnv.removeComponent(node.slots[i].id, ComponentType.SLOT);
   return editorEnv.nodes.delete(componentId);
 }
 

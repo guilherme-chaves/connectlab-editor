@@ -24,6 +24,7 @@ import {SwitchInput} from '@connectlab-editor/objects/inputTypeObjects';
 import {LEDROutput} from '@connectlab-editor/objects/outputTypeObjects';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
 import {ComponentObject} from '@connectlab-editor/interfaces/componentInterface';
+import SlotComponent from './SlotComponent';
 
 export interface NodeObject extends ComponentObject {
   id: number;
@@ -39,16 +40,16 @@ class NodeComponent implements Node {
   public position: Vector2;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeTypeObject;
-  public slotIds: Array<number>;
+  public slots: Array<SlotComponent>;
   public collisionShape: BBCollision;
-  private _images: ImageListObject | undefined;
+  private _images: ImageListObject;
   private imageWidth: number;
   private imageHeight: number;
   private readonly _signalData: SignalGraphData;
   public selected: boolean;
 
-  get image(): ImageBitmap | undefined {
-    if (this._images === undefined) return undefined;
+  get image(): ImageBitmap | null {
+    if (Object.keys(this._images).length === 0) return null;
     if (this.componentType === ComponentType.NODE) return this._images[0];
     return this._images[this.state ? 1 : 0];
   }
@@ -68,8 +69,8 @@ class NodeComponent implements Node {
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
-    slots: Array<number>,
-    images: ImageListObject | undefined,
+    slots: Array<SlotComponent>,
+    images: ImageListObject,
     signalGraph: SignalGraph,
     shiftPosition = true
   ) {
@@ -77,9 +78,9 @@ class NodeComponent implements Node {
     this.position = position;
     this.componentType = componentType;
     this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
-    this.slotIds = slots;
-    this._images = getImageSublist(images, this.nodeType.imgPath);
     this._signalData = signalGraph[this.id];
+    this.slots = slots;
+    this._images = getImageSublist(images, this.nodeType.imgPath);
     this.imageWidth = this.image?.width ?? 100;
     this.imageHeight = this.image?.height ?? 100;
     if (shiftPosition) {
@@ -140,7 +141,7 @@ class NodeComponent implements Node {
   }
 
   draw(ctx: CanvasRenderingContext2D) {
-    if (this.image === undefined) return;
+    if (!this.image) return;
     ctx.drawImage(this.image, this.position.x, this.position.y);
     if (this.collisionShape !== undefined)
       this.collisionShape.draw(ctx, this.selected);
@@ -152,7 +153,7 @@ class NodeComponent implements Node {
       componentType: this.componentType,
       nodeType: this.nodeType.id,
       position: this.position.toPlainObject(),
-      slotIds: this.slotIds,
+      slotIds: this.slots.map(slot => slot.id),
       state: this.state,
     };
     return nodeObj;

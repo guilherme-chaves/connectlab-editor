@@ -12,6 +12,7 @@ const jestConfig = {
   moduleFileExtensions: ["ts", "js", "mjs", "cjs", "json"],
   modulePaths: [tsconfig.compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {prefix: '<rootDir>/'}),
+  setupFiles: ["jest-canvas-mock"],
   transformIgnorePatterns: [],
   testEnvironment: 'jsdom',
   verbose: true,

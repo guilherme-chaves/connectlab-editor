@@ -32,10 +32,10 @@ export default class Editor {
   private readonly canvasCtx: CanvasRenderingContext2D;
   private readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: Vector2 | undefined; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
+  private canvasArea: Vector2; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null = null;
-  private windowArea: Vector2 | undefined;
-  private windowResized: boolean | undefined;
+  private windowArea: Vector2;
+  private windowResized: boolean;
   public readonly tickRate: number;
 
   constructor(
@@ -44,14 +44,9 @@ export default class Editor {
     backgroundID: string,
     canvasVw = 1,
     canvasVh = 1,
-    tickRate = 60.0,
-    testMode = false
+    tickRate = 60.0
   ) {
-    this.editorEnv = new EditorEnvironment(
-      documentId,
-      0,
-      testMode ? undefined : preloadNodeImages()
-    );
+    this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
     this.mouse = new Mouse();
     this.keyboard = new Keyboard();
     this.mouseEvents = new MouseEvents(this.mouse);
@@ -64,18 +59,12 @@ export default class Editor {
     this.canvasId = canvasID;
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
-    if (!testMode) {
-      this.createEditorEvents(canvasDOM, backgroundDOM);
-      this.backgroundPattern = null;
-      this.canvasArea = new Vector2(canvasVw, canvasVh, false);
-      this.windowArea = new Vector2(
-        window.innerWidth,
-        window.innerHeight,
-        false
-      );
-      this.loadBackgroundPattern(bgTexturePath);
-      this.windowResized = true;
-    }
+    this.createEditorEvents(canvasDOM, backgroundDOM);
+    this.backgroundPattern = null;
+    this.canvasArea = new Vector2(canvasVw, canvasVh, false);
+    this.windowArea = new Vector2(window.innerWidth, window.innerHeight, false);
+    this.loadBackgroundPattern(bgTexturePath);
+    this.windowResized = true;
     this.tickRate = tickRate;
   }
 
@@ -92,6 +81,7 @@ export default class Editor {
       if (!reader.result || typeof reader.result === 'string') return;
       const unzipped = gunzipSync(new Uint8Array(reader.result));
       const jsonData = JSON.parse(new TextDecoder().decode(unzipped));
+      // if (!(jsonData instanceof EditorEnvironmentObject))
       this.editorEnv = EditorEnvironment.createFromJson(
         jsonData,
         this.canvasCtx,
@@ -182,11 +172,10 @@ export default class Editor {
   }
 
   computeWindowArea() {
-    if (this.windowArea === undefined) return;
     const canvasParentEl = document.getElementById(
       this.canvasId
     )?.parentElement;
-    if (canvasParentEl !== undefined && canvasParentEl !== null) {
+    if (canvasParentEl) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
       this.windowArea.x = parseFloat(
         computedStyle.width.substring(0, computedStyle.length - 2)
@@ -207,13 +196,11 @@ export default class Editor {
 
   resize() {
     this.computeWindowArea();
-    if (this.windowArea !== undefined && this.canvasArea !== undefined) {
-      this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-      this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-      this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-      this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-      this.windowResized = true;
-    }
+    this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+    this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+    this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
+    this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+    this.windowResized = true;
   }
 
   update = () => {

@@ -27,12 +27,7 @@ export function addNode(
 ): number {
   const definedId = id >= 0 ? id : editorEnv.nextComponentId;
 
-  signalEvents.addVertex(
-    editorEnv.signalGraph,
-    editorEnv.nextComponentId,
-    type,
-    state
-  );
+  signalEvents.addVertex(editorEnv.signalGraph, definedId, type, state);
 
   if (
     componentType === ComponentType.LINE ||
@@ -48,7 +43,7 @@ export function addNode(
     type,
     canvasWidth,
     canvasHeight,
-    slotIds,
+    [],
     editorEnv.nodeImageList,
     editorEnv.signalGraph,
     shiftPosition
@@ -68,7 +63,15 @@ export function addNode(
         newNode,
         slot.in
       );
-      newNode.slotIds.push(slotKey);
+      if (!newNode.slots.find(slot => slot.id === slotKey)) {
+        const slot = editorEnv.slots.get(slotKey);
+        if (slot) newNode.slots.push(slot);
+      }
+    }
+  } else {
+    for (const slotId of slotIds) {
+      const slot = editorEnv.slots.get(slotId);
+      if (slot) newNode.slots.push(slot);
     }
   }
 
@@ -157,10 +160,9 @@ export function addSlot(
   if (
     parent.componentType === ComponentType.INPUT ||
     parent.componentType === ComponentType.OUTPUT ||
-    parent.componentType === ComponentType.NODE ||
-    !(parent as NodeComponent).slotIds.includes(definedId)
+    parent.componentType === ComponentType.NODE
   ) {
-    (parent as NodeComponent).slotIds.push(definedId);
+    (parent as NodeComponent).slots.push(editorEnv.slots.get(definedId)!);
   }
   return editorEnv.updateComponentId(id >= 0 ? id : undefined);
 }

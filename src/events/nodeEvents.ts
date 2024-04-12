@@ -30,16 +30,11 @@ export default {
     const node = editorEnv.nodes.get(nodeCollisions[0]);
     if (node === undefined) return false;
     node.move(v, useDelta);
-    this.moveLinkedElements(editorEnv, node, useDelta);
+    this.moveLinkedElements(node, useDelta);
     return true;
   },
-  moveLinkedElements(
-    editorEnv: EditorEnvironment,
-    node: NodeComponent,
-    useDelta = true
-  ): void {
-    for (const slotId of node.slotIds) {
-      const slot = editorEnv.slots.get(slotId);
+  moveLinkedElements(node: NodeComponent, useDelta = true): void {
+    for (const slot of node.slots) {
       if (!slot) continue;
       slot.update();
       slot.slotConnections.forEach(connection => {

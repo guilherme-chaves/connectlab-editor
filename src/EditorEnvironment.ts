@@ -35,7 +35,7 @@ import TextComponent, {
 } from '@connectlab-editor/components/TextComponent';
 import Vector2 from '@connectlab-editor/types/Vector2';
 
-type EditorEnvironmentObject = {
+export type EditorEnvironmentObject = {
   id: string;
   data: {
     nodes: NodeObject[];
@@ -53,13 +53,13 @@ class EditorEnvironment {
   public slots: SlotList;
   public connections: ConnectionList;
   public texts: TextList;
-  public readonly nodeImageList: ImageListObject | undefined;
+  public readonly nodeImageList: ImageListObject;
   public signalGraph: SignalGraph;
 
   constructor(
     documentId: string,
     startId = 0,
-    imageList: ImageListObject | undefined,
+    imageList: ImageListObject,
     signalGraph: SignalGraph = {},
     nodeList = new Map(),
     slotList = new Map(),
@@ -174,7 +174,7 @@ class EditorEnvironment {
   static createFromJson(
     data: EditorEnvironmentObject,
     ctx: CanvasRenderingContext2D,
-    imageList: ImageListObject | undefined
+    imageList: ImageListObject
   ): EditorEnvironment {
     const newEnv = new EditorEnvironment(
       data.id,
