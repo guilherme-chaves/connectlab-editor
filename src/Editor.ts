@@ -101,6 +101,19 @@ export default class Editor {
     a.click();
   }
 
+  clearEditor() {
+    this.editorEnv.nodes.clear();
+    this.editorEnv.connections.clear();
+    this.editorEnv.slots.clear();
+    this.editorEnv.texts.clear();
+    this.editorEnv.signalGraph = {};
+    this.editorEnv = new EditorEnvironment(
+      this.editorEnv.documentId,
+      0,
+      this.editorEnv.nodeImageList
+    );
+  }
+
   private createContext(
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
@@ -153,6 +166,14 @@ export default class Editor {
     document
       .getElementById('load-editor-file')
       ?.addEventListener('change', ev => this.loadFile(ev));
+    document.getElementById('clear-editor')?.addEventListener('click', () => {
+      if (
+        confirm(
+          'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!'
+        ) === true
+      )
+        this.clearEditor();
+    });
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
