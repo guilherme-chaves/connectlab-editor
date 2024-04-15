@@ -7,14 +7,17 @@ const jestConfig = {
   preset: 'ts-jest',
   transform: {
     '^.+[.]tsx?$': ['ts-jest', {tsconfig: 'tsconfig.test.json'}],
-    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': "<rootDir>/mocks/imageMock.cjs"
+    '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
+      '<rootDir>/mocks/imageMock.cjs',
   },
-  moduleFileExtensions: ["ts", "js", "mjs", "cjs", "json"],
+  moduleFileExtensions: ['ts', 'js', 'mjs', 'cjs', 'json'],
   modulePaths: [tsconfig.compilerOptions.baseUrl],
-  moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {prefix: '<rootDir>/'}),
-  setupFiles: ["jest-canvas-mock"],
+  moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, {
+    prefix: '<rootDir>/',
+  }),
+  setupFiles: ['jest-canvas-mock'],
   transformIgnorePatterns: [],
-  testEnvironment: 'jsdom',
+  testEnvironment: './mocks/structuredClone.ts',
   verbose: true,
 };
 

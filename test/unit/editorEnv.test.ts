@@ -86,6 +86,12 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
   });
   test('Carregar um novo ambiente a partir de um objeto', () => {
     const envObject = editorEnv!.saveAsJson();
-    const editorEnv2 = 
+    const editorEnv2 = EditorEnvironment.createFromJson(
+      JSON.parse(envObject),
+      ctx!,
+      editorEnv!.nodeImageList
+    );
+    expect(editorEnv2).toBeDefined();
+    // TODO - Verificações das listas e do grafo de sinal
   });
 });

@@ -52,7 +52,8 @@
   },
   "include": [
     "test",
-    "src"
+    "src",
+    "mocks"
   ],
   "exclude": []
 }
