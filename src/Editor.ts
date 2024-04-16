@@ -16,23 +16,22 @@ import {
   addSlot,
   addText,
 } from '@connectlab-editor/functions/addComponent';
-import {gzipSync, gunzipSync} from 'fflate';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
+import createEditorEvents from '@connectlab-editor/events/editorEvents';
 
 export default class Editor {
   // Lista de componentes
   public editorEnv;
   // Controle de eventos do canvas
-  private readonly mouse: Mouse;
-  private readonly keyboard: Keyboard;
-  private readonly mouseEvents: MouseEvents;
-  private readonly keyboardEvents: KeyboardEvents;
+  public readonly mouse: Mouse;
+  public readonly keyboard: Keyboard;
+  public readonly mouseEvents: MouseEvents;
+  public readonly keyboardEvents: KeyboardEvents;
   // Contextos dos canvas
   private readonly canvasId: string;
-  private readonly canvasCtx: CanvasRenderingContext2D;
-  private readonly backgroundCtx: CanvasRenderingContext2D;
+  public readonly canvasCtx: CanvasRenderingContext2D;
+  public readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private canvasArea: Vector2; // [0, 1] dentro dos dois eixos, representa a porcentagem da tela a ser ocupada
   private backgroundPattern: CanvasPattern | null = null;
   private windowArea: Vector2;
   private windowResized: boolean;
@@ -42,8 +41,6 @@ export default class Editor {
     documentId: string,
     canvasID: string,
     backgroundID: string,
-    canvasVw = 1,
-    canvasVh = 1,
     tickRate = 60.0
   ) {
     this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
@@ -59,121 +56,18 @@ export default class Editor {
     this.canvasId = canvasID;
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
-    this.createEditorEvents(canvasDOM, backgroundDOM);
     this.backgroundPattern = null;
-    this.canvasArea = new Vector2(canvasVw, canvasVh, false);
     this.windowArea = new Vector2(window.innerWidth, window.innerHeight, false);
     this.loadBackgroundPattern(bgTexturePath);
     this.windowResized = true;
     this.tickRate = tickRate;
-  }
-
-  loadFile(ev: Event): void {
-    if (!ev.target) {
-      console.error('Falha ao tentar carregar os dados da entrada de dados');
-      return;
-    }
-    const input = ev.target as HTMLInputElement;
-    if (!input.files) return;
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(input.files[0]);
-    reader.onload = () => {
-      if (!reader.result || typeof reader.result === 'string') return;
-      const unzipped = gunzipSync(new Uint8Array(reader.result));
-      const jsonData = JSON.parse(new TextDecoder().decode(unzipped));
-      // if (!(jsonData instanceof EditorEnvironmentObject))
-      this.editorEnv = EditorEnvironment.createFromJson(
-        jsonData,
-        this.canvasCtx,
-        this.editorEnv.nodeImageList
-      );
-    };
-  }
-
-  saveToFile(editor: Editor) {
-    const a = document.createElement('a');
-    const file = new TextEncoder().encode(editor.editorEnv.saveAsJson());
-    const compressed = gzipSync(file, {level: 6});
-    a.href = URL.createObjectURL(
-      new Blob([compressed], {type: 'application/gzip'})
-    );
-    a.download = `${this.editorEnv.documentId}-save-${Date.now()}.save`;
-    a.click();
-  }
-
-  clearEditor() {
-    this.editorEnv.nodes.clear();
-    this.editorEnv.connections.clear();
-    this.editorEnv.slots.clear();
-    this.editorEnv.texts.clear();
-    this.editorEnv.signalGraph = {};
-    this.editorEnv = new EditorEnvironment(
-      this.editorEnv.documentId,
-      0,
-      this.editorEnv.nodeImageList
-    );
+    createEditorEvents(this, canvasDOM, backgroundDOM);
   }
 
   private createContext(
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
     return domElement.getContext('2d')!;
-  }
-
-  private createEditorEvents(
-    canvasDOM: HTMLCanvasElement,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _backgroundDOM: HTMLCanvasElement
-  ) {
-    window.addEventListener('load', () => {
-      this.resize();
-      this.compute();
-      this.update();
-    });
-    window.addEventListener('resize', () => {
-      this.resize();
-    });
-    canvasDOM.addEventListener('mousedown', ({x, y}) => {
-      this.mouse.clicked = true;
-      this.mouseEvents.onMouseClick(this);
-      if (this.mouse.stateChanged)
-        this.mouse.clickStartPosition = this.computePositionInCanvas(x, y);
-    });
-    canvasDOM.addEventListener('mouseup', () => {
-      this.mouse.clicked = false;
-      this.mouseEvents.onMouseRelease(this.editorEnv);
-    });
-    canvasDOM.addEventListener('mouseout', () => {
-      this.mouse.clicked = false;
-      this.mouseEvents.onMouseRelease(this.editorEnv);
-    });
-    window.addEventListener('mousemove', ({x, y}) => {
-      this.mouse.position = this.computePositionInCanvas(x, y);
-    });
-    window.addEventListener('keydown', (ev: KeyboardEvent) => {
-      this.keyboardEvents.onKeyDown(ev, this);
-    });
-    window.addEventListener('keyup', () => {
-      this.keyboardEvents.onKeyUp();
-    });
-    document
-      .getElementById('save-editor')
-      ?.addEventListener('click', () => this.saveToFile(this));
-    document.getElementById('load-editor')?.addEventListener('click', () => {
-      document.getElementById('load-editor-file')?.click();
-      return;
-    });
-    document
-      .getElementById('load-editor-file')
-      ?.addEventListener('change', ev => this.loadFile(ev));
-    document.getElementById('clear-editor')?.addEventListener('click', () => {
-      if (
-        confirm(
-          'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!'
-        ) === true
-      )
-        this.clearEditor();
-    });
   }
 
   getContext(canvas = true): CanvasRenderingContext2D {
@@ -217,10 +111,10 @@ export default class Editor {
 
   resize() {
     this.computeWindowArea();
-    this.canvasCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.canvasCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
-    this.backgroundCtx.canvas.width = this.windowArea.x * this.canvasArea.x;
-    this.backgroundCtx.canvas.height = this.windowArea.y * this.canvasArea.y;
+    this.canvasCtx.canvas.width = this.windowArea.x;
+    this.canvasCtx.canvas.height = this.windowArea.y;
+    this.backgroundCtx.canvas.width = this.windowArea.x;
+    this.backgroundCtx.canvas.height = this.windowArea.y;
     this.windowResized = true;
   }
 
