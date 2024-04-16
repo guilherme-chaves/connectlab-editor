@@ -18,7 +18,8 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "test": "jest"
+    "test": "jest",
+    "coverage": "jest --coverage"
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",

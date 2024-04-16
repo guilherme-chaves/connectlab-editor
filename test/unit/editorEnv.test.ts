@@ -94,4 +94,15 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(editorEnv2).toBeDefined();
     // TODO - Verificações das listas e do grafo de sinal
   });
+  test('Obter o ID do ambiente do editor', () => {
+    expect(editorEnv?.getDocumentId()).toBe('test-mode');
+  });
+  test('Remover conexão do editor', () => {
+    expect(editorEnv?.removeComponent(7, ComponentType.LINE)).toBe(true);
+    expect(editorEnv?.removeComponent(19, ComponentType.LINE)).toBe(false);
+  });
+  test('Remover nó do editor', () => {
+    expect(editorEnv?.removeComponent(0, ComponentType.NODE)).toBe(true);
+    expect(editorEnv?.removeComponent(50, ComponentType.NODE)).toBe(false);
+  });
 });

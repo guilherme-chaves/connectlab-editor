@@ -199,6 +199,24 @@ describe('Teste de operações com vetores', () => {
     });
   });
 
+  test('Obter vetor em valores absolutos (estático)', () => {
+    expect(
+      Vector2.abs(new Vector2(-3, -76.2312, false), undefined, false)
+    ).toEqual({
+      _x: expect.closeTo(3),
+      _y: expect.closeTo(76.2312),
+      useInt: false,
+    });
+  });
+
+  test('Obter vetor em valores absolutos (instância)', () => {
+    expect(new Vector2(-21, 4.587, false).abs()).toEqual({
+      _x: expect.closeTo(21),
+      _y: expect.closeTo(4.587),
+      useInt: false,
+    });
+  });
+
   test('Copiar valores de um vetor (estático)', () => {
     Vector2.copy(v1, v2);
     expect(v2).toEqual(v1);
