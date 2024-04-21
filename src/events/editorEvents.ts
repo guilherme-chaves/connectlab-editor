@@ -51,9 +51,7 @@ export default function createEditorEvents(
   });
   document
     .getElementById('load-editor-file')
-    ?.addEventListener('change', ev =>
-      loadFile(editor.editorEnv, editor.canvasCtx, ev)
-    );
+    ?.addEventListener('change', ev => loadFile(editor, editor.canvasCtx, ev));
   document.getElementById('clear-editor')?.addEventListener('click', () => {
     if (
       confirm(

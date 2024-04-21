@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test} from '@jest/globals';
+import {expect, test, beforeEach} from '@jest/globals';
 
 import Vector2 from '../../src/types/Vector2';
 

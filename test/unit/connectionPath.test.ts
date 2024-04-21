@@ -1,3 +1,5 @@
+// eslint-disable-next-line node/no-unpublished-import
+import {expect, test} from '@jest/globals';
 import BBCollision from '../../src/collision/BBCollision';
 import connectionPath from '../../src/functions/connection/connectionPath';
 import Vector2 from '../../src/types/Vector2';

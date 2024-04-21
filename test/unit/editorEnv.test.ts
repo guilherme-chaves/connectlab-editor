@@ -1,7 +1,7 @@
+// eslint-disable-next-line node/no-unpublished-import
+import {expect, test, beforeAll} from '@jest/globals';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
-import EditorEnvironment, {
-  EditorEnvironmentObject,
-} from '@connectlab-editor/environment';
+import EditorEnvironment from '@connectlab-editor/environment';
 import {
   addConnection,
   addNode,
@@ -80,9 +80,8 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
   });
   test('Salvar ambiente em objeto', () => {
     const envObject = editorEnv!.saveAsJson();
-    expect(envObject).toBeInstanceOf<string>;
     expect(envObject.length).toBeGreaterThan(0);
-    expect(JSON.parse(envObject)).toBeInstanceOf<EditorEnvironmentObject>;
+    expect(JSON.parse(envObject)).toHaveProperty('id', 'test-mode');
   });
   test('Carregar um novo ambiente a partir de um objeto', () => {
     const envObject = editorEnv!.saveAsJson();

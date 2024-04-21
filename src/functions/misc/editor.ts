@@ -1,8 +1,9 @@
 import {gzipSync, gunzipSync} from 'fflate';
 import EditorEnvironment from '@connectlab-editor/environment';
+import Editor from '@connectlab-editor';
 
 export function loadFile(
-  editorEnv: EditorEnvironment,
+  editor: Editor,
   ctx: CanvasRenderingContext2D,
   ev: Event
 ): void {
@@ -19,10 +20,10 @@ export function loadFile(
     const unzipped = gunzipSync(new Uint8Array(reader.result));
     const jsonData = JSON.parse(new TextDecoder().decode(unzipped));
     // if (!(jsonData instanceof EditorEnvironmentObject))
-    editorEnv = EditorEnvironment.createFromJson(
+    editor.editorEnv = EditorEnvironment.createFromJson(
       jsonData,
       ctx,
-      editorEnv.nodeImageList
+      editor.editorEnv.nodeImageList
     );
   };
 }

@@ -1,10 +1,14 @@
+// eslint-disable-next-line node/no-unpublished-import
+import {expect, test, beforeEach} from '@jest/globals';
 import {NodeTypes, SignalGraph} from '../../src/types/types';
 import signalEvents from '../../src/functions/signal/signalEvents';
 import signalUpdate from '../../src/functions/signal/signalUpdate';
 
 describe('Testes com o grafo de sinal lógico', () => {
   let graph: SignalGraph = {};
-  beforeEach(() => (graph = {}));
+  beforeEach(() => {
+    graph = {};
+  });
   test('Criar um elemento no grafo', () => {
     signalEvents.addVertex(graph, 0, NodeTypes.I_SWITCH, true);
     expect(graph[0]).toBeDefined();
