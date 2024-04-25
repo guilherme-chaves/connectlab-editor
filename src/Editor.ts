@@ -71,11 +71,6 @@ export default class Editor {
     return domElement.getContext('2d')!;
   }
 
-  getContext(canvas = true): CanvasRenderingContext2D {
-    if (canvas) return this.canvasCtx;
-    return this.backgroundCtx;
-  }
-
   loadBackgroundPattern(bgPath: string) {
     const backgroundImg = new Image();
     backgroundImg.onload = () => {
@@ -131,11 +126,16 @@ export default class Editor {
     if (this.windowResized) this.windowResized = false;
   };
 
-  compute() {
-    setInterval(() => {
+  compute = () => {
+    if (!this.simulationStarted) {
+      setInterval(this.compute, 1000.0 / this.tickRate);
+      this.simulationStarted = true;
+    } else {
+      this.mouseEvents.onMouseClick(this.editorEnv);
       this.mouseEvents.onMouseMove(this.editorEnv);
-    }, 1000.0 / this.tickRate);
-  }
+      this.mouseEvents.onMouseRelease(this.editorEnv);
+    }
+  };
 
   node(
     type = NodeTypes.G_AND,
