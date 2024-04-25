@@ -1,5 +1,4 @@
 /* eslint-disable no-case-declarations */
-import Editor from '@connectlab-editor';
 import connectionEvents from '@connectlab-editor/events/connectionEvents';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
@@ -33,29 +32,29 @@ export default class MouseEvents {
     this.movingObject = 'none';
   }
 
-  onMouseClick(editor: Editor) {
+  onMouseClick(editorEnv: EditorEnvironment) {
     if (this._mouse.stateChanged && this._mouse.clicked) {
-      this.clearAllCollisions(editor.editorEnv);
+      this.clearAllCollisions(editorEnv);
       // Obtêm uma lista com todas as colisões encontradas
       const nodes = nodeEvents.checkNodeClick(
-        editor.editorEnv.nodes,
+        editorEnv.nodes,
         this._mouse.position
       );
       const slots = slotEvents.checkSlotClick(
-        editor.editorEnv.slots,
+        editorEnv.slots,
         this._mouse.position
       );
       const connections = connectionEvents.checkConnectionClick(
-        editor.editorEnv.connections,
+        editorEnv.connections,
         this._mouse.position
       );
       const texts = textEvents.checkTextClick(
-        editor.editorEnv.texts,
+        editorEnv.texts,
         this._mouse.position
       );
 
       this.clearUnselectedComponents(
-        editor.editorEnv,
+        editorEnv,
         nodes,
         slots,
         connections,
@@ -71,10 +70,10 @@ export default class MouseEvents {
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       if (slots.length !== 0) {
-        connectionEvents.addLine(editor, this);
+        connectionEvents.addLine(editorEnv, this);
       }
 
-      this.showSelectedComponents(editor.editorEnv);
+      this.showSelectedComponents(editorEnv);
 
       this._mouse.stateChanged = false;
     }

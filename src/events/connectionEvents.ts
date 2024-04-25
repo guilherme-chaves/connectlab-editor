@@ -1,4 +1,3 @@
-import Editor from '@connectlab-editor';
 import Vector2 from '@connectlab-editor/types/Vector2';
 import {ComponentType, ConnectionList} from '@connectlab-editor/types';
 import slotEvents from '@connectlab-editor/events/slotEvents';
@@ -7,6 +6,7 @@ import signalEvents from '@connectlab-editor/signal/signalEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
+import {addConnection} from '@connectlab-editor/functions/addComponent';
 
 export default {
   editingLineId: -1,
@@ -30,14 +30,16 @@ export default {
     return collidedWith;
   },
 
-  addLine(editor: Editor, mouseEvents: MouseEvents) {
+  addLine(editorEnv: EditorEnvironment, mouseEvents: MouseEvents) {
     if (this.editingLine && this.editingLineId !== -1) return true;
     const slotCollisions = mouseEvents.getCollisionList().slots;
     if (slotCollisions.length > 0) {
-      const slot = editor.editorEnv.slots.get(slotCollisions[0]);
+      const slot = editorEnv.slots.get(slotCollisions[0]);
       if (!slot) return false;
       // debugger;
-      this.editingLineId = editor.line(
+      this.editingLineId = addConnection(
+        undefined,
+        editorEnv,
         slot.globalPosition.x,
         slot.globalPosition.y,
         slot.globalPosition.x,
