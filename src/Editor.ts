@@ -36,6 +36,7 @@ export default class Editor {
   private windowArea: Vector2;
   private windowResized: boolean;
   public readonly tickRate: number;
+  private simulationStarted = false;
 
   constructor(
     documentId: string,

@@ -53,7 +53,7 @@ export function addNode(
   editorEnv.updateComponentId(id >= 0 ? id : undefined);
 
   if (slotIds.length === 0) {
-    const slotParams = NodeComponent.getNodeTypeObject(type).connectionSlot;
+    const slotParams = NodeComponent.getNodeModel(type).connectionSlot;
     for (const slot of Object.values(slotParams)) {
       const slotKey = addSlot(
         undefined,

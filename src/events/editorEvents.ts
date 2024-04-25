@@ -21,17 +21,14 @@ export default function createEditorEvents(
   });
   canvasDOM.addEventListener('mousedown', ({x, y}) => {
     editor.mouse.clicked = true;
-    editor.mouseEvents.onMouseClick(editor);
     if (editor.mouse.stateChanged)
       editor.mouse.clickStartPosition = editor.computePositionInCanvas(x, y);
   });
   canvasDOM.addEventListener('mouseup', () => {
     editor.mouse.clicked = false;
-    editor.mouseEvents.onMouseRelease(editor.editorEnv);
   });
   canvasDOM.addEventListener('mouseout', () => {
     editor.mouse.clicked = false;
-    editor.mouseEvents.onMouseRelease(editor.editorEnv);
   });
   window.addEventListener('mousemove', ({x, y}) => {
     editor.mouse.position = editor.computePositionInCanvas(x, y);

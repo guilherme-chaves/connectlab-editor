@@ -19,7 +19,7 @@
         "src/functions/misc/*"
       ],
       "@connectlab-editor/interfaces/*": ["src/interfaces/*"],
-      "@connectlab-editor/objects/*": ["src/objects/*"],
+      "@connectlab-editor/models/*": ["src/models/*"],
       "@connectlab-editor/events/*": ["src/events/*"],
       "@connectlab-editor/signal/*": ["src/functions/signal/*"]
     },

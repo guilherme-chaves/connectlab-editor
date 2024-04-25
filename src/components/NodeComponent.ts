@@ -7,7 +7,7 @@ import {
   VectorObject,
   slotStates,
 } from '@connectlab-editor/types';
-import {NodeTypeObject} from '@connectlab-editor/types';
+import {NodeModel} from '@connectlab-editor/types';
 import {
   ADDNode,
   NANDNode,
@@ -16,12 +16,12 @@ import {
   ORNode,
   XNORNode,
   XORNode,
-} from '@connectlab-editor/objects/nodeTypeObjects';
+} from '@connectlab-editor/models/node';
 import Vector2 from '@connectlab-editor/types/Vector2';
 import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
 import Node from '@connectlab-editor/interfaces/nodeInterface';
-import {SwitchInput} from '@connectlab-editor/objects/inputTypeObjects';
-import {LEDROutput} from '@connectlab-editor/objects/outputTypeObjects';
+import {SwitchInput} from '@connectlab-editor/models/input';
+import {LEDROutput} from '@connectlab-editor/models/output';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
 import {ComponentObject} from '@connectlab-editor/interfaces/componentInterface';
 import SlotComponent from './SlotComponent';
@@ -39,7 +39,7 @@ class NodeComponent implements Node {
   public readonly id: number;
   public position: Vector2;
   public readonly componentType: ComponentType;
-  public readonly nodeType: NodeTypeObject;
+  public readonly nodeType: NodeModel;
   public slots: Array<SlotComponent>;
   public collisionShape: BBCollision;
   private _images: ImageListObject;
@@ -77,7 +77,7 @@ class NodeComponent implements Node {
     this.id = id;
     this.position = position;
     this.componentType = componentType;
-    this.nodeType = NodeComponent.getNodeTypeObject(nodeType);
+    this.nodeType = NodeComponent.getNodeModel(nodeType);
     this._signalData = signalGraph[this.id];
     this.slots = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
@@ -100,7 +100,7 @@ class NodeComponent implements Node {
     this.selected = false;
   }
 
-  static getNodeTypeObject(type: NodeTypes): NodeTypeObject {
+  static getNodeModel(type: NodeTypes): NodeModel {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
       case NodeTypes.G_AND:

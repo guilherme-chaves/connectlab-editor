@@ -65,7 +65,7 @@ export interface ConnectionVertices {
 export type slotStates = boolean;
 
 // Modelo para criação de objetos do tipo NODE
-export interface NodeTypeObject {
+export interface NodeModel {
   readonly id: NodeTypes;
   readonly imgPath: string[];
   readonly connectionSlot: Array<{

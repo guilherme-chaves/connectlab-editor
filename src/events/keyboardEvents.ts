@@ -1,6 +1,7 @@
 import Editor from '@connectlab-editor';
 import Keyboard from '@connectlab-editor/types/Keyboard';
 import {NodeTypes} from '@connectlab-editor/types';
+import {saveToFile} from '@connectlab-editor/functions/editor';
 
 export enum keyboardMode {
   ADD_NODE = 0,
@@ -100,7 +101,7 @@ export default class KeyboardEvents {
         editor.remove();
         break;
       case specialKeycodes.INSERT:
-        editor.saveToFile(editor);
+        saveToFile(editor.editorEnv);
     }
   }
 

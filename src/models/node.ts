@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/Vector2';
-import {NodeTypeObject, NodeTypes} from '@connectlab-editor/types';
+import {NodeModel, NodeTypes} from '@connectlab-editor/types';
 import ADDPath from '@connectlab-editor/gates/AND_ANSI.svg';
 import NANDPath from '@connectlab-editor/gates/NAND_ANSI.svg';
 import NORPath from '@connectlab-editor/gates/NOR_ANSI.svg';
@@ -8,7 +8,7 @@ import ORPath from '@connectlab-editor/gates/OR_ANSI.svg';
 import XNORPath from '@connectlab-editor/gates/XNOR_ANSI.svg';
 import XORPath from '@connectlab-editor/gates/XOR_ANSI.svg';
 
-export const ADDNode: NodeTypeObject = {
+export const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,
   imgPath: [ADDPath],
   connectionSlot: [
@@ -33,7 +33,7 @@ export const ADDNode: NodeTypeObject = {
   ],
 };
 
-export const NANDNode: NodeTypeObject = {
+export const NANDNode: NodeModel = {
   id: NodeTypes.G_NAND,
   imgPath: [NANDPath],
   connectionSlot: [
@@ -58,7 +58,7 @@ export const NANDNode: NodeTypeObject = {
   ],
 };
 
-export const NORNode: NodeTypeObject = {
+export const NORNode: NodeModel = {
   id: NodeTypes.G_NOR,
   imgPath: [NORPath],
   connectionSlot: [
@@ -83,7 +83,7 @@ export const NORNode: NodeTypeObject = {
   ],
 };
 
-export const NOTNode: NodeTypeObject = {
+export const NOTNode: NodeModel = {
   id: NodeTypes.G_NOT,
   imgPath: [NOTPath],
   connectionSlot: [
@@ -102,7 +102,7 @@ export const NOTNode: NodeTypeObject = {
   ],
 };
 
-export const ORNode: NodeTypeObject = {
+export const ORNode: NodeModel = {
   id: NodeTypes.G_OR,
   imgPath: [ORPath],
   connectionSlot: [
@@ -127,7 +127,7 @@ export const ORNode: NodeTypeObject = {
   ],
 };
 
-export const XNORNode: NodeTypeObject = {
+export const XNORNode: NodeModel = {
   id: NodeTypes.G_XNOR,
   imgPath: [XNORPath],
   connectionSlot: [
@@ -152,7 +152,7 @@ export const XNORNode: NodeTypeObject = {
   ],
 };
 
-export const XORNode: NodeTypeObject = {
+export const XORNode: NodeModel = {
   id: NodeTypes.G_XOR,
   imgPath: [XORPath],
   connectionSlot: [
