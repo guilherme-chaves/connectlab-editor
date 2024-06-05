@@ -99,7 +99,8 @@ class ConnectionComponent implements Component {
     ctx.lineJoin = 'round';
     ctx.stroke(this.drawPath);
     ctx.restore();
-    this.collisionShape.forEach(shape => shape.draw(ctx, this.selected));
+    for (let i = 0; i < this.collisionShape.length; i++)
+      this.collisionShape[i].draw(ctx, this.selected);
   }
 
   addAnchor(point: Vector2, arrIndex: number = this.anchors.length): void {

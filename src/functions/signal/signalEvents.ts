@@ -18,14 +18,13 @@ export default {
   },
   removeVertex(signalGraph: SignalGraph, nodeId: number): void {
     if (signalGraph[nodeId]) {
-      signalGraph[nodeId].signalTo.forEach(connectedNode => {
-        const index =
-          signalGraph[connectedNode]?.signalFrom.indexOf(nodeId) ?? -1;
+      for (const signalToId of Object.values(signalGraph[nodeId].signalTo)) {
+        const index = signalGraph[signalToId]?.signalFrom.indexOf(nodeId) ?? -1;
         if (index !== -1) {
-          signalGraph[connectedNode].signalFrom.splice(index, 1);
-          signalGraph[connectedNode].state = undefined;
+          signalGraph[signalToId].signalFrom.splice(index, 1);
+          signalGraph[signalToId].state = undefined;
         }
-      });
+      }
       delete signalGraph[nodeId];
       signalUpdate.updateGraph(signalGraph);
     }

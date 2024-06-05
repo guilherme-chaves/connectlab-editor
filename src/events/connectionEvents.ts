@@ -6,9 +6,9 @@ import signalEvents from '@connectlab-editor/signal/signalEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
-import {addConnection} from '@connectlab-editor/functions/addComponent';
+import {addComponent} from '@connectlab-editor/functions/addComponent';
 
-export default {
+export const connectionEvents = {
   editingLineId: -1,
   editingLine: false,
   lineStartSlot: -1,
@@ -21,12 +21,12 @@ export default {
     position: Vector2
   ): number[] {
     const collidedWith: Array<number> = [];
-    connections.forEach((connection, key) => {
+    for (const [key, connection] of connections.entries()) {
       const collision = connection.collisionShape.find(collisionShape => {
         return collisionShape.collisionWithPoint(position);
       });
       if (collision !== undefined) collidedWith.push(key);
-    });
+    }
     return collidedWith;
   },
 
