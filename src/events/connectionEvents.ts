@@ -37,7 +37,7 @@ export const connectionEvents = {
       const slot = editorEnv.slots.get(slotCollisions[0]);
       if (!slot) return false;
       // debugger;
-      this.editingLineId = addConnection(
+      this.editingLineId = addComponent.connection(
         undefined,
         editorEnv,
         slot.globalPosition.x,

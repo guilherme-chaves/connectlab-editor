@@ -1,24 +1,34 @@
 import {slotStates} from '@connectlab-editor/types';
 
-export const input_output = (slotState: [slotStates, slotStates]) =>
-  slotState[0];
+const input_output = (slotState: [slotStates, slotStates]) => slotState[0];
 
-export const and = (slotState: [slotStates, slotStates]) =>
+const and = (slotState: [slotStates, slotStates]) =>
   slotState[0] && slotState[1];
 
-export const nand = (slotState: [slotStates, slotStates]) =>
+const nand = (slotState: [slotStates, slotStates]) =>
   !(slotState[0] && slotState[1]);
 
-export const nor = (slotState: [slotStates, slotStates]) =>
+const nor = (slotState: [slotStates, slotStates]) =>
   !(slotState[0] || slotState[1]);
 
-export const not = (slotState: [slotStates, slotStates]) => !slotState[0];
+const not = (slotState: [slotStates, slotStates]) => !slotState[0];
 
-export const or = (slotState: [slotStates, slotStates]) =>
+const or = (slotState: [slotStates, slotStates]) =>
   slotState[0] || slotState[1];
 
-export const xnor = (slotState: [slotStates, slotStates]) =>
+const xnor = (slotState: [slotStates, slotStates]) =>
   slotState[0] === slotState[1];
 
-export const xor = (slotState: [slotStates, slotStates]) =>
+const xor = (slotState: [slotStates, slotStates]) =>
   slotState[0] !== slotState[1];
+
+export const signalOperations = {
+  input_output,
+  and,
+  nand,
+  nor,
+  not,
+  or,
+  xnor,
+  xor,
+};

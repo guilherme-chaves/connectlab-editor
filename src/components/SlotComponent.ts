@@ -77,15 +77,8 @@ export default class SlotComponent implements Component {
     this.regenPath = false;
   }
 
-  move(v: Vector2, useDelta = true) {
-    if (useDelta) this.position.add(v);
-    else Vector2.copy(v, this.position);
-    Vector2.add(this.position, this.parent.position, this.globalPosition);
-    this.collisionShape.moveShape(this.globalPosition, false);
-    this.regenPath = true;
-  }
-
-  update() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  move(_v?: Vector2, _useDelta = true) {
     Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
     this.regenPath = true;

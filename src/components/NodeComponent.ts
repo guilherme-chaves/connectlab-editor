@@ -8,15 +8,7 @@ import {
   slotStates,
 } from '@connectlab-editor/types';
 import {NodeModel} from '@connectlab-editor/types';
-import {
-  ADDNode,
-  NANDNode,
-  NORNode,
-  NOTNode,
-  ORNode,
-  XNORNode,
-  XORNode,
-} from '@connectlab-editor/models/node';
+import {nodeModels} from '@connectlab-editor/models/node';
 import Vector2 from '@connectlab-editor/types/Vector2';
 import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
 import Node from '@connectlab-editor/interfaces/nodeInterface';
@@ -104,25 +96,25 @@ class NodeComponent implements Node {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
       case NodeTypes.G_AND:
-        return ADDNode;
+        return nodeModels.ADDNode;
       case NodeTypes.G_NAND:
-        return NANDNode;
+        return nodeModels.NANDNode;
       case NodeTypes.G_NOR:
-        return NORNode;
+        return nodeModels.NORNode;
       case NodeTypes.G_NOT:
-        return NOTNode;
+        return nodeModels.NOTNode;
       case NodeTypes.G_OR:
-        return ORNode;
+        return nodeModels.ORNode;
       case NodeTypes.G_XNOR:
-        return XNORNode;
+        return nodeModels.XNORNode;
       case NodeTypes.G_XOR:
-        return XORNode;
+        return nodeModels.XORNode;
       case NodeTypes.I_SWITCH:
         return SwitchInput;
       case NodeTypes.O_LED_RED:
         return LEDROutput;
       default:
-        return NOTNode;
+        return nodeModels.NOTNode;
     }
   }
 

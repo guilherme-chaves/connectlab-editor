@@ -13,7 +13,7 @@ export default function createEditorEvents(
 ) {
   window.addEventListener('load', () => {
     editor.resize();
-    editor.compute();
+    setInterval(editor.compute, 1000.0 / editor.tickRate);
     editor.update();
   });
   window.addEventListener('resize', () => {
@@ -50,11 +50,6 @@ export default function createEditorEvents(
     .getElementById('load-editor-file')
     ?.addEventListener('change', ev => loadFile(editor, editor.canvasCtx, ev));
   document.getElementById('clear-editor')?.addEventListener('click', () => {
-    if (
-      confirm(
-        'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!'
-      ) === true
-    )
-      clearEditor(editor.editorEnv);
+    clearEditor(editor.editorEnv);
   });
 }

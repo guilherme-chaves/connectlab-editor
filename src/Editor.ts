@@ -1,6 +1,6 @@
 import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types';
 import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
-import updateAll from '@connectlab-editor/functions/canvasDraw';
+import {updateEditor} from '@connectlab-editor/functions/canvasDraw';
 import EditorEnvironment from '@connectlab-editor/environment';
 import Vector2 from '@connectlab-editor/types/Vector2';
 import Component from '@connectlab-editor/interfaces/componentInterface';
@@ -8,14 +8,7 @@ import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import Mouse from '@connectlab-editor/types/Mouse';
 import KeyboardEvents from '@connectlab-editor/events/keyboardEvents';
 import Keyboard from '@connectlab-editor/types/Keyboard';
-import {
-  addConnection,
-  addInput,
-  addNode,
-  addOutput,
-  addSlot,
-  addText,
-} from '@connectlab-editor/functions/addComponent';
+import {addComponent} from '@connectlab-editor/functions/addComponent';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import createEditorEvents from '@connectlab-editor/events/editorEvents';
 
@@ -36,7 +29,6 @@ export default class Editor {
   private windowArea: Vector2;
   private windowResized: boolean;
   public readonly tickRate: number;
-  private simulationStarted = false;
 
   constructor(
     documentId: string,
@@ -68,7 +60,7 @@ export default class Editor {
   private createContext(
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
-    return domElement.getContext('2d')!;
+    return domElement.getContext('2d' /*, {desynchronized: true}*/)!;
   }
 
   loadBackgroundPattern(bgPath: string) {
@@ -115,26 +107,20 @@ export default class Editor {
   }
 
   update = () => {
-    requestAnimationFrame(this.update);
-    updateAll(
+    updateEditor(
       this.canvasCtx,
       this.editorEnv.components,
       this.windowResized ? this.backgroundCtx : null,
       this.backgroundPattern
     );
-
     if (this.windowResized) this.windowResized = false;
+    requestAnimationFrame(this.update);
   };
 
   compute = () => {
-    if (!this.simulationStarted) {
-      setInterval(this.compute, 1000.0 / this.tickRate);
-      this.simulationStarted = true;
-    } else {
-      this.mouseEvents.onMouseClick(this.editorEnv);
-      this.mouseEvents.onMouseMove(this.editorEnv);
-      this.mouseEvents.onMouseRelease(this.editorEnv);
-    }
+    this.mouseEvents.onMouseClick(this.editorEnv);
+    this.mouseEvents.onMouseMove(this.editorEnv);
+    this.mouseEvents.onMouseRelease(this.editorEnv);
   };
 
   node(
@@ -142,7 +128,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addNode(
+    return addComponent.node(
       undefined,
       this.editorEnv,
       this.canvasCtx.canvas.width,
@@ -158,7 +144,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addInput(
+    return addComponent.input(
       undefined,
       this.editorEnv,
       this.canvasCtx.canvas.width,
@@ -174,7 +160,7 @@ export default class Editor {
     x = this.mouse.position.x,
     y = this.mouse.position.y
   ): number {
-    return addOutput(
+    return addComponent.output(
       undefined,
       this.editorEnv,
       this.canvasCtx.canvas.width,
@@ -193,7 +179,16 @@ export default class Editor {
     from?: ConnectionVertex,
     to?: ConnectionVertex
   ): number {
-    return addConnection(undefined, this.editorEnv, x1, y1, x2, y2, from, to);
+    return addComponent.connection(
+      undefined,
+      this.editorEnv,
+      x1,
+      y1,
+      x2,
+      y2,
+      from,
+      to
+    );
   }
 
   text(
@@ -203,7 +198,7 @@ export default class Editor {
     style?: string,
     parent?: Component
   ): number {
-    return addText(
+    return addComponent.text(
       undefined,
       this.editorEnv,
       this.canvasCtx,
@@ -225,7 +220,7 @@ export default class Editor {
     color?: string,
     colorActive?: string
   ) {
-    return addSlot(
+    return addComponent.slot(
       undefined,
       this.editorEnv,
       x,

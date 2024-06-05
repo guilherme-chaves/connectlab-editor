@@ -8,7 +8,7 @@ import ORPath from '@connectlab-editor/gates/OR_ANSI.svg';
 import XNORPath from '@connectlab-editor/gates/XNOR_ANSI.svg';
 import XORPath from '@connectlab-editor/gates/XOR_ANSI.svg';
 
-export const ADDNode: NodeModel = {
+const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,
   imgPath: [ADDPath],
   connectionSlot: [
@@ -33,7 +33,7 @@ export const ADDNode: NodeModel = {
   ],
 };
 
-export const NANDNode: NodeModel = {
+const NANDNode: NodeModel = {
   id: NodeTypes.G_NAND,
   imgPath: [NANDPath],
   connectionSlot: [
@@ -58,7 +58,7 @@ export const NANDNode: NodeModel = {
   ],
 };
 
-export const NORNode: NodeModel = {
+const NORNode: NodeModel = {
   id: NodeTypes.G_NOR,
   imgPath: [NORPath],
   connectionSlot: [
@@ -83,7 +83,7 @@ export const NORNode: NodeModel = {
   ],
 };
 
-export const NOTNode: NodeModel = {
+const NOTNode: NodeModel = {
   id: NodeTypes.G_NOT,
   imgPath: [NOTPath],
   connectionSlot: [
@@ -102,7 +102,7 @@ export const NOTNode: NodeModel = {
   ],
 };
 
-export const ORNode: NodeModel = {
+const ORNode: NodeModel = {
   id: NodeTypes.G_OR,
   imgPath: [ORPath],
   connectionSlot: [
@@ -127,7 +127,7 @@ export const ORNode: NodeModel = {
   ],
 };
 
-export const XNORNode: NodeModel = {
+const XNORNode: NodeModel = {
   id: NodeTypes.G_XNOR,
   imgPath: [XNORPath],
   connectionSlot: [
@@ -152,7 +152,7 @@ export const XNORNode: NodeModel = {
   ],
 };
 
-export const XORNode: NodeModel = {
+const XORNode: NodeModel = {
   id: NodeTypes.G_XOR,
   imgPath: [XORPath],
   connectionSlot: [
@@ -175,4 +175,14 @@ export const XORNode: NodeModel = {
       localPos: new Vector2(88, 25),
     },
   ],
+};
+
+export const nodeModels = {
+  ADDNode,
+  NANDNode,
+  NORNode,
+  NOTNode,
+  ORNode,
+  XNORNode,
+  XORNode,
 };

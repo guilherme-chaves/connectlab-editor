@@ -3,14 +3,14 @@ import {FullComponentList} from '@connectlab-editor/types';
 const drawOrder = ['connections', 'nodes', 'slots', 'texts'];
 
 // Limpa o canvas antes de desenhar um novo quadro
-export function clearFrame(ctx: CanvasRenderingContext2D) {
+function clearFrame(ctx: CanvasRenderingContext2D) {
   ctx.save();
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.restore();
 }
 
-export function updateCanvas(
+function updateCanvas(
   ctx: CanvasRenderingContext2D,
   elements: FullComponentList
 ) {
@@ -22,7 +22,7 @@ export function updateCanvas(
   }
 }
 
-export function updateBackground(
+function updateBackground(
   ctx: CanvasRenderingContext2D,
   bgPattern: CanvasPattern | null
 ) {
@@ -32,7 +32,7 @@ export function updateBackground(
   ctx.fill();
 }
 
-export default function updateAll(
+export function updateEditor(
   canvasCtx: CanvasRenderingContext2D,
   elements: FullComponentList,
   bgCtx: CanvasRenderingContext2D | null,

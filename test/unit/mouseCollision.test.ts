@@ -1,18 +1,13 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test, beforeAll} from '@jest/globals';
 import EditorEnvironment from '@connectlab-editor/environment';
-import {
-  addConnection,
-  addInput,
-  addNode,
-  addText,
-} from '@connectlab-editor/functions/addComponent';
+import {addComponent} from '@connectlab-editor/functions/addComponent';
 import {NodeTypes} from '@connectlab-editor/types';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import Vector2 from '@connectlab-editor/types/Vector2';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
-import connectionEvents from '@connectlab-editor/events/connectionEvents';
+import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
 
 const editorEnv = new EditorEnvironment('test-collision', 0, {});
 const canvas = document.createElement('canvas');
@@ -22,7 +17,7 @@ const ctx = canvas.getContext('2d');
 
 describe('Testes de detecção de colisão entre o mouse e componentes', () => {
   beforeAll(() => {
-    addNode(
+    addComponent.node(
       undefined,
       editorEnv,
       canvas.width,
@@ -31,7 +26,7 @@ describe('Testes de detecção de colisão entre o mouse e componentes', () => {
       674,
       328
     );
-    addInput(
+    addComponent.input(
       undefined,
       editorEnv,
       canvas.width,
@@ -40,8 +35,8 @@ describe('Testes de detecção de colisão entre o mouse e componentes', () => {
       200,
       439
     );
-    addText(undefined, editorEnv, ctx!, 'Olá mundo!', 1400, 900);
-    addConnection(
+    addComponent.text(undefined, editorEnv, ctx!, 'Olá mundo!', 1400, 900);
+    addComponent.connection(
       undefined,
       editorEnv,
       220,

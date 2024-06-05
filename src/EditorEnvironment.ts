@@ -21,12 +21,7 @@ import ConnectionComponent, {
 import NodeComponent, {
   NodeObject,
 } from '@connectlab-editor/components/NodeComponent';
-import {
-  addConnection,
-  addNode,
-  addSlot,
-  addText,
-} from '@connectlab-editor/functions/addComponent';
+import {addComponent} from '@connectlab-editor/functions/addComponent';
 import SlotComponent, {
   SlotObject,
 } from '@connectlab-editor/components/SlotComponent';
@@ -75,8 +70,6 @@ class EditorEnvironment {
     this.signalGraph = signalGraph;
     this.nodeImageList = imageList;
   }
-
-  /* Getters e Setters */
 
   getDocumentId(): string {
     return this.documentId;
@@ -165,9 +158,7 @@ class EditorEnvironment {
         }
       }
     }
-    for (const [key, data] of Object.entries(this.signalGraph)) {
-      env.signal[parseInt(key)] = data;
-    }
+    env.signal = this.signalGraph;
     return JSON.stringify(env);
   }
 
@@ -183,7 +174,7 @@ class EditorEnvironment {
       data.signal
     );
     for (const nodeObj of data.data.nodes) {
-      addNode(
+      addComponent.node(
         nodeObj.id,
         newEnv,
         ctx.canvas.width,
@@ -197,7 +188,7 @@ class EditorEnvironment {
       );
     }
     for (const slotObj of data.data.slots) {
-      addSlot(
+      addComponent.slot(
         slotObj.id,
         newEnv,
         slotObj.position.x,
@@ -211,7 +202,7 @@ class EditorEnvironment {
       );
     }
     for (const lineObj of data.data.connections) {
-      addConnection(
+      addComponent.connection(
         lineObj.id,
         newEnv,
         lineObj.position.x,
@@ -232,7 +223,7 @@ class EditorEnvironment {
           .slotConnections.push(newEnv.connections.get(lineObj.id)!);
     }
     for (const textObj of data.data.texts) {
-      addText(
+      addComponent.text(
         textObj.id,
         newEnv,
         ctx,

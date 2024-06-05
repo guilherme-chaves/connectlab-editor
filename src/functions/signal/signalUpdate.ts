@@ -4,16 +4,7 @@ import {
   SignalGraphData,
   slotStates,
 } from '@connectlab-editor/types';
-import {
-  and,
-  input_output,
-  nand,
-  nor,
-  not,
-  or,
-  xnor,
-  xor,
-} from '@connectlab-editor/signal/signalOperations';
+import {signalOperations} from '@connectlab-editor/signal/signalOperations';
 
 export default {
   updateGraph(signalGraph: SignalGraph): void {
@@ -49,7 +40,6 @@ export default {
     visited.add(nodeId);
     const node = signalGraph[nodeId];
     if (node === undefined) return;
-    if (node.signalFrom.length < 1) return;
     for (let i = 0; i < node.signalFrom.length; i++)
       this.updateVertexStatus(signalGraph, node.signalFrom[i], visited);
     if (node.nodeType !== NodeTypes.I_SWITCH)
@@ -67,21 +57,21 @@ export default {
   ): (slotState: [slotStates, slotStates]) => boolean {
     switch (type) {
       case NodeTypes.G_AND:
-        return and;
+        return signalOperations.and;
       case NodeTypes.G_NAND:
-        return nand;
+        return signalOperations.nand;
       case NodeTypes.G_NOR:
-        return nor;
+        return signalOperations.nor;
       case NodeTypes.G_NOT:
-        return not;
+        return signalOperations.not;
       case NodeTypes.G_OR:
-        return or;
+        return signalOperations.or;
       case NodeTypes.G_XNOR:
-        return xnor;
+        return signalOperations.xnor;
       case NodeTypes.G_XOR:
-        return xor;
+        return signalOperations.xor;
       default:
-        return input_output;
+        return signalOperations.input_output;
     }
   },
 };

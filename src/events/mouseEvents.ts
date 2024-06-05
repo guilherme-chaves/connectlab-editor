@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import connectionEvents from '@connectlab-editor/events/connectionEvents';
+import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
@@ -8,7 +8,7 @@ import Mouse from '@connectlab-editor/types/Mouse';
 import EditorEnvironment from '@connectlab-editor/environment';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
-export interface CollisionList {
+interface CollisionList {
   [index: string]: Array<number>;
   nodes: Array<number>;
   slots: Array<number>;

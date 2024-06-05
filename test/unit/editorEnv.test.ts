@@ -2,11 +2,7 @@
 import {expect, test, beforeAll} from '@jest/globals';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import EditorEnvironment from '@connectlab-editor/environment';
-import {
-  addConnection,
-  addNode,
-  addText,
-} from '../../src/functions/component/addComponent';
+import {addComponent} from '../../src/functions/component/addComponent';
 import {ComponentType, NodeTypes} from '../../src/types/types';
 
 let editorEnv: EditorEnvironment | undefined;
@@ -20,7 +16,7 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     editorEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
   });
   test('Criar node', () => {
-    const nodeId = addNode(
+    const nodeId = addComponent.node(
       undefined,
       editorEnv!,
       canvas.width,
@@ -35,7 +31,7 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(nodeId).toBe(0);
   });
   test('Criar texto', () => {
-    const textId = addText(
+    const textId = addComponent.text(
       undefined,
       editorEnv!,
       ctx!,
@@ -48,7 +44,7 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(editorEnv?.texts.get(textId)).toBeDefined();
   });
   test('Criar node de entrada', () => {
-    const inputId = addNode(
+    const inputId = addComponent.node(
       undefined,
       editorEnv!,
       canvas.width,
@@ -65,7 +61,7 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
   test('Criar conexão entre dois nodes', () => {
     const slot1Pos = editorEnv!.nodes.get(5)!.slots[0].position;
     const slot2Pos = editorEnv!.nodes.get(0)!.slots[0].position;
-    const connectionId = addConnection(
+    const connectionId = addComponent.connection(
       undefined,
       editorEnv!,
       slot1Pos.x,
