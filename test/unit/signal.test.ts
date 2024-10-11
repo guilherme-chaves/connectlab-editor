@@ -1,7 +1,7 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test, beforeEach} from '@jest/globals';
 import {NodeTypes, SignalGraph} from '../../src/types/types';
-import signalEvents from '../../src/functions/signal/signalEvents';
+import signalEvents from '../../src/events/signalEvents';
 import signalUpdate from '../../src/functions/signal/signalUpdate';
 
 describe('Testes com o grafo de sinal lógico', () => {

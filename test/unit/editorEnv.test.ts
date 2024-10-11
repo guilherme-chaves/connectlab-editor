@@ -100,4 +100,11 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(editorEnv?.removeComponent(0, ComponentType.NODE)).toBe(true);
     expect(editorEnv?.removeComponent(50, ComponentType.NODE)).toBe(false);
   });
+  test('Remover caixa de texto do editor', () => {
+    expect(editorEnv?.removeComponent(4, ComponentType.TEXT)).toBe(true);
+  });
+  test('Remover um componente sem indicar o tipo', () => {
+    expect(editorEnv?.removeComponent(5)).toBe(true);
+    expect(editorEnv?.removeComponent(70)).toBe(false);
+  });
 });
