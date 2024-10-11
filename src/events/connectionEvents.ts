@@ -2,7 +2,7 @@ import Vector2 from '@connectlab-editor/types/Vector2';
 import {ComponentType, ConnectionList} from '@connectlab-editor/types';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import SlotComponent from '@connectlab-editor/components/SlotComponent';
-import signalEvents from '@connectlab-editor/signal/signalEvents';
+import signalEvents from '@connectlab-editor/events/signalEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
@@ -30,7 +30,7 @@ export const connectionEvents = {
     return collidedWith;
   },
 
-  addLine(editorEnv: EditorEnvironment, mouseEvents: MouseEvents) {
+  addLine(editorEnv: EditorEnvironment, mouseEvents: MouseEvents): boolean {
     if (this.editingLine && this.editingLineId !== -1) return true;
     const slotCollisions = mouseEvents.getCollisionList().slots;
     if (slotCollisions.length > 0) {
@@ -65,7 +65,7 @@ export const connectionEvents = {
     editorEnv: EditorEnvironment,
     mouseEvents: MouseEvents,
     position: Vector2
-  ) {
+  ): boolean {
     if (
       !this.editingLine ||
       this.editingLineId === -1 ||
@@ -88,7 +88,7 @@ export const connectionEvents = {
     return false;
   },
 
-  fixLine(editorEnv: EditorEnvironment, position: Vector2) {
+  fixLine(editorEnv: EditorEnvironment, position: Vector2): boolean {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
       const currentSlotCollisions = slotEvents.checkSlotClick(
@@ -160,7 +160,7 @@ export const connectionEvents = {
     return false;
   },
 
-  bindConnection(editorEnv: EditorEnvironment, position: Vector2) {
+  bindConnection(editorEnv: EditorEnvironment, position: Vector2): void {
     if (this.editingLine && this.editingLineId !== -1) {
       const slotCollisions = slotEvents.checkSlotClick(
         editorEnv.slots,
@@ -193,7 +193,7 @@ export const connectionEvents = {
     startNodeId?: number,
     endSlotId?: number,
     endNodeId?: number
-  ) {
+  ): void {
     if (startPos !== undefined) connection.move(startPos, false, 0, false);
     if (endPos !== undefined) connection.move(endPos, false, 1, false);
     if (startSlotId !== undefined && startNodeId !== undefined)
@@ -201,7 +201,10 @@ export const connectionEvents = {
     if (endSlotId !== undefined && endNodeId !== undefined)
       connection.changeConnection(endSlotId, endNodeId, true);
   },
-  removeOldInSlotConnection(editorEnv: EditorEnvironment, slot: SlotComponent) {
+  removeOldInSlotConnection(
+    editorEnv: EditorEnvironment,
+    slot: SlotComponent
+  ): void {
     if (!slot.inSlot) return;
     const oldConnection = slot.slotConnections[0];
     if (oldConnection !== undefined) {
@@ -227,7 +230,7 @@ export const connectionEvents = {
       editorEnv.removeComponent(oldConnection.id, ComponentType.LINE);
     }
   },
-  resetConnEventParams() {
+  resetConnEventParams(): void {
     // Reinicia os parâmetros para evitar ligações acidentais
     this.editingLine = false;
     this.editingLineId = -1;

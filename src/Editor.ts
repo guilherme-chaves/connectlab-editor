@@ -237,15 +237,15 @@ export default class Editor {
   remove(): boolean {
     if (this.mouseEvents.getCollisionList().nodes.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().nodes![0]
+        this.mouseEvents.getCollisionList().nodes[0]
       );
     else if (this.mouseEvents.getCollisionList().connections.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().connections![0]
+        this.mouseEvents.getCollisionList().connections[0]
       );
     else if (this.mouseEvents.getCollisionList().texts.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().texts![0]
+        this.mouseEvents.getCollisionList().texts[0]
       );
     return false;
   }

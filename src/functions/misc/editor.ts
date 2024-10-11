@@ -59,7 +59,7 @@ export function saveToFile(editorEnv: EditorEnvironment) {
   a.href = URL.createObjectURL(
     new Blob([compressed], {type: 'application/gzip'})
   );
-  a.download = `${fileName}.save`;
+  a.download = `${fileName}.simulation`;
   a.click();
 }
 

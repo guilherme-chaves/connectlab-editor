@@ -32,7 +32,7 @@ export default class MouseEvents {
     this.movingObject = 'none';
   }
 
-  onMouseClick(editorEnv: EditorEnvironment) {
+  onMouseClick(editorEnv: EditorEnvironment): void {
     if (this._mouse.stateChanged && this._mouse.clicked) {
       this.clearAllCollisions(editorEnv);
       // Obtêm uma lista com todas as colisões encontradas
@@ -69,9 +69,7 @@ export default class MouseEvents {
       };
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      if (slots.length !== 0) {
-        connectionEvents.addLine(editorEnv, this);
-      }
+      connectionEvents.addLine(editorEnv, this);
 
       this.showSelectedComponents(editorEnv);
 
@@ -79,7 +77,7 @@ export default class MouseEvents {
     }
   }
 
-  onMouseRelease(editorEnv: EditorEnvironment) {
+  onMouseRelease(editorEnv: EditorEnvironment): void {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
         if (this.collisionList.nodes.length !== 0) {
@@ -101,7 +99,7 @@ export default class MouseEvents {
     this.movingObject = 'none';
   }
 
-  onMouseMove(editorEnv: EditorEnvironment) {
+  onMouseMove(editorEnv: EditorEnvironment): boolean {
     if (this._mouse.clicked && this._mouse.dragged) {
       return (
         connectionEvents.move(editorEnv, this, this._mouse.position) ||
@@ -112,7 +110,7 @@ export default class MouseEvents {
     return false;
   }
 
-  showSelectedComponents(editorEnv: EditorEnvironment) {
+  showSelectedComponents(editorEnv: EditorEnvironment): void {
     for (const [key, category] of Object.entries(this.collisionList)) {
       switch (key) {
         case 'slots':
@@ -175,15 +173,11 @@ export default class MouseEvents {
     }
   }
 
-  getCollisionList() {
+  getCollisionList(): CollisionList {
     return this.collisionList;
   }
 
-  clearDragCollisions() {
-    this.collisionList.nodes = [];
-  }
-
-  clearAllCollisions(editorEnv: EditorEnvironment) {
+  clearAllCollisions(editorEnv: EditorEnvironment): void {
     this.clearUnselectedComponents(editorEnv);
     this.collisionList.nodes = [];
     this.collisionList.slots = [];

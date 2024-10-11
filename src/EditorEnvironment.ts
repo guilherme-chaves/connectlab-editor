@@ -112,8 +112,6 @@ class EditorEnvironment {
           return removeConnection(this, componentId);
         case ComponentType.TEXT:
           return removeText(this, componentId);
-        default:
-          return false;
       }
     } else {
       const component =
@@ -123,8 +121,8 @@ class EditorEnvironment {
         this.texts.get(componentId);
       if (component !== undefined)
         return this.removeComponent(component.id, component.componentType);
-      else return false;
     }
+    return false;
   }
 
   saveAsJson(): string {
