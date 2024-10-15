@@ -47,8 +47,8 @@ export default class KeyboardEvents {
   constructor(keyboard: Keyboard) {
     this._keyboard = keyboard;
   }
-  onKeyDown(ev: KeyboardEvent, editor: Editor) {
-    this._keyboard.key = ev.key;
+  onKeyDown(editor: Editor) {
+    if (this._keyboard.nKeysPressed === 0) return;
     if (this._keyboard.keyPressed) {
       this._keyboard.keyHold = true;
     } else {
@@ -59,55 +59,33 @@ export default class KeyboardEvents {
   }
 
   handleKeyPressed(editor: Editor) {
-    switch (this._keyboard.key) {
-      case nodeKeycodes.ADD:
-      case nodeKeycodes.ADD_u:
-        editor.node(NodeTypes.G_AND);
-        break;
-      case nodeKeycodes.NAND:
-      case nodeKeycodes.NAND_u:
-        editor.node(NodeTypes.G_NAND);
-        break;
-      case nodeKeycodes.NOR:
-      case nodeKeycodes.NOR_u:
-        editor.node(NodeTypes.G_NOR);
-        break;
-      case nodeKeycodes.NOT:
-      case nodeKeycodes.NOT_u:
-        editor.node(NodeTypes.G_NOT);
-        break;
-      case nodeKeycodes.OR:
-      case nodeKeycodes.OR_u:
-        editor.node(NodeTypes.G_OR);
-        break;
-      case nodeKeycodes.XNOR:
-      case nodeKeycodes.XNOR_u:
-        editor.node(NodeTypes.G_XNOR);
-        break;
-      case nodeKeycodes.XOR:
-      case nodeKeycodes.XOR_u:
-        editor.node(NodeTypes.G_XOR);
-        break;
-      case inputKeycodes.SWITCH:
-      case inputKeycodes.SWITCH_u:
-        editor.input(NodeTypes.I_SWITCH);
-        break;
-      case outputKeycodes.LED_RED:
-      case outputKeycodes.LED_RED_u:
-        editor.output(NodeTypes.O_LED_RED);
-        break;
-      case specialKeycodes.DELETE:
-      case specialKeycodes.BACKSPACE:
-        editor.remove();
-        break;
-      case specialKeycodes.INSERT:
-        saveToFile(editor.editorEnv);
-    }
+    const keys = this._keyboard.getKeysPressed();
+    if (keys[nodeKeycodes.ADD] || keys[nodeKeycodes.ADD_u])
+      editor.node(NodeTypes.G_AND);
+    else if (keys[nodeKeycodes.NAND] || keys[nodeKeycodes.NAND_u])
+      editor.node(NodeTypes.G_NAND);
+    else if (keys[nodeKeycodes.NOR] || keys[nodeKeycodes.NOR_u])
+      editor.node(NodeTypes.G_NOR);
+    else if (keys[nodeKeycodes.NOT] || keys[nodeKeycodes.NOT_u])
+      editor.node(NodeTypes.G_NOT);
+    else if (keys[nodeKeycodes.OR] || keys[nodeKeycodes.OR_u])
+      editor.node(NodeTypes.G_OR);
+    else if (keys[nodeKeycodes.XNOR] || keys[nodeKeycodes.XNOR_u])
+      editor.node(NodeTypes.G_XNOR);
+    else if (keys[nodeKeycodes.XOR] || keys[nodeKeycodes.XOR_u])
+      editor.node(NodeTypes.G_XOR);
+    else if (keys[inputKeycodes.SWITCH] || keys[inputKeycodes.SWITCH_u])
+      editor.input(NodeTypes.I_SWITCH);
+    else if (keys[outputKeycodes.LED_RED] || keys[outputKeycodes.LED_RED_u])
+      editor.output(NodeTypes.O_LED_RED);
+    else if (keys[specialKeycodes.DELETE]) editor.remove();
+    else if (keys[specialKeycodes.INSERT]) saveToFile(editor.editorEnv);
   }
 
   onKeyUp() {
-    this._keyboard.key = '';
-    this._keyboard.keyPressed = false;
-    this._keyboard.keyHold = false;
+    if (this._keyboard.keyPressed && this._keyboard.nKeysPressed === 0) {
+      this._keyboard.keyPressed = false;
+      this._keyboard.keyHold = false;
+    }
   }
 }

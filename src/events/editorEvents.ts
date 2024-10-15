@@ -34,10 +34,10 @@ export default function createEditorEvents(
     editor.mouse.position = editor.computePositionInCanvas(x, y);
   });
   window.addEventListener('keydown', (ev: KeyboardEvent) => {
-    editor.keyboardEvents.onKeyDown(ev, editor);
+    editor.keyboard.setKeyPressed(ev.key, true);
   });
-  window.addEventListener('keyup', () => {
-    editor.keyboardEvents.onKeyUp();
+  window.addEventListener('keyup', (ev: KeyboardEvent) => {
+    editor.keyboard.setKeyPressed(ev.key, false);
   });
   document
     .getElementById('save-editor')

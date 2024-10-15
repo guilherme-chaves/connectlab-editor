@@ -118,6 +118,8 @@ export default class Editor {
   };
 
   compute = () => {
+    this.keyboardEvents.onKeyDown(this);
+    this.keyboardEvents.onKeyUp();
     this.mouseEvents.onMouseClick(this.editorEnv);
     this.mouseEvents.onMouseMove(this.editorEnv);
     this.mouseEvents.onMouseRelease(this.editorEnv);
