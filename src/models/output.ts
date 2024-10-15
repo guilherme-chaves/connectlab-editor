@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeModel, NodeTypes} from '@connectlab-editor/types';
 import LED_OFF from '@connectlab-editor/gates/LED_OFF.svg';
 import LED_RED from '@connectlab-editor/gates/LED_RED_ON.svg';

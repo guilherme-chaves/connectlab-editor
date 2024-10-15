@@ -2,12 +2,12 @@ import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types';
 import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
 import {updateEditor} from '@connectlab-editor/functions/canvasDraw';
 import EditorEnvironment from '@connectlab-editor/environment';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import Mouse from '@connectlab-editor/types/Mouse';
+import Mouse from '@connectlab-editor/types/mouse';
 import KeyboardEvents from '@connectlab-editor/events/keyboardEvents';
-import Keyboard from '@connectlab-editor/types/Keyboard';
+import Keyboard from '@connectlab-editor/types/keyboard';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import createEditorEvents from '@connectlab-editor/events/editorEvents';
@@ -63,7 +63,7 @@ export default class Editor {
     return domElement.getContext('2d' /*, {desynchronized: true}*/)!;
   }
 
-  loadBackgroundPattern(bgPath: string) {
+  private loadBackgroundPattern(bgPath: string): void {
     const backgroundImg = new Image();
     backgroundImg.onload = () => {
       this.backgroundPattern = this.backgroundCtx.createPattern(
@@ -74,7 +74,7 @@ export default class Editor {
     backgroundImg.src = bgPath;
   }
 
-  computeWindowArea() {
+  private computeWindowArea(): void {
     const canvasParentEl = document.getElementById(
       this.canvasId
     )?.parentElement;
@@ -92,12 +92,12 @@ export default class Editor {
     }
   }
 
-  computePositionInCanvas(x: number, y: number) {
+  computePositionInCanvas(x: number, y: number): Vector2 {
     const rect = this.canvasCtx.canvas.getBoundingClientRect();
     return new Vector2(x - rect.left, y - rect.top);
   }
 
-  resize() {
+  resize(): void {
     this.computeWindowArea();
     this.canvasCtx.canvas.width = this.windowArea.x;
     this.canvasCtx.canvas.height = this.windowArea.y;
@@ -106,7 +106,7 @@ export default class Editor {
     this.windowResized = true;
   }
 
-  update = () => {
+  update = (): void => {
     updateEditor(
       this.canvasCtx,
       this.editorEnv.components,
@@ -117,7 +117,7 @@ export default class Editor {
     requestAnimationFrame(this.update);
   };
 
-  compute = () => {
+  compute = (): void => {
     this.keyboardEvents.onKeyDown(this);
     this.keyboardEvents.onKeyUp();
     this.mouseEvents.onMouseClick(this.editorEnv);
@@ -221,7 +221,7 @@ export default class Editor {
     attractionRadius?: number,
     color?: string,
     colorActive?: string
-  ) {
+  ): number {
     return addComponent.slot(
       undefined,
       this.editorEnv,

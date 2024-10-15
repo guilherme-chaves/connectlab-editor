@@ -1,10 +1,10 @@
 import EditorEnvironment from '@connectlab-editor/environment';
-import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
-import NodeComponent from '@connectlab-editor/components/NodeComponent';
-import SlotComponent from '@connectlab-editor/components/SlotComponent';
-import TextComponent from '@connectlab-editor/components/TextComponent';
+import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
+import NodeComponent from '@connectlab-editor/components/nodeComponent';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
+import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {
   ComponentType,
   ConnectionVertex,

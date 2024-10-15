@@ -1,7 +1,7 @@
 import {ComponentType, NodeList} from '@connectlab-editor/types';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import NodeComponent from '@connectlab-editor/components/NodeComponent';
+import NodeComponent from '@connectlab-editor/components/nodeComponent';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 

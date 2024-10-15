@@ -45,7 +45,7 @@ export default {
     if (node.nodeType !== NodeTypes.I_SWITCH)
       this.computeState(signalGraph, node);
   },
-  computeState(signalGraph: SignalGraph, node: SignalGraphData) {
+  computeState(signalGraph: SignalGraph, node: SignalGraphData): void {
     const op = this.getComputeFunction(node.nodeType);
     const slotStatus: [slotStates, slotStates] = [false, false];
     slotStatus[0] = signalGraph[node.signalFrom[0]]?.state ?? false;

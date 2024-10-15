@@ -4,7 +4,7 @@ import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
 
-import Mouse from '@connectlab-editor/types/Mouse';
+import Mouse from '@connectlab-editor/types/mouse';
 import EditorEnvironment from '@connectlab-editor/environment';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 

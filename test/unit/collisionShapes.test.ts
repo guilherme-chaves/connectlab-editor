@@ -1,25 +1,25 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test, describe, beforeAll} from '@jest/globals';
 
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
-import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
+import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
 
-let box: BBCollision;
-let box2: BBCollision;
+let box: BoxCollision;
+let box2: BoxCollision;
 let circle: CircleCollision;
 let circle2: CircleCollision;
 
 describe('Testes de funcionamento das formas de colisão', () => {
   beforeAll(() => {
-    box = new BBCollision(new Vector2(100, 100), 500, 200);
-    box2 = new BBCollision(new Vector2(), 120, 120, '#8080FF');
+    box = new BoxCollision(new Vector2(100, 100), 500, 200);
+    box2 = new BoxCollision(new Vector2(), 120, 120, '#8080FF');
     circle = new CircleCollision(new Vector2(400, 200), 100);
     circle2 = new CircleCollision(new Vector2(550, 300), 150, '#8080FF');
   });
 
   test('Colisão entre caixas de colisão', () => {
-    expect(box.collisionWithAABB(box2)).toBe(true);
+    expect(box.collisionWithBox(box2)).toBe(true);
   });
 
   test('Colisão entre círculos de colisão', () => {

@@ -1,16 +1,16 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/Vector2';
-import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
+import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
 
-interface BBPoints {
+interface BoxPoints {
   a: Vector2;
   b: Vector2;
 }
 
-export default class BBCollision implements Collision {
+export default class BoxCollision implements Collision {
   public position: Vector2;
-  public readonly points: BBPoints;
-  public readonly globalPoints: BBPoints;
+  public readonly points: BoxPoints;
+  public readonly globalPoints: BoxPoints;
   public readonly width: number;
   public readonly height: number;
   private drawPath: Path2D | undefined;
@@ -39,7 +39,7 @@ export default class BBCollision implements Collision {
     Vector2.add(this.position, this.points.b, this.globalPoints.b);
   }
 
-  private setPoints(): BBPoints {
+  private setPoints(): BoxPoints {
     return {
       a: Vector2.ZERO,
       b: new Vector2(this.width, this.height),
@@ -53,7 +53,7 @@ export default class BBCollision implements Collision {
     return path;
   }
 
-  draw(ctx: CanvasRenderingContext2D, selected: boolean) {
+  draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
     if (!this.drawPath || this.regenPath) this.drawPath = this.generatePath();
     ctx.save();
@@ -78,7 +78,7 @@ export default class BBCollision implements Collision {
     );
   }
 
-  collisionWithAABB(other: BBCollision): boolean {
+  collisionWithBox(other: BoxCollision): boolean {
     return !(
       this.globalPoints.b.x < other.globalPoints.a.x ||
       this.globalPoints.b.y < other.globalPoints.a.y ||
@@ -88,6 +88,6 @@ export default class BBCollision implements Collision {
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
-    return other.collisionWithAABB(this);
+    return other.collisionWithBox(this);
   }
 }

@@ -1,9 +1,9 @@
-import ConnectionComponent from '../components/ConnectionComponent';
-import NodeComponent from '../components/NodeComponent';
-import SlotComponent from '../components/SlotComponent';
-import TextComponent from '../components/TextComponent';
-import Component from '../interfaces/componentInterface';
-import Vector2 from './Vector2';
+import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
+import NodeComponent from '@connectlab-editor/components/nodeComponent';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
+import TextComponent from '@connectlab-editor/components/textComponent';
+import Component from '@connectlab-editor/interfaces/componentInterface';
+import Vector2 from '@connectlab-editor/types/vector2';
 
 export const enum ComponentType {
   LINE = 1,

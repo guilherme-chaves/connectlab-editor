@@ -1,11 +1,11 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {ComponentType, ConnectionList} from '@connectlab-editor/types';
 import slotEvents from '@connectlab-editor/events/slotEvents';
-import SlotComponent from '@connectlab-editor/components/SlotComponent';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
+import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
 
 export const connectionEvents = {

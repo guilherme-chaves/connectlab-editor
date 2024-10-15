@@ -1,5 +1,5 @@
 import Editor from '@connectlab-editor';
-import Keyboard from '@connectlab-editor/types/Keyboard';
+import Keyboard from '@connectlab-editor/types/keyboard';
 import {NodeTypes} from '@connectlab-editor/types';
 import {saveToFile} from '@connectlab-editor/functions/editor';
 
@@ -47,7 +47,7 @@ export default class KeyboardEvents {
   constructor(keyboard: Keyboard) {
     this._keyboard = keyboard;
   }
-  onKeyDown(editor: Editor) {
+  onKeyDown(editor: Editor): void {
     if (this._keyboard.nKeysPressed === 0) return;
     if (this._keyboard.keyPressed) {
       this._keyboard.keyHold = true;
@@ -58,7 +58,7 @@ export default class KeyboardEvents {
     if (!this._keyboard.keyHold) this.handleKeyPressed(editor);
   }
 
-  handleKeyPressed(editor: Editor) {
+  handleKeyPressed(editor: Editor): void {
     const keys = this._keyboard.getKeysPressed();
     if (keys[nodeKeycodes.ADD] || keys[nodeKeycodes.ADD_u])
       editor.node(NodeTypes.G_AND);
@@ -82,7 +82,7 @@ export default class KeyboardEvents {
     else if (keys[specialKeycodes.INSERT]) saveToFile(editor.editorEnv);
   }
 
-  onKeyUp() {
+  onKeyUp(): void {
     if (this._keyboard.keyPressed && this._keyboard.nKeysPressed === 0) {
       this._keyboard.keyPressed = false;
       this._keyboard.keyHold = false;

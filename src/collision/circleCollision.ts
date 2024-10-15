@@ -1,6 +1,6 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/Vector2';
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 
 export default class CircleCollision implements Collision {
   public position: Vector2;
@@ -44,7 +44,7 @@ export default class CircleCollision implements Collision {
     return Vector2.sub(this.position, point).lenSquared() < this.radiusSquared;
   }
 
-  collisionWithAABB(other: BBCollision): boolean {
+  collisionWithBox(other: BoxCollision): boolean {
     let distance = 0;
     if (this.position.x < other.globalPoints.b.x)
       distance += Math.pow(other.globalPoints.b.x - this.position.x, 2);

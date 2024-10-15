@@ -9,14 +9,14 @@ import {
 } from '@connectlab-editor/types';
 import {NodeModel} from '@connectlab-editor/types';
 import {nodeModels} from '@connectlab-editor/models/node';
-import Vector2 from '@connectlab-editor/types/Vector2';
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Node from '@connectlab-editor/interfaces/nodeInterface';
 import {SwitchInput} from '@connectlab-editor/models/input';
 import {LEDROutput} from '@connectlab-editor/models/output';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
 import {ComponentObject} from '@connectlab-editor/interfaces/componentInterface';
-import SlotComponent from './SlotComponent';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
 
 export interface NodeObject extends ComponentObject {
   id: number;
@@ -33,7 +33,7 @@ class NodeComponent implements Node {
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeModel;
   public slots: Array<SlotComponent>;
-  public collisionShape: BBCollision;
+  public collisionShape: BoxCollision;
   private _images: ImageListObject;
   private imageWidth: number;
   private imageHeight: number;
@@ -84,7 +84,7 @@ class NodeComponent implements Node {
       );
       this.position.min(canvasBound).max(Vector2.ZERO);
     }
-    this.collisionShape = new BBCollision(
+    this.collisionShape = new BoxCollision(
       this.position,
       this.imageWidth,
       this.imageHeight
@@ -132,7 +132,7 @@ class NodeComponent implements Node {
     }
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D): void {
     if (!this.image) return;
     ctx.drawImage(this.image, this.position.x, this.position.y);
     if (this.collisionShape !== undefined)

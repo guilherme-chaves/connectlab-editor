@@ -13,6 +13,7 @@ import LED_OFF from '@connectlab-editor/gates/LED_OFF.svg';
 import LED_RED from '@connectlab-editor/gates/LED_RED_ON.svg';
 
 import preloadImage from '@connectlab-editor/functions/preloadImage';
+import {ImageListObject} from '@connectlab-editor/types';
 
 const imageList: Array<string> = [
   ADDPath,
@@ -28,6 +29,6 @@ const imageList: Array<string> = [
   LED_RED,
 ];
 
-export default function preloadNodeImages() {
+export default function preloadNodeImages(): ImageListObject {
   return preloadImage(imageList);
 }

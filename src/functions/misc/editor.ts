@@ -47,7 +47,7 @@ export function loadFile(
   };
 }
 
-export function saveToFile(editorEnv: EditorEnvironment) {
+export function saveToFile(editorEnv: EditorEnvironment): void {
   const fileName = window.prompt(
     'Salvar projeto como:',
     `${editorEnv.documentId}-${Date.now()}`

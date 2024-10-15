@@ -1,5 +1,5 @@
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {QUARTER_PI, THREE_QUARTER_PI} from '@connectlab-editor/types/consts';
 
 export default {
@@ -11,7 +11,7 @@ export default {
     ifEqualY = 0,
     ifDiffY = 0,
     precision = 1e-4
-  ) {
+  ): Vector2 {
     if (v1.useInt && v2.useInt)
       return new Vector2(
         v1.x === v2.x ? ifEqualX : ifDiffX,
@@ -72,7 +72,7 @@ export default {
     position: Vector2,
     endPosition: Vector2,
     anchors: Vector2[]
-  ) {
+  ): BoxCollision[] {
     if (anchors.length === 0) return [];
     const collisionArr = [];
     let pPos = position.copy();
@@ -91,7 +91,7 @@ export default {
         nPos.y - pPos.y
       );
       collisionArr.push(
-        new BBCollision(pPos.sub(new Vector2(6, 6)), size.x, size.y)
+        new BoxCollision(pPos.sub(new Vector2(6, 6)), size.x, size.y)
       );
       pPos = nPos.copy();
     }

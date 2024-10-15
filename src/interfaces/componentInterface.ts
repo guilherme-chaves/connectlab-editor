@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {ComponentType, VectorObject} from '@connectlab-editor/types';
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
 

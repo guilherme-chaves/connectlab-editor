@@ -1,6 +1,6 @@
 import {ComponentType, VectorObject} from '@connectlab-editor/types';
-import Vector2 from '@connectlab-editor/types/Vector2';
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
@@ -22,7 +22,7 @@ class TextComponent implements Component {
   public parent: {id: number; type: ComponentType} | null;
   public style: string;
   private textSize: Vector2;
-  public collisionShape: BBCollision;
+  public collisionShape: BoxCollision;
   private canvasContext: CanvasRenderingContext2D;
   public selected: boolean;
 
@@ -43,7 +43,7 @@ class TextComponent implements Component {
     this.canvasContext = ctx;
     this.textSize = this.measureText(text, style);
     this.position.sub(Vector2.div(this.textSize, 2));
-    this.collisionShape = new BBCollision(
+    this.collisionShape = new BoxCollision(
       this.position,
       this.textSize.x,
       this.textSize.y
@@ -64,7 +64,7 @@ class TextComponent implements Component {
     return textSize;
   }
 
-  draw(ctx: CanvasRenderingContext2D) {
+  draw(ctx: CanvasRenderingContext2D): void {
     ctx.save();
     ctx.font = this.style;
     ctx.textBaseline = 'top';
@@ -74,7 +74,7 @@ class TextComponent implements Component {
     this.collisionShape.draw(ctx, this.selected);
   }
 
-  move(v: Vector2, useDelta = true) {
+  move(v: Vector2, useDelta = true): void {
     if (useDelta) this.position.add(v);
     else Vector2.sub(v, Vector2.div(this.textSize, 2), this.position);
     this.collisionShape.moveShape(this.position, false);

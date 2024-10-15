@@ -1,10 +1,10 @@
-import CircleCollision from '@connectlab-editor/collisionShapes/CircleCollision';
+import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {ComponentType, VectorObject} from '@connectlab-editor/types';
-import ConnectionComponent from '@connectlab-editor/components/ConnectionComponent';
+import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 
 export interface SlotObject extends ComponentObject {
   id: number;
@@ -36,7 +36,7 @@ export default class SlotComponent implements Component {
   private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
   public collisionShape: CircleCollision;
 
-  get slotConnections() {
+  get slotConnections(): Array<ConnectionComponent> {
     return this._slotConnections;
   }
 
@@ -78,7 +78,7 @@ export default class SlotComponent implements Component {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  move(_v?: Vector2, _useDelta = true) {
+  move(_v?: Vector2, _useDelta = true): void {
     Vector2.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
     this.regenPath = true;

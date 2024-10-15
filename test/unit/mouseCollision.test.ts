@@ -4,7 +4,7 @@ import EditorEnvironment from '@connectlab-editor/environment';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
 import {NodeTypes} from '@connectlab-editor/types';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
 import {connectionEvents} from '@connectlab-editor/events/connectionEvents';

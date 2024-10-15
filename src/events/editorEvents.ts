@@ -10,7 +10,7 @@ export default function createEditorEvents(
   canvasDOM: HTMLCanvasElement,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _backgroundDOM: HTMLCanvasElement
-) {
+): void {
   window.addEventListener('load', () => {
     editor.resize();
     setInterval(editor.compute, 1000.0 / editor.tickRate);

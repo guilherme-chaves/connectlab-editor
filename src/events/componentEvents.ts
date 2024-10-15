@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeList, SlotList, TextList} from '@connectlab-editor/types';
 
 export const componentEvents = {

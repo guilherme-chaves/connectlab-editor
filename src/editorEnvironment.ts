@@ -17,18 +17,18 @@ import {
 } from '@connectlab-editor/functions/removeComponent';
 import ConnectionComponent, {
   ConnectionObject,
-} from '@connectlab-editor/components/ConnectionComponent';
+} from '@connectlab-editor/components/connectionComponent';
 import NodeComponent, {
   NodeObject,
-} from '@connectlab-editor/components/NodeComponent';
+} from '@connectlab-editor/components/nodeComponent';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
 import SlotComponent, {
   SlotObject,
-} from '@connectlab-editor/components/SlotComponent';
+} from '@connectlab-editor/components/slotComponent';
 import TextComponent, {
   TextObject,
-} from '@connectlab-editor/components/TextComponent';
-import Vector2 from '@connectlab-editor/types/Vector2';
+} from '@connectlab-editor/components/textComponent';
+import Vector2 from '@connectlab-editor/types/vector2';
 
 export type EditorEnvironmentObject = {
   id: string;

@@ -14,7 +14,7 @@ export default class Keyboard {
     this._nKeysPressed = Math.max(0, nVal);
   }
 
-  public setKeyPressed(key: string, state: boolean) {
+  public setKeyPressed(key: string, state: boolean): void {
     this.keys[key] = state;
     this.nKeysPressed += state ? 1 : -1;
   }

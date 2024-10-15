@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeModel, NodeTypes} from '@connectlab-editor/types';
 import INPUT_ON from '@connectlab-editor/gates/INPUT_ON.svg';
 import INPUT_OFF from '@connectlab-editor/gates/INPUT_OFF.svg';

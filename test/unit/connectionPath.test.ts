@@ -1,8 +1,8 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test} from '@jest/globals';
-import BBCollision from '../../src/collision/BBCollision';
-import connectionPath from '../../src/functions/connection/connectionPath';
-import Vector2 from '../../src/types/Vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
+import connectionPath from '@connectlab-editor/functions/connectionPath';
+import Vector2 from '@connectlab-editor/types/vector2';
 
 describe('Testes com a geração da conexão entre componentes', () => {
   test('Definir o tamanho de uma caixa de colisão a partir de dois vetores (inteiros)', () => {
@@ -80,6 +80,6 @@ describe('Testes com a geração da conexão entre componentes', () => {
     const anchors = connectionPath.generateAnchors(pos, endPos);
     const bb = connectionPath.generateCollisionShapes(pos, endPos, anchors);
     expect(bb.length).toBe(4);
-    expect(bb[0]).toBeInstanceOf(BBCollision);
+    expect(bb[0]).toBeInstanceOf(BoxCollision);
   });
 });

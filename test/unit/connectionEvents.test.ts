@@ -4,10 +4,10 @@ import {addComponent} from '@connectlab-editor/functions/addComponent';
 import EditorEnvironment from '@connectlab-editor/environment';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import {NodeTypes} from '@connectlab-editor/types';
-import Mouse from '@connectlab-editor/types/Mouse';
+import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 
 let editorEnv: EditorEnvironment;
 // let inputId: number;

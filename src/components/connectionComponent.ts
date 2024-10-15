@@ -3,8 +3,8 @@ import {
   ConnectionVertices,
   VectorObject,
 } from '@connectlab-editor/types';
-import Vector2 from '@connectlab-editor/types/Vector2';
-import BBCollision from '@connectlab-editor/collisionShapes/BBCollision';
+import Vector2 from '@connectlab-editor/types/vector2';
+import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';
 import Component, {
   ComponentObject,
@@ -29,7 +29,7 @@ class ConnectionComponent implements Component {
   public connectedTo: ConnectionVertices;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
-  public collisionShape: Array<BBCollision>;
+  public collisionShape: Array<BoxCollision>;
   public selected: boolean;
 
   constructor(

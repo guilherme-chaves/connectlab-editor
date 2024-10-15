@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 
 export default class Mouse {
   public position = new Vector2();
@@ -10,7 +10,7 @@ export default class Mouse {
   public readonly doubleClickTimer = 300; // ms
   private alreadyClicked = false;
 
-  get clicked() {
+  get clicked(): boolean {
     return this._mouseClicked;
   }
 
@@ -20,7 +20,7 @@ export default class Mouse {
     if (value) this.clickStartPosition = this.position.copy();
   }
 
-  get dragged() {
+  get dragged(): boolean {
     const mouseMovement = Vector2.sub(this.position, this.clickStartPosition);
     return (
       mouseMovement.x > this.clickToDragThreshold ||
@@ -30,7 +30,7 @@ export default class Mouse {
     );
   }
 
-  get stateChanged() {
+  get stateChanged(): boolean {
     return this._mouseStateChanged;
   }
 

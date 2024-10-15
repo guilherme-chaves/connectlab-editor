@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/Vector2';
+import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeModel, NodeTypes} from '@connectlab-editor/types';
 import ADDPath from '@connectlab-editor/gates/AND_ANSI.svg';
 import NANDPath from '@connectlab-editor/gates/NAND_ANSI.svg';
