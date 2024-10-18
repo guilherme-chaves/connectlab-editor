@@ -11,44 +11,43 @@ export default function createEditorEvents(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _backgroundDOM: HTMLCanvasElement
 ): void {
-  window.addEventListener('load', () => {
+  if (!window) {
+    console.error('Variável window é nula! Não será possível iniciar o editor');
+    return;
+  }
+  window.onload = () => {
     editor.resize();
     setInterval(editor.compute, 1000.0 / editor.tickRate);
     editor.update();
-  });
-  window.addEventListener('resize', () => {
-    editor.resize();
-  });
-  canvasDOM.addEventListener('mousedown', ({x, y}) => {
-    editor.mouse.clicked = true;
-    if (editor.mouse.stateChanged)
-      editor.mouse.clickStartPosition = editor.computePositionInCanvas(x, y);
-  });
-  canvasDOM.addEventListener('mouseup', () => {
-    editor.mouse.clicked = false;
-  });
-  canvasDOM.addEventListener('mouseout', () => {
-    editor.mouse.clicked = false;
-  });
-  window.addEventListener('mousemove', ({x, y}) => {
-    editor.mouse.position = editor.computePositionInCanvas(x, y);
-  });
-  window.addEventListener('keydown', (ev: KeyboardEvent) => {
+  };
+
+  window.onresize = () => editor.resize();
+
+  canvasDOM.onmousedown = () => (editor.mouse.clicked = true);
+
+  canvasDOM.onmouseup = canvasDOM.onmouseout = () =>
+    (editor.mouse.clicked = false);
+
+  window.onmousemove = ({x, y}) => editor.setLocalMousePosition(x, y);
+
+  window.onkeydown = (ev: KeyboardEvent) =>
     editor.keyboard.setKeyPressed(ev.key, true);
-  });
-  window.addEventListener('keyup', (ev: KeyboardEvent) => {
+
+  window.onkeyup = (ev: KeyboardEvent) =>
     editor.keyboard.setKeyPressed(ev.key, false);
-  });
+
   document
     .getElementById('save-editor')
     ?.addEventListener('click', () => saveToFile(editor.editorEnv));
+
   document.getElementById('load-editor')?.addEventListener('click', () => {
     document.getElementById('load-editor-file')?.click();
-    return;
   });
+
   document
     .getElementById('load-editor-file')
     ?.addEventListener('change', ev => loadFile(editor, editor.canvasCtx, ev));
+
   document.getElementById('clear-editor')?.addEventListener('click', () => {
     clearEditor(editor.editorEnv);
   });
