@@ -1,6 +1,9 @@
 import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types';
 import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
-import {updateEditor} from '@connectlab-editor/functions/canvasDraw';
+import {
+  updateBackground,
+  updateCanvas,
+} from '@connectlab-editor/functions/canvasDraw';
 import EditorEnvironment from '@connectlab-editor/environment';
 import Vector2 from '@connectlab-editor/types/vector2';
 import Component from '@connectlab-editor/interfaces/componentInterface';
@@ -58,7 +61,7 @@ export default class Editor {
   private createContext(
     domElement: HTMLCanvasElement
   ): CanvasRenderingContext2D {
-    return domElement.getContext('2d' /*, {desynchronized: true}*/)!;
+    return domElement.getContext('2d', {desynchronized: true})!;
   }
 
   private loadBackgroundPattern(bgPath: string): void {
@@ -107,13 +110,11 @@ export default class Editor {
   }
 
   update = (): void => {
-    updateEditor(
-      this.canvasCtx,
-      this.editorEnv.components,
-      this.windowResized ? this.backgroundCtx : null,
-      this.backgroundPattern
-    );
-    if (this.windowResized) this.windowResized = false;
+    updateCanvas(this.canvasCtx, this.editorEnv.components);
+    if (this.windowResized) {
+      updateBackground(this.backgroundCtx, this.backgroundPattern);
+      this.windowResized = false;
+    }
     requestAnimationFrame(this.update);
   };
 

@@ -11,7 +11,7 @@ function clearFrame(ctx: CanvasRenderingContext2D): void {
   ctx.restore();
 }
 
-function updateCanvas(
+export function updateCanvas(
   ctx: CanvasRenderingContext2D,
   elements: FullComponentList
 ): void {
@@ -23,7 +23,7 @@ function updateCanvas(
   }
 }
 
-function updateBackground(
+export function updateBackground(
   ctx: CanvasRenderingContext2D,
   bgPattern: CanvasPattern | null
 ): void {
@@ -31,16 +31,4 @@ function updateBackground(
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = bgPattern ?? '#ff0000';
   ctx.fill();
-}
-
-export function updateEditor(
-  canvasCtx: CanvasRenderingContext2D,
-  elements: FullComponentList,
-  bgCtx: CanvasRenderingContext2D | null,
-  bgPattern: CanvasPattern | null
-): void {
-  updateCanvas(canvasCtx, elements);
-  if (bgCtx !== null) {
-    updateBackground(bgCtx, bgPattern);
-  }
 }
