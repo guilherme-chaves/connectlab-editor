@@ -25,8 +25,7 @@ export default class Editor {
   public readonly canvasCtx: CanvasRenderingContext2D;
   public readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
-  private backgroundPattern: CanvasPattern | null = null;
-  private windowArea: Vector2;
+  private backgroundPattern: CanvasPattern | null;
   private windowResized: boolean;
   public readonly tickRate: number;
 
@@ -50,7 +49,6 @@ export default class Editor {
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM);
     this.backgroundPattern = null;
-    this.windowArea = new Vector2(window.innerWidth, window.innerHeight, false);
     this.loadBackgroundPattern(bgTexturePath);
     this.windowResized = true;
     this.tickRate = tickRate;
@@ -74,35 +72,37 @@ export default class Editor {
     backgroundImg.src = bgPath;
   }
 
-  private computeWindowArea(): void {
+  private getEditorArea(): Vector2 {
     const canvasParentEl = document.getElementById(
       this.canvasId
     )?.parentElement;
+    const v = new Vector2(0, 0, false);
     if (canvasParentEl) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
-      this.windowArea.x = parseFloat(
+      v.x = parseFloat(
         computedStyle.width.substring(0, computedStyle.length - 2)
       );
-      this.windowArea.y = parseFloat(
+      v.y = parseFloat(
         computedStyle.height.substring(0, computedStyle.length - 2)
       );
     } else {
-      this.windowArea.x = window.innerWidth;
-      this.windowArea.y = window.innerHeight;
+      v.x = window.innerWidth;
+      v.y = window.innerHeight;
     }
+    return v;
   }
 
-  computePositionInCanvas(x: number, y: number): Vector2 {
+  setLocalMousePosition(x: number, y: number): void {
     const rect = this.canvasCtx.canvas.getBoundingClientRect();
-    return new Vector2(x - rect.left, y - rect.top);
+    this.mouse.position = new Vector2(x - rect.left, y - rect.top);
   }
 
   resize(): void {
-    this.computeWindowArea();
-    this.canvasCtx.canvas.width = this.windowArea.x;
-    this.canvasCtx.canvas.height = this.windowArea.y;
-    this.backgroundCtx.canvas.width = this.windowArea.x;
-    this.backgroundCtx.canvas.height = this.windowArea.y;
+    const editorArea = this.getEditorArea();
+    this.canvasCtx.canvas.width = editorArea.x;
+    this.canvasCtx.canvas.height = editorArea.y;
+    this.backgroundCtx.canvas.width = editorArea.x;
+    this.backgroundCtx.canvas.height = editorArea.y;
     this.windowResized = true;
   }
 
