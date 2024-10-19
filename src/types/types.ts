@@ -65,16 +65,20 @@ export interface ConnectionVertices {
 export type slotStates = boolean;
 
 // Modelo para criação de objetos do tipo NODE
-export interface NodeModel {
-  readonly id: NodeTypes;
-  readonly imgPath: string[];
-  readonly connectionSlot: Array<{
-    id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
-    name: string; // Nome do slot (adiciona textNode?)
-    localPos: Vector2; // Posição do slot, relativo ao elemento-pai
-    in: boolean; // Recebe informação de outro elemento (true)
-  }>;
-}
+export type NodeModel = Readonly<{
+  id: NodeTypes;
+  imgPath: string[];
+  connectionSlot: Readonly<
+    Array<
+      Readonly<{
+        id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
+        name: string; // Nome do slot (adiciona textNode?)
+        localPos: Vector2; // Posição do slot, relativo ao elemento-pai
+        in: boolean; // Recebe informação de outro elemento (true)
+      }>
+    >
+  >;
+}>;
 
 export interface SignalGraphData {
   state: boolean | undefined;
