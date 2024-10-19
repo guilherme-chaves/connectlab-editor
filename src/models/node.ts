@@ -1,16 +1,9 @@
 import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeModel, NodeTypes} from '@connectlab-editor/types';
-import ADDPath from '@connectlab-editor/gates/AND_ANSI.svg';
-import NANDPath from '@connectlab-editor/gates/NAND_ANSI.svg';
-import NORPath from '@connectlab-editor/gates/NOR_ANSI.svg';
-import NOTPath from '@connectlab-editor/gates/NOT_ANSI.svg';
-import ORPath from '@connectlab-editor/gates/OR_ANSI.svg';
-import XNORPath from '@connectlab-editor/gates/XNOR_ANSI.svg';
-import XORPath from '@connectlab-editor/gates/XOR_ANSI.svg';
 
 const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,
-  imgPath: [ADDPath],
+  imgPath: ['/src/assets/gates/AND_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -35,7 +28,7 @@ const ADDNode: NodeModel = {
 
 const NANDNode: NodeModel = {
   id: NodeTypes.G_NAND,
-  imgPath: [NANDPath],
+  imgPath: ['/src/assets/gates/NAND_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -60,7 +53,7 @@ const NANDNode: NodeModel = {
 
 const NORNode: NodeModel = {
   id: NodeTypes.G_NOR,
-  imgPath: [NORPath],
+  imgPath: ['/src/assets/gates/NOR_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -85,7 +78,7 @@ const NORNode: NodeModel = {
 
 const NOTNode: NodeModel = {
   id: NodeTypes.G_NOT,
-  imgPath: [NOTPath],
+  imgPath: ['/src/assets/gates/NOT_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -104,7 +97,7 @@ const NOTNode: NodeModel = {
 
 const ORNode: NodeModel = {
   id: NodeTypes.G_OR,
-  imgPath: [ORPath],
+  imgPath: ['/src/assets/gates/OR_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -129,7 +122,7 @@ const ORNode: NodeModel = {
 
 const XNORNode: NodeModel = {
   id: NodeTypes.G_XNOR,
-  imgPath: [XNORPath],
+  imgPath: ['/src/assets/gates/XNOR_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,
@@ -154,7 +147,7 @@ const XNORNode: NodeModel = {
 
 const XORNode: NodeModel = {
   id: NodeTypes.G_XOR,
-  imgPath: [XORPath],
+  imgPath: ['/src/assets/gates/XOR_ANSI.svg'],
   connectionSlot: [
     {
       id: 0,

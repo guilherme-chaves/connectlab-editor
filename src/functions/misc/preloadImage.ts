@@ -6,18 +6,11 @@ import {ImageListObject} from '@connectlab-editor/types';
  * @argument list Array de strings com a localização das imagens
  * @returns Lista dos bitmaps das imagens carregadas, tendo como chave a localização da imagem, passada no array do parâmetro
  */
-export default function preloadImage(list: string[]): ImageListObject {
-  const images: ImageListObject = {};
-  for (const key of list) {
-    const image = new Image();
-    image.onload = () => {
-      Promise.all([createImageBitmap(image)]).then(bitmap => {
-        images[key] = bitmap[0];
-      });
-    };
-    image.src = key;
-  }
-  return images;
+export default async function loadImage(src: string): Promise<ImageBitmap> {
+  const image = new Image();
+  image.src = src;
+  await image.decode();
+  return createImageBitmap(image);
 }
 
 export function getImageSublist(
