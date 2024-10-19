@@ -7,7 +7,11 @@
     <title>ConnectLab</title>
   </head>
   <body>
-    <div id="app">
+    <div id="loading-div">
+      <span class="loader"></span>
+      <p style="font-family: monospace; font-size: 1rem;">Carregando editor...</p>
+    </div>
+    <div id="app" style="visibility: hidden;">
       <div id="app-sidebar">
         <h3>Portas lógicas</h3>
         <ul id="app-key-list">
@@ -64,12 +68,61 @@
         </canvas>
       </div>
     </div>
-    <div id="app-toolbar">
+    <div id="app-toolbar" style="visibility: hidden;">
       <button id="save-editor">Salvar projeto</button>
       <button id="load-editor">Carregar projeto</button>
       <button id="clear-editor">Limpar editor</button>
       <input type="file" id="load-editor-file" name="load-editor-file" hidden />
     </div>
+    <style>
+      #loading-div {
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: whitesmoke;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .loader {
+        width: 48px;
+        height: 48px;
+        display: inline-block;
+        position: relative;
+      }
+      .loader::after,
+      .loader::before {
+        content: '';  
+        box-sizing: border-box;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: #80b7ff;
+        position: absolute;
+        left: 0;
+        top: 0;
+        animation: animloader 2s linear infinite;
+      }
+      .loader::after {
+        animation-delay: 1s;
+      }
+
+      @keyframes animloader {
+        0% {
+          transform: scale(0);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+    </style>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

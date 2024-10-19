@@ -15,10 +15,19 @@ export default function createEditorEvents(
     console.error('Variável window é nula! Não será possível iniciar o editor');
     return;
   }
+
   window.onload = () => {
     editor.resize();
     setInterval(editor.compute, 1000.0 / editor.tickRate);
     editor.update();
+
+    setTimeout(() => {
+      document.getElementById('app')!.style.visibility = 'visible';
+      document.getElementById('app-toolbar')!.style.visibility = 'visible';
+      document.getElementById('app')!.className = 'animate-show';
+      document.getElementById('app-toolbar')!.className = 'animate-show';
+      document.getElementById('loading-div')!.style.visibility = 'hidden';
+    }, 1000);
   };
 
   window.onresize = () => editor.resize();

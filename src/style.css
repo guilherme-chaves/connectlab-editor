@@ -4,6 +4,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  background-color: whitesmoke;
 }
 
 #app {
@@ -18,6 +19,7 @@ body {
 
 #app > * {
   font-family: monospace;
+  background-color: white;
 }
 
 #app-sidebar {
@@ -76,4 +78,23 @@ body {
 #editor-canvas {
   border: 1px solid black;
   z-index: 2;
+}
+
+/* CSS responsável pela animação de carregamento da página */
+.animate-show {
+  position: relative;
+  -webkit-animation-name: animateshow;
+  -webkit-animation-duration: 1s;
+  animation-name: animateshow;
+  animation-duration: 1s;
+}
+
+@-webkit-keyframes animateshow {
+  from { opacity:0 } 
+  to { opacity:1 }
+}
+
+@keyframes animateshow { 
+  from{ opacity:0 } 
+  to{ opacity:1 }
 }
