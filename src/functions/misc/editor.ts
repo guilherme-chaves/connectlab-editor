@@ -63,21 +63,20 @@ export function saveToFile(editorEnv: EditorEnvironment): void {
   a.click();
 }
 
-export function clearEditor(editorEnv: EditorEnvironment): void {
+export function clearEditor(
+  editorEnv: EditorEnvironment
+): EditorEnvironment | null {
   if (
     confirm(
       'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!'
     ) === true
   ) {
-    editorEnv.nodes.clear();
-    editorEnv.connections.clear();
-    editorEnv.slots.clear();
-    editorEnv.texts.clear();
-    editorEnv.signalGraph = {};
-    editorEnv = new EditorEnvironment(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return new EditorEnvironment(
       editorEnv.documentId,
       0,
       editorEnv.nodeImageList
     );
   }
+  return null;
 }

@@ -10,7 +10,7 @@ export default async function loadImage(src: string): Promise<ImageBitmap> {
   const image = new Image();
   image.src = src;
   await image.decode();
-  return createImageBitmap(image);
+  return window.createImageBitmap(image);
 }
 
 export function getImageSublist(

@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeEach} from '@jest/globals';
+import {expect, test, beforeEach, describe} from 'vitest';
 
 import Vector2 from '@connectlab-editor/types/vector2';
 

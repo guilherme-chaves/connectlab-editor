@@ -58,6 +58,6 @@ export default function createEditorEvents(
     ?.addEventListener('change', ev => loadFile(editor, editor.canvasCtx, ev));
 
   document.getElementById('clear-editor')?.addEventListener('click', () => {
-    clearEditor(editor.editorEnv);
+    editor.editorEnv = clearEditor(editor.editorEnv) ?? editor.editorEnv;
   });
 }

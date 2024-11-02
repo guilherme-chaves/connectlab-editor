@@ -91,7 +91,7 @@ class EditorEnvironment {
   updateComponentId(next?: number): number {
     const ret = this._nextComponentId;
     this._nextComponentId = next
-      ? Math.max(this._nextComponentId + 1, next + 1)
+      ? Math.max(this._nextComponentId, next + 1)
       : this._nextComponentId + 1;
     return ret;
   }
@@ -167,7 +167,7 @@ class EditorEnvironment {
   ): EditorEnvironment {
     const newEnv = new EditorEnvironment(
       data.id,
-      undefined,
+      0,
       structuredClone(imageList),
       data.signal
     );

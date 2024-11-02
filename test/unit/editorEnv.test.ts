@@ -1,9 +1,10 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeAll} from '@jest/globals';
+import {expect, test, beforeAll, describe, vi, expectTypeOf} from 'vitest';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import EditorEnvironment from '@connectlab-editor/environment';
 import {addComponent} from '../../src/functions/component/addComponent';
 import {ComponentType, NodeTypes} from '../../src/types/types';
+import Node from '@connectlab-editor/interfaces/nodeInterface';
 
 let editorEnv: EditorEnvironment | undefined;
 const canvas = document.createElement('canvas');
@@ -80,6 +81,7 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(JSON.parse(envObject)).toHaveProperty('id', 'test-mode');
   });
   test('Carregar um novo ambiente a partir de um objeto', () => {
+    vi.spyOn(window, 'structuredClone').mockImplementation(() => 'mocked');
     const envObject = editorEnv!.saveAsJson();
     const editorEnv2 = EditorEnvironment.createFromJson(
       JSON.parse(envObject),
@@ -88,6 +90,12 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     );
     expect(editorEnv2).toBeDefined();
     // TODO - Verificações das listas e do grafo de sinal
+    expect(editorEnv2.signalGraph).toEqual(editorEnv!.signalGraph);
+    expect(editorEnv2.documentId).toBe(editorEnv!.documentId);
+    expect(editorEnv2.nextComponentId).toBe(editorEnv!.nextComponentId);
+    expectTypeOf(editorEnv2.nodes.get(0)!).toEqualTypeOf<Node>();
+    expect(editorEnv2.slots.get(1)).toBeDefined();
+    expect(editorEnv2.connections.get(7)).toBeDefined();
   });
   test('Obter o ID do ambiente do editor', () => {
     expect(editorEnv?.getDocumentId()).toBe('test-mode');

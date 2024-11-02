@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test, describe, beforeAll} from '@jest/globals';
+import {expect, test, describe, beforeAll} from 'vitest';
 
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';

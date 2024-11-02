@@ -1,5 +1,5 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeEach} from '@jest/globals';
+import {expect, test, beforeEach, describe} from 'vitest';
 import {NodeTypes, SignalGraph} from '../../src/types/types';
 import signalEvents from '../../src/events/signalEvents';
 import signalUpdate from '../../src/functions/signal/signalUpdate';
