@@ -15,7 +15,8 @@ export default defineConfig({
       },
     },
     coverage: {
-      include: ['./test/**/*.test.ts'],
+      provider: 'v8',
+      include: ['src/**'],
     },
   },
   plugins: [tsconfigPaths()],
