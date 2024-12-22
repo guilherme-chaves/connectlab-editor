@@ -1,10 +1,10 @@
-import SlotComponent from '../components/SlotComponent';
-import {NodeTypeObject, slotStates} from '../types/types';
-import Component from './componentInterface';
+import {NodeModel, slotStates} from '@connectlab-editor/types';
+import Component from '@connectlab-editor/interfaces/componentInterface';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
 
 export default interface Node extends Component {
-  slotComponents: Array<SlotComponent>;
-  readonly nodeType: NodeTypeObject;
-  image: ImageBitmap | undefined;
+  slots: Array<SlotComponent>;
+  readonly nodeType: NodeModel;
+  image: ImageBitmap | null;
   state: slotStates;
 }
