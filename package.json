@@ -10,7 +10,7 @@
     "type": "git",
     "url": "https://github.com/guilherme-chaves/connectlab-editor.git"
   },
-  "homepage": "https://guilherme-chaves.github.io/connectlab-editor",
+  "homepage": "https://guilherme-chaves.github.io/connectlab-editor/",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
