@@ -1,5 +1,5 @@
 import './style.css';
-import Editor from '@connectlab-editor';
+import Editor from '@connectlab-editor/editor';
 
 const editor = new Editor('teste', 'editor-canvas', 'editor-background');
 

@@ -3,7 +3,7 @@ import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
 import Vector2 from '@connectlab-editor/types/vector2';
-import {ComponentType, VectorObject} from '@connectlab-editor/types';
+import {ComponentType, VectorObject} from '@connectlab-editor/types/common';
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 
 export interface SlotObject extends ComponentObject {

@@ -1,4 +1,4 @@
-import {FullComponentList} from '@connectlab-editor/types';
+import {FullComponentList} from '@connectlab-editor/types/common';
 
 // Ordem crescente em que os componentes serão desenhados (menor z-index para maior z-index)
 const drawOrder = ['connections', 'nodes', 'slots', 'texts'];

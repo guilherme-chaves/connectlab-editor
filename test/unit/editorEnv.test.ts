@@ -3,7 +3,7 @@ import {expect, test, beforeAll, describe, vi} from 'vitest';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import EditorEnvironment from '@connectlab-editor/environment';
 import {addComponent} from '../../src/functions/component/addComponent';
-import {ComponentType, NodeTypes} from '../../src/types/types';
+import {ComponentType, NodeTypes} from '../../src/types/common';
 
 let editorEnv: EditorEnvironment | undefined;
 const canvas = document.createElement('canvas');

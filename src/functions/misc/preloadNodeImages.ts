@@ -1,5 +1,5 @@
 import loadImage from '@connectlab-editor/functions/preloadImage';
-import {ImageListObject} from '@connectlab-editor/types';
+import {ImageListObject} from '@connectlab-editor/types/common';
 
 const imageList = import.meta.glob('/src/assets/gates/*.svg');
 

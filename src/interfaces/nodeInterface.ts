@@ -1,4 +1,4 @@
-import {NodeModel, slotStates} from '@connectlab-editor/types';
+import {NodeModel, slotStates} from '@connectlab-editor/types/common';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 

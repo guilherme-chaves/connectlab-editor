@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {TextList} from '@connectlab-editor/types';
+import {TextList} from '@connectlab-editor/types/common';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 

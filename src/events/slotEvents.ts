@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {SlotList} from '@connectlab-editor/types';
+import {SlotList} from '@connectlab-editor/types/common';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 
 export default {

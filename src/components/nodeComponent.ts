@@ -6,8 +6,8 @@ import {
   SignalGraphData,
   VectorObject,
   slotStates,
-} from '@connectlab-editor/types';
-import {NodeModel} from '@connectlab-editor/types';
+} from '@connectlab-editor/types/common';
+import {NodeModel} from '@connectlab-editor/types/common';
 import {nodeModels} from '@connectlab-editor/models/node';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';

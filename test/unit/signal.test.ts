@@ -1,6 +1,6 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test, beforeEach, describe} from 'vitest';
-import {NodeTypes, SignalGraph} from '../../src/types/types';
+import {NodeTypes, SignalGraph} from '../../src/types/common';
 import signalEvents from '../../src/events/signalEvents';
 import signalUpdate from '../../src/functions/signal/signalUpdate';
 

@@ -1,4 +1,4 @@
-import {ComponentType, VectorObject} from '@connectlab-editor/types';
+import {ComponentType, VectorObject} from '@connectlab-editor/types/common';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Component, {

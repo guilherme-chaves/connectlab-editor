@@ -9,7 +9,7 @@ import {
   ComponentType,
   ConnectionVertex,
   NodeTypes,
-} from '@connectlab-editor/types';
+} from '@connectlab-editor/types/common';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 
 export const addComponent = {

@@ -5,11 +5,10 @@
     "outDir": "./build",
     "baseUrl": ".",
     "paths": {
-      "@connectlab-editor": ["src/editor.ts"],
+      "@connectlab-editor/editor": ["src/editor.ts"],
       "@connectlab-editor/environment": ["src/editorEnvironment.ts"],
       "@connectlab-editor/assets/*": ["src/assets/*"],
       "@connectlab-editor/gates/*": ["src/assets/gates/*"],
-      "@connectlab-editor/types": ["src/types/types.ts"],
       "@connectlab-editor/types/*": ["src/types/*"],
       "@connectlab-editor/collisionShapes/*": ["src/collision/*"],
       "@connectlab-editor/components/*": ["src/components/*"],

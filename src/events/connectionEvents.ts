@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {ComponentType, ConnectionList} from '@connectlab-editor/types';
+import {ComponentType, ConnectionList} from '@connectlab-editor/types/common';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import signalEvents from '@connectlab-editor/events/signalEvents';

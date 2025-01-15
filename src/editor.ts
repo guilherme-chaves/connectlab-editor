@@ -1,4 +1,4 @@
-import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types';
+import {ConnectionVertex, NodeTypes} from '@connectlab-editor/types/common';
 import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
 import {
   updateBackground,

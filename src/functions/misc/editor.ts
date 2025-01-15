@@ -1,6 +1,6 @@
 import {gzipSync, gunzipSync} from 'fflate';
 import EditorEnvironment from '@connectlab-editor/environment';
-import Editor from '@connectlab-editor';
+import Editor from '@connectlab-editor/editor';
 
 export function loadFile(
   editor: Editor,
