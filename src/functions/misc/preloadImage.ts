@@ -1,4 +1,4 @@
-import {ImageListObject} from '@connectlab-editor/types';
+import {ImageListObject} from '@connectlab-editor/types/common';
 
 /**
  * Função que carrega um ou mais arrays contendo um par de chave da imagem e caminho para o arquivo,

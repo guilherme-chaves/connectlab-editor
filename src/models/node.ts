@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {NodeModel, NodeTypes} from '@connectlab-editor/types';
+import {NodeModel, NodeTypes} from '@connectlab-editor/types/common';
 
 const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,

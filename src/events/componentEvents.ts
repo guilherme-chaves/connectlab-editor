@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {NodeList, SlotList, TextList} from '@connectlab-editor/types';
+import {NodeList, SlotList, TextList} from '@connectlab-editor/types/common';
 
 export const componentEvents = {
   checkComponentClick(

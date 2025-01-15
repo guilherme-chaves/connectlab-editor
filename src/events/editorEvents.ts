@@ -1,4 +1,4 @@
-import Editor from '@connectlab-editor';
+import Editor from '@connectlab-editor/editor';
 import {
   saveToFile,
   loadFile,

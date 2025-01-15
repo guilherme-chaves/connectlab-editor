@@ -8,7 +8,7 @@ import {
   TextList,
   SignalGraph,
   SignalGraphData,
-} from '@connectlab-editor/types';
+} from '@connectlab-editor/types/common';
 import {
   removeNode,
   removeSlot,

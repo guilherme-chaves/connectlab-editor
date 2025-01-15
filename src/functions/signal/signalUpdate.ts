@@ -3,7 +3,7 @@ import {
   SignalGraph,
   SignalGraphData,
   slotStates,
-} from '@connectlab-editor/types';
+} from '@connectlab-editor/types/common';
 import {signalOperations} from '@connectlab-editor/signal/signalOperations';
 
 export default {

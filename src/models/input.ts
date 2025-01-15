@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {NodeModel, NodeTypes} from '@connectlab-editor/types';
+import {NodeModel, NodeTypes} from '@connectlab-editor/types/common';
 
 export const SwitchInput: NodeModel = {
   id: NodeTypes.I_SWITCH,
