@@ -1,9 +1,16 @@
 import Vector2 from '@connectlab-editor/types/vector2';
 import {NodeModel, NodeTypes} from '@connectlab-editor/types/common';
+import GATE_AND from '@connectlab-editor/gates/AND_ANSI.svg';
+import GATE_NAND from '@connectlab-editor/gates/NAND_ANSI.svg';
+import GATE_NOR from '@connectlab-editor/gates/NOR_ANSI.svg';
+import GATE_NOT from '@connectlab-editor/gates/NOT_ANSI.svg';
+import GATE_OR from '@connectlab-editor/gates/OR_ANSI.svg';
+import GATE_XNOR from '@connectlab-editor/gates/XNOR_ANSI.svg';
+import GATE_XOR from '@connectlab-editor/gates/XOR_ANSI.svg';
 
 const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,
-  imgPath: ['/src/assets/gates/AND_ANSI.svg'],
+  imgPath: [GATE_AND],
   connectionSlot: [
     {
       id: 0,
@@ -28,7 +35,7 @@ const ADDNode: NodeModel = {
 
 const NANDNode: NodeModel = {
   id: NodeTypes.G_NAND,
-  imgPath: ['/src/assets/gates/NAND_ANSI.svg'],
+  imgPath: [GATE_NAND],
   connectionSlot: [
     {
       id: 0,
@@ -53,7 +60,7 @@ const NANDNode: NodeModel = {
 
 const NORNode: NodeModel = {
   id: NodeTypes.G_NOR,
-  imgPath: ['/src/assets/gates/NOR_ANSI.svg'],
+  imgPath: [GATE_NOR],
   connectionSlot: [
     {
       id: 0,
@@ -78,7 +85,7 @@ const NORNode: NodeModel = {
 
 const NOTNode: NodeModel = {
   id: NodeTypes.G_NOT,
-  imgPath: ['/src/assets/gates/NOT_ANSI.svg'],
+  imgPath: [GATE_NOT],
   connectionSlot: [
     {
       id: 0,
@@ -97,7 +104,7 @@ const NOTNode: NodeModel = {
 
 const ORNode: NodeModel = {
   id: NodeTypes.G_OR,
-  imgPath: ['/src/assets/gates/OR_ANSI.svg'],
+  imgPath: [GATE_OR],
   connectionSlot: [
     {
       id: 0,
@@ -122,7 +129,7 @@ const ORNode: NodeModel = {
 
 const XNORNode: NodeModel = {
   id: NodeTypes.G_XNOR,
-  imgPath: ['/src/assets/gates/XNOR_ANSI.svg'],
+  imgPath: [GATE_XNOR],
   connectionSlot: [
     {
       id: 0,
@@ -147,7 +154,7 @@ const XNORNode: NodeModel = {
 
 const XORNode: NodeModel = {
   id: NodeTypes.G_XOR,
-  imgPath: ['/src/assets/gates/XOR_ANSI.svg'],
+  imgPath: [GATE_XOR],
   connectionSlot: [
     {
       id: 0,
