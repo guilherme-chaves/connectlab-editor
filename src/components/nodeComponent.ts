@@ -1,12 +1,11 @@
 import {
-  ComponentType,
   ImageListObject,
-  NodeTypes,
   SignalGraph,
   SignalGraphData,
   VectorObject,
   slotStates,
 } from '@connectlab-editor/types/common';
+import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import {NodeModel} from '@connectlab-editor/types/common';
 import {nodeModels} from '@connectlab-editor/models/node';
 import Vector2 from '@connectlab-editor/types/vector2';

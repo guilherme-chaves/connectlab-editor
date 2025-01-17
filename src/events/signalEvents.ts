@@ -1,9 +1,6 @@
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
-import {
-  NodeTypes,
-  SignalGraph,
-  slotStates,
-} from '@connectlab-editor/types/common';
+import {SignalGraph, slotStates} from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {

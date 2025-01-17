@@ -3,7 +3,7 @@ import {expect, test, beforeAll, describe} from 'vitest';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
 import EditorEnvironment from '@connectlab-editor/environment';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
-import {NodeTypes} from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import {connectionEvents} from '@connectlab-editor/events/connectionEvents';

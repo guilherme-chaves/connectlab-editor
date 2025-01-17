@@ -1,6 +1,7 @@
 // eslint-disable-next-line node/no-unpublished-import
 import {expect, test, beforeEach, describe} from 'vitest';
-import {NodeTypes, SignalGraph} from '../../src/types/common';
+import {SignalGraph} from '../../src/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import signalEvents from '../../src/events/signalEvents';
 import signalUpdate from '../../src/functions/signal/signalUpdate';
 

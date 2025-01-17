@@ -1,46 +1,13 @@
 import Editor from '@connectlab-editor/editor';
 import Keyboard from '@connectlab-editor/types/keyboard';
-import {NodeTypes} from '@connectlab-editor/types/common';
 import {saveToFile} from '@connectlab-editor/functions/editor';
-
-export enum keyboardMode {
-  ADD_NODE = 0,
-  EDIT_TEXT = 1,
-}
-
-// *_u = uppercase/letras maiúsuculas
-enum nodeKeycodes {
-  ADD = 'a',
-  ADD_u = 'A',
-  NAND = 'd',
-  NAND_u = 'D',
-  NOR = 'r',
-  NOR_u = 'R',
-  NOT = 'n',
-  NOT_u = 'N',
-  OR = 'o',
-  OR_u = 'O',
-  XNOR = 'v',
-  XNOR_u = 'V',
-  XOR = 'x',
-  XOR_u = 'X',
-}
-
-enum inputKeycodes {
-  SWITCH = 's',
-  SWITCH_u = 'S',
-}
-
-enum outputKeycodes {
-  LED_RED = 'l',
-  LED_RED_u = 'L',
-}
-
-enum specialKeycodes {
-  DELETE = 'Delete',
-  BACKSPACE = 'Backspace',
-  INSERT = 'Insert',
-}
+import {
+  inputKeycodes,
+  nodeKeycodes,
+  outputKeycodes,
+  specialKeycodes,
+  NodeTypes,
+} from '@connectlab-editor/types/enums';
 
 export default class KeyboardEvents {
   private _keyboard: Keyboard;

@@ -1,5 +1,5 @@
 import EditorEnvironment from '@connectlab-editor/environment';
-import {ComponentType} from '@connectlab-editor/types/common';
+import {ComponentType} from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 
 export function removeNode(

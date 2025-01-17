@@ -5,11 +5,8 @@ import SlotComponent from '@connectlab-editor/components/slotComponent';
 import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import Vector2 from '@connectlab-editor/types/vector2';
-import {
-  ComponentType,
-  ConnectionVertex,
-  NodeTypes,
-} from '@connectlab-editor/types/common';
+import {ConnectionVertex} from '@connectlab-editor/types/common';
+import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 
 export const addComponent = {

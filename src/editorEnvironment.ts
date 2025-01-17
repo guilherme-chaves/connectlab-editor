@@ -1,5 +1,4 @@
 import {
-  ComponentType,
   ImageListObject,
   FullComponentList,
   NodeList,
@@ -9,6 +8,7 @@ import {
   SignalGraph,
   SignalGraphData,
 } from '@connectlab-editor/types/common';
+import {ComponentType} from '@connectlab-editor/types/enums';
 import {
   removeNode,
   removeSlot,

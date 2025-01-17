@@ -4,35 +4,7 @@ import SlotComponent from '@connectlab-editor/components/slotComponent';
 import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import Vector2 from '@connectlab-editor/types/vector2';
-
-export const enum ComponentType {
-  LINE = 1,
-  NODE = 2,
-  TEXT = 3,
-  SLOT = 4,
-  INPUT = 5,
-  OUTPUT = 6,
-}
-
-// G(ate)_*, I(nput)_*, O(utput)_*
-export const enum NodeTypes {
-  G_AND = 0,
-  G_NAND = 1,
-  G_NOR = 2,
-  G_NOT = 3,
-  G_OR = 4,
-  G_XNOR = 5,
-  G_XOR = 6,
-  I_SWITCH = 100,
-  O_LED_RED = 200,
-}
-
-export const enum EditorMode {
-  ADD = 0,
-  MOVE = 1,
-  SELECT = 2,
-  PROP = 3,
-}
+import {NodeTypes} from '@connectlab-editor/types/enums';
 
 export type ImageListObject = Record<string, ImageBitmap>;
 

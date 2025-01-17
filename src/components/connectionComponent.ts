@@ -1,8 +1,8 @@
 import {
-  ComponentType,
   ConnectionVertices,
   VectorObject,
 } from '@connectlab-editor/types/common';
+import {ComponentType} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';

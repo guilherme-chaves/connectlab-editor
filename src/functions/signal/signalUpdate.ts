@@ -1,9 +1,9 @@
 import {
-  NodeTypes,
   SignalGraph,
   SignalGraphData,
   slotStates,
 } from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import {signalOperations} from '@connectlab-editor/signal/signalOperations';
 
 export default {

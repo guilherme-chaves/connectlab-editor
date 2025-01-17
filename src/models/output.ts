@@ -1,5 +1,6 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {NodeModel, NodeTypes} from '@connectlab-editor/types/common';
+import {NodeModel} from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import OUTPUT_LED_OFF from '@connectlab-editor/gates/LED_OFF.svg';
 import OUTPUT_LED_RED from '@connectlab-editor/gates/LED_RED_ON.svg';
 

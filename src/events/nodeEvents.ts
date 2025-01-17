@@ -1,4 +1,5 @@
-import {ComponentType, NodeList} from '@connectlab-editor/types/common';
+import {NodeList} from '@connectlab-editor/types/common';
+import {ComponentType} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeComponent from '@connectlab-editor/components/nodeComponent';

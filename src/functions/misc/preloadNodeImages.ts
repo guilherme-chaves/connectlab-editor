@@ -31,6 +31,7 @@ const imageList = [
 export default function preloadNodeImages(): ImageListObject {
   const images: ImageListObject = {};
   for (const imgPath of imageList) {
+    // Workaround para que as imagens sejam carregadas corretamente tanto no modo de desenvolvimento quanto em produção
     const path = import.meta.env.DEV
       ? window.location.href + imgPath.substring(1)
       : imgPath;

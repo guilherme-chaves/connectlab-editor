@@ -1,5 +1,6 @@
 import Vector2 from '@connectlab-editor/types/vector2';
-import {NodeModel, NodeTypes} from '@connectlab-editor/types/common';
+import {NodeModel} from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import GATE_AND from '@connectlab-editor/gates/AND_ANSI.svg';
 import GATE_NAND from '@connectlab-editor/gates/NAND_ANSI.svg';
 import GATE_NOR from '@connectlab-editor/gates/NOR_ANSI.svg';

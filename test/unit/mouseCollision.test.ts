@@ -2,7 +2,7 @@
 import {expect, test, beforeAll, describe} from 'vitest';
 import EditorEnvironment from '@connectlab-editor/environment';
 import {addComponent} from '@connectlab-editor/functions/addComponent';
-import {NodeTypes} from '@connectlab-editor/types/common';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import Vector2 from '@connectlab-editor/types/vector2';
 import slotEvents from '@connectlab-editor/events/slotEvents';
