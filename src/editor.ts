@@ -12,7 +12,7 @@ import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import Mouse from '@connectlab-editor/types/mouse';
 import KeyboardEvents from '@connectlab-editor/events/keyboardEvents';
 import Keyboard from '@connectlab-editor/types/keyboard';
-import {addComponent} from '@connectlab-editor/functions/addComponent';
+import addComponent from '@connectlab-editor/functions/addComponent';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import createEditorEvents from '@connectlab-editor/events/editorEvents';
 

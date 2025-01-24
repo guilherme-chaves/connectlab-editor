@@ -9,7 +9,7 @@ import {ConnectionVertex} from '@connectlab-editor/types/common';
 import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 
-export const addComponent = {
+const addComponent = {
   node(
     id: number = -1,
     editorEnv: EditorEnvironment,
@@ -211,3 +211,5 @@ export const addComponent = {
     return editorEnv.updateComponentId(id >= 0 ? id : undefined);
   },
 };
+
+export default addComponent;

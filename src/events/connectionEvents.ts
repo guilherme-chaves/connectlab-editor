@@ -7,7 +7,7 @@ import signalEvents from '@connectlab-editor/events/signalEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
-import {addComponent} from '@connectlab-editor/functions/addComponent';
+import addComponent from '@connectlab-editor/functions/addComponent';
 
 export const connectionEvents = {
   editingLineId: -1,

@@ -9,19 +9,14 @@ import {
   SignalGraphData,
 } from '@connectlab-editor/types/common';
 import {ComponentType} from '@connectlab-editor/types/enums';
-import {
-  removeNode,
-  removeSlot,
-  removeConnection,
-  removeText,
-} from '@connectlab-editor/functions/removeComponent';
+import removeComponent from '@connectlab-editor/functions/removeComponent';
 import ConnectionComponent, {
   ConnectionObject,
 } from '@connectlab-editor/components/connectionComponent';
 import NodeComponent, {
   NodeObject,
 } from '@connectlab-editor/components/nodeComponent';
-import {addComponent} from '@connectlab-editor/functions/addComponent';
+import addComponent from '@connectlab-editor/functions/addComponent';
 import SlotComponent, {
   SlotObject,
 } from '@connectlab-editor/components/slotComponent';
@@ -105,13 +100,13 @@ class EditorEnvironment {
         case ComponentType.NODE:
         case ComponentType.INPUT:
         case ComponentType.OUTPUT:
-          return removeNode(this, componentId);
+          return removeComponent.node(this, componentId);
         case ComponentType.SLOT:
-          return removeSlot(this, componentId);
+          return removeComponent.slot(this, componentId);
         case ComponentType.LINE:
-          return removeConnection(this, componentId);
+          return removeComponent.connection(this, componentId);
         case ComponentType.TEXT:
-          return removeText(this, componentId);
+          return removeComponent.text(this, componentId);
       }
     } else {
       const component =
