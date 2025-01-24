@@ -87,7 +87,7 @@ export default class MouseEvents {
               this.collisionList.nodes[0]
             )
           )
-            signalUpdate.updateGraphPartial(
+            signalUpdate.updateGraph(
               editorEnv.signalGraph,
               this.collisionList.nodes[0]
             );

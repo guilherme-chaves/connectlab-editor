@@ -25,7 +25,7 @@ export const addComponent = {
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
 
-    signalEvents.addVertex(editorEnv.signalGraph, definedId, type, state);
+    signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
 
     if (
       componentType === ComponentType.LINE ||

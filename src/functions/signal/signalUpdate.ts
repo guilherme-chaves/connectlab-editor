@@ -7,43 +7,18 @@ import {NodeTypes} from '@connectlab-editor/types/enums';
 import {signalOperations} from '@connectlab-editor/signal/signalOperations';
 
 export default {
-  updateGraph(signalGraph: SignalGraph): void {
+  updateGraph(signalGraph: SignalGraph, originId: number): void {
     const visited: Set<number> = new Set();
-    for (const key of Object.keys(signalGraph)) {
-      this.updateVertexStatus(signalGraph, parseInt(key), visited);
-    }
-    visited.clear();
-  },
-  updateGraphPartial(signalGraph: SignalGraph, nodeId: number): void {
-    const visited: Set<number> = new Set();
-    const stack: Array<number> = [nodeId];
-    do {
-      if (!visited.has(stack[0])) {
-        visited.add(stack[0]);
-        stack.push(...(signalGraph[stack[0]]?.signalTo ?? []));
-        if (
-          stack[0] !== nodeId &&
-          signalGraph[stack[0]].nodeType !== NodeTypes.I_SWITCH
-        ) {
+    const stack: Array<number> = [originId];
+    while (stack.length > 0) {
+      if (!visited.has(stack[0]) && signalGraph[stack[0]] !== undefined) {
+        if (signalGraph[stack[0]].nodeType !== NodeTypes.I_SWITCH)
           this.computeState(signalGraph, signalGraph[stack[0]]);
-        }
+        stack.push(...(signalGraph[stack[0]]?.signalTo ?? []));
       }
+      visited.add(stack[0]);
       stack.shift();
-    } while (stack.length > 0);
-  },
-  updateVertexStatus(
-    signalGraph: SignalGraph,
-    nodeId: number,
-    visited: Set<number>
-  ): void {
-    if (visited.has(nodeId)) return;
-    visited.add(nodeId);
-    const node = signalGraph[nodeId];
-    if (node === undefined) return;
-    for (let i = 0; i < node.signalFrom.length; i++)
-      this.updateVertexStatus(signalGraph, node.signalFrom[i], visited);
-    if (node.nodeType !== NodeTypes.I_SWITCH)
-      this.computeState(signalGraph, node);
+    }
   },
   computeState(signalGraph: SignalGraph, node: SignalGraphData): void {
     const op = this.getComputeFunction(node.nodeType);

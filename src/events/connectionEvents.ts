@@ -143,7 +143,7 @@ export const connectionEvents = {
           currentSlot.parent.id
         );
         // Cria conjunto de caixas de colisão para a conexão
-        signalEvents.addEdge(editorEnv.signalGraph, currentLine);
+        signalEvents.edge.add(editorEnv.signalGraph, currentLine);
         currentLine.collisionShape = currentLine.generateCollisionShapes();
 
         // Retorna a lista de parâmetros do objeto para seus valores padrão
