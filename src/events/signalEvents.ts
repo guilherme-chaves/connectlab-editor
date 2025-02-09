@@ -48,11 +48,7 @@ export default {
       const startNodeId = connection.connectedTo.start?.nodeId ?? -1;
       const endNodeId = connection.connectedTo.end?.nodeId ?? -1;
 
-      if (
-        signalGraph[startNodeId] !== undefined &&
-        signalGraph[startNodeId].signalTo.find(el => endNodeId === el) ===
-          undefined
-      ) {
+      if (signalGraph[startNodeId] !== undefined) {
         signalGraph[startNodeId].signalTo.push(endNodeId);
       } else {
         console.warn(
