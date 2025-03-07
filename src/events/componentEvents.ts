@@ -8,6 +8,12 @@ export const componentEvents = {
   ): number[] {
     const collidedWith: Array<number> = [];
     for (const [key, component] of elementsList.entries()) {
+      if (component.collisionShape instanceof Array) {
+        console.warn(
+          'Não utilize a função checkComponentClick para checar colisões com conexões!'
+        );
+        return [];
+      }
       const collision = component.collisionShape.collisionWithPoint(position);
       if (collision) collidedWith.push(key);
     }

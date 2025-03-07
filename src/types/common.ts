@@ -1,5 +1,5 @@
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
-import NodeComponent from '@connectlab-editor/components/nodeComponent';
+import NodeComponent from '@connectlab-editor/interfaces/nodeInterface';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';

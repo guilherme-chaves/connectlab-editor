@@ -2,31 +2,18 @@ import {
   ImageListObject,
   SignalGraph,
   SignalGraphData,
-  VectorObject,
   slotStates,
 } from '@connectlab-editor/types/common';
-import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
+import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import {NodeModel} from '@connectlab-editor/types/common';
-import {nodeModels} from '@connectlab-editor/models/node';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
-import Node from '@connectlab-editor/interfaces/nodeInterface';
-import {SwitchInput} from '@connectlab-editor/models/input';
-import {LEDROutput} from '@connectlab-editor/models/output';
+import Node, {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
+import {SwitchInput as SwitchInputModel} from '@connectlab-editor/models/input';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
-import {ComponentObject} from '@connectlab-editor/interfaces/componentInterface';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 
-export interface NodeObject extends ComponentObject {
-  id: number;
-  componentType: ComponentType;
-  nodeType: NodeTypes;
-  position: VectorObject;
-  slotIds: number[];
-  state: boolean;
-}
-
-class NodeComponent implements Node {
+class SwitchInput implements Node {
   public readonly id: number;
   public position: Vector2;
   public readonly componentType: ComponentType;
@@ -41,7 +28,6 @@ class NodeComponent implements Node {
 
   get image(): ImageBitmap | null {
     if (Object.keys(this._images).length === 0) return null;
-    if (this.componentType === ComponentType.NODE) return this._images[0];
     return this._images[this.state ? 1 : 0];
   }
 
@@ -49,15 +35,14 @@ class NodeComponent implements Node {
     return this._signalData.state ?? false;
   }
 
-  set state(value: slotStates) {
-    this._signalData.state = value;
+  set state(nVal: slotStates) {
+    this._signalData.state = nVal;
   }
 
   constructor(
     id: number,
     position: Vector2,
     componentType: ComponentType,
-    nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
     slots: Array<SlotComponent>,
@@ -68,7 +53,7 @@ class NodeComponent implements Node {
     this.id = id;
     this.position = position;
     this.componentType = componentType;
-    this.nodeType = NodeComponent.getNodeModel(nodeType);
+    this.nodeType = SwitchInputModel;
     this._signalData = signalGraph[this.id];
     this.slots = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
@@ -89,32 +74,6 @@ class NodeComponent implements Node {
       this.imageHeight
     );
     this.selected = false;
-  }
-
-  static getNodeModel(type: NodeTypes): NodeModel {
-    // Carrega o objeto do tipo de Node solicitado
-    switch (type) {
-      case NodeTypes.G_AND:
-        return nodeModels.ADDNode;
-      case NodeTypes.G_NAND:
-        return nodeModels.NANDNode;
-      case NodeTypes.G_NOR:
-        return nodeModels.NORNode;
-      case NodeTypes.G_NOT:
-        return nodeModels.NOTNode;
-      case NodeTypes.G_OR:
-        return nodeModels.ORNode;
-      case NodeTypes.G_XNOR:
-        return nodeModels.XNORNode;
-      case NodeTypes.G_XOR:
-        return nodeModels.XORNode;
-      case NodeTypes.I_SWITCH:
-        return SwitchInput;
-      case NodeTypes.O_LED_RED:
-        return LEDROutput;
-      default:
-        return nodeModels.NOTNode;
-    }
   }
 
   move(v: Vector2, useDelta = true): void {
@@ -149,6 +108,17 @@ class NodeComponent implements Node {
     };
     return nodeObj;
   }
+
+  onEvent(ev: EditorEvents): boolean {
+    switch (ev) {
+      case EditorEvents.MOUSE_RELEASED:
+        this.state = !this.state;
+        break;
+      default:
+        return false;
+    }
+    return true;
+  }
 }
 
-export default NodeComponent;
+export default SwitchInput;

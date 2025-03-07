@@ -6,6 +6,7 @@ import Vector2 from '@connectlab-editor/types/vector2';
 import {VectorObject} from '@connectlab-editor/types/common';
 import {ComponentType} from '@connectlab-editor/types/enums';
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
+import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 
 export interface SlotObject extends ComponentObject {
   id: number;
@@ -25,7 +26,7 @@ export default class SlotComponent implements Component {
   public position: Vector2;
   public globalPosition: Vector2;
   public readonly componentType: ComponentType;
-  public readonly parent: Component;
+  public readonly parent: NodeInterface;
   private _slotConnections: Array<ConnectionComponent>;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
@@ -51,7 +52,7 @@ export default class SlotComponent implements Component {
   constructor(
     id: number,
     position: Vector2,
-    parent: Component,
+    parent: NodeInterface,
     connections: Array<ConnectionComponent> = [],
     inSlot = true,
     radius = 4,

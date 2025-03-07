@@ -2,7 +2,7 @@ import {NodeList} from '@connectlab-editor/types/common';
 import {ComponentType} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import NodeComponent from '@connectlab-editor/components/nodeComponent';
+import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
 
@@ -34,7 +34,7 @@ export default {
     this.moveLinkedElements(node, useDelta);
     return true;
   },
-  moveLinkedElements(node: NodeComponent, useDelta = true): void {
+  moveLinkedElements(node: NodeInterface, useDelta = true): void {
     for (const slot of node.slots) {
       if (!slot) continue;
       slot.move();

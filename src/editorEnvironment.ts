@@ -8,21 +8,13 @@ import {
   SignalGraph,
   SignalGraphData,
 } from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
-import ConnectionComponent, {
-  ConnectionObject,
-} from '@connectlab-editor/components/connectionComponent';
-import NodeComponent, {
-  NodeObject,
-} from '@connectlab-editor/components/nodeComponent';
+import {ConnectionObject} from '@connectlab-editor/components/connectionComponent';
+import {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
 import addComponent from '@connectlab-editor/functions/addComponent';
-import SlotComponent, {
-  SlotObject,
-} from '@connectlab-editor/components/slotComponent';
-import TextComponent, {
-  TextObject,
-} from '@connectlab-editor/components/textComponent';
+import {SlotObject} from '@connectlab-editor/components/slotComponent';
+import {TextObject} from '@connectlab-editor/components/textComponent';
 import Vector2 from '@connectlab-editor/types/vector2';
 
 export type EditorEnvironmentObject = {
@@ -135,18 +127,16 @@ class EditorEnvironment {
       for (const component of map.values()) {
         switch (key) {
           case 'nodes':
-            env.data.nodes.push((component as NodeComponent).toObject());
+            env.data.nodes.push(component.toObject() as NodeObject);
             break;
           case 'slots':
-            env.data.slots.push((component as SlotComponent).toObject());
+            env.data.slots.push(component.toObject() as SlotObject);
             break;
           case 'connections':
-            env.data.connections.push(
-              (component as ConnectionComponent).toObject()
-            );
+            env.data.connections.push(component.toObject() as ConnectionObject);
             break;
           case 'texts':
-            env.data.texts.push((component as TextComponent).toObject());
+            env.data.texts.push(component.toObject() as TextObject);
             break;
         }
       }
@@ -167,18 +157,53 @@ class EditorEnvironment {
       data.signal
     );
     for (const nodeObj of data.data.nodes) {
-      addComponent.node(
-        nodeObj.id,
-        newEnv,
-        ctx.canvas.width,
-        ctx.canvas.height,
-        nodeObj.nodeType,
-        nodeObj.position.x,
-        nodeObj.position.y,
-        nodeObj.componentType,
-        nodeObj.slotIds,
-        false
-      );
+      switch (nodeObj.nodeType) {
+        case NodeTypes.G_AND:
+        case NodeTypes.G_NAND:
+        case NodeTypes.G_NOR:
+        case NodeTypes.G_NOT:
+        case NodeTypes.G_OR:
+        case NodeTypes.G_XNOR:
+        case NodeTypes.G_XOR:
+          addComponent.node(
+            nodeObj.id,
+            newEnv,
+            ctx.canvas.width,
+            ctx.canvas.height,
+            nodeObj.nodeType,
+            nodeObj.position.x,
+            nodeObj.position.y,
+            nodeObj.slotIds,
+            false
+          );
+          break;
+        case NodeTypes.I_SWITCH:
+          addComponent.input(
+            nodeObj.id,
+            newEnv,
+            ctx.canvas.width,
+            ctx.canvas.height,
+            nodeObj.nodeType,
+            nodeObj.position.x,
+            nodeObj.position.y,
+            nodeObj.slotIds,
+            false
+          );
+          break;
+        case NodeTypes.O_LED_RED:
+          addComponent.output(
+            nodeObj.id,
+            newEnv,
+            ctx.canvas.width,
+            ctx.canvas.height,
+            nodeObj.nodeType,
+            nodeObj.position.x,
+            nodeObj.position.y,
+            nodeObj.slotIds,
+            false
+          );
+          break;
+      }
     }
     for (const slotObj of data.data.slots) {
       addComponent.slot(

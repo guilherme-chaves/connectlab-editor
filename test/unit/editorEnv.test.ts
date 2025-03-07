@@ -44,15 +44,14 @@ describe('Conjunto de testes com a criação de elementos a partir do ambiente d
     expect(editorEnv?.texts.get(textId)).toBeDefined();
   });
   test('Criar node de entrada', () => {
-    const inputId = addComponent.node(
+    const inputId = addComponent.input(
       undefined,
       editorEnv!,
       canvas.width,
       canvas.height,
       NodeTypes.I_SWITCH,
       25,
-      80,
-      ComponentType.INPUT
+      80
     );
     expect(inputId).toBe(5);
     expect(editorEnv?.nodes.get(inputId)).toBeDefined();

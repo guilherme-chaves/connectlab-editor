@@ -67,3 +67,12 @@ export const enum EditorMode {
   SELECT = 2,
   PROP = 3,
 }
+
+export const enum EditorEvents {
+  MOUSE_CLICKED = 0,
+  MOUSE_RELEASED = 1,
+  MOUSE_DRAGGED = 2,
+  KEY_PRESSED = 10,
+  KEY_RELEASED = 11,
+  KEY_HOLDED = 12,
+}
