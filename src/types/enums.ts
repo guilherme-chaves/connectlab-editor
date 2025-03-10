@@ -30,6 +30,8 @@ export enum inputKeycodes {
 export enum outputKeycodes {
   LED_RED = 'l',
   LED_RED_u = 'L',
+  SEGMENTS = 'e',
+  SEGMENTS_u = 'E',
 }
 
 export enum specialKeycodes {
@@ -59,6 +61,7 @@ export const enum NodeTypes {
   G_XOR = 6,
   I_SWITCH = 100,
   O_LED_RED = 200,
+  O_7_SEGMENTS = 201,
 }
 
 export const enum EditorMode {

@@ -12,7 +12,11 @@ import signalEvents from '@connectlab-editor/events/signalEvents';
 import SwitchInput from '@connectlab-editor/components/nodes/switchInput';
 import {SwitchInput as SwitchInputModel} from '@connectlab-editor/models/input';
 import LedOutput from '@connectlab-editor/components/nodes/ledOutput';
-import {LEDROutput} from '@connectlab-editor/models/output';
+import {
+  LEDROutput,
+  SegmentsOutput as SegmentsOutputModel,
+} from '@connectlab-editor/models/output';
+import SegmentsOutput from '@connectlab-editor/components/nodes/segmentsOutput';
 
 const addComponent = {
   node(
@@ -190,6 +194,21 @@ const addComponent = {
           shiftPosition
         );
         model = LEDROutput;
+        break;
+      case NodeTypes.O_7_SEGMENTS:
+        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        newOutput = new SegmentsOutput(
+          definedId,
+          new Vector2(x, y),
+          ComponentType.INPUT,
+          canvasWidth,
+          canvasHeight,
+          [],
+          editorEnv.nodeImageList,
+          editorEnv.signalGraph,
+          shiftPosition
+        );
+        model = SegmentsOutputModel;
         break;
       default:
         console.error(

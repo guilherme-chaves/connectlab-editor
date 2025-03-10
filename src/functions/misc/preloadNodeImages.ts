@@ -14,6 +14,15 @@ import INPUT_ON from '@connectlab-editor/gates/INPUT_ON.svg';
 import OUTPUT_LED_OFF from '@connectlab-editor/gates/LED_OFF.svg';
 import OUTPUT_LED_RED from '@connectlab-editor/gates/LED_RED_ON.svg';
 
+import SEGMENTS_OFF from '@connectlab-editor/gates/7segment/7segment-off.svg';
+import SEGMENTS_A from '@connectlab-editor/gates/7segment/7segment-a.svg';
+import SEGMENTS_B from '@connectlab-editor/gates/7segment/7segment-b.svg';
+import SEGMENTS_C from '@connectlab-editor/gates/7segment/7segment-c.svg';
+import SEGMENTS_D from '@connectlab-editor/gates/7segment/7segment-d.svg';
+import SEGMENTS_E from '@connectlab-editor/gates/7segment/7segment-e.svg';
+import SEGMENTS_F from '@connectlab-editor/gates/7segment/7segment-f.svg';
+import SEGMENTS_G from '@connectlab-editor/gates/7segment/7segment-g.svg';
+
 const imageList = [
   GATE_AND,
   GATE_NAND,
@@ -26,6 +35,14 @@ const imageList = [
   INPUT_ON,
   OUTPUT_LED_OFF,
   OUTPUT_LED_RED,
+  SEGMENTS_OFF,
+  SEGMENTS_A,
+  SEGMENTS_B,
+  SEGMENTS_C,
+  SEGMENTS_D,
+  SEGMENTS_E,
+  SEGMENTS_F,
+  SEGMENTS_G,
 ];
 
 export default function preloadNodeImages(): ImageListObject {
