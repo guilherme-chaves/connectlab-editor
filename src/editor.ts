@@ -8,6 +8,7 @@ import {
 import EditorEnvironment from '@connectlab-editor/environment';
 import Vector2 from '@connectlab-editor/types/vector2';
 import Component from '@connectlab-editor/interfaces/componentInterface';
+import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import Mouse from '@connectlab-editor/types/mouse';
 import KeyboardEvents from '@connectlab-editor/events/keyboardEvents';
@@ -217,7 +218,7 @@ export default class Editor {
   slot(
     x: number,
     y: number,
-    parent: Component,
+    parent: NodeInterface,
     inSlot?: boolean,
     radius?: number,
     attractionRadius?: number,

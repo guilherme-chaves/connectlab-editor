@@ -41,7 +41,6 @@ class DefaultGate implements Node {
   constructor(
     id: number,
     position: Vector2,
-    componentType: ComponentType,
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
@@ -52,7 +51,7 @@ class DefaultGate implements Node {
   ) {
     this.id = id;
     this.position = position;
-    this.componentType = componentType;
+    this.componentType = ComponentType.NODE;
     this.nodeType = DefaultGate.getNodeModel(nodeType);
     this._signalData = signalGraph[this.id];
     this.slots = slots;

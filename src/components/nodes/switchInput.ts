@@ -42,7 +42,6 @@ class SwitchInput implements Node {
   constructor(
     id: number,
     position: Vector2,
-    componentType: ComponentType,
     canvasWidth: number,
     canvasHeight: number,
     slots: Array<SlotComponent>,
@@ -52,7 +51,7 @@ class SwitchInput implements Node {
   ) {
     this.id = id;
     this.position = position;
-    this.componentType = componentType;
+    this.componentType = ComponentType.INPUT;
     this.nodeType = SwitchInputModel;
     this._signalData = signalGraph[this.id];
     this.slots = slots;

@@ -37,7 +37,6 @@ class SegmentsOutput implements Node {
   constructor(
     id: number,
     position: Vector2,
-    componentType: ComponentType,
     canvasWidth: number,
     canvasHeight: number,
     slots: Array<SlotComponent>,
@@ -47,7 +46,7 @@ class SegmentsOutput implements Node {
   ) {
     this.id = id;
     this.position = position;
-    this.componentType = componentType;
+    this.componentType = ComponentType.OUTPUT;
     this.nodeType = SegmentsOutputModel;
     this._signalData = signalGraph[this.id];
     this.slots = slots;

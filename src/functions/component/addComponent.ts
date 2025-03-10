@@ -47,7 +47,6 @@ const addComponent = {
         newNode = new GateNode(
           definedId,
           new Vector2(x, y),
-          ComponentType.NODE,
           type,
           canvasWidth,
           canvasHeight,
@@ -116,7 +115,6 @@ const addComponent = {
         newInput = new SwitchInput(
           definedId,
           new Vector2(x, y),
-          ComponentType.INPUT,
           canvasWidth,
           canvasHeight,
           [],
@@ -185,7 +183,6 @@ const addComponent = {
         newOutput = new LedOutput(
           definedId,
           new Vector2(x, y),
-          ComponentType.INPUT,
           canvasWidth,
           canvasHeight,
           [],
@@ -200,7 +197,6 @@ const addComponent = {
         newOutput = new SegmentsOutput(
           definedId,
           new Vector2(x, y),
-          ComponentType.INPUT,
           canvasWidth,
           canvasHeight,
           [],
