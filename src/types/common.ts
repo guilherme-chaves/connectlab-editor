@@ -53,8 +53,9 @@ export type NodeModel = Readonly<{
 }>;
 
 export interface SignalGraphData {
-  state: boolean | undefined;
-  signalFrom: Array<number>;
+  state: slotStates;
+  // connectedNodeId => slotIdAtCurrentNode, state
+  signalFrom: Record<number, [number, slotStates]>;
   signalTo: Array<number>;
   nodeType: NodeTypes;
 }
