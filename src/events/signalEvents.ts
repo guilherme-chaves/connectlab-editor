@@ -2,6 +2,7 @@ import ConnectionComponent from '@connectlab-editor/components/connectionCompone
 import {SignalGraph, slotStates} from '@connectlab-editor/types/common';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
+import SlotComponent from '@connectlab-editor/components/slotComponent';
 
 export default {
   vertex: {
@@ -9,22 +10,29 @@ export default {
       signalGraph: SignalGraph,
       nodeId: number,
       nodeType: NodeTypes,
-      state: slotStates,
-      signalFrom: Array<number> = [],
+      state: slotStates = false,
+      signalFrom: Record<number, [number, slotStates]> = {},
       signalTo: Array<number> = []
     ): void {
       if (!signalGraph[nodeId]) {
-        signalGraph[nodeId] = {state, signalFrom, signalTo, nodeType};
-        // Como um vértice nunca é gerado conectado, não é necessário fazer atualização de estado do grafo aqui
+        signalGraph[nodeId] = {
+          state,
+          signalFrom,
+          signalTo,
+          nodeType,
+        };
+        signalUpdate.updateGraph(signalGraph, nodeId);
       }
     },
     remove(signalGraph: SignalGraph, nodeId: number): void {
       if (signalGraph[nodeId]) {
         for (const signalToId of Object.values(signalGraph[nodeId].signalTo)) {
           if (signalGraph[signalToId] === undefined) continue;
-          signalGraph[signalToId].signalFrom = signalGraph[
-            signalToId
-          ].signalFrom.filter(val => val !== nodeId);
+          signalGraph[signalToId].signalFrom = Object.fromEntries(
+            Object.entries(signalGraph[signalToId].signalFrom).filter(
+              v => parseInt(v[0]) !== nodeId
+            )
+          );
           signalUpdate.updateGraph(signalGraph, signalToId);
         }
         delete signalGraph[nodeId];
@@ -44,9 +52,14 @@ export default {
     },
   },
   edge: {
-    add(signalGraph: SignalGraph, connection: ConnectionComponent): void {
-      const startNodeId = connection.connectedTo.start?.nodeId ?? -1;
-      const endNodeId = connection.connectedTo.end?.nodeId ?? -1;
+    add(
+      signalGraph: SignalGraph,
+      connection: ConnectionComponent,
+      startSlot: SlotComponent,
+      endSlot: SlotComponent
+    ): void {
+      const startNodeId = startSlot.parent.id;
+      const endNodeId = endSlot.parent.id;
 
       if (signalGraph[startNodeId] !== undefined) {
         signalGraph[startNodeId].signalTo.push(endNodeId);
@@ -57,7 +70,10 @@ export default {
         );
       }
       if (signalGraph[endNodeId] !== undefined) {
-        signalGraph[endNodeId].signalFrom.push(startNodeId);
+        signalGraph[endNodeId].signalFrom[startNodeId] = [
+          endSlot.slotIdAtParent,
+          signalGraph[startNodeId].state,
+        ];
       } else {
         console.warn(
           `Node final com ID ${endNodeId} não encontrado no grafo de sinal, isso poderá acarretar em bugs`,
@@ -75,9 +91,9 @@ export default {
       const endNodeId = connection.connectedTo.end?.nodeId ?? -1;
       if (endNodeId !== -1) {
         const indexSF =
-          signalGraph[endNodeId]?.signalFrom.indexOf(startNodeId) ?? -1;
-        if (indexSF !== -1)
-          signalGraph[endNodeId].signalFrom.splice(indexSF, 1);
+          Object.keys(signalGraph[endNodeId]?.signalFrom)[startNodeId] ?? '-1';
+        if (parseInt(indexSF) !== -1)
+          delete signalGraph[endNodeId].signalFrom[parseInt(indexSF)];
       }
       if (startNodeId !== -1) {
         const indexST =

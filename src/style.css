@@ -51,11 +51,13 @@ body {
 
 .app-key-gate-img {
   max-width: 5em;
+  max-height: 5em;
   object-fit: contain;
 }
 
 .app-key-io-img {
   max-width: 3.75em;
+  max-height: 3.75em;
   object-fit: contain;
 }
 

@@ -22,14 +22,13 @@ export default {
   },
   computeState(signalGraph: SignalGraph, node: SignalGraphData): void {
     const op = this.getComputeFunction(node.nodeType);
-    const slotStatus: [slotStates, slotStates] = [false, false];
-    slotStatus[0] = signalGraph[node.signalFrom[0]]?.state ?? false;
-    slotStatus[1] = signalGraph[node.signalFrom[1]]?.state ?? false;
-    node.state = op(slotStatus);
+    for (const key of Object.keys(node.signalFrom))
+      node.signalFrom[parseInt(key)][1] = signalGraph[parseInt(key)]!.state;
+    node.state = op(node.signalFrom);
   },
   getComputeFunction(
     type: NodeTypes
-  ): (slotState: [slotStates, slotStates]) => boolean {
+  ): (slotState: Record<number, [number, slotStates]>) => boolean {
     switch (type) {
       case NodeTypes.G_AND:
         return signalOperations.and;
