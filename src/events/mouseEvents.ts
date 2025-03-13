@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
@@ -7,6 +6,7 @@ import textEvents from '@connectlab-editor/events/textEvents';
 import Mouse from '@connectlab-editor/types/mouse';
 import EditorEnvironment from '@connectlab-editor/environment';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
+import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 
 interface CollisionList {
   [index: string]: Array<number>;
@@ -53,14 +53,6 @@ export default class MouseEvents {
         this._mouse.position
       );
 
-      this.clearUnselectedComponents(
-        editorEnv,
-        nodes,
-        slots,
-        connections,
-        texts
-      );
-
       this.collisionList = {
         nodes,
         slots,
@@ -71,7 +63,7 @@ export default class MouseEvents {
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       connectionEvents.addLine(editorEnv, this);
 
-      this.showSelectedComponents(editorEnv);
+      this.displaySelectedComponents(editorEnv);
 
       this._mouse.stateChanged = false;
     }
@@ -81,11 +73,11 @@ export default class MouseEvents {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
         if (this.collisionList.nodes.length !== 0) {
+          const node = editorEnv.nodes.get(this.collisionList.nodes[0]);
           if (
-            nodeEvents.switchInputState(
-              editorEnv.nodes,
-              this.collisionList.nodes[0]
-            )
+            node !== undefined &&
+            node.componentType === ComponentType.INPUT &&
+            node.onEvent(EditorEvents.MOUSE_RELEASED)
           )
             signalUpdate.updateGraph(
               editorEnv.signalGraph,
@@ -110,66 +102,21 @@ export default class MouseEvents {
     return false;
   }
 
-  showSelectedComponents(editorEnv: EditorEnvironment): void {
-    for (const [key, category] of Object.entries(this.collisionList)) {
-      switch (key) {
-        case 'slots':
-          const slot = editorEnv.slots.get(category[0]);
-          if (slot) slot.selected = true;
-          break;
-        case 'nodes':
-          const nodes = editorEnv.nodes.get(category[0]);
-          if (nodes) nodes.selected = true;
-          break;
-        case 'texts':
-          const text = editorEnv.texts.get(category[0]);
-          if (text) text.selected = true;
-          break;
-        case 'connections':
-          const connections = editorEnv.connections.get(category[0]);
-          if (connections) connections.selected = true;
-          break;
-      }
+  private displaySelectedComponents(editorEnv: EditorEnvironment): void {
+    for (const [category, collisions] of Object.entries(this.collisionList)) {
+      editorEnv.components[category]
+        .get(collisions[0])
+        ?.onEvent(EditorEvents.FOCUS_IN);
     }
   }
 
-  // Procura na lista anterior de colisões as que não estão presentes na atual, removendo seu estado de selecionado/ativo
-  clearUnselectedComponents(
-    editorEnv: EditorEnvironment,
-    newNodeIds: Array<number> = [],
-    newSlotIds: Array<number> = [],
-    newConnectionIds: Array<number> = [],
-    newTextIds: Array<number> = []
-  ): void {
-    if (this.collisionList.nodes.length !== 0) {
-      for (let i = 0; i < this.collisionList.nodes.length; i++)
-        if (!newNodeIds.includes(this.collisionList.nodes[i])) {
-          const node = editorEnv.nodes.get(this.collisionList.nodes[i]);
-          if (node) node.selected = false;
-        }
-    }
-    if (this.collisionList.slots.length !== 0) {
-      for (let i = 0; i < this.collisionList.slots.length; i++)
-        if (!newSlotIds.includes(this.collisionList.slots[i])) {
-          const slot = editorEnv.slots.get(this.collisionList.slots[i]);
-          if (slot) slot.selected = false;
-        }
-    }
-    if (this.collisionList.connections.length !== 0) {
-      for (let i = 0; i < this.collisionList.connections.length; i++)
-        if (!newConnectionIds.includes(this.collisionList.connections[i])) {
-          const connection = editorEnv.connections.get(
-            this.collisionList.connections[i]
-          );
-          if (connection) connection.selected = false;
-        }
-    }
-    if (this.collisionList.texts.length !== 0) {
-      for (let i = 0; i < this.collisionList.texts.length; i++)
-        if (!newTextIds.includes(this.collisionList.texts[i])) {
-          const text = editorEnv.texts.get(this.collisionList.texts[i]);
-          if (text) text.selected = false;
-        }
+  private clearSelectedComponents(editorEnv: EditorEnvironment): void {
+    for (const [category, collisions] of Object.entries(this.collisionList)) {
+      for (const collision of collisions) {
+        editorEnv.components[category]
+          .get(collision)
+          ?.onEvent(EditorEvents.FOCUS_OUT);
+      }
     }
   }
 
@@ -178,7 +125,7 @@ export default class MouseEvents {
   }
 
   clearAllCollisions(editorEnv: EditorEnvironment): void {
-    this.clearUnselectedComponents(editorEnv);
+    this.clearSelectedComponents(editorEnv);
     this.collisionList.nodes = [];
     this.collisionList.slots = [];
     this.collisionList.connections = [];

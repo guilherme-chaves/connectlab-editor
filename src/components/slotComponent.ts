@@ -4,7 +4,7 @@ import Component, {
 } from '@connectlab-editor/interfaces/componentInterface';
 import Vector2 from '@connectlab-editor/types/vector2';
 import {VectorObject} from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 
@@ -110,6 +110,20 @@ export default class SlotComponent implements Component {
     ctx.fill(this.drawPath);
     ctx.restore();
     this.collisionShape.draw(ctx, this.selected);
+  }
+
+  onEvent(ev: EditorEvents): boolean {
+    switch (ev) {
+      case EditorEvents.FOCUS_IN:
+        this.selected = true;
+        break;
+      case EditorEvents.FOCUS_OUT:
+        this.selected = false;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 
   toObject(): SlotObject {

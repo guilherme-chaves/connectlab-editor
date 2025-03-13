@@ -1,5 +1,4 @@
 import {NodeList} from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
@@ -46,13 +45,5 @@ export default {
           connection.move(slot.globalPosition, useDelta, 1);
       }
     }
-  },
-  switchInputState(nodes: NodeList, inputId: number): boolean {
-    const input = nodes.get(inputId);
-    if (input && input.componentType === ComponentType.INPUT) {
-      input.state = !input.state;
-      return true;
-    }
-    return false;
   },
 };
