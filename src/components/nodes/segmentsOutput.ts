@@ -87,6 +87,15 @@ class SegmentsOutput implements Node {
   draw(ctx: CanvasRenderingContext2D): void {
     if (!this.image) return;
     ctx.drawImage(this.image, this.position.x, this.position.y);
+    if (Object.keys(this._images).length >= 8)
+      for (const slotState of Object.values(this._signalData.signalFrom)) {
+        if (slotState[1])
+          ctx.drawImage(
+            this._images[slotState[0] + 1],
+            this.position.x,
+            this.position.y
+          );
+      }
     if (this.collisionShape !== undefined)
       this.collisionShape.draw(ctx, this.selected);
   }
