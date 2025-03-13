@@ -77,6 +77,7 @@ const addComponent = {
           slot.localPos.x,
           slot.localPos.y,
           node,
+          slot.id,
           slot.in
         );
         if (!node.slots.find(slot => slot.id === slotKey)) {
@@ -145,6 +146,7 @@ const addComponent = {
           slot.localPos.x,
           slot.localPos.y,
           input,
+          slot.id,
           slot.in
         );
         if (!input.slots.find(slot => slot.id === slotKey)) {
@@ -227,6 +229,7 @@ const addComponent = {
           slot.localPos.x,
           slot.localPos.y,
           output,
+          slot.id,
           slot.in
         );
         if (!output.slots.find(slot => slot.id === slotKey)) {
@@ -250,6 +253,7 @@ const addComponent = {
     x: number,
     y: number,
     parent: NodeInterface,
+    slotId: number,
     inSlot?: boolean,
     radius?: number,
     attractionRadius?: number,
@@ -261,6 +265,7 @@ const addComponent = {
       definedId,
       new Vector2(x, y),
       parent,
+      slotId,
       undefined,
       inSlot,
       radius,

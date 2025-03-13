@@ -6,7 +6,6 @@ import {
   SlotList,
   TextList,
   SignalGraph,
-  SignalGraphData,
 } from '@connectlab-editor/types/common';
 import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
@@ -25,7 +24,7 @@ export type EditorEnvironmentObject = {
     slots: SlotObject[];
     texts: TextObject[];
   };
-  signal: Record<number, SignalGraphData>;
+  signal: SignalGraph;
 };
 
 class EditorEnvironment {
@@ -191,6 +190,7 @@ class EditorEnvironment {
           );
           break;
         case NodeTypes.O_LED_RED:
+        case NodeTypes.O_7_SEGMENTS:
           addComponent.output(
             nodeObj.id,
             newEnv,
@@ -212,6 +212,7 @@ class EditorEnvironment {
         slotObj.position.x,
         slotObj.position.y,
         newEnv.nodes.get(slotObj.parentId)!,
+        slotObj.slotIdAtParent,
         slotObj.inSlot,
         slotObj.radius,
         slotObj.attractionRadius,

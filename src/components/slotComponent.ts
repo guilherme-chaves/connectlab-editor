@@ -13,6 +13,7 @@ export interface SlotObject extends ComponentObject {
   componentType: ComponentType;
   position: VectorObject;
   parentId: number;
+  slotIdAtParent: number;
   connectionIds: number[];
   inSlot: boolean;
   color: string;
@@ -27,6 +28,7 @@ export default class SlotComponent implements Component {
   public globalPosition: Vector2;
   public readonly componentType: ComponentType;
   public readonly parent: NodeInterface;
+  public slotIdAtParent: number;
   private _slotConnections: Array<ConnectionComponent>;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
@@ -53,6 +55,7 @@ export default class SlotComponent implements Component {
     id: number,
     position: Vector2,
     parent: NodeInterface,
+    slotIdAtParent: number,
     connections: Array<ConnectionComponent> = [],
     inSlot = true,
     radius = 4,
@@ -65,6 +68,7 @@ export default class SlotComponent implements Component {
     this.globalPosition = Vector2.add(position, parent.position);
     this.componentType = ComponentType.SLOT;
     this.parent = parent;
+    this.slotIdAtParent = slotIdAtParent;
     this._slotConnections = connections;
     this.color = color;
     this.colorActive = colorActive;
@@ -114,6 +118,7 @@ export default class SlotComponent implements Component {
       componentType: this.componentType,
       position: this.position.toPlainObject(),
       parentId: this.parent.id,
+      slotIdAtParent: this.slotIdAtParent,
       connectionIds: this.slotConnections.map(value => value.id),
       inSlot: this.inSlot,
       color: this.color,
