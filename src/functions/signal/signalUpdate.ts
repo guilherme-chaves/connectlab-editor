@@ -12,7 +12,10 @@ export default {
     const stack: Array<number> = [originId];
     while (stack.length > 0) {
       if (!visited.has(stack[0]) && signalGraph[stack[0]] !== undefined) {
-        if (signalGraph[stack[0]].nodeType !== NodeTypes.I_SWITCH)
+        if (
+          signalGraph[stack[0]].nodeType < 100 ||
+          signalGraph[stack[0]].nodeType >= 200
+        )
           this.computeState(signalGraph, signalGraph[stack[0]]);
         stack.push(...(signalGraph[stack[0]]?.signalTo ?? []));
       }

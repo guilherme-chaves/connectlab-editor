@@ -25,6 +25,8 @@ export enum nodeKeycodes {
 export enum inputKeycodes {
   SWITCH = 's',
   SWITCH_u = 'S',
+  BUTTON = 'b',
+  BUTTON_u = 'B',
 }
 
 export enum outputKeycodes {
@@ -60,6 +62,7 @@ export const enum NodeTypes {
   G_XNOR = 5,
   G_XOR = 6,
   I_SWITCH = 100,
+  I_BUTTON = 101,
   O_LED_RED = 200,
   O_7_SEGMENTS = 201,
 }
