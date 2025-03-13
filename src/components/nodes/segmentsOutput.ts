@@ -100,6 +100,20 @@ class SegmentsOutput implements Node {
       this.collisionShape.draw(ctx, this.selected);
   }
 
+  onEvent(ev: EditorEvents): boolean {
+    switch (ev) {
+      case EditorEvents.FOCUS_IN:
+        this.selected = true;
+        break;
+      case EditorEvents.FOCUS_OUT:
+        this.selected = false;
+        break;
+      default:
+        return false;
+    }
+    return true;
+  }
+
   toObject(): NodeObject {
     const nodeObj: NodeObject = {
       id: this.id,
@@ -110,11 +124,6 @@ class SegmentsOutput implements Node {
       state: this.state,
     };
     return nodeObj;
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onEvent(_ev: EditorEvents): boolean {
-    return false;
   }
 }
 

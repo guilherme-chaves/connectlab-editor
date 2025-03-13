@@ -2,7 +2,7 @@ import {
   ConnectionVertices,
   VectorObject,
 } from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';
@@ -171,6 +171,20 @@ class ConnectionComponent implements Component {
       if (end) this.connectedTo.end = undefined;
       else this.connectedTo.start = undefined;
     }
+  }
+
+  onEvent(ev: EditorEvents): boolean {
+    switch (ev) {
+      case EditorEvents.FOCUS_IN:
+        this.selected = true;
+        break;
+      case EditorEvents.FOCUS_OUT:
+        this.selected = false;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 
   toObject(): ConnectionObject {

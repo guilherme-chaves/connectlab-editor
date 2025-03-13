@@ -78,4 +78,6 @@ export const enum EditorEvents {
   KEY_PRESSED = 10,
   KEY_RELEASED = 11,
   KEY_HOLDED = 12,
+  FOCUS_IN = 20,
+  FOCUS_OUT = 21,
 }

@@ -1,5 +1,5 @@
 import {VectorObject} from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import Vector2 from '@connectlab-editor/types/vector2';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Component, {
@@ -79,6 +79,20 @@ class TextComponent implements Component {
     if (useDelta) this.position.add(v);
     else Vector2.sub(v, Vector2.div(this.textSize, 2), this.position);
     this.collisionShape.moveShape(this.position, false);
+  }
+
+  onEvent(ev: EditorEvents): boolean {
+    switch (ev) {
+      case EditorEvents.FOCUS_IN:
+        this.selected = true;
+        break;
+      case EditorEvents.FOCUS_OUT:
+        this.selected = false;
+        break;
+      default:
+        return false;
+    }
+    return true;
   }
 
   toObject(): TextObject {
