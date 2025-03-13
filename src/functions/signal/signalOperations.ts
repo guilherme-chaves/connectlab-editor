@@ -1,26 +1,68 @@
 import {slotStates} from '@connectlab-editor/types/common';
 
-const input_output = (slotState: [slotStates, slotStates]) => slotState[0];
+const input_output = (slotState: Record<number, [number, slotStates]>) => {
+  for (const state of Object.values(slotState)) return state[1];
+  return false;
+};
 
-const and = (slotState: [slotStates, slotStates]) =>
-  slotState[0] && slotState[1];
+const and = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator = true;
+  for (const state of Object.values(slotState))
+    accumulator = accumulator && state[1];
+  return accumulator;
+};
 
-const nand = (slotState: [slotStates, slotStates]) =>
-  !(slotState[0] && slotState[1]);
+const nand = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator = true;
+  for (const state of Object.values(slotState))
+    accumulator = accumulator && state[1];
+  return !accumulator;
+};
 
-const nor = (slotState: [slotStates, slotStates]) =>
-  !(slotState[0] || slotState[1]);
+const nor = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator = false;
+  for (const state of Object.values(slotState))
+    accumulator = accumulator || state[1];
+  return !accumulator;
+};
 
-const not = (slotState: [slotStates, slotStates]) => !slotState[0];
+const not = (slotState: Record<number, [number, slotStates]>) => {
+  for (const state of Object.values(slotState)) return !state[1];
+  return true;
+};
 
-const or = (slotState: [slotStates, slotStates]) =>
-  slotState[0] || slotState[1];
+const or = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator = false;
+  for (const state of Object.values(slotState))
+    accumulator = accumulator || state[1];
+  return accumulator;
+};
 
-const xnor = (slotState: [slotStates, slotStates]) =>
-  slotState[0] === slotState[1];
+const xnor = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator: boolean | undefined = undefined;
+  for (const state of Object.values(slotState)) {
+    if (accumulator === undefined) {
+      accumulator = state[1];
+      continue;
+    }
 
-const xor = (slotState: [slotStates, slotStates]) =>
-  slotState[0] !== slotState[1];
+    accumulator = accumulator === state[1];
+  }
+  return accumulator ?? false;
+};
+
+const xor = (slotState: Record<number, [number, slotStates]>) => {
+  let accumulator: boolean | undefined = undefined;
+  for (const state of Object.values(slotState)) {
+    if (accumulator === undefined) {
+      accumulator = state[1];
+      continue;
+    }
+
+    accumulator = accumulator !== state[1];
+  }
+  return accumulator ?? false;
+};
 
 export const signalOperations = {
   input_output,
