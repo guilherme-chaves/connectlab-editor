@@ -19,7 +19,7 @@ const LEDROutput: NodeModel = {
     {
       id: 0,
       in: true,
-      name: 'A',
+      name: 'In',
       localPos: new Vector2(23, 64),
     },
   ],

@@ -10,13 +10,17 @@ import {ConnectionVertex, NodeModel} from '@connectlab-editor/types/common';
 import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 import SwitchInput from '@connectlab-editor/components/nodes/switchInput';
-import {SwitchInput as SwitchInputModel} from '@connectlab-editor/models/input';
+import {
+  SwitchInput as SwitchInputModel,
+  ButtonInput as ButtonInputModel,
+} from '@connectlab-editor/models/input';
 import LedOutput from '@connectlab-editor/components/nodes/ledOutput';
 import {
   LEDROutput,
   SegmentsOutput as SegmentsOutputModel,
 } from '@connectlab-editor/models/output';
 import SegmentsOutput from '@connectlab-editor/components/nodes/segmentsOutput';
+import ButtonInput from '@connectlab-editor/components/nodes/buttonInput';
 
 const addComponent = {
   node(
@@ -33,36 +37,24 @@ const addComponent = {
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
 
-    let newNode: NodeInterface;
-    switch (type) {
-      case NodeTypes.G_AND:
-      case NodeTypes.G_NAND:
-      case NodeTypes.G_NOR:
-      case NodeTypes.G_NOT:
-      case NodeTypes.G_OR:
-      case NodeTypes.G_XNOR:
-      case NodeTypes.G_XOR:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
-
-        newNode = new GateNode(
-          definedId,
-          new Vector2(x, y),
-          type,
-          canvasWidth,
-          canvasHeight,
-          [],
-          editorEnv.nodeImageList,
-          editorEnv.signalGraph,
-          shiftPosition
-        );
-        break;
-      default:
-        console.error(
-          'O tipo de node passado como parâmetro é inválido!',
-          type
-        );
-        return -1;
+    if (type < 0 || type >= 100) {
+      console.error('O tipo de node passado como parâmetro é inválido!', type);
+      return -1;
     }
+
+    signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+
+    const newNode = new GateNode(
+      definedId,
+      new Vector2(x, y),
+      type,
+      canvasWidth,
+      canvasHeight,
+      [],
+      editorEnv.nodeImageList,
+      editorEnv.signalGraph,
+      shiftPosition
+    );
 
     editorEnv.nodes.set(definedId, newNode);
     const node = editorEnv.nodes.get(definedId)!;
@@ -124,6 +116,20 @@ const addComponent = {
           shiftPosition
         );
         model = SwitchInputModel;
+        break;
+      case NodeTypes.I_BUTTON:
+        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        newInput = new ButtonInput(
+          definedId,
+          new Vector2(x, y),
+          canvasWidth,
+          canvasHeight,
+          [],
+          editorEnv.nodeImageList,
+          editorEnv.signalGraph,
+          shiftPosition
+        );
+        model = ButtonInputModel;
         break;
       default:
         console.error(

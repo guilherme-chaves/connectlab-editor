@@ -59,6 +59,7 @@ body {
   max-width: 3.75em;
   max-height: 3.75em;
   object-fit: contain;
+  margin-bottom: .75em;
 }
 
 .app-canvas-el {

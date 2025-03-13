@@ -6,7 +6,11 @@ import textEvents from '@connectlab-editor/events/textEvents';
 import Mouse from '@connectlab-editor/types/mouse';
 import EditorEnvironment from '@connectlab-editor/environment';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
-import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
+import {
+  ComponentType,
+  EditorEvents,
+  NodeTypes,
+} from '@connectlab-editor/types/enums';
 
 interface CollisionList {
   [index: string]: Array<number>;
@@ -62,6 +66,14 @@ export default class MouseEvents {
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
       connectionEvents.addLine(editorEnv, this);
+      const node = editorEnv.nodes.get(this.collisionList.nodes[0]);
+      if (node !== undefined && node.nodeType.id === NodeTypes.I_BUTTON) {
+        node.onEvent(EditorEvents.MOUSE_CLICKED);
+        signalUpdate.updateGraph(
+          editorEnv.signalGraph,
+          this.collisionList.nodes[0]
+        );
+      }
 
       this.displaySelectedComponents(editorEnv);
 

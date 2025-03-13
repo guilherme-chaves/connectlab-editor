@@ -7,7 +7,7 @@ import {
   TextList,
   SignalGraph,
 } from '@connectlab-editor/types/common';
-import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
+import {ComponentType} from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
 import {ConnectionObject} from '@connectlab-editor/components/connectionComponent';
 import {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
@@ -156,54 +156,45 @@ class EditorEnvironment {
       data.signal
     );
     for (const nodeObj of data.data.nodes) {
-      switch (nodeObj.nodeType) {
-        case NodeTypes.G_AND:
-        case NodeTypes.G_NAND:
-        case NodeTypes.G_NOR:
-        case NodeTypes.G_NOT:
-        case NodeTypes.G_OR:
-        case NodeTypes.G_XNOR:
-        case NodeTypes.G_XOR:
-          addComponent.node(
-            nodeObj.id,
-            newEnv,
-            ctx.canvas.width,
-            ctx.canvas.height,
-            nodeObj.nodeType,
-            nodeObj.position.x,
-            nodeObj.position.y,
-            nodeObj.slotIds,
-            false
-          );
-          break;
-        case NodeTypes.I_SWITCH:
-          addComponent.input(
-            nodeObj.id,
-            newEnv,
-            ctx.canvas.width,
-            ctx.canvas.height,
-            nodeObj.nodeType,
-            nodeObj.position.x,
-            nodeObj.position.y,
-            nodeObj.slotIds,
-            false
-          );
-          break;
-        case NodeTypes.O_LED_RED:
-        case NodeTypes.O_7_SEGMENTS:
-          addComponent.output(
-            nodeObj.id,
-            newEnv,
-            ctx.canvas.width,
-            ctx.canvas.height,
-            nodeObj.nodeType,
-            nodeObj.position.x,
-            nodeObj.position.y,
-            nodeObj.slotIds,
-            false
-          );
-          break;
-      }
+      if (nodeObj.nodeType >= 0 && nodeObj.nodeType < 100)
+        // LOGIC GATES
+        addComponent.node(
+          nodeObj.id,
+          newEnv,
+          ctx.canvas.width,
+          ctx.canvas.height,
+          nodeObj.nodeType,
+          nodeObj.position.x,
+          nodeObj.position.y,
+          nodeObj.slotIds,
+          false
+        );
+      else if (nodeObj.nodeType >= 100 && nodeObj.nodeType < 200)
+        // INPUTS
+        addComponent.input(
+          nodeObj.id,
+          newEnv,
+          ctx.canvas.width,
+          ctx.canvas.height,
+          nodeObj.nodeType,
+          nodeObj.position.x,
+          nodeObj.position.y,
+          nodeObj.slotIds,
+          false
+        );
+      else if (nodeObj.nodeType >= 200 && nodeObj.nodeType < 300)
+        // OUTPUTS
+        addComponent.output(
+          nodeObj.id,
+          newEnv,
+          ctx.canvas.width,
+          ctx.canvas.height,
+          nodeObj.nodeType,
+          nodeObj.position.x,
+          nodeObj.position.y,
+          nodeObj.slotIds,
+          false
+        );
     }
     for (const slotObj of data.data.slots) {
       addComponent.slot(
