@@ -38,20 +38,65 @@ export default {
     }
     return list;
   },
-  optimizePath(path: Array<Vector2>): Array<Vector2> {},
+  floatEquals(a: number, b: number, precision: number) {
+    return a - b < precision;
+  },
+  currentDirection(
+    previous: Vector2,
+    current: Vector2,
+    next: Vector2,
+    precision: number
+  ) {
+    const a1 = this.stepDirectionFromAtan2(current.atan2(previous));
+    const a2 = this.stepDirectionFromAtan2(next.atan2(current));
+    if (a1.equals(a2)) {
+      return 'e'; // equals
+    }
+    if (this.floatEquals(a1.x, a2.x, precision) && a1.x !== 0) return 'x';
+    if (this.floatEquals(a1.y, a2.y, precision) && a1.y !== 0) return 'y';
+    return 'c'; // direction change
+  },
+  optimizePath(pathList: Array<Vector2>, precision = 1e-5): Array<Vector2> {
+    const result = [];
+    let lastDirection: 'x' | 'y' | 'e' | 'c' = 'c';
+    for (let i = 0; i < pathList.length; i++) {
+      const direction = this.currentDirection(
+        pathList[Math.max(0, i - 1)],
+        pathList[i],
+        pathList[Math.min(i, pathList.length - 1)],
+        precision
+      );
+
+      if (
+        direction === 'c' ||
+        (direction !== lastDirection && lastDirection !== 'e')
+      ) {
+        result.push(pathList[i]);
+      } else {
+        if (direction === 'x') {
+          result[result.length - 1].x = pathList[i].x;
+        } else if (direction === 'y') {
+          result[result.length - 1].y = pathList[i].y;
+        }
+      }
+      lastDirection = direction;
+    }
+    return result;
+  },
   simplePathFinder(
     start: Vector2,
     end: Vector2,
     stepDivisor: Vector2 = new Vector2(2, 1)
   ): Array<Vector2> {
     const list: Array<Vector2> = [];
+    if (start.equals(end)) return list; // Não calcular se os vetores forem iguais
     const current = start.copy();
     const currentT = new Vector2(0, 0, false);
     let runs = 0;
     while (!current.equals(end)) {
       if (runs > 15) break;
       runs++;
-      const atan2 = current.atan2(end);
+      const atan2 = end.atan2(current);
       const step = this.stepDirectionFromAtan2(atan2);
       const nextT = step.abs().div(stepDivisor).add(currentT);
       list.push(nextT);

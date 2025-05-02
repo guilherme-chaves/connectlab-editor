@@ -204,3 +204,47 @@ describe('Testes com o modelo simples do traçador de caminhos', () => {
     expect(path[2]).toEqual(new Vector2(1, 1, false));
   });
 });
+
+describe('Testes com o otimizador de caminhos', () => {
+  test('Valores predefinidos e idênticos', () => {
+    const path = [
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+      new Vector2(0.1, 0, false),
+    ];
+    const optimized = pathFinder.optimizePath(path);
+    expect(optimized.length).toBe(1);
+    expect(optimized[0]).toEqual(new Vector2(0.1, 0, false));
+  });
+  test('Valores predefinidos e diferentes', () => {
+    const path = [
+      new Vector2(0.1, 0, false),
+      new Vector2(0.2, 0, false),
+      new Vector2(0.5, 0, false),
+      new Vector2(0.5, 0.4, false),
+      new Vector2(0.5, 1, false),
+      new Vector2(0.5000100234324, 1, false),
+      new Vector2(0.75, 1, false),
+      new Vector2(1, 1, false),
+    ];
+    const optimized = pathFinder.optimizePath(path);
+    expect(optimized.length).toBe(3);
+    expect(optimized[0]).toEqual(new Vector2(0.5, 0, false));
+    expect(optimized[1]).toEqual(new Vector2(0.5, 1, false));
+    expect(optimized[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Valores gerados pelo algoritmo de busca simples', () => {
+    const p1 = new Vector2(0, 0);
+    const p2 = new Vector2(100, 50);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    const optimized = pathFinder.optimizePath(path);
+    expect(optimized.length).toBe(2);
+    expect(optimized[0]).toEqual(new Vector2(1, 0, false));
+    expect(optimized[1]).toEqual(new Vector2(1, 1, false));
+  });
+});
