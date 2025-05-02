@@ -54,4 +54,45 @@ describe('Testes do cálculo da direção ideal do traçador de caminhos', () =>
   });
 });
 
+describe('Testes da área para busca de caminhos', () => {
+  test('getSearchArea - área pequena', () => {
+    const p1 = new Vector2(50, 50);
+    const p2 = new Vector2(75, 75);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    expect(searchArea.position).toEqual(new Vector2(25, 25));
+    expect(searchArea.width).toBe(75);
+    expect(searchArea.height).toBe(75);
+  });
+  test('getSearchArea - área retangular', () => {
+    const p1 = new Vector2(112, 50);
+    const p2 = new Vector2(627, 288);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    expect(searchArea.position).toEqual(new Vector2(-403, -188));
+    expect(searchArea.width).toBe(1545);
+    expect(searchArea.height).toBe(714);
+  });
+  test('getSearchArea - p1.x > p2.x', () => {
+    const p1 = new Vector2(1002, 120);
+    const p2 = new Vector2(400, 288);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    expect(searchArea.position).toEqual(new Vector2(-202, -48));
+    expect(searchArea.width).toBe(1806);
+    expect(searchArea.height).toBe(504);
+  });
+  test('getSearchArea - p1.y > p2.y', () => {
+    const p1 = new Vector2(27, 350);
+    const p2 = new Vector2(480, 288);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    expect(searchArea.position).toEqual(new Vector2(-426, 226));
+    expect(searchArea.width).toBe(1359);
+    expect(searchArea.height).toBe(186);
+  });
+  test('getSearchArea - p1 > p2', () => {
+    const p1 = new Vector2(875, 540);
+    const p2 = new Vector2(640, 350);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    expect(searchArea.position).toEqual(new Vector2(405, 160));
+    expect(searchArea.width).toBe(705);
+    expect(searchArea.height).toBe(570);
+  });
 });

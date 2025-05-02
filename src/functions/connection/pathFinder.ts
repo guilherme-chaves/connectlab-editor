@@ -19,4 +19,14 @@ export default {
     }
     return result;
   },
+  // Aumenta a área de busca para caminhos
+  getSearchArea(p1: Vector2, p2: Vector2, multiplier = 3): BoxCollision {
+    const dist = Vector2.sub(p1, p2).abs();
+    const minPoint = Vector2.min(p1, p2);
+    return new BoxCollision(
+      minPoint.sub(dist),
+      dist.x * multiplier,
+      dist.y * multiplier
+    );
+  },
 };
