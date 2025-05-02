@@ -1,6 +1,5 @@
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Vector2 from '@connectlab-editor/types/vector2';
-import {QUARTER_PI, THREE_QUARTER_PI} from '@connectlab-editor/types/consts';
 
 export default {
   setCollisionShapeSize(
@@ -23,49 +22,6 @@ export default {
         Math.abs(v1.y - v2.y) < precision ? ifEqualY : ifDiffY,
         false
       );
-  },
-
-  // checkAnchorCollision(p1: Vector2) {
-  //   //Teste
-  // },
-
-  generateAnchors(position: Vector2, endPosition: Vector2): Array<Vector2> {
-    const anchorsArr: Array<Vector2> = [];
-    let lastAnchorAdded = new Vector2();
-    const currentPos = position.copy();
-    const stepDivisor = new Vector2(2, 1, false);
-    let newAnchor: Vector2;
-    let loopRuns = 0;
-    while (loopRuns < 64) {
-      const stepTo = new Vector2(0, 0, false);
-      const headedTowards = currentPos.atan2(endPosition);
-      stepTo.x =
-        headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
-          ? 1
-          : headedTowards > THREE_QUARTER_PI ||
-              headedTowards < -THREE_QUARTER_PI
-            ? -1
-            : 0;
-      stepTo.y =
-        headedTowards > QUARTER_PI && headedTowards <= THREE_QUARTER_PI
-          ? 1
-          : headedTowards < -QUARTER_PI && headedTowards >= -THREE_QUARTER_PI
-            ? -1
-            : 0;
-      if (anchorsArr.length === 0) {
-        newAnchor = stepTo.abs().div(stepDivisor);
-      } else {
-        newAnchor = stepTo.abs().div(stepDivisor).add(lastAnchorAdded);
-      }
-      Vector2.bilinear(position, endPosition, newAnchor, currentPos);
-      anchorsArr.push(newAnchor);
-      lastAnchorAdded = newAnchor.copy();
-
-      if (currentPos.equals(endPosition)) break;
-      loopRuns += 1;
-    }
-    // console.log(anchorsArr);
-    return anchorsArr;
   },
 
   generateCollisionShapes(

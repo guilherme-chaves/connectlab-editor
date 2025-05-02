@@ -3,6 +3,7 @@ import {expect, test, describe} from 'vitest';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import connectionPath from '@connectlab-editor/functions/connectionPath';
 import Vector2 from '@connectlab-editor/types/vector2';
+import pathFinder from '@connectlab-editor/functions/pathFinder';
 
 describe('Testes com a geração da conexão entre componentes', () => {
   test('Definir o tamanho de uma caixa de colisão a partir de dois vetores (inteiros)', () => {
@@ -44,40 +45,10 @@ describe('Testes com a geração da conexão entre componentes', () => {
     );
     expect(size).not.toEqual(new Vector2(290, 6, false));
   });
-  test('Criar âncoras entre duas posições (ZigZag)', () => {
-    const pos = new Vector2(100, 100);
-    const endPos = new Vector2(1000, 1000);
-    const anchors = connectionPath.generateAnchors(pos, endPos);
-    expect(anchors).toEqual([
-      new Vector2(0.5, 0, false),
-      new Vector2(0.5, 1, false),
-      new Vector2(1, 1, false),
-    ]);
-  });
-  test('Criar âncoras entre duas posições (¬)', () => {
-    const pos = new Vector2(100, 100);
-    const endPos = new Vector2(684, 0);
-    const anchors = connectionPath.generateAnchors(pos, endPos);
-    expect(anchors).toEqual([
-      new Vector2(0.5, 0, false),
-      new Vector2(1, 0, false),
-      new Vector2(1, 1, false),
-    ]);
-  });
-  test('Criar âncoras entre duas posições (L)', () => {
-    const pos = new Vector2(100, 100);
-    const endPos = new Vector2(0, 750);
-    const anchors = connectionPath.generateAnchors(pos, endPos);
-    expect(anchors).toEqual([
-      new Vector2(0, 1, false),
-      new Vector2(0.5, 1, false),
-      new Vector2(1, 1, false),
-    ]);
-  });
   test('Criar lista objetos de caixas de colisão', () => {
     const pos = new Vector2(100, 100);
     const endPos = new Vector2(1000, 1000);
-    const anchors = connectionPath.generateAnchors(pos, endPos);
+    const anchors = pathFinder.simplePathFinder(pos, endPos);
     const bb = connectionPath.generateCollisionShapes(pos, endPos, anchors);
     expect(bb.length).toBe(4);
     expect(bb[0]).toBeInstanceOf(BoxCollision);
