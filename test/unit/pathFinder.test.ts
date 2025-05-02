@@ -18,28 +18,28 @@ describe('Testes do cálculo da direção ideal do traçador de caminhos', () =>
     const p2 = new Vector2(130, 15);
     const a = Vector2.atan2(p1, p2);
     const step = pathFinder.stepDirectionFromAtan2(a);
-    expect(step).toEqual(new Vector2(1, 0));
+    expect(step).toEqual(new Vector2(1, 0, false));
   });
   test('stepDirectionFromAtan2 - Segundo quadrante', () => {
     const p1 = new Vector2(10, 10);
     const p2 = new Vector2(22, 150);
     const a = Vector2.atan2(p1, p2);
     const step = pathFinder.stepDirectionFromAtan2(a);
-    expect(step).toEqual(new Vector2(0, 1));
+    expect(step).toEqual(new Vector2(0, 1, false));
   });
   test('stepDirectionFromAtan2 - Terceiro quadrante', () => {
     const p1 = new Vector2(412, 100);
     const p2 = new Vector2(22, 73);
     const a = Vector2.atan2(p1, p2);
     const step = pathFinder.stepDirectionFromAtan2(a);
-    expect(step).toEqual(new Vector2(-1, 0));
+    expect(step).toEqual(new Vector2(-1, 0, false));
   });
   test('stepDirectionFromAtan2 - Quarto quadrante', () => {
     const p1 = new Vector2(155, 751);
     const p2 = new Vector2(100, 42);
     const a = Vector2.atan2(p1, p2);
     const step = pathFinder.stepDirectionFromAtan2(a);
-    expect(step).toEqual(new Vector2(0, -1));
+    expect(step).toEqual(new Vector2(0, -1, false));
   });
   test('stepDirectionFromAtan2 - Valores randômicos', () => {
     for (let i = 0; i < 100; i++) {
@@ -48,7 +48,7 @@ describe('Testes do cálculo da direção ideal do traçador de caminhos', () =>
       const a = Vector2.atan2(p1, p2);
       const step = pathFinder.stepDirectionFromAtan2(a);
       const deg = atan2ToDegree(a);
-      const expected = new Vector2();
+      const expected = new Vector2(0, 0, false);
       if (deg < 45 || deg > 315) expected.x = 1;
       if (deg >= 45 && deg < 135) expected.y = 1;
       if (deg >= 135 && deg < 225) expected.x = -1;
@@ -145,5 +145,62 @@ describe('Testes para verificar lista de nodes dentro da área de busca', () => 
     expect(collisions.get(0)!.position).toEqual(new Vector2(25, 20));
     expect(collisions.get(4)!.position).toEqual(new Vector2(602, 160));
     expect(collisions.get(8)!.position).toEqual(new Vector2(790, 130));
+  });
+});
+
+describe('Testes com o modelo simples do traçador de caminhos', () => {
+  test('Caminho em L', () => {
+    const p1 = new Vector2(0, 0);
+    const p2 = new Vector2(50, 100);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0, 1, false));
+    expect(path[1]).toEqual(new Vector2(0.5, 1, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Caminho em Z', () => {
+    const p1 = new Vector2(0, 0);
+    const p2 = new Vector2(100, 100);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0.5, 0, false));
+    expect(path[1]).toEqual(new Vector2(0.5, 1, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Caminho em ¬', () => {
+    const p1 = new Vector2(0, 0);
+    const p2 = new Vector2(100, 25);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0.5, 0, false));
+    expect(path[1]).toEqual(new Vector2(1, 0, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Caminho em L inverso', () => {
+    const p2 = new Vector2(0, 0);
+    const p1 = new Vector2(50, 100);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0, 1, false));
+    expect(path[1]).toEqual(new Vector2(0.5, 1, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Caminho em Z inverso', () => {
+    const p2 = new Vector2(0, 0);
+    const p1 = new Vector2(100, 100);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0.5, 0, false));
+    expect(path[1]).toEqual(new Vector2(0.5, 1, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
+  });
+  test('Caminho em ¬ inverso', () => {
+    const p2 = new Vector2(0, 0);
+    const p1 = new Vector2(100, 25);
+    const path = pathFinder.simplePathFinder(p1, p2);
+    expect(path.length).toBe(3);
+    expect(path[0]).toEqual(new Vector2(0.5, 0, false));
+    expect(path[1]).toEqual(new Vector2(1, 0, false));
+    expect(path[2]).toEqual(new Vector2(1, 1, false));
   });
 });
