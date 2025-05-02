@@ -1,7 +1,11 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {describe, test, expect} from 'vitest';
+import {describe, test, expect, beforeAll} from 'vitest';
 import pathFinder from '@connectlab-editor/functions/pathFinder';
 import Vector2 from '@connectlab-editor/types/vector2';
+import EditorEnvironment from '@connectlab-editor/environment';
+import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
+import addComponent from '@connectlab-editor/functions/addComponent';
+import {NodeTypes} from '@connectlab-editor/types/enums';
 
 const atan2ToDegree = (atan2: number): number => {
   const radians = atan2 >= 0 ? atan2 : Math.PI * 2 + atan2;
@@ -94,5 +98,52 @@ describe('Testes da área para busca de caminhos', () => {
     expect(searchArea.position).toEqual(new Vector2(405, 160));
     expect(searchArea.width).toBe(705);
     expect(searchArea.height).toBe(570);
+  });
+});
+
+let testEnv: EditorEnvironment;
+
+describe('Testes para verificar lista de nodes dentro da área de busca', () => {
+  beforeAll(() => {
+    testEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 75, 70);
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 652, 210);
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 840, 180);
+  });
+  test('getCollisionsInArea - vazio', () => {
+    const p1 = new Vector2(400, 400);
+    const p2 = new Vector2(450, 470);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    const collisions = pathFinder.getCollisionsInArea(
+      testEnv.nodes,
+      searchArea
+    );
+    expect(collisions.size).toBe(0);
+  });
+  test('getCollisionsInArea - 1 colisão', () => {
+    const p1 = new Vector2(620, 175);
+    const p2 = new Vector2(688, 224);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    const collisions = pathFinder.getCollisionsInArea(
+      testEnv.nodes,
+      searchArea
+    );
+    expect(collisions.size).toBe(1);
+    // Nodes centralizam a posição
+    expect(collisions.get(4)!.position).toEqual(new Vector2(602, 160));
+  });
+  test('getCollisionsInArea - multiplas colisões', () => {
+    const p1 = new Vector2(400, 120);
+    const p2 = new Vector2(880, 200);
+    const searchArea = pathFinder.getSearchArea(p1, p2);
+    const collisions = pathFinder.getCollisionsInArea(
+      testEnv.nodes,
+      searchArea
+    );
+    expect(collisions.size).toBe(3);
+    // Nodes centralizam a posição
+    expect(collisions.get(0)!.position).toEqual(new Vector2(25, 20));
+    expect(collisions.get(4)!.position).toEqual(new Vector2(602, 160));
+    expect(collisions.get(8)!.position).toEqual(new Vector2(790, 130));
   });
 });

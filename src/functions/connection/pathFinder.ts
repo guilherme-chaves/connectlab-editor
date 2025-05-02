@@ -1,4 +1,5 @@
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
+import {NodeList} from '@connectlab-editor/types/common';
 import * as angles from '@connectlab-editor/types/consts';
 import Vector2 from '@connectlab-editor/types/vector2';
 
@@ -28,5 +29,23 @@ export default {
       dist.x * multiplier,
       dist.y * multiplier
     );
+  },
+  // Filtra a lista de nodes e retorna apenas aqueles que existem dentro de uma área
+  getCollisionsInArea(nodeList: NodeList, box: BoxCollision): NodeList {
+    const list: NodeList = new Map();
+    for (const node of nodeList.values()) {
+      if (node.collisionShape.collisionWithBox(box)) list.set(node.id, node);
+    }
+    return list;
+  },
+  // Função principal
+  find(p1: Vector2, p2: Vector2, nodeList: NodeList) {
+    const simpleSearchArea = this.getSearchArea(p1, p2, 1);
+    const collisions = this.getCollisionsInArea(nodeList, simpleSearchArea);
+    if (collisions.size === 0) {
+      // Todo: return busca simples
+    } else {
+      // Todo: return busca complexa
+    }
   },
 };
