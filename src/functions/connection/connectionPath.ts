@@ -38,7 +38,7 @@ export default {
     let loopRuns = 0;
     while (loopRuns < 64) {
       const stepTo = new Vector2(0, 0, false);
-      const headedTowards = currentPos.angleBetween(endPosition);
+      const headedTowards = currentPos.atan2(endPosition);
       stepTo.x =
         headedTowards <= QUARTER_PI && headedTowards >= -QUARTER_PI
           ? 1

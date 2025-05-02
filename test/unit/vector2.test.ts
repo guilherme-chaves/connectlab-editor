@@ -176,11 +176,11 @@ describe('Teste de operações com vetores', () => {
   });
 
   test('Calcular ângulo do vetor entre dois vetores (estático)', () => {
-    expect(Vector2.angleBetween(v2, v1)).toBeCloseTo(Math.PI / 4);
+    expect(Vector2.atan2(v2, v1)).toBeCloseTo(Math.PI / 4);
   });
 
   test('Calcular ângulo do vetor entre dois vetores (instância)', () => {
-    expect(v2.angleBetween(v1)).toBeCloseTo(Math.PI / 4);
+    expect(v2.atan2(v1)).toBeCloseTo(Math.PI / 4);
   });
 
   test('Normalizar vetor (estático)', () => {
