@@ -297,11 +297,11 @@ export default class Vector2 {
     return out;
   }
 
-  angleBetween(other: Vector2): number {
+  atan2(other: Vector2): number {
     return Math.atan2(other.y - this.y, other.x - this.x);
   }
 
-  static angleBetween(v1: Vector2, v2: Vector2): number {
+  static atan2(v1: Vector2, v2: Vector2): number {
     return Math.atan2(v2.y - v1.y, v2.x - v1.x);
   }
 

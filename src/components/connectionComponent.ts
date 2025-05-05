@@ -9,6 +9,7 @@ import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
+import pathFinder from '@connectlab-editor/functions/pathFinder';
 
 export interface ConnectionObject extends ComponentObject {
   id: number;
@@ -84,10 +85,7 @@ class ConnectionComponent implements Component {
   }
 
   generateAnchors(): Vector2[] {
-    return ConnectionPathFunctions.generateAnchors(
-      this.position,
-      this.endPosition
-    );
+    return pathFinder.simplePathFinder(this.position, this.endPosition);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
