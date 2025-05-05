@@ -33,29 +33,59 @@ export default class Vector2 {
     }
   }
 
-  add(other: Vector2): Vector2 {
-    this.x += other.x;
-    this.y += other.y;
+  add(other: Vector2 | number): Vector2 {
+    if (other instanceof Vector2) {
+      this.x += other.x;
+      this.y += other.y;
+    } else {
+      this.x += other;
+      this.y += other;
+    }
     return this;
   }
 
-  static add(v1: Vector2, v2: Vector2, out?: Vector2, useInt = true): Vector2 {
+  static add(
+    v1: Vector2,
+    v2OrS: Vector2 | number,
+    out?: Vector2,
+    useInt = true
+  ): Vector2 {
     out ??= new Vector2(0, 0, useInt);
-    out.x = v1.x + v2.x;
-    out.y = v1.y + v2.y;
+    if (v2OrS instanceof Vector2) {
+      out.x = v1.x + v2OrS.x;
+      out.y = v1.y + v2OrS.y;
+    } else {
+      out.x = v1.x + v2OrS;
+      out.y = v1.y + v2OrS;
+    }
     return out;
   }
 
-  sub(other: Vector2): Vector2 {
-    this.x -= other.x;
-    this.y -= other.y;
+  sub(other: Vector2 | number): Vector2 {
+    if (other instanceof Vector2) {
+      this.x -= other.x;
+      this.y -= other.y;
+    } else {
+      this.x -= other;
+      this.y -= other;
+    }
     return this;
   }
 
-  static sub(v1: Vector2, v2: Vector2, out?: Vector2, useInt = true): Vector2 {
+  static sub(
+    v1: Vector2,
+    v2OrS: Vector2 | number,
+    out?: Vector2,
+    useInt = true
+  ): Vector2 {
     out ??= new Vector2(0, 0, useInt);
-    out.x = v1.x - v2.x;
-    out.y = v1.y - v2.y;
+    if (v2OrS instanceof Vector2) {
+      out.x = v1.x - v2OrS.x;
+      out.y = v1.y - v2OrS.y;
+    } else {
+      out.x = v1.x - v2OrS;
+      out.y = v1.y - v2OrS;
+    }
     return out;
   }
 
