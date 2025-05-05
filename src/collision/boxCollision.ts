@@ -90,4 +90,48 @@ export default class BoxCollision implements Collision {
   collisionWithCircle(other: CircleCollision): boolean {
     return other.collisionWithBox(this);
   }
+
+  collisionWithLine(p1: Vector2, p2: Vector2): boolean {
+    for (const boxBoundary of [
+      [
+        this.position.x,
+        this.position.y,
+        this.position.x,
+        this.position.y + this.height,
+      ],
+      [
+        this.position.x + this.width,
+        this.position.y,
+        this.position.x + this.width,
+        this.position.y + this.height,
+      ],
+      [
+        this.position.x,
+        this.position.y,
+        this.position.x + this.width,
+        this.position.y,
+      ],
+      [
+        this.position.x,
+        this.position.y + this.height,
+        this.position.x + this.width,
+        this.position.y + this.height,
+      ],
+    ]) {
+      const boxP1 = new Vector2(boxBoundary[0], boxBoundary[1]);
+      const boxP2 = new Vector2(boxBoundary[2], boxBoundary[3]);
+      const uA =
+        ((boxP2.x - boxP1.x) * (p1.y - boxP1.y) -
+          (boxP2.y - boxP1.y) * (p1.x - boxP1.x)) /
+        ((boxP2.y - boxP1.y) * (p2.x - p1.x) -
+          (boxP2.x - boxP1.x) * (p2.y - p1.y));
+      const uB =
+        ((p2.x - p1.x) * (p1.y - boxP1.y) - (p2.y - p1.y) * (p1.x - boxP1.x)) /
+        ((boxP2.y - boxP1.y) * (p2.x - p1.x) -
+          (boxP2.x - boxP1.x) * (p2.y - p1.y));
+
+      return uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1;
+    }
+    return false;
+  }
 }

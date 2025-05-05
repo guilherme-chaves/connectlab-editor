@@ -10,4 +10,5 @@ export default interface Collision {
   collisionWithPoint(point: Vector2): boolean;
   collisionWithBox(other: BoxCollision): boolean;
   collisionWithCircle(other: CircleCollision): boolean;
+  collisionWithLine(p1: Vector2, p2: Vector2): boolean;
 }

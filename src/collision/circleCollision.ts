@@ -65,4 +65,25 @@ export default class CircleCollision implements Collision {
       this.radius + other.radius
     );
   }
+
+  collisionWithLine(p1: Vector2, p2: Vector2): boolean {
+    if (this.collisionWithPoint(p1) || this.collisionWithPoint(p2)) return true;
+    const AC = Vector2.sub(this.position, p1);
+    const AB = Vector2.sub(p2, p1);
+
+    const k = Vector2.dot(AC, AB) / Vector2.dot(AB, AB);
+    const projection = Vector2.add(p1, Vector2.mul(AB, k));
+
+    const AD = Vector2.sub(projection, p1);
+    const projPos = Math.abs(AB.x) > Math.abs(AB.y) ? AD.x / AB.x : AD.y / AB.y;
+    if (projPos <= 0) {
+      // Ponto D está fora da linha no sentido de A/p1, calcular distância entre C e A < Raio
+      return Vector2.len(Vector2.sub(this.position, p1)) < this.radius;
+    } else if (projPos >= 1) {
+      // Ponto D está fora da linha no sentido de B/p2, calcular distância entre C e B < Raio
+      return Vector2.len(Vector2.sub(this.position, p2)) < this.radius;
+    }
+
+    return Vector2.len(Vector2.sub(this.position, projection)) < this.radius;
+  }
 }
