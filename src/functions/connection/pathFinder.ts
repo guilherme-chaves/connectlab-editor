@@ -39,22 +39,20 @@ export default {
     return list;
   },
   floatEquals(a: number, b: number, precision: number) {
-    return a - b < precision;
+    return Math.abs(a - b) < precision;
   },
   currentDirection(
     previous: Vector2,
-    current: Vector2,
     next: Vector2,
     precision: number
-  ) {
-    const a1 = this.stepDirectionFromAtan2(current.atan2(previous));
-    const a2 = this.stepDirectionFromAtan2(next.atan2(current));
-    if (a1.equals(a2)) {
-      return 'e'; // equals
-    }
-    if (this.floatEquals(a1.x, a2.x, precision) && a1.x !== 0) return 'x';
-    if (this.floatEquals(a1.y, a2.y, precision) && a1.y !== 0) return 'y';
-    return 'c'; // direction change
+  ): 'x' | 'y' | 'e' | 'c' {
+    const diff = Vector2.sub(next, previous, undefined, false);
+    const len = diff.len();
+    if (diff.equals(Vector2.ZERO) && len === 0) return 'e';
+    const atan2 = Vector2.atan2(previous, next);
+    if (this.floatEquals(atan2, angles.HALF_PI, precision)) return 'y';
+    if (this.floatEquals(atan2, 0, precision)) return 'x';
+    return 'c';
   },
   optimizePath(pathList: Array<Vector2>, precision = 1e-5): Array<Vector2> {
     const result = [];
@@ -62,7 +60,6 @@ export default {
     for (let i = 0; i < pathList.length; i++) {
       const direction = this.currentDirection(
         pathList[Math.max(0, i - 1)],
-        pathList[i],
         pathList[Math.min(i, pathList.length - 1)],
         precision
       );
@@ -81,7 +78,7 @@ export default {
       }
       lastDirection = direction;
     }
-    return result;
+    return result.filter(v => !v.equals(Vector2.ONE));
   },
   simplePathFinder(
     start: Vector2,

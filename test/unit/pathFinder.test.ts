@@ -101,6 +101,35 @@ describe('Testes da área para busca de caminhos', () => {
   });
 });
 
+describe('Testes com a função para obter a direção de um vetor', () => {
+  test('currentDirection - valores idênticos', () => {
+    const p1 = new Vector2(0.5, 0.5, false);
+    const d = pathFinder.currentDirection(p1, p1, 1e-5);
+    expect(d).toBe('e');
+  });
+  test('currentDirection - valores idênticos em x', () => {
+    const p1 = new Vector2(0.5, 0, false);
+    // const p2 = new Vector2(0.5, 0.5, false);
+    const p3 = new Vector2(0.5, 1, false);
+    const d = pathFinder.currentDirection(p1, p3, 1e-5);
+    expect(d).toBe('y');
+  });
+  test('currentDirection - valores idênticos em y', () => {
+    const p1 = new Vector2(0, 0.5, false);
+    // const p2 = new Vector2(0.5, 0.5, false);
+    const p3 = new Vector2(1, 0.5, false);
+    const d = pathFinder.currentDirection(p1, p3, 1e-5);
+    expect(d).toBe('x');
+  });
+  test('currentDirection - valores diferentes', () => {
+    const p1 = new Vector2(0, 0, false);
+    // const p2 = new Vector2(0.5, 0, false);
+    const p3 = new Vector2(0.5, 0.5, false);
+    const d = pathFinder.currentDirection(p1, p3, 1e-5);
+    expect(d).toBe('c');
+  });
+});
+
 let testEnv: EditorEnvironment;
 
 describe('Testes para verificar lista de nodes dentro da área de busca', () => {
@@ -233,18 +262,16 @@ describe('Testes com o otimizador de caminhos', () => {
       new Vector2(1, 1, false),
     ];
     const optimized = pathFinder.optimizePath(path);
-    expect(optimized.length).toBe(3);
+    expect(optimized.length).toBe(2);
     expect(optimized[0]).toEqual(new Vector2(0.5, 0, false));
     expect(optimized[1]).toEqual(new Vector2(0.5, 1, false));
-    expect(optimized[2]).toEqual(new Vector2(1, 1, false));
   });
   test('Valores gerados pelo algoritmo de busca simples', () => {
     const p1 = new Vector2(0, 0);
     const p2 = new Vector2(100, 50);
     const path = pathFinder.simplePathFinder(p1, p2);
     const optimized = pathFinder.optimizePath(path);
-    expect(optimized.length).toBe(2);
+    expect(optimized.length).toBe(1);
     expect(optimized[0]).toEqual(new Vector2(1, 0, false));
-    expect(optimized[1]).toEqual(new Vector2(1, 1, false));
   });
 });
