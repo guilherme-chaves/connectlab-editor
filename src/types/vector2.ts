@@ -5,6 +5,11 @@ export default class Vector2 {
   private _y: number = 0;
   public useInt: boolean;
   static readonly ZERO = new Vector2();
+  static readonly ONE = new Vector2(1, 1);
+  static readonly UP = new Vector2(0, -1);
+  static readonly DOWN = new Vector2(0, 1);
+  static readonly LEFT = new Vector2(-1, 0);
+  static readonly RIGHT = new Vector2(1, 0);
 
   get x(): number {
     return this._x;
