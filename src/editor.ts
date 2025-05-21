@@ -16,6 +16,7 @@ import Keyboard from '@connectlab-editor/types/keyboard';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import createEditorEvents from '@connectlab-editor/events/editorEvents';
+import nodeEvents from '@connectlab-editor/events/nodeEvents';
 
 export default class Editor {
   // Lista de componentes
@@ -126,6 +127,7 @@ export default class Editor {
     this.mouseEvents.onMouseClick(this.editorEnv);
     this.mouseEvents.onMouseMove(this.editorEnv);
     this.mouseEvents.onMouseRelease(this.editorEnv);
+    nodeEvents.onPhysicsEngineUpdate(this.editorEnv.nodes, this.editorEnv.signalGraph);
   };
 
   node(

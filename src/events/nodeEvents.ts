@@ -1,9 +1,11 @@
-import {NodeList} from '@connectlab-editor/types/common';
+import {NodeList, SignalGraph} from '@connectlab-editor/types/common';
 import Vector2 from '@connectlab-editor/types/vector2';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
+import { EditorEvents, NodeTypes } from '@connectlab-editor/types/enums';
+import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
@@ -46,4 +48,14 @@ export default {
       }
     }
   },
+  onPhysicsEngineUpdate(nodes: NodeList, signalGraph: SignalGraph): void {
+    let updateList: Array<number> = [];
+    for (const node of nodes.values()) {
+      if (node.nodeType.id === NodeTypes.I_CLOCK && node.onEvent(EditorEvents.PHYSICS_ENGINE_CYCLE))
+        updateList.push(node.id);
+    }
+    for (const id of updateList) {
+      signalUpdate.updateGraph(signalGraph, id);
+    }
+  }
 };

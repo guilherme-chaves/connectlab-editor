@@ -12,6 +12,7 @@ import INPUT_OFF from '@connectlab-editor/gates/INPUT_OFF.svg';
 import INPUT_ON from '@connectlab-editor/gates/INPUT_ON.svg';
 import BUTTON_OFF from '@connectlab-editor/assets/gates/BUTTON_OFF.svg';
 import BUTTON_ON from '@connectlab-editor/assets/gates/BUTTON_ON.svg';
+import CLOCK from '@connectlab-editor/assets/gates/CLOCK.svg';
 
 import OUTPUT_LED_OFF from '@connectlab-editor/gates/LED_OFF.svg';
 import OUTPUT_LED_RED from '@connectlab-editor/gates/LED_RED_ON.svg';
@@ -37,6 +38,7 @@ const imageList = [
   INPUT_ON,
   BUTTON_OFF,
   BUTTON_ON,
+  CLOCK,
   OUTPUT_LED_OFF,
   OUTPUT_LED_RED,
   SEGMENTS_OFF,

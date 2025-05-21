@@ -13,6 +13,7 @@ import SwitchInput from '@connectlab-editor/components/nodes/switchInput';
 import {
   SwitchInput as SwitchInputModel,
   ButtonInput as ButtonInputModel,
+  ClockInput as ClockInputModel,
 } from '@connectlab-editor/models/input';
 import LedOutput from '@connectlab-editor/components/nodes/ledOutput';
 import {
@@ -21,6 +22,7 @@ import {
 } from '@connectlab-editor/models/output';
 import SegmentsOutput from '@connectlab-editor/components/nodes/segmentsOutput';
 import ButtonInput from '@connectlab-editor/components/nodes/buttonInput';
+import ClockInput from '@connectlab-editor/components/nodes/clockInput';
 
 const addComponent = {
   node(
@@ -130,6 +132,21 @@ const addComponent = {
           shiftPosition
         );
         model = ButtonInputModel;
+        break;
+      case NodeTypes.I_CLOCK:
+        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        newInput = new ClockInput(
+          definedId,
+          new Vector2(x, y),
+          canvasWidth,
+          canvasHeight,
+          [],
+          editorEnv.nodeImageList,
+          editorEnv.signalGraph,
+          undefined,
+          shiftPosition
+        );
+        model = ClockInputModel;
         break;
       default:
         console.error(
