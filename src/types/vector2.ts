@@ -4,12 +4,25 @@ export default class Vector2 {
   private _x: number = 0;
   private _y: number = 0;
   public useInt: boolean;
-  static readonly ZERO = Object.freeze(new Vector2());
-  static readonly ONE = Object.freeze(new Vector2(1, 1));
-  static readonly UP = Object.freeze(new Vector2(0, -1));
-  static readonly DOWN = Object.freeze(new Vector2(0, 1));
-  static readonly LEFT = Object.freeze(new Vector2(-1, 0));
-  static readonly RIGHT = Object.freeze(new Vector2(1, 0));
+
+  static get ZERO(): Vector2 {
+    return new Vector2();
+  }
+  static get ONE(): Vector2 {
+    return new Vector2(1, 1);
+  }
+  static get UP(): Vector2 {
+    return new Vector2(0, -1);
+  }
+  static get DOWN(): Vector2 {
+    return new Vector2(0, 1);
+  }
+  static get LEFT(): Vector2 {
+    return new Vector2(-1, -0);
+  }
+  static get RIGHT(): Vector2 {
+    return new Vector2(1, 0);
+  }
 
   get x(): number {
     return this._x;
