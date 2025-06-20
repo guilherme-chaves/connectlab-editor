@@ -17,10 +17,10 @@ const LEDROutput: NodeModel = {
   imgPath: [OUTPUT_LED_OFF, OUTPUT_LED_RED],
   connectionSlot: [
     {
-      id: 0,
+      id: -4,
       in: true,
       name: 'In',
-      localPos: new Vector2(23, 64),
+      localPos: new Vector2(23, 66),
     },
   ],
 };
@@ -39,46 +39,46 @@ const SegmentsOutput: NodeModel = {
   ],
   connectionSlot: [
     {
-      id: 0,
+      id: -4,
       in: true,
       name: 'A',
-      localPos: new Vector2(0, 17),
+      localPos: new Vector2(-4, 17),
     },
     {
       id: 1,
       in: true,
       name: 'B',
-      localPos: new Vector2(0, 32),
+      localPos: new Vector2(-4, 32),
     },
     {
       id: 2,
       in: true,
       name: 'C',
-      localPos: new Vector2(0, 46),
+      localPos: new Vector2(-4, 46),
     },
     {
       id: 3,
       in: true,
       name: 'D',
-      localPos: new Vector2(0, 60),
+      localPos: new Vector2(-4, 60),
     },
     {
       id: 4,
       in: true,
       name: 'E',
-      localPos: new Vector2(0, 75),
+      localPos: new Vector2(-4, 75),
     },
     {
       id: 5,
       in: true,
       name: 'F',
-      localPos: new Vector2(0, 89),
+      localPos: new Vector2(-4, 89),
     },
     {
       id: 6,
       in: true,
       name: 'G',
-      localPos: new Vector2(0, 103),
+      localPos: new Vector2(-4, 103),
     },
   ],
 };

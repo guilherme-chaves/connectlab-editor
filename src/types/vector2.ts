@@ -250,7 +250,7 @@ export default class Vector2 {
   }
 
   equals(other: Vector2, precision = 1e-4): boolean {
-    if (this.useInt && other.useInt)
+    if (this.useInt && other.useInt && precision === 1e-4)
       return this.x === other.x && this.y === other.y;
     else
       return (

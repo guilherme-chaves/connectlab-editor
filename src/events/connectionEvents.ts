@@ -82,7 +82,7 @@ export const connectionEvents = {
 
     const connection = editorEnv.connections.get(this.editingLineId);
     if (connection) {
-      connection.move(position, false, 1, false);
+      connection.move(position, false, 1, false, editorEnv.nodes);
       this.bindConnection(editorEnv, position);
       return true;
     }
@@ -135,6 +135,7 @@ export const connectionEvents = {
         // Define as posições inicial e final da conexão para os dois slots
         this.changeConnectionParams(
           editorEnv.connections.get(this.editingLineId)!,
+          editorEnv,
           startSlot.globalPosition,
           currentSlot.globalPosition,
           this.lineStartSlot,
@@ -193,6 +194,7 @@ export const connectionEvents = {
   },
   changeConnectionParams(
     connection: ConnectionComponent,
+    editorEnv: EditorEnvironment,
     startPos?: Vector2,
     endPos?: Vector2,
     startSlotId?: number,
@@ -200,8 +202,10 @@ export const connectionEvents = {
     endSlotId?: number,
     endNodeId?: number
   ): void {
-    if (startPos !== undefined) connection.move(startPos, false, 0, false);
-    if (endPos !== undefined) connection.move(endPos, false, 1, false);
+    if (startPos !== undefined)
+      connection.move(startPos, false, 0, true, editorEnv.nodes);
+    if (endPos !== undefined)
+      connection.move(endPos, false, 1, true, editorEnv.nodes);
     if (startSlotId !== undefined && startNodeId !== undefined)
       connection.changeConnection(startSlotId, startNodeId, false);
     if (endSlotId !== undefined && endNodeId !== undefined)

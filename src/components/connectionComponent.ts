@@ -1,5 +1,6 @@
 import {
   ConnectionVertices,
+  NodeList,
   VectorObject,
 } from '@connectlab-editor/types/common';
 import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
@@ -84,8 +85,8 @@ class ConnectionComponent implements Component {
     );
   }
 
-  generateAnchors(): Vector2[] {
-    return pathFinder.simplePathFinder(this.position, this.endPosition);
+  generateAnchors(nodeList: NodeList): Vector2[] {
+    return pathFinder.find(this.position, this.endPosition, nodeList);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -123,7 +124,8 @@ class ConnectionComponent implements Component {
     v: Vector2,
     useDelta = true,
     movePoint = 2,
-    updateCollisionShapes = true
+    updateCollisionShapes = true,
+    nodeList: NodeList = new Map()
   ) {
     if (useDelta) {
       if (movePoint !== 1) this.position.add(v);
@@ -132,7 +134,7 @@ class ConnectionComponent implements Component {
       if (movePoint !== 1) Vector2.copy(v, this.position);
       if (movePoint !== 0) Vector2.copy(v, this.endPosition);
     }
-    this.anchors = this.generateAnchors();
+    this.anchors = this.generateAnchors(nodeList);
     if (updateCollisionShapes)
       this.collisionShape = this.generateCollisionShapes();
     this.regenPath = true;

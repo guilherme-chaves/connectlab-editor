@@ -15,7 +15,7 @@ export const SwitchInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(70, 25),
+      localPos: new Vector2(74, 25),
     },
   ],
 };
@@ -28,7 +28,7 @@ export const ButtonInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(70, 25),
+      localPos: new Vector2(74, 25),
     },
   ],
 };
@@ -41,7 +41,7 @@ export const ClockInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(60, 25),
+      localPos: new Vector2(64, 25),
     },
   ],
 };

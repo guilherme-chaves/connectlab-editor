@@ -275,3 +275,57 @@ describe('Testes com o otimizador de caminhos', () => {
     expect(optimized[0]).toEqual(new Vector2(1, 0, false));
   });
 });
+
+describe('Testes para verificar se uma colisão existe no próximo passo', () => {
+  beforeAll(() => {
+    testEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 250, 70);
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 600, 284);
+    addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 840, 180);
+  });
+  test('Colisão não existe', () => {
+    const start = new Vector2(0, 0);
+    const end = new Vector2(250, 250);
+    const current = new Vector2(125, 0);
+    const nextT = new Vector2(0.5, 1, false);
+    expect(
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+    ).toBe(false);
+  });
+  test('Colisão não existe - limítrofe horizontal', () => {
+    const start = new Vector2(0, 0);
+    const end = new Vector2(250, 250);
+    const current = new Vector2(125, 0);
+    const nextT = new Vector2(0.5, 1, false);
+    expect(
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+    ).toBe(false);
+  });
+  test('Colisão não existe - limítrofe vertical', () => {
+    const start = new Vector2(0, 0);
+    const end = new Vector2(250, 250);
+    const current = new Vector2(125, 0);
+    const nextT = new Vector2(0.5, 1, false);
+    expect(
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+    ).toBe(false);
+  });
+  test('Colisão existe - horizontal', () => {
+    const start = new Vector2(0, 30);
+    const end = new Vector2(550, 250);
+    const current = new Vector2(0, 30);
+    const nextT = new Vector2(0.5, 0, false);
+    expect(
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+    ).toBe(true);
+  });
+  test('Colisão existe - vertical', () => {
+    const start = new Vector2(0, 0);
+    const end = new Vector2(1200, 700);
+    const current = new Vector2(600, 0);
+    const nextT = new Vector2(0.5, 1, false);
+    expect(
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+    ).toBe(true);
+  });
+});

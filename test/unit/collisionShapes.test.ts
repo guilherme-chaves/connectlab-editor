@@ -132,7 +132,7 @@ describe('Testes com a área de colisão circular', () => {
       Math.sin(Rad45Deg) * circle.radius
     ).add(circle.position);
     expect(circle.collisionWithPoint(point)).toBe(false);
-    point.sub(Vector2.ONE.copy());
+    point.sub(Vector2.ONE);
     expect(circle.collisionWithPoint(point)).toBe(true);
   });
   test('Sem colisão com um ponto', () => {
@@ -288,7 +288,7 @@ describe('Testes com uma linha', () => {
       new Vector2(475, 475)
     );
     expect(line.collisionWithLine(line2)).toBe(true);
-    line2.endPosition.sub(Vector2.ONE.copy());
+    line2.endPosition.sub(Vector2.ONE);
     expect(line.collisionWithLine(line2)).toBe(false);
   });
   test('Colisão com outra linha (limítrofe - fim)', () => {
@@ -297,7 +297,7 @@ describe('Testes com uma linha', () => {
       new Vector2(550, 550)
     );
     expect(line.collisionWithLine(line2)).toBe(true);
-    line2.position.add(Vector2.ONE.copy());
+    line2.position.add(Vector2.ONE);
     expect(line.collisionWithLine(line2)).toBe(false);
   });
   test('Sem colisão com uma linha', () => {
@@ -314,13 +314,13 @@ describe('Testes com uma linha', () => {
   test('Colisão com um ponto (limítrofe - início)', () => {
     const point = new Vector2(475, 475);
     expect(line.collisionWithPoint(point)).toBe(true);
-    point.sub(Vector2.ONE.copy());
+    point.sub(Vector2.ONE);
     expect(line.collisionWithPoint(point)).toBe(false);
   });
   test('Colisão com um ponto (limítrofe - fim)', () => {
     const point = new Vector2(524, 524);
     expect(line.collisionWithPoint(point)).toBe(true);
-    point.add(Vector2.LEFT.copy());
+    point.add(Vector2.LEFT);
     expect(line.collisionWithPoint(point)).toBe(false);
   });
   test('Sem colisão com um ponto', () => {
