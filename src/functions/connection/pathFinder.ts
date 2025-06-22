@@ -12,6 +12,13 @@ type ScoreNode = {
   score: number;
 };
 type ScoreGraph = Map<string, ScoreNode>; // x::y
+enum NodeUpdateStatus {
+  NO_CHANGE = 0,
+  CHANGE = 1,
+  SAME_POSITION = 2,
+  INVALID = 3,
+  LOOP = 4,
+}
 
 export default {
   stepDirectionFromAtan2(atan2: number): Vector2 {
@@ -33,12 +40,11 @@ export default {
   // Aumenta a área de busca para caminhos
   getSearchArea(p1: Vector2, p2: Vector2, multiplier = 3): BoxCollision {
     const dist = Vector2.sub(p1, p2).abs();
-    const minPoint = Vector2.min(p1, p2);
-    return new BoxCollision(
-      minPoint.sub(multiplier === 1 ? 0 : dist),
-      dist.x * multiplier,
-      dist.y * multiplier
-    );
+    const minPointOffset: Vector2 = Vector2.ZERO;
+    if (multiplier !== 1)
+      Vector2.copy(Vector2.div(dist, 2).mul(multiplier), minPointOffset);
+    const minPoint = Vector2.min(p1, p2).sub(minPointOffset);
+    return new BoxCollision(minPoint, dist.x * multiplier, dist.y * multiplier);
   },
   // Filtra a lista de nodes e retorna apenas aqueles que existem dentro de uma área
   getCollisionsInArea(nodeList: NodeList, box: BoxCollision): NodeList {
@@ -141,11 +147,12 @@ export default {
     let current: ScoreNode | undefined = scores.get(`${end.x}::${end.y}`);
     const path: Array<Vector2> = [];
     while (current !== undefined) {
-      path.unshift(new Vector2(current.t, undefined, false));
+      path.push(new Vector2(current.t, undefined, false));
       current =
         current.from !== undefined ? scores.get(current.from) : undefined;
     }
-    return path;
+    scores.clear();
+    return path.reverse();
   },
   setNodeScore(
     scoreGraph: ScoreGraph,
@@ -154,20 +161,18 @@ export default {
     nodePosition: Vector2,
     nodeT: Vector2,
     from: Vector2 | undefined
-  ): boolean {
+  ): NodeUpdateStatus {
     const key = `${nodePosition.x}::${nodePosition.y}`;
-    const [fromKey, fromScore] =
-      from !== undefined
-        ? [
-            `${from.x}::${from.y}`,
-            scoreGraph.get(`${from.x}::${from.y}`)?.score ?? 0,
-          ]
-        : [undefined, 0];
+    let fromKey = undefined;
     const nodeScore = scoreGraph.get(key)?.score ?? Infinity;
-    if (isNaN(nodeScore)) return false;
-    if (from !== undefined && nodePosition.equals(from)) return false;
-    const tmpScore =
-      this.computeStepScore(start, nodePosition, end) + fromScore;
+    if (isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
+    if (from !== undefined) {
+      fromKey = `${from.x}::${from.y}`;
+      const fromNode = scoreGraph.get(fromKey);
+      if (nodePosition.equals(from)) return NodeUpdateStatus.SAME_POSITION;
+      if (fromNode?.from === fromKey) return NodeUpdateStatus.LOOP;
+    }
+    const tmpScore = this.computeStepScore(start, nodePosition, end);
 
     if (tmpScore < nodeScore) {
       scoreGraph.set(key, {
@@ -176,9 +181,9 @@ export default {
         from: fromKey,
         score: tmpScore,
       });
-      return true;
+      return NodeUpdateStatus.CHANGE;
     }
-    return false;
+    return NodeUpdateStatus.NO_CHANGE;
   },
   testStep(
     start: Vector2,
@@ -330,7 +335,7 @@ export default {
         continue;
       }
       for (const next of nextSteps) {
-        if (
+        switch (
           this.setNodeScore(
             scoreGraph,
             start,
@@ -340,10 +345,21 @@ export default {
             currentPosition
           )
         ) {
-          openSet.push({
-            key: `${next[0].x}::${next[0].y}`,
-            score: scoreGraph.get(`${next[0].x}::${next[0].y}`)!.score,
-          });
+          case NodeUpdateStatus.CHANGE:
+            openSet.push({
+              key: `${next[0].x}::${next[0].y}`,
+              score: scoreGraph.get(`${next[0].x}::${next[0].y}`)!.score,
+            });
+            break;
+          case NodeUpdateStatus.SAME_POSITION:
+          case NodeUpdateStatus.LOOP:
+            if (currentNode.from)
+              openSet.push({
+                key: currentNode.from,
+                score: scoreGraph.get(currentNode.from)?.score ?? Infinity,
+              });
+            currentNode.score = NaN;
+            break;
         }
       }
     }
