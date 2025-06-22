@@ -25,6 +25,7 @@
     "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
+    "@types/heap": "^0.2.34",
     "@types/node": ">=20.10.5",
     "@typescript-eslint/eslint-plugin": ">=6.15.0",
     "@typescript-eslint/parser": ">=6.15.0",
@@ -41,6 +42,7 @@
     "vitest-canvas-mock": "^0.3.3"
   },
   "dependencies": {
-    "fflate": "^0.8.2"
+    "fflate": "^0.8.2",
+    "heap": "^0.2.7"
   }
 }

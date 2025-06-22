@@ -3,6 +3,7 @@ import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 import {NodeList} from '@connectlab-editor/types/common';
 import * as angles from '@connectlab-editor/types/consts';
 import Vector2 from '@connectlab-editor/types/vector2';
+import Heap from 'heap';
 
 type ScoreNode = {
   position: Vector2;
@@ -267,11 +268,13 @@ export default {
       new Vector2(0, 0, false),
       undefined
     );
-    let lastAddedNodes: Map<string, number> = new Map();
-    lastAddedNodes.set(
-      `${start.x}::${start.y}`,
-      scoreGraph.get(`${start.x}::${start.y}`)!.score
+    const openSet: Heap<{key: string; score: number}> = new Heap(
+      (a, b) => a.score - b.score
     );
+    openSet.push({
+      key: `${start.x}::${start.y}`,
+      score: scoreGraph.get(`${start.x}::${start.y}`)!.score,
+    });
 
     const distance = Vector2.sub(start, end, undefined, false)
       .abs()
@@ -284,62 +287,65 @@ export default {
       .min(maxStepSize);
 
     let runCount = 0;
-    while (runCount <= 1024 && lastAddedNodes.size > 0) {
+    while (runCount <= 1024 && openSet.size() > 0) {
       runCount++;
-      const key = lastAddedNodes.keys().next().value!;
+      const current = openSet.pop()!;
 
-      const currentNode = scoreGraph.get(key)!;
-      const current = currentNode.position;
+      const currentNode = scoreGraph.get(current.key)!;
+      const currentPosition = currentNode.position;
       const currentT = currentNode.t;
-      if (current.equals(end, 8)) {
+      if (currentPosition.equals(end, 8)) {
         this.setNodeScore(
           scoreGraph,
           start,
           end,
           end,
           new Vector2(1, 1, false),
-          current
+          currentPosition
         );
         return [true, this.createPathFromScores(scoreGraph, end)];
       }
       const nextSteps = this.getPossibleNextSteps(
         start,
         end,
-        current,
+        currentPosition,
         currentT,
         nodeList,
         maxStepSize,
         minStepSize
       );
       if (nextSteps.length === 0) {
-        scoreGraph.set(key, {
-          position: current,
+        scoreGraph.set(current.key, {
+          position: currentPosition,
           t: currentT,
           from: currentNode.from,
           score: NaN,
         });
         if (currentNode.from !== undefined) {
-          lastAddedNodes.set(
-            currentNode.from,
-            scoreGraph.get(currentNode.from)!.score
-          );
+          openSet.push({
+            key: currentNode.from,
+            score: scoreGraph.get(currentNode.from)!.score,
+          });
         }
-        lastAddedNodes.delete(key);
-        runCount--;
         continue;
       }
       for (const next of nextSteps) {
         if (
-          this.setNodeScore(scoreGraph, start, end, next[0], next[1], current)
+          this.setNodeScore(
+            scoreGraph,
+            start,
+            end,
+            next[0],
+            next[1],
+            currentPosition
+          )
         ) {
-          lastAddedNodes.set(
-            `${next[0].x}::${next[0].y}`,
-            scoreGraph.get(`${next[0].x}::${next[0].y}`)!.score
-          );
+          openSet.push({
+            key: `${next[0].x}::${next[0].y}`,
+            score: scoreGraph.get(`${next[0].x}::${next[0].y}`)!.score,
+          });
         }
       }
-      lastAddedNodes.delete(key);
-      lastAddedNodes = new Map([...lastAddedNodes].sort((a, b) => a[1] - b[1]));
     }
     return [false, []];
   },
