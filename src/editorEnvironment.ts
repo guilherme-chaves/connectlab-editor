@@ -14,7 +14,7 @@ import {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import {SlotObject} from '@connectlab-editor/components/slotComponent';
 import {TextObject} from '@connectlab-editor/components/textComponent';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2f from './types/vector2f';
 
 export type EditorEnvironmentObject = {
   id: string;
@@ -221,7 +221,7 @@ class EditorEnvironment {
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
         lineObj.connectedTo.end,
-        lineObj.anchors.map(vo => new Vector2(vo.x, vo.y, vo.useInt))
+        lineObj.anchors.map(vo => new Vector2f(vo.x, vo.y))
       );
       if (lineObj.connectedTo.start)
         newEnv.slots

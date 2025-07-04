@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {ConnectionList} from '@connectlab-editor/types/common';
 import {ComponentType} from '@connectlab-editor/types/enums';
 import slotEvents from '@connectlab-editor/events/slotEvents';
@@ -19,7 +19,7 @@ export const connectionEvents = {
   // Busca na lista de conexões quais possuem uma colisão com o ponto do mouse
   checkConnectionClick(
     connections: ConnectionList,
-    position: Vector2
+    position: Vector2i
   ): number[] {
     const collidedWith: Array<number> = [];
     for (const [key, connection] of connections.entries()) {
@@ -65,7 +65,7 @@ export const connectionEvents = {
   move(
     editorEnv: EditorEnvironment,
     mouseEvents: MouseEvents,
-    position: Vector2
+    position: Vector2i
   ): boolean {
     if (
       !this.editingLine ||
@@ -89,7 +89,7 @@ export const connectionEvents = {
     return false;
   },
 
-  fixLine(editorEnv: EditorEnvironment, position: Vector2): boolean {
+  fixLine(editorEnv: EditorEnvironment, position: Vector2i): boolean {
     if (this.editingLine && this.editingLineId !== -1) {
       // Busca se existe um slot na posição atual do mouse
       const currentSlotCollisions = slotEvents.checkSlotClick(
@@ -167,7 +167,7 @@ export const connectionEvents = {
     return false;
   },
 
-  bindConnection(editorEnv: EditorEnvironment, position: Vector2): void {
+  bindConnection(editorEnv: EditorEnvironment, position: Vector2i): void {
     if (this.editingLine && this.editingLineId !== -1) {
       const slotCollisions = slotEvents.checkSlotClick(
         editorEnv.slots,
@@ -181,7 +181,7 @@ export const connectionEvents = {
           this.oldSlotCollision = this.slotCollision;
           this.slotCollision = slotCollisions[0];
           // Fixa a posição da linha para o slot
-          currentLine.endPosition = new Vector2(slotCollided.globalPosition);
+          currentLine.endPosition = new Vector2i(slotCollided.globalPosition);
         }
       } else {
         if (this.slotCollision !== -1) {
@@ -195,8 +195,8 @@ export const connectionEvents = {
   changeConnectionParams(
     connection: ConnectionComponent,
     editorEnv: EditorEnvironment,
-    startPos?: Vector2,
-    endPos?: Vector2,
+    startPos?: Vector2i,
+    endPos?: Vector2i,
     startSlotId?: number,
     startNodeId?: number,
     endSlotId?: number,

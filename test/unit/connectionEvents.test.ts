@@ -7,7 +7,7 @@ import {NodeTypes} from '@connectlab-editor/types/enums';
 import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2 from '@connectlab-editor/types/vector2i';
 
 let editorEnv: EditorEnvironment;
 // let inputId: number;
@@ -90,7 +90,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
     expect(editorEnv.connections.get(connectionId)!.endPosition).toEqual({
       _x: 700,
       _y: 250,
-      useInt: true,
+      type: 'int',
     });
   });
 
@@ -102,7 +102,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
     expect(editorEnv.connections.get(connectionId)!.endPosition).toEqual({
       _x: 700,
       _y: 250,
-      useInt: true,
+      type: 'int',
     });
   });
 

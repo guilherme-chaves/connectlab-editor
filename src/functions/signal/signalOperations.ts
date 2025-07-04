@@ -1,67 +1,43 @@
-import {slotStates} from '@connectlab-editor/types/common';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-const input_output = (slotState: Record<number, [number, slotStates]>) => {
-  for (const state of Object.values(slotState)) return state[1];
-  return false;
+function bitCount(n: number): number {
+  n = n - ((n >> 1) & 0x55555555);
+  n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
+  return (((n + (n >> 4)) & 0xf0f0f0f) * 0x1010101) >> 24;
+}
+
+const input_output = (inputStates: number, numSlots: number) => {
+  return or(inputStates, numSlots);
 };
 
-const and = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator = true;
-  for (const state of Object.values(slotState))
-    accumulator = accumulator && state[1];
-  return accumulator;
+const and = (inputStates: number, numSlots: number) => {
+  const cmp = (1 << numSlots) - 1;
+  return (inputStates & cmp) === cmp;
 };
 
-const nand = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator = true;
-  for (const state of Object.values(slotState))
-    accumulator = accumulator && state[1];
-  return !accumulator;
+const nand = (inputStates: number, numSlots: number) => {
+  return !and(inputStates, numSlots);
 };
 
-const nor = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator = false;
-  for (const state of Object.values(slotState))
-    accumulator = accumulator || state[1];
-  return !accumulator;
+const nor = (inputStates: number, numSlots: number) => {
+  return !or(inputStates, numSlots);
 };
 
-const not = (slotState: Record<number, [number, slotStates]>) => {
-  for (const state of Object.values(slotState)) return !state[1];
-  return true;
+const not = (inputStates: number, numSlots: number) => {
+  if (numSlots > 1) return nor(inputStates, numSlots);
+  return (inputStates & 1) !== 1;
 };
 
-const or = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator = false;
-  for (const state of Object.values(slotState))
-    accumulator = accumulator || state[1];
-  return accumulator;
+const or = (inputStates: number, _numSlots: number) => {
+  return (inputStates | 0) !== 0;
 };
 
-const xnor = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator: boolean | undefined = undefined;
-  for (const state of Object.values(slotState)) {
-    if (accumulator === undefined) {
-      accumulator = state[1];
-      continue;
-    }
-
-    accumulator = accumulator === state[1];
-  }
-  return accumulator ?? false;
+const xnor = (inputStates: number, numSlots: number) => {
+  return !xor(inputStates, numSlots);
 };
 
-const xor = (slotState: Record<number, [number, slotStates]>) => {
-  let accumulator: boolean | undefined = undefined;
-  for (const state of Object.values(slotState)) {
-    if (accumulator === undefined) {
-      accumulator = state[1];
-      continue;
-    }
-
-    accumulator = accumulator !== state[1];
-  }
-  return accumulator ?? false;
+const xor = (inputStates: number, _numSlots: number) => {
+  return bitCount(inputStates) % 2 === 1;
 };
 
 export const signalOperations = {

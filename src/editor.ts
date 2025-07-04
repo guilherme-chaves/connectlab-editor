@@ -6,7 +6,7 @@ import {
   updateCanvas,
 } from '@connectlab-editor/functions/canvasDraw';
 import EditorEnvironment from '@connectlab-editor/environment';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
@@ -78,11 +78,11 @@ export default class Editor {
     backgroundImg.src = bgPath;
   }
 
-  private getEditorArea(): Vector2 {
+  private getEditorArea(): Vector2i {
     const canvasParentEl = document.getElementById(
       this.canvasId
     )?.parentElement;
-    const v = new Vector2(0, 0, false);
+    const v = new Vector2i(0, 0);
     if (canvasParentEl) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
       v.x = parseFloat(
@@ -100,7 +100,7 @@ export default class Editor {
 
   setLocalMousePosition(x: number, y: number): void {
     const rect = this.canvasCtx.canvas.getBoundingClientRect();
-    this.mouse.position = new Vector2(x - rect.left, y - rect.top);
+    this.mouse.position = new Vector2i(x - rect.left, y - rect.top);
   }
 
   resize(): void {
@@ -127,7 +127,10 @@ export default class Editor {
     this.mouseEvents.onMouseClick(this.editorEnv);
     this.mouseEvents.onMouseMove(this.editorEnv);
     this.mouseEvents.onMouseRelease(this.editorEnv);
-    nodeEvents.onPhysicsEngineUpdate(this.editorEnv.nodes, this.editorEnv.signalGraph);
+    nodeEvents.onPhysicsEngineUpdate(
+      this.editorEnv.nodes,
+      this.editorEnv.signalGraph
+    );
   };
 
   node(

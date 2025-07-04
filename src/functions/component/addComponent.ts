@@ -5,7 +5,8 @@ import GateNode from '@connectlab-editor/components/nodes/defaultGate';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
+import Vector2f from '@connectlab-editor/types/vector2f';
 import {ConnectionVertex, NodeModel} from '@connectlab-editor/types/common';
 import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
@@ -44,11 +45,17 @@ const addComponent = {
       return -1;
     }
 
-    signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+    signalEvents.vertex.add(
+      editorEnv.signalGraph,
+      definedId,
+      type,
+      GateNode.getNodeModel(type),
+      state
+    );
 
     const newNode = new GateNode(
       definedId,
-      new Vector2(x, y),
+      new Vector2i(x, y),
       type,
       canvasWidth,
       canvasHeight,
@@ -106,10 +113,17 @@ const addComponent = {
     let model: NodeModel;
     switch (type) {
       case NodeTypes.I_SWITCH:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        model = SwitchInputModel;
+        signalEvents.vertex.add(
+          editorEnv.signalGraph,
+          definedId,
+          type,
+          model,
+          state
+        );
         newInput = new SwitchInput(
           definedId,
-          new Vector2(x, y),
+          new Vector2i(x, y),
           canvasWidth,
           canvasHeight,
           [],
@@ -117,13 +131,19 @@ const addComponent = {
           editorEnv.signalGraph,
           shiftPosition
         );
-        model = SwitchInputModel;
         break;
       case NodeTypes.I_BUTTON:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        model = ButtonInputModel;
+        signalEvents.vertex.add(
+          editorEnv.signalGraph,
+          definedId,
+          type,
+          model,
+          state
+        );
         newInput = new ButtonInput(
           definedId,
-          new Vector2(x, y),
+          new Vector2i(x, y),
           canvasWidth,
           canvasHeight,
           [],
@@ -131,13 +151,19 @@ const addComponent = {
           editorEnv.signalGraph,
           shiftPosition
         );
-        model = ButtonInputModel;
         break;
       case NodeTypes.I_CLOCK:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        model = ClockInputModel;
+        signalEvents.vertex.add(
+          editorEnv.signalGraph,
+          definedId,
+          type,
+          model,
+          state
+        );
         newInput = new ClockInput(
           definedId,
-          new Vector2(x, y),
+          new Vector2i(x, y),
           canvasWidth,
           canvasHeight,
           [],
@@ -146,7 +172,6 @@ const addComponent = {
           undefined,
           shiftPosition
         );
-        model = ClockInputModel;
         break;
       default:
         console.error(
@@ -204,10 +229,17 @@ const addComponent = {
     let model: NodeModel;
     switch (type) {
       case NodeTypes.O_LED_RED:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        model = LEDROutput;
+        signalEvents.vertex.add(
+          editorEnv.signalGraph,
+          definedId,
+          type,
+          model,
+          state
+        );
         newOutput = new LedOutput(
           definedId,
-          new Vector2(x, y),
+          new Vector2i(x, y),
           canvasWidth,
           canvasHeight,
           [],
@@ -215,13 +247,19 @@ const addComponent = {
           editorEnv.signalGraph,
           shiftPosition
         );
-        model = LEDROutput;
         break;
       case NodeTypes.O_7_SEGMENTS:
-        signalEvents.vertex.add(editorEnv.signalGraph, definedId, type, state);
+        model = SegmentsOutputModel;
+        signalEvents.vertex.add(
+          editorEnv.signalGraph,
+          definedId,
+          type,
+          model,
+          state
+        );
         newOutput = new SegmentsOutput(
           definedId,
-          new Vector2(x, y),
+          new Vector2i(x, y),
           canvasWidth,
           canvasHeight,
           [],
@@ -229,7 +267,6 @@ const addComponent = {
           editorEnv.signalGraph,
           shiftPosition
         );
-        model = SegmentsOutputModel;
         break;
       default:
         console.error(
@@ -286,7 +323,7 @@ const addComponent = {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newSlot = new SlotComponent(
       definedId,
-      new Vector2(x, y),
+      new Vector2i(x, y),
       parent,
       slotId,
       undefined,
@@ -316,13 +353,13 @@ const addComponent = {
     y2: number,
     from?: ConnectionVertex,
     to?: ConnectionVertex,
-    anchors?: Array<Vector2>
+    anchors?: Array<Vector2f>
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newLine = new ConnectionComponent(
       definedId,
-      new Vector2(x1, y1),
-      new Vector2(x2, y2),
+      new Vector2i(x1, y1),
+      new Vector2i(x2, y2),
       {start: from, end: to},
       anchors
     );
@@ -343,7 +380,7 @@ const addComponent = {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newText = new TextComponent(
       definedId,
-      new Vector2(x, y),
+      new Vector2i(x, y),
       text,
       style,
       parent ? {id: parent.id, type: parent.componentType} : null,

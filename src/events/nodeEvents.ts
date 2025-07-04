@@ -1,5 +1,5 @@
 import {NodeList, SignalGraph} from '@connectlab-editor/types/common';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
@@ -9,13 +9,13 @@ import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {
   // Busca na lista de nodes quais possuem uma colisão com o ponto do mouse
-  checkNodeClick(nodes: NodeList, position: Vector2): number[] {
+  checkNodeClick(nodes: NodeList, position: Vector2i): number[] {
     return componentEvents.checkComponentClick(position, nodes);
   },
   move(
     editorEnv: EditorEnvironment,
     mouseEvents: MouseEvents,
-    v: Vector2,
+    v: Vector2i,
     useDelta = true
   ): boolean {
     const nodeCollisions = mouseEvents.getCollisionList().nodes;

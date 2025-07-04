@@ -1,9 +1,9 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {NodeList, SlotList, TextList} from '@connectlab-editor/types/common';
 
 export const componentEvents = {
   checkComponentClick(
-    position: Vector2,
+    position: Vector2i,
     elementsList: NodeList | SlotList | TextList
   ): number[] {
     const collidedWith: Array<number> = [];

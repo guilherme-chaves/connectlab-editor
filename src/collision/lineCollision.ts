@@ -1,19 +1,19 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from './boxCollision';
 import CircleCollision from './circleCollision';
 
 export default class LineCollision implements Collision {
-  position: Vector2;
-  endPosition: Vector2;
+  position: Vector2i;
+  endPosition: Vector2i;
   borderColor: string;
   private drawPath: Path2D;
   private regenPath: boolean;
   private lineLength: number;
 
   constructor(
-    position: Vector2,
-    endPosition: Vector2,
+    position: Vector2i,
+    endPosition: Vector2i,
     borderColor: string = '#FF8008DC'
   ) {
     this.position = position;
@@ -33,7 +33,7 @@ export default class LineCollision implements Collision {
   }
 
   private computeLineLength(): number {
-    return Vector2.sub(this.endPosition, this.position).len();
+    return Vector2i.sub(this.endPosition, this.position).len();
   }
 
   draw(ctx: CanvasRenderingContext2D, isSelected: boolean): void {
@@ -45,20 +45,20 @@ export default class LineCollision implements Collision {
     ctx.restore();
   }
 
-  moveShape(v: Vector2, isDeltaVector: boolean): void {
+  moveShape(v: Vector2i, isDeltaVector: boolean): void {
     if (isDeltaVector) {
       this.position.add(v);
       this.endPosition.add(v);
     } else {
-      this.position.add(Vector2.sub(this.position, v));
-      this.endPosition.add(Vector2.sub(this.position, v));
+      this.position.add(Vector2i.sub(this.position, v));
+      this.endPosition.add(Vector2i.sub(this.position, v));
     }
   }
 
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(point: Vector2i): boolean {
     // https://www.jeffreythompson.org/collision-detection/line-point.php
-    const d1 = Vector2.sub(this.position, point).len();
-    const d2 = Vector2.sub(this.endPosition, point).len();
+    const d1 = Vector2i.sub(this.position, point).len();
+    const d2 = Vector2i.sub(this.endPosition, point).len();
     return d1 + d2 - this.lineLength < 1e-4;
   }
 
@@ -81,14 +81,14 @@ export default class LineCollision implements Collision {
           (this.endPosition.y - this.position.y)) /
       Math.pow(this.lineLength, 2);
 
-    const closest = new Vector2(
+    const closest = new Vector2i(
       this.position.x + dot * (this.endPosition.x - this.position.x),
       this.position.y + dot * (this.endPosition.y - this.position.y)
     );
 
     if (!this.collisionWithPoint(closest)) return false;
 
-    const distToClosest = Vector2.sub(closest, other.position).len();
+    const distToClosest = Vector2i.sub(closest, other.position).len();
 
     return distToClosest < other.radius;
   }

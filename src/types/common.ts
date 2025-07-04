@@ -3,7 +3,7 @@ import NodeComponent from '@connectlab-editor/interfaces/nodeInterface';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 
 export type ImageListObject = Record<string, ImageBitmap>;
@@ -34,8 +34,6 @@ export interface ConnectionVertices {
   end: ConnectionVertex | undefined;
 }
 
-export type slotStates = boolean;
-
 // Modelo para criação de objetos do tipo NODE
 export type NodeModel = Readonly<{
   id: NodeTypes;
@@ -45,21 +43,28 @@ export type NodeModel = Readonly<{
       Readonly<{
         id: number; // Identificador do slot (0 => inA, 1 => inB, ...)
         name: string; // Nome do slot (adiciona textNode?)
-        localPos: Vector2; // Posição do slot, relativo ao elemento-pai
+        localPos: Vector2i; // Posição do slot, relativo ao elemento-pai
         in: boolean; // Recebe informação de outro elemento (true)
       }>
     >
   >;
 }>;
 
+// Map<slotId, nodeConnectedId]
+export type SignalSlot = Map<number, number>;
+
+export type signalOperation = (
+  inputStates: number,
+  numSlots: number
+) => boolean;
+
 export interface SignalGraphData {
-  state: slotStates;
-  // connectedNodeId => slotIdAtCurrentNode, state
-  signalFrom: Record<number, [number, slotStates]>;
-  signalTo: Array<number>;
+  output: boolean;
+  signalFrom: SignalSlot;
+  signalTo: Set<number>;
   nodeType: NodeTypes;
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;
 
-export type VectorObject = {x: number; y: number; useInt: boolean};
+export type VectorObject = {x: number; y: number};

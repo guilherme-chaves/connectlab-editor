@@ -1,6 +1,6 @@
 import {VectorObject} from '@connectlab-editor/types/common';
 import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Component, {
   ComponentObject,
@@ -17,19 +17,19 @@ export interface TextObject extends ComponentObject {
 
 class TextComponent implements Component {
   public readonly id: number;
-  public position: Vector2;
+  public position: Vector2i;
   public readonly componentType: ComponentType;
   public text: string;
   public parent: {id: number; type: ComponentType} | null;
   public style: string;
-  private textSize: Vector2;
+  private textSize: Vector2i;
   public collisionShape: BoxCollision;
   private canvasContext: CanvasRenderingContext2D;
   public selected: boolean;
 
   constructor(
     id: number,
-    position: Vector2,
+    position: Vector2i,
     text = '',
     style = '12px sans-serif',
     parent: {id: number; type: ComponentType} | null,
@@ -43,7 +43,7 @@ class TextComponent implements Component {
     this.parent = parent;
     this.canvasContext = ctx;
     this.textSize = this.measureText(text, style);
-    this.position.sub(Vector2.div(this.textSize, 2));
+    this.position.sub(Vector2i.div(this.textSize, 2));
     this.collisionShape = new BoxCollision(
       this.position,
       this.textSize.x,
@@ -52,16 +52,16 @@ class TextComponent implements Component {
     this.selected = false;
   }
 
-  private measureText(text: string, style: string): Vector2 {
+  private measureText(text: string, style: string): Vector2i {
     this.canvasContext.font = style;
     this.canvasContext.textBaseline = 'top';
     this.canvasContext.textAlign = 'left';
     const textDimensions = this.canvasContext.measureText(text);
-    const textSize = new Vector2(
+    const textSize = new Vector2i(
       textDimensions.width,
       textDimensions.actualBoundingBoxDescent -
         textDimensions.actualBoundingBoxAscent
-    ).max(new Vector2(16, 16));
+    ).max(new Vector2i(16, 16));
     return textSize;
   }
 
@@ -75,9 +75,9 @@ class TextComponent implements Component {
     this.collisionShape.draw(ctx, this.selected);
   }
 
-  move(v: Vector2, useDelta = true): void {
+  move(v: Vector2i, useDelta = true): void {
     if (useDelta) this.position.add(v);
-    else Vector2.sub(v, Vector2.div(this.textSize, 2), this.position);
+    else Vector2i.sub(v, Vector2i.div(this.textSize, 2), this.position);
     this.collisionShape.moveShape(this.position, false);
   }
 

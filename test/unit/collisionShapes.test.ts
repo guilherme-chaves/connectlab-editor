@@ -4,7 +4,7 @@ import {expect, test, describe} from 'vitest';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2 from '@connectlab-editor/types/vector2i';
 import {Rad45Deg} from '@connectlab-editor/types/consts';
 
 const circle = new CircleCollision(new Vector2(500, 500), 25);

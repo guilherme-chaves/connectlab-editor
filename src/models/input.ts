@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {NodeModel} from '@connectlab-editor/types/common';
 import INPUT_OFF from '@connectlab-editor/gates/INPUT_OFF.svg';
 import INPUT_ON from '@connectlab-editor/gates/INPUT_ON.svg';
@@ -15,7 +15,7 @@ export const SwitchInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(74, 25),
+      localPos: new Vector2i(74, 25),
     },
   ],
 };
@@ -28,7 +28,7 @@ export const ButtonInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(74, 25),
+      localPos: new Vector2i(74, 25),
     },
   ],
 };
@@ -41,7 +41,7 @@ export const ClockInput: NodeModel = {
       id: 0,
       in: false,
       name: 'Out',
-      localPos: new Vector2(64, 25),
+      localPos: new Vector2i(64, 25),
     },
   ],
 };

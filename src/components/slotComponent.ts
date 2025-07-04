@@ -2,7 +2,7 @@ import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision'
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {VectorObject} from '@connectlab-editor/types/common';
 import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
@@ -24,8 +24,8 @@ export interface SlotObject extends ComponentObject {
 
 export default class SlotComponent implements Component {
   public readonly id: number;
-  public position: Vector2;
-  public globalPosition: Vector2;
+  public position: Vector2i;
+  public globalPosition: Vector2i;
   public readonly componentType: ComponentType;
   public readonly parent: NodeInterface;
   public slotIdAtParent: number;
@@ -53,7 +53,7 @@ export default class SlotComponent implements Component {
 
   constructor(
     id: number,
-    position: Vector2,
+    position: Vector2i,
     parent: NodeInterface,
     slotIdAtParent: number,
     connections: Array<ConnectionComponent> = [],
@@ -65,7 +65,7 @@ export default class SlotComponent implements Component {
   ) {
     this.id = id;
     this.position = position;
-    this.globalPosition = Vector2.add(position, parent.position);
+    this.globalPosition = Vector2i.add(position, parent.position);
     this.componentType = ComponentType.SLOT;
     this.parent = parent;
     this.slotIdAtParent = slotIdAtParent;
@@ -84,8 +84,8 @@ export default class SlotComponent implements Component {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  move(_v?: Vector2, _useDelta = true): void {
-    Vector2.add(this.position, this.parent.position, this.globalPosition);
+  move(_v?: Vector2i, _useDelta = true): void {
+    Vector2i.add(this.position, this.parent.position, this.globalPosition);
     this.collisionShape.moveShape(this.globalPosition, false);
     this.regenPath = true;
   }

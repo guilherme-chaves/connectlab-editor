@@ -1,18 +1,18 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 
 // Sentido anti-horário, começando do ponto superior esquerdo
 interface BoxVertices {
-  a: Vector2;
-  b: Vector2;
-  c: Vector2;
-  d: Vector2;
+  a: Vector2i;
+  b: Vector2i;
+  c: Vector2i;
+  d: Vector2i;
 }
 
 export default class BoxCollision implements Collision {
-  public position: Vector2;
+  public position: Vector2i;
   public readonly localVertices: BoxVertices;
   public readonly vertices: BoxVertices;
   public readonly width: number;
@@ -22,7 +22,7 @@ export default class BoxCollision implements Collision {
   public borderColor: string;
 
   constructor(
-    position: Vector2,
+    position: Vector2i,
     width = 2,
     height = 2,
     borderColor = '#FF8008DC'
@@ -34,26 +34,26 @@ export default class BoxCollision implements Collision {
     this.localVertices = this.setLocalVertices();
     this.regenPath = false;
     this.vertices = {
-      a: Vector2.add(this.position, this.localVertices.a),
-      b: Vector2.add(this.position, this.localVertices.b),
-      c: Vector2.add(this.position, this.localVertices.c),
-      d: Vector2.add(this.position, this.localVertices.d),
+      a: Vector2i.add(this.position, this.localVertices.a),
+      b: Vector2i.add(this.position, this.localVertices.b),
+      c: Vector2i.add(this.position, this.localVertices.c),
+      d: Vector2i.add(this.position, this.localVertices.d),
     };
   }
 
   private setVertices(): void {
-    Vector2.add(this.position, this.localVertices.a, this.vertices.a);
-    Vector2.add(this.position, this.localVertices.b, this.vertices.b);
-    Vector2.add(this.position, this.localVertices.c, this.vertices.c);
-    Vector2.add(this.position, this.localVertices.d, this.vertices.d);
+    Vector2i.add(this.position, this.localVertices.a, this.vertices.a);
+    Vector2i.add(this.position, this.localVertices.b, this.vertices.b);
+    Vector2i.add(this.position, this.localVertices.c, this.vertices.c);
+    Vector2i.add(this.position, this.localVertices.d, this.vertices.d);
   }
 
   private setLocalVertices(): BoxVertices {
     return Object.freeze({
-      a: new Vector2(),
-      b: new Vector2(this.width, 0),
-      c: new Vector2(this.width, this.height),
-      d: new Vector2(0, this.height),
+      a: new Vector2i(),
+      b: new Vector2i(this.width, 0),
+      c: new Vector2i(this.width, this.height),
+      d: new Vector2i(0, this.height),
     });
   }
 
@@ -73,14 +73,14 @@ export default class BoxCollision implements Collision {
     ctx.restore();
   }
 
-  moveShape(v: Vector2, useDelta = true): void {
+  moveShape(v: Vector2i, useDelta = true): void {
     if (useDelta) this.position.add(v);
-    else Vector2.copy(v, this.position);
+    else this.position.copy(v);
     this.setVertices();
     this.regenPath = true;
   }
 
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(point: Vector2i): boolean {
     return (
       point.x > this.vertices.a.x &&
       point.x < this.vertices.c.x &&
