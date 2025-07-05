@@ -22,33 +22,29 @@ export default {
     if (
       nodeCollisions.length === 0 ||
       !(
-        mouseEvents.movingObject === 'none' ||
-        mouseEvents.movingObject === 'node'
+        MouseEvents.movingObject === 'none' ||
+        MouseEvents.movingObject === 'node'
       )
     )
       return false;
 
-    mouseEvents.movingObject = 'node';
+    MouseEvents.movingObject = 'node';
     const node = editorEnv.nodes.get(nodeCollisions[0]);
     if (node === undefined) return false;
     node.move(v, useDelta);
-    this.moveLinkedElements(node, editorEnv.nodes, useDelta);
+    this.moveLinkedElements(node, editorEnv.nodes);
     return true;
   },
-  moveLinkedElements(
-    node: NodeInterface,
-    nodeList: NodeList,
-    useDelta = true
-  ): void {
+  moveLinkedElements(node: NodeInterface, nodeList: NodeList): void {
     for (const slot of node.slots) {
       if (!slot) continue;
       slot.move();
       for (let i = 0; i < slot.slotConnections.length; i++) {
         const connection = slot.slotConnections[i];
         if (connection.connectedTo.start?.slotId === slot.id)
-          connection.move(slot.globalPosition, useDelta, 0, true, nodeList);
+          connection.move(slot.globalPosition, false, 0, true, nodeList);
         else if (connection.connectedTo.end?.slotId === slot.id)
-          connection.move(slot.globalPosition, useDelta, 1, true, nodeList);
+          connection.move(slot.globalPosition, false, 1, true, nodeList);
       }
     }
   },

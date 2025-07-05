@@ -18,13 +18,13 @@ export default {
     if (
       textCollisions.length === 0 ||
       !(
-        mouseEvents.movingObject === 'none' ||
-        mouseEvents.movingObject === 'text'
+        MouseEvents.movingObject === 'none' ||
+        MouseEvents.movingObject === 'text'
       )
     )
       return false;
 
-    mouseEvents.movingObject = 'text';
+    MouseEvents.movingObject = 'text';
     const text = texts.get(textCollisions[0]);
     if (text === undefined) return false;
     text.move(v, useDelta);

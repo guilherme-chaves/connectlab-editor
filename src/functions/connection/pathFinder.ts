@@ -288,7 +288,7 @@ export default {
       .min(maxStepSize);
 
     let runCount = 0;
-    while (runCount <= 1024 && openSet.size() > 0) {
+    while (runCount <= 512 && openSet.size() > 0) {
       runCount++;
       const current = openSet.pop()!;
 
@@ -363,6 +363,7 @@ export default {
   },
   // Função principal
   find(start: Vector2i, end: Vector2i, nodeList: NodeList) {
+    if (start.equals(end, 8)) return [];
     const simpleSearchArea = this.getSearchArea(start, end, 1);
     let collisions = this.getCollisionsInArea(nodeList, simpleSearchArea);
     if (collisions.size === 0) {

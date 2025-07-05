@@ -36,22 +36,22 @@ export default {
       }
     },
     remove(signalGraph: SignalGraph, nodeId: number): void {
-      if (signalGraph[nodeId]) {
-        for (const signalToId of signalGraph[nodeId].signalTo.values()) {
-          if (signalGraph[signalToId] === undefined) continue;
-          signalGraph[signalToId].signalFrom.forEach((v, k, m) => {
-            if (v === nodeId) {
-              m.delete(k);
-            }
-          });
-          signalUpdate.updateGraph(signalGraph, signalToId);
-        }
-        delete signalGraph[nodeId];
-      } else {
+      const graphNode = signalGraph[nodeId];
+      if (graphNode === undefined) {
         console.warn(
           `Node ${nodeId} não encontrado no grafo de sinal lógico ao ser removido!`
         );
+        return;
       }
+      for (const signalToId of graphNode.signalTo.values()) {
+        if (signalGraph[signalToId] === undefined) continue;
+        signalGraph[signalToId].signalFrom.forEach((v, k, m) => {
+          if (v === nodeId) {
+            m.delete(k);
+          }
+        });
+      }
+      delete signalGraph[nodeId];
     },
     getState(signalGraph: SignalGraph, nodeId: number): boolean {
       return signalGraph[nodeId].output ?? false;

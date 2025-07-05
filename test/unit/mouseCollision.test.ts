@@ -7,7 +7,7 @@ import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import Vector2 from '@connectlab-editor/types/vector2i';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
-import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
+import {ConnectionEvents} from '@connectlab-editor/events/connectionEvents';
 
 const editorEnv = new EditorEnvironment('test-collision', 0, {});
 const canvas = document.createElement('canvas');
@@ -89,11 +89,11 @@ describe('Testes de detecção de colisão entre o mouse e componentes', () => {
     expect(collisions2).toEqual([6]);
   });
   test('Colisão do mouse com uma conexão', () => {
-    const collisions = connectionEvents.checkConnectionClick(
+    const collisions = ConnectionEvents.checkConnectionClick(
       editorEnv.connections,
       new Vector2(250, 1000)
     );
-    const collisions2 = connectionEvents.checkConnectionClick(
+    const collisions2 = ConnectionEvents.checkConnectionClick(
       editorEnv.connections,
       new Vector2(600, 293)
     );

@@ -22,6 +22,13 @@ export interface ConnectionObject extends ComponentObject {
   connectedTo: ConnectionVertices;
 }
 
+export enum movePointEnum {
+  START = 0,
+  END = 1,
+  BOTH = 2,
+  NONE = -1,
+}
+
 class ConnectionComponent implements Component {
   public readonly id: number;
   public position: Vector2i;
@@ -124,7 +131,7 @@ class ConnectionComponent implements Component {
   move(
     v: Vector2i,
     useDelta = true,
-    movePoint = 2,
+    movePoint: movePointEnum = 2,
     updateCollisionShapes = true,
     nodeList: NodeList = new Map()
   ) {
@@ -132,8 +139,8 @@ class ConnectionComponent implements Component {
       if (movePoint !== 1) this.position.add(v);
       if (movePoint !== 0) this.endPosition.add(v);
     } else {
-      if (movePoint !== 1) this.position.copy(v);
-      if (movePoint !== 0) this.endPosition.copy(v);
+      if (movePoint === 0) this.position.copy(v);
+      if (movePoint === 1) this.endPosition.copy(v);
     }
     this.anchors = this.generateAnchors(nodeList);
     if (updateCollisionShapes)
