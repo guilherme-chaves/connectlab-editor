@@ -101,9 +101,9 @@ export default {
       const startNodeId = connection.connectedTo.start?.nodeId ?? -1;
       const endNodeId = connection.connectedTo.end?.nodeId ?? -1;
       if (endNodeId >= 0 && signalGraph[endNodeId] !== undefined) {
-        signalGraph[endNodeId].signalFrom.delete(
-          connection.connectedTo.end?.slotId ?? -1
-        );
+        signalGraph[endNodeId].signalFrom.forEach((v, k, m) => {
+          if (v === startNodeId) m.set(k, -1);
+        });
       }
       if (startNodeId >= 0 && signalGraph[startNodeId] !== undefined) {
         signalGraph[startNodeId].signalTo.delete(
