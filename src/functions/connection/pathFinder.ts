@@ -10,7 +10,7 @@ import Heap from 'heap';
 type PathNode = {
   position: Vector2i;
   t: Vector2f;
-  from: string | undefined; // tx::ty
+  from: Vector2i | undefined; // tx::ty
   score: number;
 };
 type PathGraph = Map<string, PathNode>; // x::y
@@ -24,7 +24,7 @@ enum NodeUpdateStatus {
 
 export default {
   stepDirectionFromAtan2(atan2: number): Vector2f {
-    const result = new Vector2f(0, 0);
+    const result = Vector2f.ZERO;
     if (atan2 <= angles.Rad45Deg && atan2 >= -angles.Rad45Deg) {
       result.x = 1;
     }
@@ -152,7 +152,9 @@ export default {
     while (current !== undefined) {
       path.push(current.t.clone());
       current =
-        current.from !== undefined ? scores.get(current.from) : undefined;
+        current.from !== undefined
+          ? scores.get(`${current.from.x}::${current.from.y}`)
+          : undefined;
     }
     scores.clear();
     return path.reverse();
@@ -167,24 +169,21 @@ export default {
   ): NodeUpdateStatus {
     const key = `${nodePosition.x}::${nodePosition.y}`;
     let fromKey = undefined;
-    let fromScore = 0;
     const nodeScore = pathGraph.get(key)?.score ?? Infinity;
     if (isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
     if (from !== undefined) {
       fromKey = `${from.x}::${from.y}`;
       const fromNode = pathGraph.get(fromKey);
-      fromScore = fromNode?.score ?? 0;
       if (nodePosition.equals(from)) return NodeUpdateStatus.SAME_POSITION;
-      if (fromNode?.from === fromKey) return NodeUpdateStatus.LOOP;
+      if (fromNode?.from?.equals(from)) return NodeUpdateStatus.LOOP;
     }
-    const tmpScore =
-      this.computeStepScore(start, nodePosition, end) + fromScore / 4;
+    const tmpScore = this.computeStepScore(start, nodePosition, end);
 
     if (tmpScore < nodeScore) {
       pathGraph.set(key, {
         position: nodePosition,
         t: nodeT,
-        from: fromKey,
+        from,
         score: tmpScore,
       });
       return NodeUpdateStatus.CHANGE;
@@ -198,30 +197,19 @@ export default {
     currentT: Vector2f,
     step: Vector2f,
     nodeList: NodeList,
-    maxStepSize: Vector2f,
     minStepSize: Vector2f,
     currentStepSize: Vector2f
   ): [boolean, Vector2i, Vector2f] {
-    // Não foi possível encontrar uma posição válida dentro dos limites
-    if (!Vector2f.min(minStepSize, currentStepSize).equals(minStepSize))
-      return [false, Vector2i.ZERO, Vector2f.ZERO];
     const nextT = Vector2f.mul(step, currentStepSize).add(currentT);
     const next = Vector2i.bilinear(start, end, nextT);
-    if (this.stepCollisionExists(start, end, current, nextT, nodeList)) {
-      const stepReduce = Vector2f.mul(step, 2).abs().max(Vector2f.ONE);
-      return this.testStep(
-        start,
-        end,
-        current,
-        currentT,
-        step,
-        nodeList,
-        maxStepSize,
-        minStepSize,
-        currentStepSize.div(stepReduce)
-      );
+    while (Vector2f.min(currentStepSize, minStepSize).equals(minStepSize)) {
+      if (this.stepCollisionExists(start, end, current, nextT, nodeList)) {
+        currentStepSize.sub(0.075);
+        continue;
+      }
+      return [true, next, nextT];
     }
-    return [true, next, nextT];
+    return [false, Vector2i.ZERO, Vector2f.ZERO];
   },
   getPossibleNextSteps(
     start: Vector2i,
@@ -247,7 +235,6 @@ export default {
         currentT,
         direction,
         nodeList,
-        maxStepSize,
         minStepSize,
         maxStepSize.clone()
       );
@@ -271,11 +258,11 @@ export default {
       new Vector2f(0, 0),
       undefined
     );
-    const openSet: Heap<{key: string; score: number}> = new Heap(
+    const openSet: Heap<{key: Vector2i; score: number}> = new Heap(
       (a, b) => a.score - b.score
     );
     openSet.push({
-      key: `${start.x}::${start.y}`,
+      key: start,
       score: pathGraph.get(`${start.x}::${start.y}`)!.score,
     });
 
@@ -283,7 +270,7 @@ export default {
     // Maior passo possível = metade da distância entre os dois pontos
     const maxStepSize = new Vector2f(0.5, 0.5);
     // Menor passo possível = 8 pixels
-    const minStepSize: Vector2f = new Vector2f(8, 8)
+    const minStepSize: Vector2f = new Vector2f(4, 4)
       .div(distance)
       .min(maxStepSize);
 
@@ -292,10 +279,10 @@ export default {
       runCount++;
       const current = openSet.pop()!;
 
-      const currentNode = pathGraph.get(current.key)!;
+      const currentNode = pathGraph.get(`${current.key.x}::${current.key.y}`)!;
       const currentPosition = currentNode.position;
       const currentT = currentNode.t;
-      if (currentPosition.equals(end, 8)) {
+      if (currentPosition.equals(end, 16)) {
         this.setNodeScore(
           pathGraph,
           start,
@@ -316,7 +303,7 @@ export default {
         minStepSize
       );
       if (nextSteps.length === 0) {
-        pathGraph.set(current.key, {
+        pathGraph.set(`${current.key.x}::${current.key.y}`, {
           position: currentPosition,
           t: currentT,
           from: currentNode.from,
@@ -325,7 +312,9 @@ export default {
         if (currentNode.from !== undefined) {
           openSet.push({
             key: currentNode.from,
-            score: pathGraph.get(currentNode.from)!.score,
+            score: pathGraph.get(
+              `${currentNode.from.x}::${currentNode.from.y}`
+            )!.score,
           });
         }
         continue;
@@ -343,16 +332,18 @@ export default {
         ) {
           case NodeUpdateStatus.CHANGE:
             openSet.push({
-              key: `${next[0].x}::${next[0].y}`,
+              key: next[0],
               score: pathGraph.get(`${next[0].x}::${next[0].y}`)!.score,
             });
             break;
           case NodeUpdateStatus.SAME_POSITION:
           case NodeUpdateStatus.LOOP:
-            if (currentNode.from)
+            if (currentNode.from !== undefined)
               openSet.push({
                 key: currentNode.from,
-                score: pathGraph.get(currentNode.from)?.score ?? Infinity,
+                score:
+                  pathGraph.get(`${currentNode.from.x}::${currentNode.from.y}`)
+                    ?.score ?? Infinity,
               });
             currentNode.score = NaN;
             break;
