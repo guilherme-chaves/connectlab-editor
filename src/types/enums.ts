@@ -27,6 +27,8 @@ export enum inputKeycodes {
   SWITCH_u = 'S',
   BUTTON = 'b',
   BUTTON_u = 'B',
+  CLOCK = 'k',
+  CLOCK_u = 'K',
 }
 
 export enum outputKeycodes {
@@ -63,6 +65,7 @@ export const enum NodeTypes {
   G_XOR = 6,
   I_SWITCH = 100,
   I_BUTTON = 101,
+  I_CLOCK = 102,
   O_LED_RED = 200,
   O_7_SEGMENTS = 201,
 }
@@ -83,4 +86,7 @@ export const enum EditorEvents {
   KEY_HOLDED = 12,
   FOCUS_IN = 20,
   FOCUS_OUT = 21,
+  CLOCK_TRIGGERED = 30,
+  CLOCK_FINISHED = 31,
+  PHYSICS_ENGINE_CYCLE = 40,
 }

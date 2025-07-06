@@ -1,14 +1,17 @@
 import {
   ConnectionVertices,
+  NodeList,
   VectorObject,
 } from '@connectlab-editor/types/common';
 import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
+import Vector2f from '@connectlab-editor/types/vector2f';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
+import pathFinder from '@connectlab-editor/functions/pathFinder';
 
 export interface ConnectionObject extends ComponentObject {
   id: number;
@@ -19,13 +22,20 @@ export interface ConnectionObject extends ComponentObject {
   connectedTo: ConnectionVertices;
 }
 
+export enum movePointEnum {
+  START = 0,
+  END = 1,
+  BOTH = 2,
+  NONE = -1,
+}
+
 class ConnectionComponent implements Component {
   public readonly id: number;
-  public position: Vector2;
+  public position: Vector2i;
   public readonly componentType: ComponentType;
-  public endPosition: Vector2;
+  public endPosition: Vector2i;
   // Pesos (valores de 0 a 1) relativos a interpolação bilinear entre os pontos inicial e final
-  public anchors: Array<Vector2>;
+  public anchors: Array<Vector2f>;
   public connectedTo: ConnectionVertices;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
@@ -34,10 +44,10 @@ class ConnectionComponent implements Component {
 
   constructor(
     id: number,
-    startPoint: Vector2,
-    endPosition: Vector2,
+    startPoint: Vector2i,
+    endPosition: Vector2i,
     connections: ConnectionVertices = {start: undefined, end: undefined},
-    anchors?: Array<Vector2>
+    anchors?: Array<Vector2f>
   ) {
     // A variável position funciona como startPoint
     this.id = id;
@@ -45,10 +55,10 @@ class ConnectionComponent implements Component {
     this.componentType = ComponentType.LINE;
     this.endPosition = endPosition;
     this.anchors = anchors ?? [
-      new Vector2(0.25, 0),
-      new Vector2(0.25, 0.5),
-      new Vector2(0.5, 0.5),
-      new Vector2(0.5, 1),
+      new Vector2f(0.25, 0),
+      new Vector2f(0.25, 0.5),
+      new Vector2f(0.5, 0.5),
+      new Vector2f(0.5, 1),
     ];
     this.connectedTo = connections;
     this.regenPath = true;
@@ -60,9 +70,9 @@ class ConnectionComponent implements Component {
   generatePath() {
     const path = new Path2D();
     path.moveTo(this.position.x, this.position.y);
-    const globalPos = new Vector2();
+    const globalPos = new Vector2i();
     for (let i = 0; i < this.anchors.length; i++) {
-      Vector2.bilinear(
+      Vector2i.bilinear(
         this.position,
         this.endPosition,
         this.anchors[i],
@@ -83,11 +93,8 @@ class ConnectionComponent implements Component {
     );
   }
 
-  generateAnchors(): Vector2[] {
-    return ConnectionPathFunctions.generateAnchors(
-      this.position,
-      this.endPosition
-    );
+  generateAnchors(nodeList: NodeList): Vector2f[] {
+    return pathFinder.find(this.position, this.endPosition, nodeList);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
@@ -103,7 +110,7 @@ class ConnectionComponent implements Component {
       this.collisionShape[i].draw(ctx, this.selected);
   }
 
-  addAnchor(point: Vector2, arrIndex: number = this.anchors.length): void {
+  addAnchor(point: Vector2f, arrIndex: number = this.anchors.length): void {
     this.anchors.splice(arrIndex, 0, point);
     this.regenPath = true;
   }
@@ -122,26 +129,27 @@ class ConnectionComponent implements Component {
   // Recebe um delta entre a posição anterior e a atual
   // movePoint -> 0 = position, 1 = endPosition, 2 (ou qualquer outro) = ambos
   move(
-    v: Vector2,
+    v: Vector2i,
     useDelta = true,
-    movePoint = 2,
-    updateCollisionShapes = true
+    movePoint: movePointEnum = 2,
+    updateCollisionShapes = true,
+    nodeList: NodeList = new Map()
   ) {
     if (useDelta) {
       if (movePoint !== 1) this.position.add(v);
       if (movePoint !== 0) this.endPosition.add(v);
     } else {
-      if (movePoint !== 1) Vector2.copy(v, this.position);
-      if (movePoint !== 0) Vector2.copy(v, this.endPosition);
+      if (movePoint === 0) this.position.copy(v);
+      if (movePoint === 1) this.endPosition.copy(v);
     }
-    this.anchors = this.generateAnchors();
+    this.anchors = this.generateAnchors(nodeList);
     if (updateCollisionShapes)
       this.collisionShape = this.generateCollisionShapes();
     this.regenPath = true;
   }
 
   changeAnchor(
-    position: Vector2,
+    position: Vector2i,
     index: number = this.anchors.length - 1
   ): void {
     if (index < 0 || index >= this.anchors.length) {
@@ -150,12 +158,9 @@ class ConnectionComponent implements Component {
       );
       return;
     }
-    this.anchors[index] = Vector2.sub(
-      position,
-      this.position,
-      undefined,
-      false
-    ).div(Vector2.sub(this.endPosition, this.position, undefined, false));
+    this.anchors[index] = Vector2f.sub(position, this.position).div(
+      Vector2f.sub(this.endPosition, this.position)
+    );
     this.regenPath = true;
   }
 

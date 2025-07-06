@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {VectorObject} from '@connectlab-editor/types/common';
 import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
@@ -11,11 +11,11 @@ export interface ComponentObject {
 
 export default interface Component {
   readonly id: number;
-  position: Vector2;
+  position: Vector2i;
   readonly componentType: ComponentType;
   collisionShape: Collision | Array<Collision>;
   selected: boolean;
-  move(v: Vector2, useDelta: boolean): void;
+  move(v: Vector2i, useDelta: boolean): void;
   draw(ctx: CanvasRenderingContext2D): void;
   onEvent(ev: EditorEvents): boolean;
   toObject(): ComponentObject;

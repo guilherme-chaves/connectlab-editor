@@ -1,30 +1,30 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {TextList} from '@connectlab-editor/types/common';
 import {componentEvents} from '@connectlab-editor/events/componentEvents';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 
 export default {
   // Busca na lista de textos quais possuem uma colisão com o ponto do mouse
-  checkTextClick(texts: TextList, position: Vector2): number[] {
+  checkTextClick(texts: TextList, position: Vector2i): number[] {
     return componentEvents.checkComponentClick(position, texts);
   },
   move(
     texts: TextList,
     mouseEvents: MouseEvents,
-    v: Vector2,
+    v: Vector2i,
     useDelta = true
   ): boolean {
     const textCollisions = mouseEvents.getCollisionList().texts;
     if (
       textCollisions.length === 0 ||
       !(
-        mouseEvents.movingObject === 'none' ||
-        mouseEvents.movingObject === 'text'
+        MouseEvents.movingObject === 'none' ||
+        MouseEvents.movingObject === 'text'
       )
     )
       return false;
 
-    mouseEvents.movingObject = 'text';
+    MouseEvents.movingObject = 'text';
     const text = texts.get(textCollisions[0]);
     if (text === undefined) return false;
     text.move(v, useDelta);

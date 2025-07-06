@@ -45,6 +45,8 @@ export default class KeyboardEvents {
       editor.input(NodeTypes.I_SWITCH);
     else if (keys[inputKeycodes.BUTTON] || keys[inputKeycodes.BUTTON_u])
       editor.input(NodeTypes.I_BUTTON);
+    else if (keys[inputKeycodes.CLOCK] || keys[inputKeycodes.CLOCK_u])
+      editor.input(NodeTypes.I_CLOCK);
     else if (keys[outputKeycodes.LED_RED] || keys[outputKeycodes.LED_RED_u])
       editor.output(NodeTypes.O_LED_RED);
     else if (keys[outputKeycodes.SEGMENTS] || keys[outputKeycodes.SEGMENTS_u])

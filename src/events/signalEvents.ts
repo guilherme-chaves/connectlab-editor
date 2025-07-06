@@ -1,5 +1,9 @@
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
-import {SignalGraph, slotStates} from '@connectlab-editor/types/common';
+import {
+  SignalSlot,
+  SignalGraph,
+  NodeModel,
+} from '@connectlab-editor/types/common';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
@@ -10,13 +14,20 @@ export default {
       signalGraph: SignalGraph,
       nodeId: number,
       nodeType: NodeTypes,
-      state: slotStates = false,
-      signalFrom: Record<number, [number, slotStates]> = {},
-      signalTo: Array<number> = []
+      nodeModel: NodeModel,
+      output = false,
+      signalFrom: SignalSlot = new Map(),
+      signalTo: Set<number> = new Set()
     ): void {
-      if (!signalGraph[nodeId]) {
+      if (signalGraph[nodeId] === undefined) {
+        if (signalFrom.size === 0) {
+          for (const slot of Object.values(nodeModel.connectionSlot)) {
+            if (!slot.in) continue;
+            signalFrom.set(slot.id, -1);
+          }
+        }
         signalGraph[nodeId] = {
-          state,
+          output,
           signalFrom,
           signalTo,
           nodeType,
@@ -25,29 +36,29 @@ export default {
       }
     },
     remove(signalGraph: SignalGraph, nodeId: number): void {
-      if (signalGraph[nodeId]) {
-        for (const signalToId of Object.values(signalGraph[nodeId].signalTo)) {
-          if (signalGraph[signalToId] === undefined) continue;
-          signalGraph[signalToId].signalFrom = Object.fromEntries(
-            Object.entries(signalGraph[signalToId].signalFrom).filter(
-              v => parseInt(v[0]) !== nodeId
-            )
-          );
-          signalUpdate.updateGraph(signalGraph, signalToId);
-        }
-        delete signalGraph[nodeId];
+      const graphNode = signalGraph[nodeId];
+      if (graphNode === undefined) {
+        console.warn(
+          `Node ${nodeId} não encontrado no grafo de sinal lógico ao ser removido!`
+        );
+        return;
       }
+      for (const signalToId of graphNode.signalTo.values()) {
+        if (signalGraph[signalToId] === undefined) continue;
+        signalGraph[signalToId].signalFrom.forEach((v, k, m) => {
+          if (v === nodeId) {
+            m.delete(k);
+          }
+        });
+      }
+      delete signalGraph[nodeId];
     },
-    getState(signalGraph: SignalGraph, nodeId: number): slotStates {
-      return signalGraph[nodeId]?.state ?? false;
+    getState(signalGraph: SignalGraph, nodeId: number): boolean {
+      return signalGraph[nodeId].output ?? false;
     },
-    setState(
-      signalGraph: SignalGraph,
-      nodeId: number,
-      state: slotStates
-    ): void {
+    setState(signalGraph: SignalGraph, nodeId: number, state: boolean): void {
       if (signalGraph[nodeId]) {
-        signalGraph[nodeId].state = state;
+        signalGraph[nodeId].output = state;
       }
     },
   },
@@ -62,7 +73,7 @@ export default {
       const endNodeId = endSlot.parent.id;
 
       if (signalGraph[startNodeId] !== undefined) {
-        signalGraph[startNodeId].signalTo.push(endNodeId);
+        signalGraph[startNodeId].signalTo.add(endNodeId);
       } else {
         console.warn(
           `Node inicial com ID ${endNodeId} não encontrado no grafo de sinal, isso poderá acarretar em bugs`,
@@ -70,10 +81,10 @@ export default {
         );
       }
       if (signalGraph[endNodeId] !== undefined) {
-        signalGraph[endNodeId].signalFrom[startNodeId] = [
+        signalGraph[endNodeId].signalFrom.set(
           endSlot.slotIdAtParent,
-          signalGraph[startNodeId].state,
-        ];
+          startNodeId
+        );
       } else {
         console.warn(
           `Node final com ID ${endNodeId} não encontrado no grafo de sinal, isso poderá acarretar em bugs`,
@@ -89,22 +100,17 @@ export default {
       if (connection === undefined) return;
       const startNodeId = connection.connectedTo.start?.nodeId ?? -1;
       const endNodeId = connection.connectedTo.end?.nodeId ?? -1;
-      if (endNodeId !== -1) {
-        const indexSF =
-          Object.keys(signalGraph[endNodeId]?.signalFrom)[startNodeId] ?? '-1';
-        if (parseInt(indexSF) !== -1)
-          delete signalGraph[endNodeId].signalFrom[parseInt(indexSF)];
+      if (endNodeId >= 0 && signalGraph[endNodeId] !== undefined) {
+        signalGraph[endNodeId].signalFrom.forEach((v, k, m) => {
+          if (v === startNodeId) m.set(k, -1);
+        });
       }
-      if (startNodeId !== -1) {
-        const indexST =
-          signalGraph[startNodeId]?.signalTo.indexOf(endNodeId) ?? -1;
-        if (indexST !== -1)
-          signalGraph[startNodeId].signalTo.splice(indexST, 1);
+      if (startNodeId >= 0 && signalGraph[startNodeId] !== undefined) {
+        signalGraph[startNodeId].signalTo.delete(
+          connection.connectedTo.end?.nodeId ?? -1
+        );
       }
-
       if (endNodeId !== -1) signalUpdate.updateGraph(signalGraph, endNodeId);
-      if (startNodeId !== -1)
-        signalUpdate.updateGraph(signalGraph, startNodeId);
     },
   },
 };

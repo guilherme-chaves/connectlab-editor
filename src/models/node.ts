@@ -1,4 +1,4 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import {NodeModel} from '@connectlab-editor/types/common';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 import GATE_AND from '@connectlab-editor/gates/AND_ANSI.svg';
@@ -9,7 +9,7 @@ import GATE_OR from '@connectlab-editor/gates/OR_ANSI.svg';
 import GATE_XNOR from '@connectlab-editor/gates/XNOR_ANSI.svg';
 import GATE_XOR from '@connectlab-editor/gates/XOR_ANSI.svg';
 
-const ADDNode: NodeModel = {
+export const ADDNode: NodeModel = {
   id: NodeTypes.G_AND,
   imgPath: [GATE_AND],
   connectionSlot: [
@@ -17,24 +17,24 @@ const ADDNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const NANDNode: NodeModel = {
+export const NANDNode: NodeModel = {
   id: NodeTypes.G_NAND,
   imgPath: [GATE_NAND],
   connectionSlot: [
@@ -42,24 +42,24 @@ const NANDNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const NORNode: NodeModel = {
+export const NORNode: NodeModel = {
   id: NodeTypes.G_NOR,
   imgPath: [GATE_NOR],
   connectionSlot: [
@@ -67,24 +67,24 @@ const NORNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const NOTNode: NodeModel = {
+export const NOTNode: NodeModel = {
   id: NodeTypes.G_NOT,
   imgPath: [GATE_NOT],
   connectionSlot: [
@@ -92,18 +92,18 @@ const NOTNode: NodeModel = {
       id: 0,
       name: 'In',
       in: true,
-      localPos: new Vector2(0, 25),
+      localPos: new Vector2i(-4, 25),
     },
     {
       id: 1,
       name: 'Out',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const ORNode: NodeModel = {
+export const ORNode: NodeModel = {
   id: NodeTypes.G_OR,
   imgPath: [GATE_OR],
   connectionSlot: [
@@ -111,24 +111,24 @@ const ORNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const XNORNode: NodeModel = {
+export const XNORNode: NodeModel = {
   id: NodeTypes.G_XNOR,
   imgPath: [GATE_XNOR],
   connectionSlot: [
@@ -136,24 +136,24 @@ const XNORNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
 };
 
-const XORNode: NodeModel = {
+export const XORNode: NodeModel = {
   id: NodeTypes.G_XOR,
   imgPath: [GATE_XOR],
   connectionSlot: [
@@ -161,29 +161,19 @@ const XORNode: NodeModel = {
       id: 0,
       name: 'A',
       in: true,
-      localPos: new Vector2(0, 15),
+      localPos: new Vector2i(-4, 15),
     },
     {
       id: 1,
       name: 'B',
       in: true,
-      localPos: new Vector2(0, 35),
+      localPos: new Vector2i(-4, 35),
     },
     {
       id: 2,
       name: 'C',
       in: false,
-      localPos: new Vector2(88, 25),
+      localPos: new Vector2i(92, 25),
     },
   ],
-};
-
-export const nodeModels = {
-  ADDNode,
-  NANDNode,
-  NORNode,
-  NOTNode,
-  ORNode,
-  XNORNode,
-  XORNode,
 };

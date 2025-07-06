@@ -1,43 +1,46 @@
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 
 export default class Mouse {
-  public position = new Vector2();
-  private _mouseClicked = false;
+  public position = new Vector2i();
+  private mouseClicked = false;
   public doubleClicked = false;
-  public clickStartPosition = new Vector2();
-  private _mouseStateChanged = false;
+  public clickStartPosition = new Vector2i();
+  private mouseStateChanged = false;
   public readonly clickToDragThreshold = 6; // pixels
   public readonly doubleClickTimer = 300; // ms
   private alreadyClicked = false;
+  private mouseDragged = false;
 
   get clicked(): boolean {
-    return this._mouseClicked;
+    return this.mouseClicked;
   }
 
   set clicked(value: boolean) {
-    this._mouseClicked = value;
-    this._mouseStateChanged = true;
-    if (value) this.clickStartPosition = this.position.copy();
+    this.mouseClicked = value;
+    this.mouseStateChanged = true;
+    if (value) this.clickStartPosition.copy(this.position);
+    else this.mouseDragged = false;
   }
 
   get dragged(): boolean {
-    const mouseMovement = Vector2.sub(this.position, this.clickStartPosition);
-    return (
+    const mouseMovement = Vector2i.sub(this.position, this.clickStartPosition);
+    this.mouseDragged =
+      this.mouseDragged ||
       mouseMovement.x > this.clickToDragThreshold ||
       mouseMovement.x < -this.clickToDragThreshold ||
       mouseMovement.y > this.clickToDragThreshold ||
-      mouseMovement.y < -this.clickToDragThreshold
-    );
+      mouseMovement.y < -this.clickToDragThreshold;
+    return this.mouseDragged;
   }
 
   get stateChanged(): boolean {
-    return this._mouseStateChanged;
+    return this.mouseStateChanged;
   }
 
   set stateChanged(value: boolean) {
-    this._mouseStateChanged = value;
+    this.mouseStateChanged = value;
     if (this.alreadyClicked) {
-      this.doubleClicked = this._mouseClicked;
+      this.doubleClicked = this.mouseClicked;
     } else {
       this.alreadyClicked = true;
       setTimeout(() => (this.alreadyClicked = false), this.doubleClickTimer);

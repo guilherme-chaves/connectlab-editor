@@ -8,11 +8,11 @@ import {NodeModel} from '@connectlab-editor/types/common';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Node, {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
-import {SwitchInput as SwitchInputModel} from '@connectlab-editor/models/input';
+import {ClockInput as ClockInputModel} from '@connectlab-editor/models/input';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 
-class SwitchInput implements Node {
+class ClockInput implements Node {
   public readonly id: number;
   public position: Vector2i;
   public readonly componentType: ComponentType;
@@ -25,10 +25,12 @@ class SwitchInput implements Node {
   private imageMode: 'UP_LEFT' | 'CENTER' = 'UP_LEFT';
   private readonly _signalData: SignalGraphData;
   public selected: boolean;
+  public clockDelay: number;
+  private currentClockStep = 0;
 
   get image(): ImageBitmap | null {
     if (Object.keys(this._images).length === 0) return null;
-    return this._images[this.state ? 1 : 0];
+    return this._images[0];
   }
 
   get state() {
@@ -47,14 +49,16 @@ class SwitchInput implements Node {
     slots: Array<SlotComponent>,
     images: ImageListObject,
     signalGraph: SignalGraph,
+    clockDelay: number = 60,
     shiftPosition = true
   ) {
     this.id = id;
     this.position = position;
     this.componentType = ComponentType.INPUT;
-    this.nodeType = SwitchInputModel;
+    this.nodeType = ClockInputModel;
     this._signalData = signalGraph[this.id];
     this.slots = slots;
+    this.clockDelay = clockDelay;
     this._images = getImageSublist(images, this.nodeType.imgPath);
     this.imageSize = new Vector2i(
       this.image?.width ?? 100,
@@ -97,14 +101,22 @@ class SwitchInput implements Node {
 
   onEvent(ev: EditorEvents): boolean {
     switch (ev) {
-      case EditorEvents.MOUSE_RELEASED:
-        this.state = !this.state;
-        break;
       case EditorEvents.FOCUS_IN:
         this.selected = true;
         break;
       case EditorEvents.FOCUS_OUT:
         this.selected = false;
+        break;
+      case EditorEvents.CLOCK_FINISHED:
+        this.state = !this.state;
+        this.currentClockStep = 0;
+        // this.onEvent(EditorEvents.CLOCK_TRIGGERED);
+        break;
+      case EditorEvents.PHYSICS_ENGINE_CYCLE:
+        this.currentClockStep++;
+        if (this.currentClockStep > this.clockDelay) {
+          this.onEvent(EditorEvents.CLOCK_FINISHED);
+        }
         break;
       default:
         return false;
@@ -125,4 +137,4 @@ class SwitchInput implements Node {
   }
 }
 
-export default SwitchInput;
+export default ClockInput;

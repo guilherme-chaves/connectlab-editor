@@ -9,23 +9,24 @@ import {
   NodeTypes,
 } from '@connectlab-editor/types/enums';
 import {NodeModel} from '@connectlab-editor/types/common';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Node, {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
 import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
-import {nodeModels} from '@connectlab-editor/models/node';
+import * as NodeModels from '@connectlab-editor/models/node';
 
 class DefaultGate implements Node {
   public readonly id: number;
-  public position: Vector2;
+  public position: Vector2i;
   public readonly componentType: ComponentType;
   public readonly nodeType: NodeModel;
   public slots: Array<SlotComponent>;
   public collisionShape: BoxCollision;
   private _images: ImageListObject;
-  private imageWidth: number;
-  private imageHeight: number;
+  private imageSize: Vector2i;
+  private halfImageSize: Vector2i;
+  private imageMode: 'UP_LEFT' | 'CENTER' = 'UP_LEFT';
   private readonly _signalData: SignalGraphData;
   public selected: boolean;
 
@@ -35,12 +36,12 @@ class DefaultGate implements Node {
   }
 
   get state() {
-    return this._signalData.state ?? false;
+    return this._signalData.output ?? false;
   }
 
   constructor(
     id: number,
-    position: Vector2,
+    position: Vector2i,
     nodeType: NodeTypes,
     canvasWidth: number,
     canvasHeight: number,
@@ -56,21 +57,23 @@ class DefaultGate implements Node {
     this._signalData = signalGraph[this.id];
     this.slots = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
-    this.imageWidth = this.image?.width ?? 100;
-    this.imageHeight = this.image?.height ?? 100;
+    this.imageSize = new Vector2i(
+      this.image?.width ?? 100,
+      this.image?.height ?? 100
+    );
+    this.halfImageSize = Vector2i.div(this.imageSize, 2);
     if (shiftPosition) {
-      this.position.sub(
-        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0)
+      this.imageMode = 'CENTER';
+      this.position.sub(this.halfImageSize);
+      const canvasBound = new Vector2i(canvasWidth, canvasHeight).sub(
+        this.imageSize
       );
-      const canvasBound = new Vector2(canvasWidth, canvasHeight).sub(
-        new Vector2(this.imageWidth, this.imageHeight)
-      );
-      this.position.min(canvasBound).max(Vector2.ZERO);
+      this.position.min(canvasBound).max(Vector2i.ZERO);
     }
     this.collisionShape = new BoxCollision(
       this.position,
-      this.imageWidth,
-      this.imageHeight
+      this.imageSize.x,
+      this.imageSize.y
     );
     this.selected = false;
   }
@@ -79,36 +82,33 @@ class DefaultGate implements Node {
     // Carrega o objeto do tipo de Node solicitado
     switch (type) {
       case NodeTypes.G_AND:
-        return nodeModels.ADDNode;
+        return NodeModels.ADDNode;
       case NodeTypes.G_NAND:
-        return nodeModels.NANDNode;
+        return NodeModels.NANDNode;
       case NodeTypes.G_NOR:
-        return nodeModels.NORNode;
+        return NodeModels.NORNode;
       case NodeTypes.G_NOT:
-        return nodeModels.NOTNode;
+        return NodeModels.NOTNode;
       case NodeTypes.G_OR:
-        return nodeModels.ORNode;
+        return NodeModels.ORNode;
       case NodeTypes.G_XNOR:
-        return nodeModels.XNORNode;
+        return NodeModels.XNORNode;
       case NodeTypes.G_XOR:
-        return nodeModels.XORNode;
+        return NodeModels.XORNode;
       default:
-        return nodeModels.NOTNode;
+        return NodeModels.NOTNode;
     }
   }
 
-  move(v: Vector2, useDelta = true): void {
+  move(v: Vector2i, useDelta = true): void {
     if (useDelta) {
       this.position.add(v);
-      this.collisionShape.moveShape(this.position, false);
+    } else if (this.imageMode === 'CENTER') {
+      Vector2i.sub(v, this.halfImageSize, this.position);
     } else {
-      Vector2.sub(
-        v,
-        new Vector2(this.imageWidth / 2.0, this.imageHeight / 2.0),
-        this.position
-      );
-      this.collisionShape.moveShape(this.position, false);
+      this.position.copy(v);
     }
+    this.collisionShape.moveShape(this.position, false);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {

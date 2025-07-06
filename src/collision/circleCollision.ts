@@ -1,16 +1,17 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
+import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 
 export default class CircleCollision implements Collision {
-  public position: Vector2;
+  public position: Vector2i;
   public readonly radius: number;
   private readonly radiusSquared: number;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
   public borderColor: string;
 
-  constructor(position: Vector2, radius: number, borderColor = '#FF8008DC') {
+  constructor(position: Vector2i, radius: number, borderColor = '#FF8008DC') {
     this.position = position;
     this.radius = radius;
     this.radiusSquared = radius * radius;
@@ -34,35 +35,41 @@ export default class CircleCollision implements Collision {
     ctx.restore();
   }
 
-  moveShape(v: Vector2, useDelta = true): void {
+  moveShape(v: Vector2i, useDelta = true): void {
     if (useDelta) this.position.add(v);
-    else Vector2.copy(v, this.position);
+    else this.position.copy(v);
     this.drawPath = this.generatePath();
   }
 
-  collisionWithPoint(point: Vector2): boolean {
-    return Vector2.sub(this.position, point).lenSquared() < this.radiusSquared;
+  collisionWithPoint(point: Vector2i): boolean {
+    return Vector2i.sub(this.position, point).lenSquared() < this.radiusSquared;
   }
 
   collisionWithBox(other: BoxCollision): boolean {
-    let distance = 0;
-    if (this.position.x < other.globalPoints.b.x)
-      distance += Math.pow(other.globalPoints.b.x - this.position.x, 2);
-    else if (this.position.x > other.globalPoints.a.x)
-      distance += Math.pow(this.position.x - other.globalPoints.a.x, 2);
+    // Centro do círculo dentro do retângulo
+    if (other.collisionWithPoint(this.position)) return true;
 
-    if (this.position.y < other.globalPoints.b.y)
-      distance += Math.pow(other.globalPoints.b.y - this.position.y, 2);
-    else if (this.position.y > other.globalPoints.a.y)
-      distance += Math.pow(this.position.y - other.globalPoints.a.y, 2);
+    const closestRectPoint = Vector2i.max(
+      other.vertices.a,
+      Vector2i.min(other.vertices.c, this.position)
+    );
 
-    return distance < this.radiusSquared;
+    const distSquared = Vector2i.sub(
+      this.position,
+      closestRectPoint
+    ).lenSquared();
+
+    return distSquared < this.radiusSquared;
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
     return (
-      Vector2.sub(this.position, other.position).len() <
+      Vector2i.sub(this.position, other.position).len() <
       this.radius + other.radius
     );
+  }
+
+  collisionWithLine(other: LineCollision): boolean {
+    return other.collisionWithCircle(this);
   }
 }

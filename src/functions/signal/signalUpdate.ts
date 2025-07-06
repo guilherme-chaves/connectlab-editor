@@ -1,7 +1,7 @@
 import {
   SignalGraph,
   SignalGraphData,
-  slotStates,
+  signalOperation,
 } from '@connectlab-editor/types/common';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 import {signalOperations} from '@connectlab-editor/signal/signalOperations';
@@ -10,28 +10,35 @@ export default {
   updateGraph(signalGraph: SignalGraph, originId: number): void {
     const visited: Set<number> = new Set();
     const stack: Array<number> = [originId];
-    while (stack.length > 0) {
-      if (!visited.has(stack[0]) && signalGraph[stack[0]] !== undefined) {
+    let currentNode = stack.shift();
+    while (currentNode !== undefined) {
+      if (!visited.has(currentNode) && signalGraph[currentNode] !== undefined) {
         if (
-          signalGraph[stack[0]].nodeType < 100 ||
-          signalGraph[stack[0]].nodeType >= 200
+          signalGraph[currentNode].nodeType < 100 ||
+          signalGraph[currentNode].nodeType >= 200
         )
-          this.computeState(signalGraph, signalGraph[stack[0]]);
-        stack.push(...(signalGraph[stack[0]]?.signalTo ?? []));
+          this.computeState(signalGraph, signalGraph[currentNode]);
+        stack.push(...signalGraph[currentNode].signalTo.values());
       }
-      visited.add(stack[0]);
-      stack.shift();
+      visited.add(currentNode);
+      currentNode = stack.shift();
     }
   },
   computeState(signalGraph: SignalGraph, node: SignalGraphData): void {
     const op = this.getComputeFunction(node.nodeType);
-    for (const key of Object.keys(node.signalFrom))
-      node.signalFrom[parseInt(key)][1] = signalGraph[parseInt(key)]!.state;
-    node.state = op(node.signalFrom);
+    let bitPosition = 0;
+    let inputStates = 0;
+    for (const connectedNodeId of node.signalFrom.values()) {
+      if (connectedNodeId !== -1) {
+        const bitVal = signalGraph[connectedNodeId].output ? 1 : 0;
+        inputStates += bitVal << bitPosition;
+      }
+      bitPosition++;
+    }
+    //console.log(inputStates, bitPosition, node);
+    node.output = op(inputStates, bitPosition);
   },
-  getComputeFunction(
-    type: NodeTypes
-  ): (slotState: Record<number, [number, slotStates]>) => boolean {
+  getComputeFunction(type: NodeTypes): signalOperation {
     switch (type) {
       case NodeTypes.G_AND:
         return signalOperations.and;

@@ -1,4 +1,4 @@
-import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
+import {ConnectionEvents} from '@connectlab-editor/events/connectionEvents';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
@@ -23,7 +23,7 @@ interface CollisionList {
 export default class MouseEvents {
   private collisionList: CollisionList;
   private readonly _mouse: Mouse;
-  public movingObject: 'node' | 'connection' | 'text' | 'none';
+  static movingObject: 'node' | 'connection' | 'text' | 'none' = 'none';
 
   constructor(mouse: Mouse) {
     this._mouse = mouse;
@@ -33,7 +33,7 @@ export default class MouseEvents {
       connections: [],
       texts: [],
     };
-    this.movingObject = 'none';
+    MouseEvents.movingObject = 'none';
   }
 
   onMouseClick(editorEnv: EditorEnvironment): void {
@@ -48,7 +48,7 @@ export default class MouseEvents {
         editorEnv.slots,
         this._mouse.position
       );
-      const connections = connectionEvents.checkConnectionClick(
+      const connections = ConnectionEvents.checkConnectionClick(
         editorEnv.connections,
         this._mouse.position
       );
@@ -65,7 +65,7 @@ export default class MouseEvents {
       };
 
       // Escrever aqui ou chamar outras funções que tratem o que cada tipo de colisão encontrada deve responder
-      connectionEvents.addLine(editorEnv, this);
+      if (slots.length > 0) ConnectionEvents.newConnection(editorEnv, slots[0]);
       const node = editorEnv.nodes.get(this.collisionList.nodes[0]);
       if (node !== undefined && node.nodeType.id === NodeTypes.I_BUTTON) {
         node.onEvent(EditorEvents.MOUSE_CLICKED);
@@ -84,29 +84,28 @@ export default class MouseEvents {
   onMouseRelease(editorEnv: EditorEnvironment): void {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
-        if (this.collisionList.nodes.length !== 0) {
-          const node = editorEnv.nodes.get(this.collisionList.nodes[0]);
+        for (const nodeId of this.collisionList.nodes) {
+          const node = editorEnv.nodes.get(nodeId);
           if (
             node !== undefined &&
             node.componentType === ComponentType.INPUT &&
             node.onEvent(EditorEvents.MOUSE_RELEASED)
-          )
-            signalUpdate.updateGraph(
-              editorEnv.signalGraph,
-              this.collisionList.nodes[0]
-            );
+          ) {
+            signalUpdate.updateGraph(editorEnv.signalGraph, nodeId);
+          }
         }
       }
-      connectionEvents.fixLine(editorEnv, this._mouse.position);
+      ConnectionEvents.bindLine(editorEnv, this._mouse.position);
+      ConnectionEvents.reset();
       this._mouse.stateChanged = false;
     }
-    this.movingObject = 'none';
+    MouseEvents.movingObject = 'none';
   }
 
   onMouseMove(editorEnv: EditorEnvironment): boolean {
     if (this._mouse.clicked && this._mouse.dragged) {
       return (
-        connectionEvents.move(editorEnv, this, this._mouse.position) ||
+        ConnectionEvents.move(editorEnv, this._mouse.position) ||
         nodeEvents.move(editorEnv, this, this._mouse.position, false) ||
         textEvents.move(editorEnv.texts, this, this._mouse.position, false)
       );

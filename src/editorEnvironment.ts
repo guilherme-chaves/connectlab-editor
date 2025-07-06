@@ -7,14 +7,14 @@ import {
   TextList,
   SignalGraph,
 } from '@connectlab-editor/types/common';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
 import {ConnectionObject} from '@connectlab-editor/components/connectionComponent';
 import {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import {SlotObject} from '@connectlab-editor/components/slotComponent';
 import {TextObject} from '@connectlab-editor/components/textComponent';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2f from './types/vector2f';
 
 export type EditorEnvironmentObject = {
   id: string;
@@ -24,7 +24,15 @@ export type EditorEnvironmentObject = {
     slots: SlotObject[];
     texts: TextObject[];
   };
-  signal: SignalGraph;
+  signal: Record<
+    number,
+    {
+      output: boolean;
+      signalFrom: Array<[number, number]>;
+      signalTo: Array<number>;
+      nodeType: NodeTypes;
+    }
+  >;
 };
 
 class EditorEnvironment {
@@ -140,7 +148,15 @@ class EditorEnvironment {
         }
       }
     }
-    env.signal = this.signalGraph;
+    for (const [key, val] of Object.entries(this.signalGraph)) {
+      const keyI = parseInt(key);
+      env.signal[keyI] = {
+        output: val.output,
+        signalFrom: [...val.signalFrom.entries()],
+        signalTo: [...val.signalTo.values()],
+        nodeType: val.nodeType,
+      };
+    }
     return JSON.stringify(env);
   }
 
@@ -149,11 +165,21 @@ class EditorEnvironment {
     ctx: CanvasRenderingContext2D,
     imageList: ImageListObject
   ): EditorEnvironment {
+    const newSignalGraph: SignalGraph = {};
+    for (const [key, val] of Object.entries(data.signal)) {
+      const keyI = parseInt(key);
+      newSignalGraph[keyI] = {
+        output: val.output,
+        signalFrom: new Map(val.signalFrom),
+        signalTo: new Set(val.signalTo),
+        nodeType: val.nodeType,
+      };
+    }
     const newEnv = new EditorEnvironment(
       data.id,
       0,
       structuredClone(imageList),
-      data.signal
+      newSignalGraph
     );
     for (const nodeObj of data.data.nodes) {
       if (nodeObj.nodeType >= 0 && nodeObj.nodeType < 100)
@@ -221,7 +247,7 @@ class EditorEnvironment {
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
         lineObj.connectedTo.end,
-        lineObj.anchors.map(vo => new Vector2(vo.x, vo.y, vo.useInt))
+        lineObj.anchors.map(vo => new Vector2f(vo.x, vo.y))
       );
       if (lineObj.connectedTo.start)
         newEnv.slots

@@ -1,16 +1,20 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
-import Vector2 from '@connectlab-editor/types/vector2';
+import Vector2i from '@connectlab-editor/types/vector2i';
 import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
+import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 
-interface BoxPoints {
-  a: Vector2;
-  b: Vector2;
+// Sentido anti-horário, começando do ponto superior esquerdo
+interface BoxVertices {
+  a: Vector2i;
+  b: Vector2i;
+  c: Vector2i;
+  d: Vector2i;
 }
 
 export default class BoxCollision implements Collision {
-  public position: Vector2;
-  public readonly points: BoxPoints;
-  public readonly globalPoints: BoxPoints;
+  public position: Vector2i;
+  public readonly localVertices: BoxVertices;
+  public readonly vertices: BoxVertices;
   public readonly width: number;
   public readonly height: number;
   private drawPath: Path2D | undefined;
@@ -18,7 +22,7 @@ export default class BoxCollision implements Collision {
   public borderColor: string;
 
   constructor(
-    position: Vector2,
+    position: Vector2i,
     width = 2,
     height = 2,
     borderColor = '#FF8008DC'
@@ -27,28 +31,35 @@ export default class BoxCollision implements Collision {
     this.width = width;
     this.height = height;
     this.borderColor = borderColor;
-    this.points = this.setPoints();
+    this.localVertices = this.setLocalVertices();
     this.regenPath = false;
-    this.globalPoints = {
-      a: this.position,
-      b: Vector2.add(this.position, this.points.b),
+    this.vertices = {
+      a: Vector2i.add(this.position, this.localVertices.a),
+      b: Vector2i.add(this.position, this.localVertices.b),
+      c: Vector2i.add(this.position, this.localVertices.c),
+      d: Vector2i.add(this.position, this.localVertices.d),
     };
   }
 
-  private setGlobalPoints(): void {
-    Vector2.add(this.position, this.points.b, this.globalPoints.b);
+  private setVertices(): void {
+    Vector2i.add(this.position, this.localVertices.a, this.vertices.a);
+    Vector2i.add(this.position, this.localVertices.b, this.vertices.b);
+    Vector2i.add(this.position, this.localVertices.c, this.vertices.c);
+    Vector2i.add(this.position, this.localVertices.d, this.vertices.d);
   }
 
-  private setPoints(): BoxPoints {
-    return {
-      a: Vector2.ZERO,
-      b: new Vector2(this.width, this.height),
-    };
+  private setLocalVertices(): BoxVertices {
+    return Object.freeze({
+      a: new Vector2i(),
+      b: new Vector2i(this.width, 0),
+      c: new Vector2i(this.width, this.height),
+      d: new Vector2i(0, this.height),
+    });
   }
 
   private generatePath(): Path2D {
     const path = new Path2D();
-    path.rect(this.position.x, this.position.y, this.width, this.height);
+    path.rect(this.vertices.a.x, this.vertices.a.y, this.width, this.height);
     this.regenPath = false;
     return path;
   }
@@ -62,32 +73,48 @@ export default class BoxCollision implements Collision {
     ctx.restore();
   }
 
-  moveShape(v: Vector2, useDelta = true): void {
+  moveShape(v: Vector2i, useDelta = true): void {
     if (useDelta) this.position.add(v);
-    else Vector2.copy(v, this.position);
-    this.setGlobalPoints();
+    else this.position.copy(v);
+    this.setVertices();
     this.regenPath = true;
   }
 
-  collisionWithPoint(point: Vector2): boolean {
+  collisionWithPoint(point: Vector2i): boolean {
     return (
-      point.x > this.globalPoints.a.x &&
-      point.x < this.globalPoints.b.x &&
-      point.y > this.globalPoints.a.y &&
-      point.y < this.globalPoints.b.y
+      point.x > this.vertices.a.x &&
+      point.x < this.vertices.c.x &&
+      point.y > this.vertices.a.y &&
+      point.y < this.vertices.c.y
     );
   }
 
   collisionWithBox(other: BoxCollision): boolean {
     return !(
-      this.globalPoints.b.x < other.globalPoints.a.x ||
-      this.globalPoints.b.y < other.globalPoints.a.y ||
-      this.globalPoints.a.x > other.globalPoints.b.x ||
-      this.globalPoints.a.y > other.globalPoints.b.y
+      this.vertices.c.x < other.vertices.a.x ||
+      this.vertices.c.y < other.vertices.a.y ||
+      this.vertices.a.x > other.vertices.c.x ||
+      this.vertices.a.y > other.vertices.c.y
     );
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
     return other.collisionWithBox(this);
+  }
+
+  collisionWithLine(other: LineCollision): boolean {
+    const left = new LineCollision(this.vertices.a, this.vertices.d);
+    const top = new LineCollision(this.vertices.a, this.vertices.b);
+    const right = new LineCollision(this.vertices.b, this.vertices.c);
+    const bottom = new LineCollision(this.vertices.c, this.vertices.d);
+
+    return (
+      this.collisionWithPoint(other.position) ||
+      this.collisionWithPoint(other.endPosition) ||
+      other.collisionWithLine(left) ||
+      other.collisionWithLine(top) ||
+      other.collisionWithLine(right) ||
+      other.collisionWithLine(bottom)
+    );
   }
 }

@@ -1,27 +1,23 @@
 // eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeAll, describe} from 'vitest';
+import {expect, test, beforeAll, describe, beforeEach} from 'vitest';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import EditorEnvironment from '@connectlab-editor/environment';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import {NodeTypes} from '@connectlab-editor/types/enums';
 import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import {connectionEvents} from '@connectlab-editor/events/connectionEvents';
-import Vector2 from '@connectlab-editor/types/vector2';
+import {ConnectionEvents} from '@connectlab-editor/events/connectionEvents';
+import Vector2i from '@connectlab-editor/types/vector2i';
 
-let editorEnv: EditorEnvironment;
-// let inputId: number;
-let connectionId: number;
-let connectionId2: number;
-// let outputId: number;
-let mouse: Mouse;
-let mouseEvents: MouseEvents;
+const editorEnv: EditorEnvironment = new EditorEnvironment(
+  'test',
+  undefined,
+  preloadNodeImages()
+);
+const mouse: Mouse = new Mouse();
 
 describe('Testes dos eventos relacionados à conexões', () => {
   beforeAll(() => {
-    editorEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
-    mouse = new Mouse();
-    mouseEvents = new MouseEvents(mouse);
     addComponent.input(
       undefined,
       editorEnv,
@@ -58,7 +54,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       400,
       500
     );
-    connectionId = addComponent.connection(
+    addComponent.connection(
       undefined,
       editorEnv,
       170,
@@ -68,7 +64,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       {nodeId: 0, slotId: 1},
       {nodeId: 2, slotId: 3}
     );
-    connectionId2 = addComponent.connection(
+    addComponent.connection(
       undefined,
       editorEnv,
       editorEnv.slots.get(5)!.globalPosition.x,
@@ -79,97 +75,51 @@ describe('Testes dos eventos relacionados à conexões', () => {
       {nodeId: 6, slotId: 7}
     );
   });
-
-  test('Movimentar linha', () => {
-    connectionEvents.editingLine = true;
-    connectionEvents.editingLineId = connectionId;
-    connectionEvents.lineStartSlot = 1;
+  beforeEach(() => {
+    ConnectionEvents.reset();
+    expect(ConnectionEvents.editingLine).toBeUndefined();
+    expect(ConnectionEvents.movePoint).toBe(-1);
+    expect(ConnectionEvents.startSlot).toBeUndefined();
+    expect(ConnectionEvents.endSlot).toBeUndefined();
+  });
+  test('Adicionar uma nova conexão', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    expect(ConnectionEvents.newConnection(editorEnv, 1)).toBe(true);
+    expect(editorEnv.connections.size).toBe(3);
+  });
+  test('Não adicionar uma nova conexão caso o ID do slot seja inválido', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    expect(ConnectionEvents.newConnection(editorEnv, 0)).toBe(false);
+  });
+  test('Não adicionar uma nova conexão caso o mouse esteja realizando outra função', () => {
+    MouseEvents.movingObject = 'connection';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    expect(ConnectionEvents.newConnection(editorEnv, 1)).toBe(false);
+  });
+  test('Colisão do mouse com uma conexão', () => {
+    expect(editorEnv.connections.has(8)).toBe(true);
+    mouse.position = editorEnv.connections.get(8)!.position.clone();
     expect(
-      connectionEvents.move(editorEnv, mouseEvents, new Vector2(700, 250))
-    ).toBe(true);
-    expect(editorEnv.connections.get(connectionId)!.endPosition).toEqual({
-      _x: 700,
-      _y: 250,
-      useInt: true,
-    });
-  });
-
-  test('Não movimentar a conexão quando o mouse estiver em outro estado', () => {
-    mouseEvents.movingObject = 'node';
-    expect(
-      connectionEvents.move(editorEnv, mouseEvents, new Vector2(800, 400))
-    ).toBe(false);
-    expect(editorEnv.connections.get(connectionId)!.endPosition).toEqual({
-      _x: 700,
-      _y: 250,
-      useInt: true,
-    });
-  });
-
-  test('Não movimentar se a conexão não existir', () => {
-    mouseEvents.movingObject = 'none';
-    connectionEvents.editingLineId = 70;
-    expect(
-      connectionEvents.move(editorEnv, mouseEvents, new Vector2(800, 400))
-    ).toBe(false);
-  });
-
-  test('Adicionar nova linha quando houver colisão com um slot', () => {
-    connectionEvents.resetConnEventParams();
-    mouse.position = editorEnv.slots.get(1)!.globalPosition;
-    mouse.clicked = true;
-
-    mouseEvents.onMouseClick(editorEnv);
-    connectionEvents.resetConnEventParams();
-    expect(connectionEvents.addLine(editorEnv, mouseEvents)).toBe(true);
-  });
-
-  test('Não adicionar nova linha quando não houver colisão com um slot', () => {
-    connectionEvents.resetConnEventParams();
-    mouse.position = new Vector2();
-    mouse.clicked = true;
-
-    mouseEvents.onMouseClick(editorEnv);
-    connectionEvents.resetConnEventParams();
-    expect(connectionEvents.addLine(editorEnv, mouseEvents)).toBe(false);
-  });
-
-  test('Fixar conexão com em um slot', () => {
-    connectionEvents.resetConnEventParams();
-    connectionEvents.editingLine = true;
-    connectionEvents.lineStartSlot = 1;
-    connectionEvents.editingLineId = connectionId;
-    connectionEvents.slotCollision = 3;
-    expect(
-      connectionEvents.fixLine(
-        editorEnv,
-        editorEnv.slots.get(3)!.globalPosition
+      ConnectionEvents.checkConnectionClick(
+        editorEnv.connections,
+        mouse.position
       )
-    ).toBe(true);
-  });
-
-  test('Não fixar linha se não houver colisão com um slot', () => {
-    connectionEvents.editingLineId = connectionId;
-    connectionEvents.editingLine = true;
-    expect(connectionEvents.fixLine(editorEnv, new Vector2())).toBe(false);
-    expect(editorEnv.connections.get(connectionId)).toBeUndefined();
-  });
-
-  test('Não fixar linha se os slots inicial e final forem o mesmo', () => {
-    connectionEvents.lineStartSlot = 5;
-    connectionEvents.editingLineId = connectionId2;
-    connectionEvents.editingLine = true;
-    connectionEvents.slotCollision = 5;
+    ).toBeOneOf([[8], [8, 10]]);
+    mouse.position = new Vector2i(240, 325);
     expect(
-      connectionEvents.fixLine(
-        editorEnv,
-        editorEnv.slots.get(5)!.globalPosition
+      ConnectionEvents.checkConnectionClick(
+        editorEnv.connections,
+        mouse.position
       )
-    ).toBe(false);
-    expect(editorEnv.connections.get(connectionId2)).toBeUndefined();
-  });
-
-  test('Não fixar linha se não estiver editando uma linha', () => {
-    expect(connectionEvents.fixLine(editorEnv, new Vector2())).toBe(false);
+    ).toEqual([8]);
+    mouse.position = new Vector2i(240, 315);
+    expect(
+      ConnectionEvents.checkConnectionClick(
+        editorEnv.connections,
+        mouse.position
+      )
+    ).toEqual([]);
   });
 });
