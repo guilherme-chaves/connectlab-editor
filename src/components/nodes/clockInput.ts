@@ -101,9 +101,6 @@ class ClockInput implements Node {
 
   onEvent(ev: EditorEvents): boolean {
     switch (ev) {
-      case EditorEvents.MOUSE_RELEASED:
-        this.state = !this.state;
-        break;
       case EditorEvents.FOCUS_IN:
         this.selected = true;
         break;

@@ -80,10 +80,10 @@ class ButtonInput implements Node {
   move(v: Vector2i, useDelta = true): void {
     if (useDelta) {
       this.position.add(v);
-    } else if (this.imageMode === 'UP_LEFT') {
-      this.position.copy(v);
-    } else {
+    } else if (this.imageMode === 'CENTER') {
       Vector2i.sub(v, this.halfImageSize, this.position);
+    } else {
+      this.position.copy(v);
     }
     this.collisionShape.moveShape(this.position, false);
   }

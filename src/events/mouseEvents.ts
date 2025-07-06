@@ -84,17 +84,15 @@ export default class MouseEvents {
   onMouseRelease(editorEnv: EditorEnvironment): void {
     if (!this._mouse.clicked && this._mouse.stateChanged) {
       if (!this._mouse.dragged) {
-        if (this.collisionList.nodes.length !== 0) {
-          const node = editorEnv.nodes.get(this.collisionList.nodes[0]);
+        for (const nodeId of this.collisionList.nodes) {
+          const node = editorEnv.nodes.get(nodeId);
           if (
             node !== undefined &&
             node.componentType === ComponentType.INPUT &&
             node.onEvent(EditorEvents.MOUSE_RELEASED)
-          )
-            signalUpdate.updateGraph(
-              editorEnv.signalGraph,
-              this.collisionList.nodes[0]
-            );
+          ) {
+            signalUpdate.updateGraph(editorEnv.signalGraph, nodeId);
+          }
         }
       }
       ConnectionEvents.bindLine(editorEnv, this._mouse.position);
