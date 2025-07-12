@@ -138,6 +138,8 @@ export const ConnectionEvents: ConnectionEventsType = {
       this.startSlot,
       this.endSlot
     );
+    // Forçar atualização do Path2D
+    this.editingLine.move(Vector2i.ZERO, true, movePointEnum.START, false);
 
     this.reset();
     return true;
