@@ -66,7 +66,6 @@ describe('Testes com o grafo de sinal lógico', () => {
       new Map<number, number>([[0, 2]])
     );
     signalUpdate.updateGraph(graph, 0);
-    console.log(graph);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(true);
 
     signalEvents.vertex.setState(graph, 0, false);
