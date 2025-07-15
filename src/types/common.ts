@@ -59,10 +59,12 @@ export type signalOperation = (
 ) => boolean;
 
 export interface SignalGraphData {
+  id: number;
   output: boolean;
   signalFrom: SignalSlot;
   signalTo: Set<number>;
   nodeType: NodeTypes;
+  signalGraph: SignalGraph;
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;

@@ -27,6 +27,7 @@ export type EditorEnvironmentObject = {
   signal: Record<
     number,
     {
+      id: number;
       output: boolean;
       signalFrom: Array<[number, number]>;
       signalTo: Array<number>;
@@ -151,6 +152,7 @@ class EditorEnvironment {
     for (const [key, val] of Object.entries(this.signalGraph)) {
       const keyI = parseInt(key);
       env.signal[keyI] = {
+        id: val.id,
         output: val.output,
         signalFrom: [...val.signalFrom.entries()],
         signalTo: [...val.signalTo.values()],
@@ -169,10 +171,12 @@ class EditorEnvironment {
     for (const [key, val] of Object.entries(data.signal)) {
       const keyI = parseInt(key);
       newSignalGraph[keyI] = {
+        id: val.id,
         output: val.output,
         signalFrom: new Map(val.signalFrom),
         signalTo: new Set(val.signalTo),
         nodeType: val.nodeType,
+        signalGraph: newSignalGraph,
       };
     }
     const newEnv = new EditorEnvironment(

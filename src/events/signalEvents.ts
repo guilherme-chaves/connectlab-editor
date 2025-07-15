@@ -27,27 +27,29 @@ export default {
           }
         }
         signalGraph[nodeId] = {
+          id: nodeId,
           output,
           signalFrom,
           signalTo,
           nodeType,
+          signalGraph,
         };
         signalUpdate.updateGraph(signalGraph, nodeId);
       }
     },
     remove(signalGraph: SignalGraph, nodeId: number): void {
-      const graphNode = signalGraph[nodeId];
-      if (graphNode === undefined) {
+      const node = signalGraph[nodeId];
+      if (node === undefined) {
         console.warn(
           `Node ${nodeId} não encontrado no grafo de sinal lógico ao ser removido!`
         );
         return;
       }
-      for (const signalToId of graphNode.signalTo.values()) {
+      for (const signalToId of node.signalTo.values()) {
         if (signalGraph[signalToId] === undefined) continue;
         signalGraph[signalToId].signalFrom.forEach((v, k, m) => {
           if (v === nodeId) {
-            m.delete(k);
+            m.set(k, -1);
           }
         });
       }
