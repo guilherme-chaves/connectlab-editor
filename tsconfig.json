@@ -28,6 +28,11 @@
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false,
     "removeComments": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "forceConsistentCasingInFileNames": true,
+    "stripInternal": true,
+    "pretty": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
