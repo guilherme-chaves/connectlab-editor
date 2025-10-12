@@ -6,6 +6,7 @@ import {
   SlotList,
   TextList,
   SignalGraph,
+  SignalGraphObject,
 } from '@connectlab-editor/types/common';
 import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
@@ -19,20 +20,12 @@ import Vector2f from './types/vector2f';
 export type EditorEnvironmentObject = {
   id: string
   data: {
-    nodes: NodeObject[];
-    connections: ConnectionObject[];
-    slots: SlotObject[];
-    texts: TextObject[];
-  };
-  signal: Record<
-    number,
-    {
-      output: boolean;
-      signalFrom: Array<[number, number]>;
-      signalTo: Array<number>;
-      nodeType: NodeTypes;
-    }
-  >;
+    nodes: NodeObject[]
+    connections: ConnectionObject[]
+    slots: SlotObject[]
+    texts: TextObject[]
+  }
+  signal: SignalGraphObject[]
 };
 
 class EditorEnvironment {
@@ -129,7 +122,7 @@ class EditorEnvironment {
         slots: [],
         texts: [],
       },
-      signal: {},
+      signal: [],
     };
     for (const [key, map] of Object.entries(this.components)) {
       for (const component of map.values()) {
@@ -151,12 +144,15 @@ class EditorEnvironment {
     }
     for (const [key, val] of Object.entries(this.signalGraph)) {
       const keyI = parseInt(key);
-      env.signal[keyI] = {
-        output: val.output,
-        signalFrom: [...val.signalFrom.entries()],
-        signalTo: [...val.signalTo.values()],
-        nodeType: val.nodeType,
-      };
+      env.signal.push({
+        id: keyI,
+        data: {
+          output: val.output,
+          signalFrom: [...val.signalFrom.entries()],
+          signalTo: [...val.signalTo.values()],
+          nodeType: val.nodeType,
+        },
+      });
     }
     return JSON.stringify(env);
   }
@@ -170,10 +166,12 @@ class EditorEnvironment {
     for (const [key, val] of Object.entries(data.signal)) {
       const keyI = parseInt(key);
       newSignalGraph[keyI] = {
-        output: val.output,
-        signalFrom: new Map(val.signalFrom),
-        signalTo: new Set(val.signalTo),
-        nodeType: val.nodeType,
+        output: val.data.output,
+        signalFrom: new Map(
+          val.data.signalFrom.map(v => [v[0], v[1]]),
+        ),
+        signalTo: new Set(val.data.signalTo),
+        nodeType: val.data.nodeType,
       };
     }
     const newEnv = new EditorEnvironment(

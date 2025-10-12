@@ -57,12 +57,22 @@ export type signalOperation = (
 ) => boolean;
 
 export interface SignalGraphData {
-  output: boolean;
-  signalFrom: SignalSlot;
-  signalTo: Set<number>;
-  nodeType: NodeTypes;
+  output: boolean
+  signalFrom: Map<number, number> // Map<slotId, nodeConnectedId]
+  signalTo: Set<number> // nodeConnectedId
+  nodeType: NodeTypes
 }
 
 export type SignalGraph = Record<number, SignalGraphData>;
 
-export type VectorObject = {x: number; y: number};
+export type VectorObject = { x: number, y: number };
+
+export type SignalGraphObject = {
+  id: number
+  data: {
+    output: boolean
+    signalFrom: number[][]
+    signalTo: Array<number>
+    nodeType: NodeTypes
+  }
+};

@@ -22,22 +22,14 @@ export function loadFile(
     const jsonData: unknown = JSON.parse(new TextDecoder().decode(unzipped));
 
     if (
-      typeof jsonData.id !== 'string' &&
-      typeof jsonData.data.nodes !== 'object' &&
-      Number.isInteger(jsonData.data.nodes.length) &&
-      typeof jsonData.data.connections !== 'object' &&
-      Number.isInteger(jsonData.data.connections.length) &&
-      typeof jsonData.data.slots !== 'object' &&
-      Number.isInteger(jsonData.data.slots.length) &&
-      typeof jsonData.data.texts !== 'object' &&
-      Number.isInteger(jsonData.data.texts.length) &&
-      typeof jsonData.signal !== 'object'
+      !fileValidator(jsonData)
     ) {
       window.alert(
-        'Falha ao carregar projeto! Arquivo inválido ou corrompido.'
+        'Falha ao carregar projeto! Arquivo inválido ou corrompido.',
       );
       console.error(
-        'Falha ao carregar projeto! Arquivo inválido ou corrompido.'
+        'Falha ao carregar projeto! Arquivo inválido ou corrompido.',
+        fileValidator.errors,
       );
       return;
     }
