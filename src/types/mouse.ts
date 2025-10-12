@@ -24,12 +24,12 @@ export default class Mouse {
 
   get dragged(): boolean {
     const mouseMovement = Vector2i.sub(this.position, this.clickStartPosition);
-    this.mouseDragged =
-      this.mouseDragged ||
-      mouseMovement.x > this.clickToDragThreshold ||
-      mouseMovement.x < -this.clickToDragThreshold ||
-      mouseMovement.y > this.clickToDragThreshold ||
-      mouseMovement.y < -this.clickToDragThreshold;
+    this.mouseDragged
+      = this.mouseDragged
+        || mouseMovement.x > this.clickToDragThreshold
+        || mouseMovement.x < -this.clickToDragThreshold
+        || mouseMovement.y > this.clickToDragThreshold
+        || mouseMovement.y < -this.clickToDragThreshold;
     return this.mouseDragged;
   }
 
@@ -41,9 +41,10 @@ export default class Mouse {
     this.mouseStateChanged = value;
     if (this.alreadyClicked) {
       this.doubleClicked = this.mouseClicked;
-    } else {
+    }
+    else {
       this.alreadyClicked = true;
-      setTimeout(() => (this.alreadyClicked = false), this.doubleClickTimer);
+      setTimeout(() => this.alreadyClicked = false, this.doubleClickTimer);
     }
   }
 }

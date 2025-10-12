@@ -1,25 +1,27 @@
-import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
+import CircleCollision
+  from '@connectlab-editor/collisionShapes/circleCollision';
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
 import Vector2i from '@connectlab-editor/types/vector2i';
-import {VectorObject} from '@connectlab-editor/types/common';
-import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
-import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
+import { VectorObject } from '@connectlab-editor/types/common';
+import { ComponentType, EditorEvents } from '@connectlab-editor/types/enums';
+import ConnectionComponent
+  from '@connectlab-editor/components/connectionComponent';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 
 export interface SlotObject extends ComponentObject {
-  id: number;
-  componentType: ComponentType;
-  position: VectorObject;
-  parentId: number;
-  slotIdAtParent: number;
-  connectionIds: number[];
-  inSlot: boolean;
-  color: string;
-  colorActive: string;
-  radius: number;
-  attractionRadius: number;
+  id: number
+  componentType: ComponentType
+  position: VectorObject
+  parentId: number
+  slotIdAtParent: number
+  connectionIds: number[]
+  inSlot: boolean
+  color: string
+  colorActive: string
+  radius: number
+  attractionRadius: number
 }
 
 export default class SlotComponent implements Component {
@@ -37,7 +39,8 @@ export default class SlotComponent implements Component {
   private color: string;
   private colorActive: string;
   private radius: number;
-  private attractionRadius: number; // Área de atração do slot para linhas a serem conectadas
+  // Área de atração do slot para linhas a serem conectadas
+  private attractionRadius: number;
   public collisionShape: CircleCollision;
 
   get slotConnections(): Array<ConnectionComponent> {
@@ -48,7 +51,8 @@ export default class SlotComponent implements Component {
     if (this.inSlot) {
       this._slotConnections.splice(0, this._slotConnections.length);
       this._slotConnections.push(value[0]);
-    } else this._slotConnections = value;
+    }
+    else this._slotConnections = value;
   }
 
   constructor(
@@ -61,7 +65,7 @@ export default class SlotComponent implements Component {
     radius = 4,
     attractionRadius = 12,
     color = '#0880FF',
-    colorActive = '#FF0000'
+    colorActive = '#FF0000',
   ) {
     this.id = id;
     this.position = position;
@@ -78,7 +82,7 @@ export default class SlotComponent implements Component {
     this.attractionRadius = attractionRadius;
     this.collisionShape = new CircleCollision(
       this.globalPosition,
-      this.attractionRadius
+      this.attractionRadius,
     );
     this.regenPath = false;
   }
@@ -98,7 +102,7 @@ export default class SlotComponent implements Component {
       this.globalPosition.y,
       this.radius,
       0,
-      Math.PI * 2
+      Math.PI * 2,
     );
     return path;
   }

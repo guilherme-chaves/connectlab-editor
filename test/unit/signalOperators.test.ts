@@ -1,6 +1,5 @@
-/* eslint-disable node/no-unpublished-import */
-import {signalOperations} from '@connectlab-editor/signal/signalOperations';
-import {expect, test, describe} from 'vitest';
+import { signalOperations } from '@connectlab-editor/signal/signalOperations';
+import { expect, test, describe } from 'vitest';
 
 describe('Testes de prova das funções de matemática booleana', () => {
   test('AND - 2 operadores', () => {

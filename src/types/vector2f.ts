@@ -1,5 +1,5 @@
 import Vector2 from '@connectlab-editor/interfaces/vector2Interface';
-import {VectorObject} from '@connectlab-editor/types/common';
+import { VectorObject } from '@connectlab-editor/types/common';
 
 export default class Vector2f implements Vector2 {
   type: 'int' | 'float' = 'float';
@@ -9,18 +9,23 @@ export default class Vector2f implements Vector2 {
   static get ZERO(): Vector2f {
     return new Vector2f();
   }
+
   static get ONE(): Vector2f {
     return new Vector2f(1, 1);
   }
+
   static get UP(): Vector2f {
     return new Vector2f(0, -1);
   }
+
   static get DOWN(): Vector2f {
     return new Vector2f(0, 1);
   }
+
   static get LEFT(): Vector2f {
     return new Vector2f(-1, -0);
   }
+
   static get RIGHT(): Vector2f {
     return new Vector2f(1, 0);
   }
@@ -45,7 +50,8 @@ export default class Vector2f implements Vector2 {
     if (typeof xOrVector2 === 'number') {
       this.x = xOrVector2;
       this.y = y;
-    } else if (Vector2f.isVector2(xOrVector2)) {
+    }
+    else if (Vector2f.isVector2(xOrVector2)) {
       this.x = xOrVector2.x;
       this.y = xOrVector2.y;
     }
@@ -53,12 +59,12 @@ export default class Vector2f implements Vector2 {
 
   static isVector2(obj: unknown): obj is Vector2 {
     return (
-      typeof obj === 'object' &&
-      obj !== null &&
-      '_x' in obj &&
-      '_y' in obj &&
-      'type' in obj &&
-      (obj.type === 'int' || obj.type === 'float')
+      typeof obj === 'object'
+      && obj !== null
+      && '_x' in obj
+      && '_y' in obj
+      && 'type' in obj
+      && (obj.type === 'int' || obj.type === 'float')
     );
   }
 
@@ -66,7 +72,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(other)) {
       this.x += other.x;
       this.y += other.y;
-    } else {
+    }
+    else {
       this.x += other;
       this.y += other;
     }
@@ -78,7 +85,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(v2OrS)) {
       out.x = v1.x + v2OrS.x;
       out.y = v1.y + v2OrS.y;
-    } else {
+    }
+    else {
       out.x = v1.x + v2OrS;
       out.y = v1.y + v2OrS;
     }
@@ -89,7 +97,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(other)) {
       this.x -= other.x;
       this.y -= other.y;
-    } else {
+    }
+    else {
       this.x -= other;
       this.y -= other;
     }
@@ -101,7 +110,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(v2OrS)) {
       out.x = v1.x - v2OrS.x;
       out.y = v1.y - v2OrS.y;
-    } else {
+    }
+    else {
       out.x = v1.x - v2OrS;
       out.y = v1.y - v2OrS;
     }
@@ -112,7 +122,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(other)) {
       this.x *= other.x;
       this.y *= other.y;
-    } else {
+    }
+    else {
       this.x *= other;
       this.y *= other;
     }
@@ -124,7 +135,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(v2orS)) {
       out.x = v1.x * v2orS.x;
       out.y = v1.y * v2orS.y;
-    } else {
+    }
+    else {
       out.x = v1.x * v2orS;
       out.y = v1.y * v2orS;
     }
@@ -135,7 +147,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(other)) {
       this.x /= other.x;
       this.y /= other.y;
-    } else {
+    }
+    else {
       this.x /= other;
       this.y /= other;
     }
@@ -147,7 +160,8 @@ export default class Vector2f implements Vector2 {
     if (Vector2f.isVector2(v2orS)) {
       out.x = v1.x / v2orS.x;
       out.y = v1.y / v2orS.y;
-    } else {
+    }
+    else {
       out.x = v1.x / v2orS;
       out.y = v1.y / v2orS;
     }
@@ -224,8 +238,8 @@ export default class Vector2f implements Vector2 {
 
   equals(other: Vector2, precision = 1e-4): boolean {
     return (
-      Math.abs(this.x - other.x) < precision &&
-      Math.abs(this.y - other.y) < precision
+      Math.abs(this.x - other.x) < precision
+      && Math.abs(this.y - other.y) < precision
     );
   }
 

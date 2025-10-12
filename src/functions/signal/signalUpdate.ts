@@ -3,8 +3,8 @@ import {
   SignalGraphData,
   signalOperation,
 } from '@connectlab-editor/types/common';
-import {NodeTypes} from '@connectlab-editor/types/enums';
-import {signalOperations} from '@connectlab-editor/signal/signalOperations';
+import { NodeTypes } from '@connectlab-editor/types/enums';
+import { signalOperations } from '@connectlab-editor/signal/signalOperations';
 
 export default {
   updateGraph(signalGraph: SignalGraph, originId: number): void {
@@ -14,8 +14,8 @@ export default {
     while (currentNode !== undefined) {
       if (!visited.has(currentNode) && signalGraph[currentNode] !== undefined) {
         if (
-          signalGraph[currentNode].nodeType < 100 ||
-          signalGraph[currentNode].nodeType >= 200
+          signalGraph[currentNode].nodeType < NodeTypes.I_SWITCH
+          || signalGraph[currentNode].nodeType >= NodeTypes.O_LED_RED
         )
           this.computeState(signalGraph, signalGraph[currentNode]);
         stack.push(...signalGraph[currentNode].signalTo.values());
@@ -35,7 +35,7 @@ export default {
       }
       bitPosition++;
     }
-    //console.log(inputStates, bitPosition, node);
+    // console.log(inputStates, bitPosition, node);
     node.output = op(inputStates, bitPosition);
   },
   getComputeFunction(type: NodeTypes): signalOperation {

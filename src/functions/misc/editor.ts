@@ -1,11 +1,12 @@
-import {gzipSync, gunzipSync} from 'fflate';
+import { gzipSync, gunzipSync } from 'fflate';
 import EditorEnvironment from '@connectlab-editor/environment';
 import Editor from '@connectlab-editor/editor';
+import { fileValidator } from '@connectlab-editor/types/file';
 
 export function loadFile(
   editor: Editor,
   ctx: CanvasRenderingContext2D,
-  ev: Event
+  ev: Event,
 ): void {
   if (!ev.target) {
     console.error('Falha ao tentar carregar os dados da entrada de dados');
@@ -18,7 +19,8 @@ export function loadFile(
   reader.onload = () => {
     if (!reader.result || typeof reader.result === 'string') return;
     const unzipped = gunzipSync(new Uint8Array(reader.result));
-    const jsonData = JSON.parse(new TextDecoder().decode(unzipped));
+    const jsonData: unknown = JSON.parse(new TextDecoder().decode(unzipped));
+
     if (
       typeof jsonData.id !== 'string' &&
       typeof jsonData.data.nodes !== 'object' &&
@@ -42,7 +44,7 @@ export function loadFile(
     editor.editorEnv = EditorEnvironment.createFromJson(
       jsonData,
       ctx,
-      editor.editorEnv.nodeImageList
+      editor.editorEnv.nodeImageList,
     );
   };
 }
@@ -50,32 +52,31 @@ export function loadFile(
 export function saveToFile(editorEnv: EditorEnvironment): void {
   const fileName = window.prompt(
     'Salvar projeto como:',
-    `${editorEnv.documentId}-${Date.now()}`
+    `${editorEnv.documentId}-${Date.now()}`,
   );
   if (fileName === null) return;
   const a = document.createElement('a');
   const file = new TextEncoder().encode(editorEnv.saveAsJson());
-  const compressed = gzipSync(file, {level: 6});
+  const compressed = gzipSync(file, { level: 6 });
   a.href = URL.createObjectURL(
-    new Blob([compressed], {type: 'application/gzip'})
+    new Blob([compressed as BlobPart], { type: 'application/gzip' }),
   );
   a.download = `${fileName}.simulation`;
   a.click();
 }
 
 export function clearEditor(
-  editorEnv: EditorEnvironment
+  editorEnv: EditorEnvironment,
 ): EditorEnvironment | null {
   if (
     confirm(
-      'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!'
+      'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!',
     ) === true
   ) {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return new EditorEnvironment(
       editorEnv.documentId,
       0,
-      editorEnv.nodeImageList
+      editorEnv.nodeImageList,
     );
   }
   return null;

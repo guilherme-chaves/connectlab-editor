@@ -1,5 +1,4 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {expect, test, describe} from 'vitest';
+import { expect, test, describe } from 'vitest';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import connectionPath from '@connectlab-editor/functions/connectionPath';
 import Vector2i from '@connectlab-editor/types/vector2i';
@@ -16,7 +15,7 @@ describe('Testes com a geração da conexão entre componentes', () => {
       6,
       nPos.x - pPos.x,
       6,
-      nPos.y - pPos.y
+      nPos.y - pPos.y,
     );
     expect(size).toEqual(new Vector2f(290, 6));
   });
@@ -29,7 +28,7 @@ describe('Testes com a geração da conexão entre componentes', () => {
       6,
       nPos.x - pPos.x,
       6,
-      nPos.y - pPos.y
+      nPos.y - pPos.y,
     );
     expect(size).toEqual(new Vector2f(290, 6));
   });
@@ -42,7 +41,7 @@ describe('Testes com a geração da conexão entre componentes', () => {
       6,
       nPos.x - pPos.x,
       6,
-      nPos.y - pPos.y
+      nPos.y - pPos.y,
     );
     expect(size).not.toEqual(new Vector2f(290, 6));
   });

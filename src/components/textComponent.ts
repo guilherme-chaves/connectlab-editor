@@ -1,5 +1,5 @@
-import {VectorObject} from '@connectlab-editor/types/common';
-import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
+import { VectorObject } from '@connectlab-editor/types/common';
+import { ComponentType, EditorEvents } from '@connectlab-editor/types/enums';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import Component, {
@@ -7,12 +7,12 @@ import Component, {
 } from '@connectlab-editor/interfaces/componentInterface';
 
 export interface TextObject extends ComponentObject {
-  id: number;
-  componentType: ComponentType;
-  position: VectorObject;
-  text: string;
-  parent: {id: number; type: ComponentType} | null;
-  style: string;
+  id: number
+  componentType: ComponentType
+  position: VectorObject
+  text: string
+  parent: { id: number, type: ComponentType } | null
+  style: string
 }
 
 class TextComponent implements Component {
@@ -20,7 +20,7 @@ class TextComponent implements Component {
   public position: Vector2i;
   public readonly componentType: ComponentType;
   public text: string;
-  public parent: {id: number; type: ComponentType} | null;
+  public parent: { id: number, type: ComponentType } | null;
   public style: string;
   private textSize: Vector2i;
   public collisionShape: BoxCollision;
@@ -32,8 +32,8 @@ class TextComponent implements Component {
     position: Vector2i,
     text = '',
     style = '12px sans-serif',
-    parent: {id: number; type: ComponentType} | null,
-    ctx: CanvasRenderingContext2D
+    parent: { id: number, type: ComponentType } | null,
+    ctx: CanvasRenderingContext2D,
   ) {
     this.id = id;
     this.position = position;
@@ -47,7 +47,7 @@ class TextComponent implements Component {
     this.collisionShape = new BoxCollision(
       this.position,
       this.textSize.x,
-      this.textSize.y
+      this.textSize.y,
     );
     this.selected = false;
   }
@@ -59,8 +59,8 @@ class TextComponent implements Component {
     const textDimensions = this.canvasContext.measureText(text);
     const textSize = new Vector2i(
       textDimensions.width,
-      textDimensions.actualBoundingBoxDescent -
-        textDimensions.actualBoundingBoxAscent
+      textDimensions.actualBoundingBoxDescent
+      - textDimensions.actualBoundingBoxAscent,
     ).max(new Vector2i(16, 16));
     return textSize;
   }

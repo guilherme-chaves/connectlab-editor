@@ -1,5 +1,5 @@
 import loadImage from '@connectlab-editor/functions/preloadImage';
-import {ImageListObject} from '@connectlab-editor/types/common';
+import { ImageListObject } from '@connectlab-editor/types/common';
 import GATE_AND from '@connectlab-editor/gates/AND_ANSI.svg';
 import GATE_NAND from '@connectlab-editor/gates/NAND_ANSI.svg';
 import GATE_NOR from '@connectlab-editor/gates/NOR_ANSI.svg';
@@ -54,9 +54,13 @@ const imageList = [
 export default function preloadNodeImages(): ImageListObject {
   const images: ImageListObject = {};
   for (const imgPath of imageList) {
-    loadImage(imgPath).then(image => {
-      images[imgPath] = image;
-    });
+    loadImage(imgPath)
+      .then((image) => {
+        images[imgPath] = image;
+      })
+      .catch(() => {
+        console.warn('Erro ao carregar as imagens.');
+      });
   }
   return images;
 }

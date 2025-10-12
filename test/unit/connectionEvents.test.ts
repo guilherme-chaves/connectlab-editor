@@ -1,18 +1,17 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeAll, describe, beforeEach} from 'vitest';
+import { expect, test, beforeAll, describe, beforeEach } from 'vitest';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import EditorEnvironment from '@connectlab-editor/environment';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
-import {ConnectionEvents} from '@connectlab-editor/events/connectionEvents';
+import { ConnectionEvents } from '@connectlab-editor/events/connectionEvents';
 import Vector2i from '@connectlab-editor/types/vector2i';
 
 const editorEnv: EditorEnvironment = new EditorEnvironment(
   'test',
   undefined,
-  preloadNodeImages()
+  preloadNodeImages(),
 );
 const mouse: Mouse = new Mouse();
 
@@ -25,7 +24,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       600,
       NodeTypes.I_SWITCH,
       100,
-      300
+      300,
     );
     addComponent.output(
       undefined,
@@ -34,7 +33,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       600,
       NodeTypes.O_LED_RED,
       700,
-      300
+      300,
     );
     addComponent.input(
       undefined,
@@ -43,7 +42,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       600,
       NodeTypes.I_SWITCH,
       300,
-      100
+      100,
     );
     addComponent.output(
       undefined,
@@ -52,7 +51,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
       600,
       NodeTypes.O_LED_RED,
       400,
-      500
+      500,
     );
     addComponent.connection(
       undefined,
@@ -61,8 +60,8 @@ describe('Testes dos eventos relacionados à conexões', () => {
       325,
       723,
       364,
-      {nodeId: 0, slotId: 1},
-      {nodeId: 2, slotId: 3}
+      { nodeId: 0, slotId: 1 },
+      { nodeId: 2, slotId: 3 },
     );
     addComponent.connection(
       undefined,
@@ -71,8 +70,8 @@ describe('Testes dos eventos relacionados à conexões', () => {
       editorEnv.slots.get(5)!.globalPosition.y,
       editorEnv.slots.get(7)!.globalPosition.x,
       editorEnv.slots.get(7)!.globalPosition.y,
-      {nodeId: 4, slotId: 5},
-      {nodeId: 6, slotId: 7}
+      { nodeId: 4, slotId: 5 },
+      { nodeId: 6, slotId: 7 },
     );
   });
   beforeEach(() => {
@@ -104,22 +103,22 @@ describe('Testes dos eventos relacionados à conexões', () => {
     expect(
       ConnectionEvents.checkConnectionClick(
         editorEnv.connections,
-        mouse.position
-      )
+        mouse.position,
+      ),
     ).toBeOneOf([[8], [8, 10]]);
     mouse.position = new Vector2i(240, 325);
     expect(
       ConnectionEvents.checkConnectionClick(
         editorEnv.connections,
-        mouse.position
-      )
+        mouse.position,
+      ),
     ).toEqual([8]);
     mouse.position = new Vector2i(240, 315);
     expect(
       ConnectionEvents.checkConnectionClick(
         editorEnv.connections,
-        mouse.position
-      )
+        mouse.position,
+      ),
     ).toEqual([]);
   });
 });

@@ -1,10 +1,10 @@
-import {NodeList, SignalGraph} from '@connectlab-editor/types/common';
+import { NodeList, SignalGraph } from '@connectlab-editor/types/common';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
-import {componentEvents} from '@connectlab-editor/events/componentEvents';
+import { componentEvents } from '@connectlab-editor/events/componentEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
-import {EditorEvents, NodeTypes} from '@connectlab-editor/types/enums';
+import { EditorEvents, NodeTypes } from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {
@@ -16,14 +16,14 @@ export default {
     editorEnv: EditorEnvironment,
     mouseEvents: MouseEvents,
     v: Vector2i,
-    useDelta = true
+    useDelta = true,
   ): boolean {
     const nodeCollisions = mouseEvents.getCollisionList().nodes;
     if (
-      nodeCollisions.length === 0 ||
-      !(
-        MouseEvents.movingObject === 'none' ||
-        MouseEvents.movingObject === 'node'
+      nodeCollisions.length === 0
+      || !(
+        MouseEvents.movingObject === 'none'
+        || MouseEvents.movingObject === 'node'
       )
     )
       return false;
@@ -52,8 +52,8 @@ export default {
     const updateList: Array<number> = [];
     for (const node of nodes.values()) {
       if (
-        node.nodeType.id === NodeTypes.I_CLOCK &&
-        node.onEvent(EditorEvents.PHYSICS_ENGINE_CYCLE)
+        node.nodeType.id === NodeTypes.I_CLOCK
+        && node.onEvent(EditorEvents.PHYSICS_ENGINE_CYCLE)
       )
         updateList.push(node.id);
     }

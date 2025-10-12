@@ -1,11 +1,10 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {describe, test, expect, beforeAll} from 'vitest';
+import { describe, test, expect, beforeAll } from 'vitest';
 import pathFinder from '@connectlab-editor/functions/pathFinder';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import EditorEnvironment from '@connectlab-editor/environment';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
 import addComponent from '@connectlab-editor/functions/addComponent';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 import Vector2f from '@connectlab-editor/types/vector2f';
 
 const atan2ToDegree = (atan2: number): number => {
@@ -146,7 +145,7 @@ describe('Testes para verificar lista de nodes dentro da área de busca', () => 
     const searchArea = pathFinder.getSearchArea(p1, p2);
     const collisions = pathFinder.getCollisionsInArea(
       testEnv.nodes,
-      searchArea
+      searchArea,
     );
     expect(collisions.size).toBe(0);
   });
@@ -156,7 +155,7 @@ describe('Testes para verificar lista de nodes dentro da área de busca', () => 
     const searchArea = pathFinder.getSearchArea(p1, p2);
     const collisions = pathFinder.getCollisionsInArea(
       testEnv.nodes,
-      searchArea
+      searchArea,
     );
     expect(collisions.size).toBe(1);
     // Nodes centralizam a posição
@@ -168,7 +167,7 @@ describe('Testes para verificar lista de nodes dentro da área de busca', () => 
     const searchArea = pathFinder.getSearchArea(p1, p2);
     const collisions = pathFinder.getCollisionsInArea(
       testEnv.nodes,
-      searchArea
+      searchArea,
     );
     expect(collisions.size).toBe(3);
     // Nodes centralizam a posição
@@ -290,7 +289,7 @@ describe('Testes para verificar se uma colisão existe no próximo passo', () =>
     const current = new Vector2i(125, 0);
     const nextT = new Vector2f(0.5, 1);
     expect(
-      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes),
     ).toBe(false);
   });
   test('Colisão não existe - limítrofe horizontal', () => {
@@ -299,7 +298,7 @@ describe('Testes para verificar se uma colisão existe no próximo passo', () =>
     const current = new Vector2i(125, 0);
     const nextT = new Vector2f(0.5, 1);
     expect(
-      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes),
     ).toBe(false);
   });
   test('Colisão não existe - limítrofe vertical', () => {
@@ -308,7 +307,7 @@ describe('Testes para verificar se uma colisão existe no próximo passo', () =>
     const current = new Vector2i(125, 0);
     const nextT = new Vector2f(0.5, 1);
     expect(
-      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes),
     ).toBe(false);
   });
   test('Colisão existe - horizontal', () => {
@@ -317,7 +316,7 @@ describe('Testes para verificar se uma colisão existe no próximo passo', () =>
     const current = new Vector2i(0, 30);
     const nextT = new Vector2f(0.5, 0);
     expect(
-      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes),
     ).toBe(true);
   });
   test('Colisão existe - vertical', () => {
@@ -326,7 +325,7 @@ describe('Testes para verificar se uma colisão existe no próximo passo', () =>
     const current = new Vector2i(600, 0);
     const nextT = new Vector2f(0.5, 1);
     expect(
-      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes)
+      pathFinder.stepCollisionExists(start, end, current, nextT, testEnv.nodes),
     ).toBe(true);
   });
 });

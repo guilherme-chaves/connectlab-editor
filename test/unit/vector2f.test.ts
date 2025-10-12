@@ -1,5 +1,4 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeEach, describe} from 'vitest';
+import { expect, test, beforeEach, describe } from 'vitest';
 
 import Vector2f from '@connectlab-editor/types/vector2f';
 
@@ -97,16 +96,18 @@ describe('Teste de operações com vetores', () => {
       Vector2f.bilinear(
         new Vector2f(),
         new Vector2f(10, 10),
-        new Vector2f(0.7, 0.3)
-      )
+        new Vector2f(0.7, 0.3),
+      ),
     ).toEqual(new Vector2f(7, 3));
   });
 
-  test('Calcular a interpolação bilinear entre dois vetores (instância)', () => {
-    expect(
-      new Vector2f().bilinear(new Vector2f(10, 10), new Vector2f(0.7, 0.3))
-    ).toEqual(new Vector2f(7, 3));
-  });
+  test('Calcular a interpolação bilinear entre dois vetores (instância)',
+    () => {
+      expect(
+        new Vector2f().bilinear(new Vector2f(10, 10), new Vector2f(0.7, 0.3)),
+      ).toEqual(new Vector2f(7, 3));
+    },
+  );
 
   test('Calcular a equalidade entre vetores (inteiros - estático)', () => {
     expect(Vector2f.equals(v1, v2)).toBe(false);
@@ -120,7 +121,7 @@ describe('Teste de operações com vetores', () => {
 
   test('Calcular a equalidade entre vetores (floats - estático)', () => {
     expect(
-      Vector2f.equals(new Vector2f(0.3 / 0.1, 0), new Vector2f(3.0, 0))
+      Vector2f.equals(new Vector2f(0.3 / 0.1, 0), new Vector2f(3.0, 0)),
     ).toBe(true);
   });
 
@@ -130,7 +131,7 @@ describe('Teste de operações com vetores', () => {
 
   test('Calcular o mínimo entre dois vetores (estático)', () => {
     expect(Vector2f.min(new Vector2f(3, 0), new Vector2f(2, 5))).toEqual(
-      new Vector2f(2, 0)
+      new Vector2f(2, 0),
     );
   });
 
@@ -143,7 +144,7 @@ describe('Teste de operações com vetores', () => {
 
   test('Calcular o máximo entre dois vetores (estático)', () => {
     expect(Vector2f.max(new Vector2f(3, 0), new Vector2f(2, 5))).toEqual(
-      new Vector2f(3, 5)
+      new Vector2f(3, 5),
     );
   });
 

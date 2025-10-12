@@ -1,5 +1,5 @@
-import {ConnectionVertex} from '@connectlab-editor/types/common';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { ConnectionVertex } from '@connectlab-editor/types/common';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 import bgTexturePath from '@connectlab-editor/assets/bg-texture.svg';
 import {
   updateBackground,
@@ -39,7 +39,7 @@ export default class Editor {
     documentId: string,
     canvasID: string,
     backgroundID: string,
-    tickRate = 60.0
+    tickRate = 60.0,
   ) {
     this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
     this.mouse = new Mouse();
@@ -62,9 +62,9 @@ export default class Editor {
   }
 
   private createContext(
-    domElement: HTMLCanvasElement
+    domElement: HTMLCanvasElement,
   ): CanvasRenderingContext2D {
-    return domElement.getContext('2d', {desynchronized: true})!;
+    return domElement.getContext('2d', { desynchronized: true })!;
   }
 
   private loadBackgroundPattern(bgPath: string): void {
@@ -72,7 +72,7 @@ export default class Editor {
     backgroundImg.onload = () => {
       this.backgroundPattern = this.backgroundCtx.createPattern(
         backgroundImg,
-        'repeat'
+        'repeat',
       );
     };
     backgroundImg.src = bgPath;
@@ -80,18 +80,19 @@ export default class Editor {
 
   private getEditorArea(): Vector2i {
     const canvasParentEl = document.getElementById(
-      this.canvasId
+      this.canvasId,
     )?.parentElement;
     const v = new Vector2i(0, 0);
     if (canvasParentEl) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
       v.x = parseFloat(
-        computedStyle.width.substring(0, computedStyle.length - 2)
+        computedStyle.width.substring(0, computedStyle.length - 2),
       );
       v.y = parseFloat(
-        computedStyle.height.substring(0, computedStyle.length - 2)
+        computedStyle.height.substring(0, computedStyle.length - 2),
       );
-    } else {
+    }
+    else {
       v.x = window.innerWidth;
       v.y = window.innerHeight;
     }
@@ -129,14 +130,14 @@ export default class Editor {
     this.mouseEvents.onMouseRelease(this.editorEnv);
     nodeEvents.onPhysicsEngineUpdate(
       this.editorEnv.nodes,
-      this.editorEnv.signalGraph
+      this.editorEnv.signalGraph,
     );
   };
 
   node(
     type = NodeTypes.G_AND,
     x = this.mouse.position.x,
-    y = this.mouse.position.y
+    y = this.mouse.position.y,
   ): number {
     return addComponent.node(
       undefined,
@@ -145,14 +146,14 @@ export default class Editor {
       this.canvasCtx.canvas.height,
       type,
       x,
-      y
+      y,
     );
   }
 
   input(
     type = NodeTypes.I_SWITCH,
     x = this.mouse.position.x,
-    y = this.mouse.position.y
+    y = this.mouse.position.y,
   ): number {
     return addComponent.input(
       undefined,
@@ -161,14 +162,14 @@ export default class Editor {
       this.canvasCtx.canvas.height,
       type,
       x,
-      y
+      y,
     );
   }
 
   output(
     type = NodeTypes.O_LED_RED,
     x = this.mouse.position.x,
-    y = this.mouse.position.y
+    y = this.mouse.position.y,
   ): number {
     return addComponent.output(
       undefined,
@@ -177,7 +178,7 @@ export default class Editor {
       this.canvasCtx.canvas.height,
       type,
       x,
-      y
+      y,
     );
   }
 
@@ -187,7 +188,7 @@ export default class Editor {
     x2: number,
     y2: number,
     from?: ConnectionVertex,
-    to?: ConnectionVertex
+    to?: ConnectionVertex,
   ): number {
     return addComponent.connection(
       undefined,
@@ -197,7 +198,7 @@ export default class Editor {
       x2,
       y2,
       from,
-      to
+      to,
     );
   }
 
@@ -206,7 +207,7 @@ export default class Editor {
     x: number,
     y: number,
     style?: string,
-    parent?: Component
+    parent?: Component,
   ): number {
     return addComponent.text(
       undefined,
@@ -216,7 +217,7 @@ export default class Editor {
       x,
       y,
       style,
-      parent
+      parent,
     );
   }
 
@@ -229,7 +230,7 @@ export default class Editor {
     radius?: number,
     attractionRadius?: number,
     color?: string,
-    colorActive?: string
+    colorActive?: string,
   ): number {
     return addComponent.slot(
       undefined,
@@ -242,22 +243,22 @@ export default class Editor {
       radius,
       attractionRadius,
       color,
-      colorActive
+      colorActive,
     );
   }
 
   remove(): boolean {
     if (this.mouseEvents.getCollisionList().nodes.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().nodes[0]
+        this.mouseEvents.getCollisionList().nodes[0],
       );
     else if (this.mouseEvents.getCollisionList().connections.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().connections[0]
+        this.mouseEvents.getCollisionList().connections[0],
       );
     else if (this.mouseEvents.getCollisionList().texts.length !== 0)
       return this.editorEnv.removeComponent(
-        this.mouseEvents.getCollisionList().texts[0]
+        this.mouseEvents.getCollisionList().texts[0],
       );
     return false;
   }

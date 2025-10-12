@@ -33,6 +33,7 @@
     "forceConsistentCasingInFileNames": true,
     "stripInternal": true,
     "pretty": true,
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -49,6 +50,11 @@
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "**/*.mjs"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
   ]
 }

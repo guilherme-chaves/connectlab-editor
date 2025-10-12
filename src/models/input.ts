@@ -1,11 +1,11 @@
 import Vector2i from '@connectlab-editor/types/vector2i';
-import {NodeModel} from '@connectlab-editor/types/common';
+import { NodeModel } from '@connectlab-editor/types/common';
 import INPUT_OFF from '@connectlab-editor/gates/INPUT_OFF.svg';
 import INPUT_ON from '@connectlab-editor/gates/INPUT_ON.svg';
 import BUTTON_OFF from '@connectlab-editor/assets/gates/BUTTON_OFF.svg';
 import BUTTON_ON from '@connectlab-editor/assets/gates/BUTTON_ON.svg';
 import CLOCK from '@connectlab-editor/assets/gates/CLOCK.svg';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 
 export const SwitchInput: NodeModel = {
   id: NodeTypes.I_SWITCH,

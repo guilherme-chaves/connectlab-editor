@@ -7,17 +7,17 @@ import {
   TextList,
   SignalGraph,
 } from '@connectlab-editor/types/common';
-import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
+import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
-import {ConnectionObject} from '@connectlab-editor/components/connectionComponent';
-import {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
+import { ConnectionObject } from '@connectlab-editor/components/connectionComponent';
+import { NodeObject } from '@connectlab-editor/interfaces/nodeInterface';
 import addComponent from '@connectlab-editor/functions/addComponent';
-import {SlotObject} from '@connectlab-editor/components/slotComponent';
-import {TextObject} from '@connectlab-editor/components/textComponent';
+import { SlotObject } from '@connectlab-editor/components/slotComponent';
+import { TextObject } from '@connectlab-editor/components/textComponent';
 import Vector2f from './types/vector2f';
 
 export type EditorEnvironmentObject = {
-  id: string;
+  id: string
   data: {
     nodes: NodeObject[];
     connections: ConnectionObject[];
@@ -53,7 +53,7 @@ class EditorEnvironment {
     nodeList = new Map(),
     slotList = new Map(),
     connectionList = new Map(),
-    textList = new Map()
+    textList = new Map(),
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
@@ -92,7 +92,7 @@ class EditorEnvironment {
 
   removeComponent(
     componentId: number = this._nextComponentId - 1,
-    type?: ComponentType
+    type?: ComponentType,
   ): boolean {
     if (type) {
       switch (type) {
@@ -107,12 +107,13 @@ class EditorEnvironment {
         case ComponentType.TEXT:
           return removeComponent.text(this, componentId);
       }
-    } else {
-      const component =
-        this.connections.get(componentId) ??
-        this.nodes.get(componentId) ??
-        this.slots.get(componentId) ??
-        this.texts.get(componentId);
+    }
+    else {
+      const component
+        = this.connections.get(componentId)
+          ?? this.nodes.get(componentId)
+          ?? this.slots.get(componentId)
+          ?? this.texts.get(componentId);
       if (component !== undefined)
         return this.removeComponent(component.id, component.componentType);
     }
@@ -163,7 +164,7 @@ class EditorEnvironment {
   static createFromJson(
     data: EditorEnvironmentObject,
     ctx: CanvasRenderingContext2D,
-    imageList: ImageListObject
+    imageList: ImageListObject,
   ): EditorEnvironment {
     const newSignalGraph: SignalGraph = {};
     for (const [key, val] of Object.entries(data.signal)) {
@@ -179,10 +180,11 @@ class EditorEnvironment {
       data.id,
       0,
       structuredClone(imageList),
-      newSignalGraph
+      newSignalGraph,
     );
     for (const nodeObj of data.data.nodes) {
-      if (nodeObj.nodeType >= 0 && nodeObj.nodeType < 100)
+      if (nodeObj.nodeType >= NodeTypes.G_AND
+        && nodeObj.nodeType < NodeTypes.I_SWITCH)
         // LOGIC GATES
         addComponent.node(
           nodeObj.id,
@@ -193,9 +195,10 @@ class EditorEnvironment {
           nodeObj.position.x,
           nodeObj.position.y,
           nodeObj.slotIds,
-          false
+          false,
         );
-      else if (nodeObj.nodeType >= 100 && nodeObj.nodeType < 200)
+      else if (nodeObj.nodeType >= NodeTypes.I_SWITCH
+        && nodeObj.nodeType < NodeTypes.O_LED_RED)
         // INPUTS
         addComponent.input(
           nodeObj.id,
@@ -206,9 +209,9 @@ class EditorEnvironment {
           nodeObj.position.x,
           nodeObj.position.y,
           nodeObj.slotIds,
-          false
+          false,
         );
-      else if (nodeObj.nodeType >= 200 && nodeObj.nodeType < 300)
+      else if (nodeObj.nodeType >= NodeTypes.O_LED_RED)
         // OUTPUTS
         addComponent.output(
           nodeObj.id,
@@ -219,7 +222,7 @@ class EditorEnvironment {
           nodeObj.position.x,
           nodeObj.position.y,
           nodeObj.slotIds,
-          false
+          false,
         );
     }
     for (const slotObj of data.data.slots) {
@@ -234,7 +237,7 @@ class EditorEnvironment {
         slotObj.radius,
         slotObj.attractionRadius,
         slotObj.color,
-        slotObj.colorActive
+        slotObj.colorActive,
       );
     }
     for (const lineObj of data.data.connections) {
@@ -247,7 +250,7 @@ class EditorEnvironment {
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
         lineObj.connectedTo.end,
-        lineObj.anchors.map(vo => new Vector2f(vo.x, vo.y))
+        lineObj.anchors.map(vo => new Vector2f(vo.x, vo.y)),
       );
       if (lineObj.connectedTo.start)
         newEnv.slots
@@ -266,7 +269,7 @@ class EditorEnvironment {
         textObj.text,
         textObj.position.x,
         textObj.position.y,
-        textObj.style
+        textObj.style,
       );
       break;
     }

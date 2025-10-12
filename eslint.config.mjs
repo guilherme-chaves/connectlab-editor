@@ -4,14 +4,22 @@ import tseslint from 'typescript-eslint';
 import stylistic from '@stylistic/eslint-plugin';
 
 export default defineConfig([
-  eslint.configs.recommended,
-  tseslint.configs.recommended,
-  stylistic.configs.recommended,
   {
-    files: ['**/*.js', '**/*.mjs', '**/*.ts'],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    files: ['**/*.ts', '**/*.tsx', '**/*.mjs'],
     plugins: {
       '@stylistic': stylistic,
     },
+    extends: [
+      eslint.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      stylistic.configs.recommended,
+    ],
     rules: {
       '@stylistic/semi': ['error', 'always'],
       '@stylistic/eol-last': 'error',
@@ -21,11 +29,16 @@ export default defineConfig([
       'prefer-arrow-callback': 'error',
       '@stylistic/no-trailing-spaces': 'error',
       '@stylistic/quotes': ['warn', 'single', { avoidEscape: true }],
-      'indent': ['error', 2],
+      '@stylistic/indent': ['error', 2],
       '@stylistic/dot-location': ['error', 'property'],
       '@stylistic/brace-style': 'error',
       '@stylistic/linebreak-style': ['error', 'unix'],
-      '@stylistic/max-len': ['error', { code: 80 }],
+      '@stylistic/max-len': ['error', {
+        code: 80,
+        comments: 120,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+      }],
       '@stylistic/no-confusing-arrow': 'error',
       '@stylistic/no-extra-parens': [
         'error',
@@ -41,6 +54,8 @@ export default defineConfig([
       '@stylistic/type-annotation-spacing': 'error',
       '@stylistic/type-generic-spacing': ['error'],
       '@stylistic/type-named-tuple-spacing': ['error'],
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      '@typescript-eslint/no-unsafe-assignment': 'warn',
     },
     ignores: ['build/', 'node_modules/', 'dist/', '*.json'],
   },

@@ -1,6 +1,6 @@
 import Editor from '@connectlab-editor/editor';
 import Keyboard from '@connectlab-editor/types/keyboard';
-import {saveToFile} from '@connectlab-editor/functions/editor';
+import { saveToFile } from '@connectlab-editor/functions/editor';
 import {
   inputKeycodes,
   nodeKeycodes,
@@ -14,11 +14,13 @@ export default class KeyboardEvents {
   constructor(keyboard: Keyboard) {
     this._keyboard = keyboard;
   }
+
   onKeyDown(editor: Editor): void {
     if (this._keyboard.nKeysPressed === 0) return;
     if (this._keyboard.keyPressed) {
       this._keyboard.keyHold = true;
-    } else {
+    }
+    else {
       this._keyboard.keyPressed = true;
       this._keyboard.keyHold = false;
     }
