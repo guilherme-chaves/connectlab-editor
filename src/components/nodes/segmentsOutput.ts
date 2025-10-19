@@ -92,10 +92,13 @@ class SegmentsOutput implements Node {
     if (!this.image) return;
     ctx.drawImage(this.image, this.position.x, this.position.y);
     if (Object.keys(this._images).length >= 8)
-      for (const slotState of this._signalData.signalFrom.entries()) {
-        if (slotState[1] >= 0)
+      for (const [slotId, connectedNodeId] of this._signalData.signalFrom) {
+        if (
+          connectedNodeId >= 0
+          && this._signalData.signalGraph[connectedNodeId].output === true
+        )
           ctx.drawImage(
-            this._images[slotState[0] + 1],
+            this._images[slotId + 1],
             this.position.x,
             this.position.y,
           );

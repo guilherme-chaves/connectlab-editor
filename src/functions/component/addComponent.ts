@@ -386,7 +386,7 @@ const addComponent = {
       new Vector2i(x, y),
       text,
       style,
-      parent ? { id: parent.id, type: parent.componentType } : null,
+      parent ? { id: parent.id, type: parent.componentType } : undefined,
       ctx,
     );
     editorEnv.texts.set(definedId, newText);

@@ -165,12 +165,14 @@ class EditorEnvironment {
     const newSignalGraph: SignalGraph = {};
     for (const signalNode of Object.values(data.signal)) {
       newSignalGraph[signalNode.id] = {
+        id: signalNode.id,
         output: signalNode.data.output,
         signalFrom: new Map(
           signalNode.data.signalFrom.map(v => [v[0], v[1]]),
         ),
         signalTo: new Set(signalNode.data.signalTo),
         nodeType: signalNode.data.nodeType,
+        signalGraph: newSignalGraph,
       };
     }
     const newEnv = new EditorEnvironment(

@@ -29,8 +29,8 @@ export default {
     let bitPosition = 0;
     let inputStates = 0;
     for (const connectedNodeId of node.signalFrom.values()) {
-      if (connectedNodeId !== -1) {
-        const bitVal = signalGraph[connectedNodeId].output ? 1 : 0;
+      if (connectedNodeId >= -1) {
+        const bitVal = signalGraph[connectedNodeId]?.output ? 1 : 0;
         inputStates += bitVal << bitPosition;
       }
       bitPosition++;
