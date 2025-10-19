@@ -133,6 +133,7 @@ const textSchema: JSONSchemaType<TextObject> = {
         type: { type: 'integer' },
       },
       required: ['id', 'type'],
+      nullable: true,
     },
     style: { type: 'string' },
   },

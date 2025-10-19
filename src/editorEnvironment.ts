@@ -43,10 +43,10 @@ class EditorEnvironment {
     startId = 0,
     imageList: ImageListObject,
     signalGraph: SignalGraph = {},
-    nodeList = new Map(),
-    slotList = new Map(),
-    connectionList = new Map(),
-    textList = new Map(),
+    nodeList = new Map() as NodeList,
+    slotList = new Map() as SlotList,
+    connectionList = new Map() as ConnectionList,
+    textList = new Map() as TextList,
   ) {
     this.documentId = documentId;
     this._nextComponentId = startId;
@@ -163,15 +163,14 @@ class EditorEnvironment {
     imageList: ImageListObject,
   ): EditorEnvironment {
     const newSignalGraph: SignalGraph = {};
-    for (const [key, val] of Object.entries(data.signal)) {
-      const keyI = parseInt(key);
-      newSignalGraph[keyI] = {
-        output: val.data.output,
+    for (const signalNode of Object.values(data.signal)) {
+      newSignalGraph[signalNode.id] = {
+        output: signalNode.data.output,
         signalFrom: new Map(
-          val.data.signalFrom.map(v => [v[0], v[1]]),
+          signalNode.data.signalFrom.map(v => [v[0], v[1]]),
         ),
-        signalTo: new Set(val.data.signalTo),
-        nodeType: val.data.nodeType,
+        signalTo: new Set(signalNode.data.signalTo),
+        nodeType: signalNode.data.nodeType,
       };
     }
     const newEnv = new EditorEnvironment(

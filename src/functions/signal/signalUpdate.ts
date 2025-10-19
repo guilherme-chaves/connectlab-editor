@@ -35,7 +35,6 @@ export default {
       }
       bitPosition++;
     }
-    // console.log(inputStates, bitPosition, node);
     node.output = op(inputStates, bitPosition);
   },
   getComputeFunction(type: NodeTypes): signalOperation {

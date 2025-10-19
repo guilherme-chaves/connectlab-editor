@@ -11,7 +11,7 @@ export interface TextObject extends ComponentObject {
   componentType: ComponentType
   position: VectorObject
   text: string
-  parent: { id: number, type: ComponentType } | null
+  parent?: { id: number, type: ComponentType }
   style: string
 }
 
@@ -20,7 +20,7 @@ class TextComponent implements Component {
   public position: Vector2i;
   public readonly componentType: ComponentType;
   public text: string;
-  public parent: { id: number, type: ComponentType } | null;
+  public parent: { id: number, type: ComponentType } | undefined;
   public style: string;
   private textSize: Vector2i;
   public collisionShape: BoxCollision;
@@ -32,7 +32,7 @@ class TextComponent implements Component {
     position: Vector2i,
     text = '',
     style = '12px sans-serif',
-    parent: { id: number, type: ComponentType } | null,
+    parent: { id: number, type: ComponentType } | undefined,
     ctx: CanvasRenderingContext2D,
   ) {
     this.id = id;

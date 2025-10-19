@@ -59,7 +59,7 @@ export function saveToFile(editorEnv: EditorEnvironment): void {
 
 export function clearEditor(
   editorEnv: EditorEnvironment,
-): EditorEnvironment | null {
+): EditorEnvironment {
   if (
     confirm(
       'Deseja limpar o editor?\nQualquer progresso não salvo será perdido!',
@@ -71,5 +71,5 @@ export function clearEditor(
       editorEnv.nodeImageList,
     );
   }
-  return null;
+  return editorEnv;
 }
