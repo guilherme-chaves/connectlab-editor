@@ -262,4 +262,35 @@ export default class Editor {
       );
     return false;
   }
+
+  addByDrapAndDrop(itemId: string) {
+    switch (itemId) {
+      case 'and-gate':
+        return this.node(NodeTypes.G_AND);
+      case 'or-gate':
+        return this.node(NodeTypes.G_OR);
+      case 'not-gate':
+        return this.node(NodeTypes.G_NOT);
+      case 'nand-gate':
+        return this.node(NodeTypes.G_NAND);
+      case 'nor-gate':
+        return this.node(NodeTypes.G_NOR);
+      case 'xor-gate':
+        return this.node(NodeTypes.G_XOR);
+      case 'xnor-gate':
+        return this.node(NodeTypes.G_XNOR);
+      case 'switch-input':
+        return this.input(NodeTypes.I_SWITCH);
+      case 'button-input':
+        return this.input(NodeTypes.I_BUTTON);
+      case 'clock-input':
+        return this.input(NodeTypes.I_CLOCK);
+      case 'led-red-output':
+        return this.output(NodeTypes.O_LED_RED);
+      case 'seven-segments-output':
+        return this.output(NodeTypes.O_7_SEGMENTS);
+      default:
+        return -1;
+    }
+  }
 }

@@ -45,6 +45,39 @@ export default function createEditorEvents(
   window.onkeyup = (ev: KeyboardEvent) =>
     editor.keyboard.setKeyPressed(ev.key, false);
 
+  const items = document.getElementsByTagName('img');
+  for (const imageItem of items) {
+    if (!imageItem.classList.contains('editor-component')
+      || !imageItem.parentElement
+      || !imageItem.parentElement.classList.contains('app-key-item')
+      || !imageItem.hasAttributes()
+      || !imageItem.draggable
+    )
+      continue;
+    imageItem.parentElement.addEventListener('dragstart', (ev: DragEvent) => {
+      ev.dataTransfer?.setData('text/plain', imageItem.id);
+      ev.dataTransfer?.setDragImage(
+        imageItem,
+        imageItem.width / 2, // xOffset
+        imageItem.height / 2, // yOffset
+      );
+    });
+  }
+
+  canvasDOM.addEventListener('dragover', (ev: DragEvent) => {
+    ev.preventDefault();
+  });
+
+  canvasDOM.addEventListener('drop', (ev: DragEvent) => {
+    ev.preventDefault();
+    if (ev.dataTransfer) {
+      editor.setLocalMousePosition(ev.x, ev.y);
+      editor.addByDrapAndDrop(
+        ev.dataTransfer.getData('text/plain'),
+      );
+    }
+  });
+
   document
     .getElementById('save-editor')
     ?.addEventListener('click', () => saveToFile(editor.editorEnv));
