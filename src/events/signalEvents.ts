@@ -1,10 +1,9 @@
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 import {
-  SignalSlot,
   SignalGraph,
   NodeModel,
 } from '@connectlab-editor/types/common';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 
@@ -16,8 +15,8 @@ export default {
       nodeType: NodeTypes,
       nodeModel: NodeModel,
       output = false,
-      signalFrom: SignalSlot = new Map(),
-      signalTo: Set<number> = new Set()
+      signalFrom: Map<number, number> = new Map(),
+      signalTo: Set<number> = new Set(),
     ): void {
       if (signalGraph[nodeId] === undefined) {
         if (signalFrom.size === 0) {
@@ -41,7 +40,7 @@ export default {
       const node = signalGraph[nodeId];
       if (node === undefined) {
         console.warn(
-          `Node ${nodeId} não encontrado no grafo de sinal lógico ao ser removido!`
+          `Node ${nodeId} não encontrado no grafo de sinal lógico ao ser removido!`,
         );
         return;
       }
@@ -69,35 +68,37 @@ export default {
       signalGraph: SignalGraph,
       connection: ConnectionComponent,
       startSlot: SlotComponent,
-      endSlot: SlotComponent
+      endSlot: SlotComponent,
     ): void {
       const startNodeId = startSlot.parent.id;
       const endNodeId = endSlot.parent.id;
 
       if (signalGraph[startNodeId] !== undefined) {
         signalGraph[startNodeId].signalTo.add(endNodeId);
-      } else {
+      }
+      else {
         console.warn(
           `Node inicial com ID ${endNodeId} não encontrado no grafo de sinal, isso poderá acarretar em bugs`,
-          connection
+          connection,
         );
       }
       if (signalGraph[endNodeId] !== undefined) {
         signalGraph[endNodeId].signalFrom.set(
           endSlot.slotIdAtParent,
-          startNodeId
+          startNodeId,
         );
-      } else {
+      }
+      else {
         console.warn(
           `Node final com ID ${endNodeId} não encontrado no grafo de sinal, isso poderá acarretar em bugs`,
-          connection
+          connection,
         );
       }
       signalUpdate.updateGraph(signalGraph, startNodeId);
     },
     remove(
       signalGraph: SignalGraph,
-      connection: ConnectionComponent | undefined
+      connection: ConnectionComponent | undefined,
     ): void {
       if (connection === undefined) return;
       const startNodeId = connection.connectedTo.start?.nodeId ?? -1;
@@ -109,7 +110,7 @@ export default {
       }
       if (startNodeId >= 0 && signalGraph[startNodeId] !== undefined) {
         signalGraph[startNodeId].signalTo.delete(
-          connection.connectedTo.end?.nodeId ?? -1
+          connection.connectedTo.end?.nodeId ?? -1,
         );
       }
       if (endNodeId !== -1) signalUpdate.updateGraph(signalGraph, endNodeId);

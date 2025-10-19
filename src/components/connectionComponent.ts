@@ -3,26 +3,27 @@ import {
   NodeList,
   VectorObject,
 } from '@connectlab-editor/types/common';
-import {ComponentType, EditorEvents} from '@connectlab-editor/types/enums';
+import { ComponentType, EditorEvents } from '@connectlab-editor/types/enums';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import Vector2f from '@connectlab-editor/types/vector2f';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
-import ConnectionPathFunctions from '@connectlab-editor/functions/connectionPath';
+import ConnectionPathFunctions
+  from '@connectlab-editor/functions/connectionPath';
 import Component, {
   ComponentObject,
 } from '@connectlab-editor/interfaces/componentInterface';
 import pathFinder from '@connectlab-editor/functions/pathFinder';
 
 export interface ConnectionObject extends ComponentObject {
-  id: number;
-  componentType: ComponentType;
-  position: VectorObject;
-  endPosition: VectorObject;
-  anchors: Array<VectorObject>;
-  connectedTo: ConnectionVertices;
+  id: number
+  componentType: ComponentType
+  position: VectorObject
+  endPosition: VectorObject
+  anchors: Array<VectorObject>
+  connectedTo: ConnectionVertices
 }
 
-export enum movePointEnum {
+export enum MovePointEnum {
   START = 0,
   END = 1,
   BOTH = 2,
@@ -46,8 +47,8 @@ class ConnectionComponent implements Component {
     id: number,
     startPoint: Vector2i,
     endPosition: Vector2i,
-    connections: ConnectionVertices = {start: undefined, end: undefined},
-    anchors?: Array<Vector2f>
+    connections: ConnectionVertices = { start: undefined, end: undefined },
+    anchors?: Array<Vector2f>,
   ) {
     // A variável position funciona como startPoint
     this.id = id;
@@ -76,7 +77,7 @@ class ConnectionComponent implements Component {
         this.position,
         this.endPosition,
         this.anchors[i],
-        globalPos
+        globalPos,
       );
       path.lineTo(globalPos.x, globalPos.y);
     }
@@ -89,7 +90,7 @@ class ConnectionComponent implements Component {
     return ConnectionPathFunctions.generateCollisionShapes(
       this.position,
       this.endPosition,
-      this.anchors
+      this.anchors,
     );
   }
 
@@ -118,7 +119,7 @@ class ConnectionComponent implements Component {
   removePoint(index: number = this.anchors.length - 1) {
     if (index < 0 || index >= this.anchors.length) {
       console.error(
-        'ConnectionComponent.removePoint - index is out of bounds!'
+        'ConnectionComponent.removePoint - index is out of bounds!',
       );
       return;
     }
@@ -131,16 +132,17 @@ class ConnectionComponent implements Component {
   move(
     v: Vector2i,
     useDelta = true,
-    movePoint: movePointEnum = 2,
+    movePoint: MovePointEnum = 2,
     updateCollisionShapes = true,
-    nodeList: NodeList = new Map()
+    nodeList: NodeList = new Map(),
   ) {
     if (useDelta) {
-      if (movePoint !== 1) this.position.add(v);
-      if (movePoint !== 0) this.endPosition.add(v);
-    } else {
-      if (movePoint === 0) this.position.copy(v);
-      if (movePoint === 1) this.endPosition.copy(v);
+      if (movePoint !== MovePointEnum.END) this.position.add(v);
+      if (movePoint !== MovePointEnum.START) this.endPosition.add(v);
+    }
+    else {
+      if (movePoint !== MovePointEnum.END) this.position.copy(v);
+      if (movePoint !== MovePointEnum.START) this.endPosition.copy(v);
     }
     this.anchors = this.generateAnchors(nodeList);
     if (updateCollisionShapes)
@@ -150,16 +152,16 @@ class ConnectionComponent implements Component {
 
   changeAnchor(
     position: Vector2i,
-    index: number = this.anchors.length - 1
+    index: number = this.anchors.length - 1,
   ): void {
     if (index < 0 || index >= this.anchors.length) {
       console.error(
-        'ConnectionComponent.changePosition - index is out of bounds!'
+        'ConnectionComponent.changePosition - index is out of bounds!',
       );
       return;
     }
     this.anchors[index] = Vector2f.sub(position, this.position).div(
-      Vector2f.sub(this.endPosition, this.position)
+      Vector2f.sub(this.endPosition, this.position),
     );
     this.regenPath = true;
   }
@@ -167,12 +169,13 @@ class ConnectionComponent implements Component {
   changeConnection(
     slotId: number | undefined,
     nodeId: number | undefined,
-    end = false
+    end = false,
   ) {
     if (slotId !== undefined && nodeId !== undefined) {
-      if (end) this.connectedTo.end = {slotId, nodeId};
-      else this.connectedTo.start = {slotId, nodeId};
-    } else {
+      if (end) this.connectedTo.end = { slotId, nodeId };
+      else this.connectedTo.start = { slotId, nodeId };
+    }
+    else {
       if (end) this.connectedTo.end = undefined;
       else this.connectedTo.start = undefined;
     }

@@ -7,8 +7,8 @@ import TextComponent from '@connectlab-editor/components/textComponent';
 import Component from '@connectlab-editor/interfaces/componentInterface';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import Vector2f from '@connectlab-editor/types/vector2f';
-import {ConnectionVertex, NodeModel} from '@connectlab-editor/types/common';
-import {ComponentType, NodeTypes} from '@connectlab-editor/types/enums';
+import { ConnectionVertex, NodeModel } from '@connectlab-editor/types/common';
+import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 import SwitchInput from '@connectlab-editor/components/nodes/switchInput';
 import {
@@ -36,11 +36,11 @@ const addComponent = {
     y: number,
     slotIds: number[] = [],
     shiftPosition = true,
-    state: boolean = false
+    state: boolean = false,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
 
-    if (type < 0 || type >= 100) {
+    if (type < NodeTypes.G_AND || type >= NodeTypes.I_SWITCH) {
       console.error('O tipo de node passado como parâmetro é inválido!', type);
       return -1;
     }
@@ -50,7 +50,7 @@ const addComponent = {
       definedId,
       type,
       GateNode.getNodeModel(type),
-      state
+      state,
     );
 
     const newNode = new GateNode(
@@ -62,7 +62,7 @@ const addComponent = {
       [],
       editorEnv.nodeImageList,
       editorEnv.signalGraph,
-      shiftPosition
+      shiftPosition,
     );
 
     editorEnv.nodes.set(definedId, newNode);
@@ -79,14 +79,15 @@ const addComponent = {
           slot.localPos.y,
           node,
           slot.id,
-          slot.in
+          slot.in,
         );
         if (!node.slots.find(slot => slot.id === slotKey)) {
           const slot = editorEnv.slots.get(slotKey);
           if (slot) node.slots.push(slot);
         }
       }
-    } else {
+    }
+    else {
       for (const slotId of slotIds) {
         const slot = editorEnv.slots.get(slotId);
         if (slot) node.slots.push(slot);
@@ -106,7 +107,7 @@ const addComponent = {
     y: number,
     slotIds: number[] = [],
     shiftPosition = true,
-    state: boolean = false
+    state: boolean = false,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     let newInput: NodeInterface;
@@ -119,7 +120,7 @@ const addComponent = {
           definedId,
           type,
           model,
-          state
+          state,
         );
         newInput = new SwitchInput(
           definedId,
@@ -129,7 +130,7 @@ const addComponent = {
           [],
           editorEnv.nodeImageList,
           editorEnv.signalGraph,
-          shiftPosition
+          shiftPosition,
         );
         break;
       case NodeTypes.I_BUTTON:
@@ -139,7 +140,7 @@ const addComponent = {
           definedId,
           type,
           model,
-          state
+          state,
         );
         newInput = new ButtonInput(
           definedId,
@@ -149,7 +150,7 @@ const addComponent = {
           [],
           editorEnv.nodeImageList,
           editorEnv.signalGraph,
-          shiftPosition
+          shiftPosition,
         );
         break;
       case NodeTypes.I_CLOCK:
@@ -159,7 +160,7 @@ const addComponent = {
           definedId,
           type,
           model,
-          state
+          state,
         );
         newInput = new ClockInput(
           definedId,
@@ -170,13 +171,13 @@ const addComponent = {
           editorEnv.nodeImageList,
           editorEnv.signalGraph,
           undefined,
-          shiftPosition
+          shiftPosition,
         );
         break;
       default:
         console.error(
           'O tipo de node de entrada passado como parâmetro é inválido!',
-          type
+          type,
         );
         return -1;
     }
@@ -195,14 +196,15 @@ const addComponent = {
           slot.localPos.y,
           input,
           slot.id,
-          slot.in
+          slot.in,
         );
         if (!input.slots.find(slot => slot.id === slotKey)) {
           const slot = editorEnv.slots.get(slotKey);
           if (slot) input.slots.push(slot);
         }
       }
-    } else {
+    }
+    else {
       for (const slotId of slotIds) {
         const slot = editorEnv.slots.get(slotId);
         if (slot) input.slots.push(slot);
@@ -222,7 +224,7 @@ const addComponent = {
     y: number,
     slotIds: number[] = [],
     shiftPosition = true,
-    state: boolean = false
+    state: boolean = false,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     let newOutput: NodeInterface;
@@ -235,7 +237,7 @@ const addComponent = {
           definedId,
           type,
           model,
-          state
+          state,
         );
         newOutput = new LedOutput(
           definedId,
@@ -245,7 +247,7 @@ const addComponent = {
           [],
           editorEnv.nodeImageList,
           editorEnv.signalGraph,
-          shiftPosition
+          shiftPosition,
         );
         break;
       case NodeTypes.O_7_SEGMENTS:
@@ -255,7 +257,7 @@ const addComponent = {
           definedId,
           type,
           model,
-          state
+          state,
         );
         newOutput = new SegmentsOutput(
           definedId,
@@ -265,13 +267,13 @@ const addComponent = {
           [],
           editorEnv.nodeImageList,
           editorEnv.signalGraph,
-          shiftPosition
+          shiftPosition,
         );
         break;
       default:
         console.error(
           'O tipo de node de saída passado como parâmetro é inválido!',
-          type
+          type,
         );
         return -1;
     }
@@ -290,14 +292,15 @@ const addComponent = {
           slot.localPos.y,
           output,
           slot.id,
-          slot.in
+          slot.in,
         );
         if (!output.slots.find(slot => slot.id === slotKey)) {
           const slot = editorEnv.slots.get(slotKey);
           if (slot) output.slots.push(slot);
         }
       }
-    } else {
+    }
+    else {
       for (const slotId of slotIds) {
         const slot = editorEnv.slots.get(slotId);
         if (slot) output.slots.push(slot);
@@ -318,7 +321,7 @@ const addComponent = {
     radius?: number,
     attractionRadius?: number,
     color?: string,
-    colorActive?: string
+    colorActive?: string,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newSlot = new SlotComponent(
@@ -331,15 +334,15 @@ const addComponent = {
       radius,
       attractionRadius,
       color,
-      colorActive
+      colorActive,
     );
     editorEnv.slots.set(definedId, newSlot);
     if (
-      parent.componentType === ComponentType.INPUT ||
-      parent.componentType === ComponentType.OUTPUT ||
-      parent.componentType === ComponentType.NODE
+      parent.componentType === ComponentType.INPUT
+      || parent.componentType === ComponentType.OUTPUT
+      || parent.componentType === ComponentType.NODE
     ) {
-      (parent as NodeInterface).slots.push(editorEnv.slots.get(definedId)!);
+      parent.slots.push(editorEnv.slots.get(definedId)!);
     }
     return editorEnv.updateComponentId(id >= 0 ? id : undefined);
   },
@@ -353,15 +356,15 @@ const addComponent = {
     y2: number,
     from?: ConnectionVertex,
     to?: ConnectionVertex,
-    anchors?: Array<Vector2f>
+    anchors?: Array<Vector2f>,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newLine = new ConnectionComponent(
       definedId,
       new Vector2i(x1, y1),
       new Vector2i(x2, y2),
-      {start: from, end: to},
-      anchors
+      { start: from, end: to },
+      anchors,
     );
     editorEnv.connections.set(definedId, newLine);
     return editorEnv.updateComponentId(id >= 0 ? id : undefined);
@@ -375,7 +378,7 @@ const addComponent = {
     x: number,
     y: number,
     style?: string,
-    parent?: Component
+    parent?: Component,
   ): number {
     const definedId = id >= 0 ? id : editorEnv.nextComponentId;
     const newText = new TextComponent(
@@ -383,8 +386,8 @@ const addComponent = {
       new Vector2i(x, y),
       text,
       style,
-      parent ? {id: parent.id, type: parent.componentType} : null,
-      ctx
+      parent ? { id: parent.id, type: parent.componentType } : undefined,
+      ctx,
     );
     editorEnv.texts.set(definedId, newText);
     return editorEnv.updateComponentId(id >= 0 ? id : undefined);

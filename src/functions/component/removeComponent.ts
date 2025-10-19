@@ -1,5 +1,5 @@
 import EditorEnvironment from '@connectlab-editor/environment';
-import {ComponentType} from '@connectlab-editor/types/enums';
+import { ComponentType } from '@connectlab-editor/types/enums';
 import signalEvents from '@connectlab-editor/events/signalEvents';
 
 const removeComponent = {
@@ -22,20 +22,20 @@ const removeComponent = {
     const connection = editorEnv.connections.get(componentId);
     if (connection === undefined) return false;
     const slotStart = editorEnv.slots.get(
-      connection.connectedTo.start?.slotId ?? -1
+      connection.connectedTo.start?.slotId ?? -1,
     );
     const slotEnd = editorEnv.slots.get(
-      connection.connectedTo.end?.slotId ?? -1
+      connection.connectedTo.end?.slotId ?? -1,
     );
     if (slotStart) {
       const index = slotStart.slotConnections.findIndex(
-        value => value.id === componentId
+        value => value.id === componentId,
       );
       if (index !== -1) slotStart.slotConnections.splice(index, 1);
     }
     if (slotEnd) {
       const index = slotEnd.slotConnections.findIndex(
-        value => value.id === componentId
+        value => value.id === componentId,
       );
       if (index !== -1) slotEnd.slotConnections.splice(index, 1);
     }

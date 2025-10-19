@@ -1,6 +1,6 @@
 import Vector2i from '@connectlab-editor/types/vector2i';
-import {TextList} from '@connectlab-editor/types/common';
-import {componentEvents} from '@connectlab-editor/events/componentEvents';
+import { TextList } from '@connectlab-editor/types/common';
+import { componentEvents } from '@connectlab-editor/events/componentEvents';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 
 export default {
@@ -12,14 +12,14 @@ export default {
     texts: TextList,
     mouseEvents: MouseEvents,
     v: Vector2i,
-    useDelta = true
+    useDelta = true,
   ): boolean {
     const textCollisions = mouseEvents.getCollisionList().texts;
     if (
-      textCollisions.length === 0 ||
-      !(
-        MouseEvents.movingObject === 'none' ||
-        MouseEvents.movingObject === 'text'
+      textCollisions.length === 0
+      || !(
+        MouseEvents.movingObject === 'none'
+        || MouseEvents.movingObject === 'text'
       )
     )
       return false;

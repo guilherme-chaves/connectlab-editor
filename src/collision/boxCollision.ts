@@ -1,14 +1,15 @@
 import Collision from '@connectlab-editor/interfaces/collisionInterface';
 import Vector2i from '@connectlab-editor/types/vector2i';
-import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
+import CircleCollision
+  from '@connectlab-editor/collisionShapes/circleCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 
 // Sentido anti-horário, começando do ponto superior esquerdo
 interface BoxVertices {
-  a: Vector2i;
-  b: Vector2i;
-  c: Vector2i;
-  d: Vector2i;
+  a: Vector2i
+  b: Vector2i
+  c: Vector2i
+  d: Vector2i
 }
 
 export default class BoxCollision implements Collision {
@@ -25,7 +26,7 @@ export default class BoxCollision implements Collision {
     position: Vector2i,
     width = 2,
     height = 2,
-    borderColor = '#FF8008DC'
+    borderColor = '#FF8008DC',
   ) {
     this.position = position;
     this.width = width;
@@ -82,19 +83,19 @@ export default class BoxCollision implements Collision {
 
   collisionWithPoint(point: Vector2i): boolean {
     return (
-      point.x > this.vertices.a.x &&
-      point.x < this.vertices.c.x &&
-      point.y > this.vertices.a.y &&
-      point.y < this.vertices.c.y
+      point.x > this.vertices.a.x
+      && point.x < this.vertices.c.x
+      && point.y > this.vertices.a.y
+      && point.y < this.vertices.c.y
     );
   }
 
   collisionWithBox(other: BoxCollision): boolean {
     return !(
-      this.vertices.c.x < other.vertices.a.x ||
-      this.vertices.c.y < other.vertices.a.y ||
-      this.vertices.a.x > other.vertices.c.x ||
-      this.vertices.a.y > other.vertices.c.y
+      this.vertices.c.x < other.vertices.a.x
+      || this.vertices.c.y < other.vertices.a.y
+      || this.vertices.a.x > other.vertices.c.x
+      || this.vertices.a.y > other.vertices.c.y
     );
   }
 
@@ -109,12 +110,12 @@ export default class BoxCollision implements Collision {
     const bottom = new LineCollision(this.vertices.c, this.vertices.d);
 
     return (
-      this.collisionWithPoint(other.position) ||
-      this.collisionWithPoint(other.endPosition) ||
-      other.collisionWithLine(left) ||
-      other.collisionWithLine(top) ||
-      other.collisionWithLine(right) ||
-      other.collisionWithLine(bottom)
+      this.collisionWithPoint(other.position)
+      || this.collisionWithPoint(other.endPosition)
+      || other.collisionWithLine(left)
+      || other.collisionWithLine(top)
+      || other.collisionWithLine(right)
+      || other.collisionWithLine(bottom)
     );
   }
 }

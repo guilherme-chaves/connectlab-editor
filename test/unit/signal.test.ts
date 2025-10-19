@@ -1,7 +1,6 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {expect, test, beforeEach, describe} from 'vitest';
-import {SignalGraph} from '../../src/types/common';
-import {NodeTypes} from '@connectlab-editor/types/enums';
+import { expect, test, beforeEach, describe } from 'vitest';
+import { SignalGraph } from '../../src/types/common';
+import { NodeTypes } from '@connectlab-editor/types/enums';
 import * as InputModels from '@connectlab-editor/models/input';
 import * as NodeModels from '@connectlab-editor/models/node';
 import * as OutputModels from '@connectlab-editor/models/output';
@@ -19,7 +18,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       0,
       NodeTypes.I_SWITCH,
       InputModels.SwitchInput,
-      true
+      true,
     );
     expect(graph[0]).toBeDefined();
     expect(graph[0].output).toBe(true);
@@ -34,7 +33,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -43,7 +42,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -55,7 +54,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -63,7 +62,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map<number, number>([[0, 2]])
+      new Map<number, number>([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(true);
@@ -89,7 +88,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -98,7 +97,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -110,7 +109,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -118,7 +117,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[0, 2]])
+      new Map([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(false);
@@ -144,7 +143,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -153,7 +152,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -165,7 +164,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -173,7 +172,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[0, 2]])
+      new Map([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(false);
@@ -199,7 +198,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       false,
       undefined,
-      new Set([1])
+      new Set([1]),
     );
     signalEvents.vertex.add(
       graph,
@@ -208,7 +207,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeModels.NOTNode,
       false,
       new Map([[0, 0]]),
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -216,7 +215,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[1, 1]])
+      new Map([[1, 1]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 2)).toBe(true);
@@ -233,7 +232,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -242,7 +241,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -254,7 +253,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -262,7 +261,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[0, 2]])
+      new Map([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(true);
@@ -288,7 +287,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -297,7 +296,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -309,7 +308,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -317,7 +316,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[0, 2]])
+      new Map([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(true);
@@ -343,7 +342,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -352,7 +351,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       InputModels.SwitchInput,
       true,
       undefined,
-      new Set([2])
+      new Set([2]),
     );
     signalEvents.vertex.add(
       graph,
@@ -364,7 +363,7 @@ describe('Testes com o grafo de sinal lógico', () => {
         [0, 0],
         [1, 1],
       ]),
-      new Set([3])
+      new Set([3]),
     );
     signalEvents.vertex.add(
       graph,
@@ -372,7 +371,7 @@ describe('Testes com o grafo de sinal lógico', () => {
       NodeTypes.O_LED_RED,
       OutputModels.LEDROutput,
       false,
-      new Map([[0, 2]])
+      new Map([[0, 2]]),
     );
     signalUpdate.updateGraph(graph, 0);
     expect(signalEvents.vertex.getState(graph, 3)).toBe(false);

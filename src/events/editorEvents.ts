@@ -9,7 +9,7 @@ export default function createEditorEvents(
   editor: Editor,
   canvasDOM: HTMLCanvasElement,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _backgroundDOM: HTMLCanvasElement
+  _backgroundDOM: HTMLCanvasElement,
 ): void {
   if (!window) {
     console.error('Variável window é nula! Não será possível iniciar o editor');
@@ -32,12 +32,12 @@ export default function createEditorEvents(
 
   window.onresize = () => editor.resize();
 
-  canvasDOM.onmousedown = () => (editor.mouse.clicked = true);
+  canvasDOM.onmousedown = () => editor.mouse.clicked = true;
 
   canvasDOM.onmouseup = canvasDOM.onmouseout = () =>
-    (editor.mouse.clicked = false);
+    editor.mouse.clicked = false;
 
-  window.onmousemove = ({x, y}) => editor.setLocalMousePosition(x, y);
+  window.onmousemove = ({ x, y }) => editor.setLocalMousePosition(x, y);
 
   window.onkeydown = (ev: KeyboardEvent) =>
     editor.keyboard.setKeyPressed(ev.key, true);
@@ -58,6 +58,6 @@ export default function createEditorEvents(
     ?.addEventListener('change', ev => loadFile(editor, editor.canvasCtx, ev));
 
   document.getElementById('clear-editor')?.addEventListener('click', () => {
-    editor.editorEnv = clearEditor(editor.editorEnv) ?? editor.editorEnv;
+    editor.editorEnv = clearEditor(editor.editorEnv);
   });
 }

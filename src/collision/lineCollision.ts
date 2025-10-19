@@ -14,7 +14,7 @@ export default class LineCollision implements Collision {
   constructor(
     position: Vector2i,
     endPosition: Vector2i,
-    borderColor: string = '#FF8008DC'
+    borderColor: string = '#FF8008DC',
   ) {
     this.position = position;
     this.endPosition = endPosition;
@@ -49,7 +49,8 @@ export default class LineCollision implements Collision {
     if (isDeltaVector) {
       this.position.add(v);
       this.endPosition.add(v);
-    } else {
+    }
+    else {
       this.position.add(Vector2i.sub(this.position, v));
       this.endPosition.add(Vector2i.sub(this.position, v));
     }
@@ -69,21 +70,21 @@ export default class LineCollision implements Collision {
   collisionWithCircle(other: CircleCollision): boolean {
     // https://www.jeffreythompson.org/collision-detection/line-circle.php
     if (
-      other.collisionWithPoint(this.position) ||
-      other.collisionWithPoint(this.endPosition)
+      other.collisionWithPoint(this.position)
+      || other.collisionWithPoint(this.endPosition)
     )
       return true;
 
-    const dot =
-      ((other.position.x - this.position.x) *
-        (this.endPosition.x - this.position.x) +
-        (other.position.y - this.position.y) *
-          (this.endPosition.y - this.position.y)) /
-      Math.pow(this.lineLength, 2);
+    const dot
+      = ((other.position.x - this.position.x)
+        * (this.endPosition.x - this.position.x)
+        + (other.position.y - this.position.y)
+        * (this.endPosition.y - this.position.y))
+      / Math.pow(this.lineLength, 2);
 
     const closest = new Vector2i(
       this.position.x + dot * (this.endPosition.x - this.position.x),
-      this.position.y + dot * (this.endPosition.y - this.position.y)
+      this.position.y + dot * (this.endPosition.y - this.position.y),
     );
 
     if (!this.collisionWithPoint(closest)) return false;
@@ -94,34 +95,34 @@ export default class LineCollision implements Collision {
   }
 
   collisionWithLine(other: LineCollision): boolean {
-    const denominator =
-      (this.position.x - this.endPosition.x) *
-        (other.position.y - other.endPosition.y) -
-      (this.position.y - this.endPosition.y) *
-        (other.position.x - other.endPosition.x);
+    const denominator
+      = (this.position.x - this.endPosition.x)
+        * (other.position.y - other.endPosition.y)
+        - (this.position.y - this.endPosition.y)
+        * (other.position.x - other.endPosition.x);
 
     // Denominador === 0 => Linhas paralelas ou colineares
     if (denominator === 0) {
       // https://blogs.sas.com/content/iml/2018/07/09/intersection-line-segments.html
       if (
-        this.collisionWithPoint(other.position) ||
-        this.collisionWithPoint(other.endPosition) ||
-        other.collisionWithPoint(this.position)
+        this.collisionWithPoint(other.position)
+        || this.collisionWithPoint(other.endPosition)
+        || other.collisionWithPoint(this.position)
       )
         return true;
       return false;
     }
 
-    const numeratorA =
-      (this.position.x - other.position.x) *
-        (other.position.y - other.endPosition.y) -
-      (this.position.y - other.position.y) *
-        (other.position.x - other.endPosition.x);
-    const numeratorB =
-      (this.position.x - this.endPosition.x) *
-        (this.position.y - other.position.y) -
-      (this.position.y - this.endPosition.y) *
-        (this.position.x - other.position.x);
+    const numeratorA
+      = (this.position.x - other.position.x)
+        * (other.position.y - other.endPosition.y)
+        - (this.position.y - other.position.y)
+        * (other.position.x - other.endPosition.x);
+    const numeratorB
+      = (this.position.x - this.endPosition.x)
+        * (this.position.y - other.position.y)
+        - (this.position.y - this.endPosition.y)
+        * (this.position.x - other.position.x);
 
     const a = numeratorA / denominator;
     const b = -(numeratorB / denominator);

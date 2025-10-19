@@ -1,11 +1,10 @@
-// eslint-disable-next-line node/no-unpublished-import
-import {expect, test, describe} from 'vitest';
+import { expect, test, describe } from 'vitest';
 
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import CircleCollision from '@connectlab-editor/collisionShapes/circleCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 import Vector2 from '@connectlab-editor/types/vector2i';
-import {Rad45Deg} from '@connectlab-editor/types/consts';
+import { Rad45Deg } from '@connectlab-editor/types/consts';
 
 const circle = new CircleCollision(new Vector2(500, 500), 25);
 const box = new BoxCollision(new Vector2(475, 475), 50, 50);
@@ -75,50 +74,50 @@ describe('Testes com a área de colisão circular', () => {
   test('Colisão com uma linha', () => {
     const line2 = new LineCollision(
       new Vector2(450, 500),
-      new Vector2(510, 510)
+      new Vector2(510, 510),
     );
     expect(circle.collisionWithLine(line2)).toBe(true);
   });
   test('Colisão com uma linha (limítrofe - início)', () => {
     const line2 = new LineCollision(
       new Vector2(524, 500),
-      new Vector2(560, 500)
+      new Vector2(560, 500),
     );
     expect(circle.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(525, 500),
-      new Vector2(560, 500)
+      new Vector2(560, 500),
     );
     expect(circle.collisionWithLine(line3)).toBe(false);
   });
   test('Colisão com uma linha (limítrofe - tangente)', () => {
     const line2 = new LineCollision(
       new Vector2(476, 450),
-      new Vector2(476, 525)
+      new Vector2(476, 525),
     );
     expect(circle.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(475, 450),
-      new Vector2(475, 525)
+      new Vector2(475, 525),
     );
     expect(circle.collisionWithLine(line3)).toBe(false);
   });
   test('Colisão com uma linha (limítrofe - fim)', () => {
     const line2 = new LineCollision(
       new Vector2(400, 500),
-      new Vector2(476, 500)
+      new Vector2(476, 500),
     );
     expect(circle.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(400, 500),
-      new Vector2(475, 500)
+      new Vector2(475, 500),
     );
     expect(circle.collisionWithLine(line3)).toBe(false);
   });
   test('Sem colisão com uma linha', () => {
     const line2 = new LineCollision(
       new Vector2(240, 720),
-      new Vector2(388, 500)
+      new Vector2(388, 500),
     );
     expect(circle.collisionWithLine(line2)).toBe(false);
   });
@@ -129,7 +128,7 @@ describe('Testes com a área de colisão circular', () => {
   test('Colisão com um ponto (limítrofe)', () => {
     const point = new Vector2(
       Math.cos(Rad45Deg) * circle.radius,
-      Math.sin(Rad45Deg) * circle.radius
+      Math.sin(Rad45Deg) * circle.radius,
     ).add(circle.position);
     expect(circle.collisionWithPoint(point)).toBe(false);
     point.sub(Vector2.ONE);
@@ -185,62 +184,62 @@ describe('Testes com a área de colisão retangular', () => {
   test('Colisão com uma linha (dentro)', () => {
     const line2 = new LineCollision(
       new Vector2(480, 500),
-      new Vector2(510, 520)
+      new Vector2(510, 520),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
   });
   test('Colisão com uma linha (esquerda)', () => {
     const line2 = new LineCollision(
       new Vector2(400, 500),
-      new Vector2(475, 500)
+      new Vector2(475, 500),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(400, 500),
-      new Vector2(474, 500)
+      new Vector2(474, 500),
     );
     expect(box.collisionWithLine(line3)).toBe(false);
   });
   test('Colisão com uma linha (cima)', () => {
     const line2 = new LineCollision(
       new Vector2(490, 440),
-      new Vector2(490, 475)
+      new Vector2(490, 475),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(490, 440),
-      new Vector2(490, 474)
+      new Vector2(490, 474),
     );
     expect(box.collisionWithLine(line3)).toBe(false);
   });
   test('Colisão com uma linha (direita)', () => {
     const line2 = new LineCollision(
       new Vector2(525, 500),
-      new Vector2(570, 500)
+      new Vector2(570, 500),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(526, 500),
-      new Vector2(570, 500)
+      new Vector2(570, 500),
     );
     expect(box.collisionWithLine(line3)).toBe(false);
   });
   test('Colisão com uma linha (baixo)', () => {
     const line2 = new LineCollision(
       new Vector2(515, 525),
-      new Vector2(515, 600)
+      new Vector2(515, 600),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
     const line3 = new LineCollision(
       new Vector2(515, 526),
-      new Vector2(515, 600)
+      new Vector2(515, 600),
     );
     expect(box.collisionWithLine(line3)).toBe(false);
   });
   test('Sem colisão com uma linha', () => {
     const line2 = new LineCollision(
       new Vector2(720, 651),
-      new Vector2(850, 510)
+      new Vector2(850, 510),
     );
     expect(box.collisionWithLine(line2)).toBe(false);
   });
@@ -264,28 +263,28 @@ describe('Testes com uma linha', () => {
   test('Colisão com outra linha', () => {
     const line2 = new LineCollision(
       new Vector2(475, 500),
-      new Vector2(525, 500)
+      new Vector2(525, 500),
     );
     expect(line.collisionWithLine(line2)).toBe(true);
   });
   test('Colisão com outra linha (perpendicular)', () => {
     const line2 = new LineCollision(
       new Vector2(475, 500),
-      new Vector2(525, 475)
+      new Vector2(525, 475),
     );
     expect(line.collisionWithLine(line2)).toBe(true);
   });
   test('Colisão com outra linha (colineares)', () => {
     const line2 = new LineCollision(
       new Vector2(450, 450),
-      new Vector2(550, 550)
+      new Vector2(550, 550),
     );
     expect(line.collisionWithLine(line2)).toBe(true);
   });
   test('Colisão com outra linha (limítrofe - início)', () => {
     const line2 = new LineCollision(
       new Vector2(450, 450),
-      new Vector2(475, 475)
+      new Vector2(475, 475),
     );
     expect(line.collisionWithLine(line2)).toBe(true);
     line2.endPosition.sub(Vector2.ONE);
@@ -294,7 +293,7 @@ describe('Testes com uma linha', () => {
   test('Colisão com outra linha (limítrofe - fim)', () => {
     const line2 = new LineCollision(
       new Vector2(525, 525),
-      new Vector2(550, 550)
+      new Vector2(550, 550),
     );
     expect(line.collisionWithLine(line2)).toBe(true);
     line2.position.add(Vector2.ONE);
@@ -303,7 +302,7 @@ describe('Testes com uma linha', () => {
   test('Sem colisão com uma linha', () => {
     const line2 = new LineCollision(
       new Vector2(475, 500),
-      new Vector2(490, 500)
+      new Vector2(490, 500),
     );
     expect(line.collisionWithLine(line2)).toBe(false);
   });

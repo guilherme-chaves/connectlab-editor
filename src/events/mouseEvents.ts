@@ -1,4 +1,4 @@
-import {ConnectionEvents} from '@connectlab-editor/events/connectionEvents';
+import { ConnectionEvents } from '@connectlab-editor/events/connectionEvents';
 import nodeEvents from '@connectlab-editor/events/nodeEvents';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
@@ -13,11 +13,11 @@ import {
 } from '@connectlab-editor/types/enums';
 
 interface CollisionList {
-  [index: string]: Array<number>;
-  nodes: Array<number>;
-  slots: Array<number>;
-  connections: Array<number>;
-  texts: Array<number>;
+  [index: string]: Array<number>
+  nodes: Array<number>
+  slots: Array<number>
+  connections: Array<number>
+  texts: Array<number>
 }
 
 export default class MouseEvents {
@@ -42,19 +42,19 @@ export default class MouseEvents {
       // Obtêm uma lista com todas as colisões encontradas
       const nodes = nodeEvents.checkNodeClick(
         editorEnv.nodes,
-        this._mouse.position
+        this._mouse.position,
       );
       const slots = slotEvents.checkSlotClick(
         editorEnv.slots,
-        this._mouse.position
+        this._mouse.position,
       );
       const connections = ConnectionEvents.checkConnectionClick(
         editorEnv.connections,
-        this._mouse.position
+        this._mouse.position,
       );
       const texts = textEvents.checkTextClick(
         editorEnv.texts,
-        this._mouse.position
+        this._mouse.position,
       );
 
       this.collisionList = {
@@ -71,7 +71,7 @@ export default class MouseEvents {
         node.onEvent(EditorEvents.MOUSE_CLICKED);
         signalUpdate.updateGraph(
           editorEnv.signalGraph,
-          this.collisionList.nodes[0]
+          this.collisionList.nodes[0],
         );
       }
 
@@ -87,9 +87,9 @@ export default class MouseEvents {
         for (const nodeId of this.collisionList.nodes) {
           const node = editorEnv.nodes.get(nodeId);
           if (
-            node !== undefined &&
-            node.componentType === ComponentType.INPUT &&
-            node.onEvent(EditorEvents.MOUSE_RELEASED)
+            node !== undefined
+            && node.componentType === ComponentType.INPUT
+            && node.onEvent(EditorEvents.MOUSE_RELEASED)
           ) {
             signalUpdate.updateGraph(editorEnv.signalGraph, nodeId);
           }
@@ -105,9 +105,9 @@ export default class MouseEvents {
   onMouseMove(editorEnv: EditorEnvironment): boolean {
     if (this._mouse.clicked && this._mouse.dragged) {
       return (
-        ConnectionEvents.move(editorEnv, this._mouse.position) ||
-        nodeEvents.move(editorEnv, this, this._mouse.position, false) ||
-        textEvents.move(editorEnv.texts, this, this._mouse.position, false)
+        ConnectionEvents.move(editorEnv, this._mouse.position)
+        || nodeEvents.move(editorEnv, this, this._mouse.position, false)
+        || textEvents.move(editorEnv.texts, this, this._mouse.position, false)
       );
     }
     return false;

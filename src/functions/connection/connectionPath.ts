@@ -11,18 +11,18 @@ export default {
     ifDiffX = 0,
     ifEqualY = 0,
     ifDiffY = 0,
-    precision = 1e-4
+    precision = 1e-4,
   ): Vector2f {
     return new Vector2f(
       Math.abs(v1.x - v2.x) < precision ? ifEqualX : ifDiffX,
-      Math.abs(v1.y - v2.y) < precision ? ifEqualY : ifDiffY
+      Math.abs(v1.y - v2.y) < precision ? ifEqualY : ifDiffY,
     );
   },
 
   generateCollisionShapes(
     position: Vector2i,
     endPosition: Vector2i,
-    anchors: Array<Vector2f>
+    anchors: Array<Vector2f>,
   ): BoxCollision[] {
     if (anchors.length === 0) return [];
     const collisionArr = [];
@@ -40,10 +40,10 @@ export default {
         12,
         nPos.x - pPos.x,
         12,
-        nPos.y - pPos.y
+        nPos.y - pPos.y,
       );
       collisionArr.push(
-        new BoxCollision(pPos.sub(collisionSize), size.x, size.y)
+        new BoxCollision(pPos.sub(collisionSize), size.x, size.y),
       );
       pPos.copy(nPos);
     }

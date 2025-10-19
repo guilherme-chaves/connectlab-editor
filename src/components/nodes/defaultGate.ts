@@ -8,11 +8,11 @@ import {
   EditorEvents,
   NodeTypes,
 } from '@connectlab-editor/types/enums';
-import {NodeModel} from '@connectlab-editor/types/common';
+import { NodeModel } from '@connectlab-editor/types/common';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
-import Node, {NodeObject} from '@connectlab-editor/interfaces/nodeInterface';
-import {getImageSublist} from '@connectlab-editor/functions/preloadImage';
+import Node, { NodeObject } from '@connectlab-editor/interfaces/nodeInterface';
+import { getImageSublist } from '@connectlab-editor/functions/preloadImage';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import * as NodeModels from '@connectlab-editor/models/node';
 
@@ -48,7 +48,7 @@ class DefaultGate implements Node {
     slots: Array<SlotComponent>,
     images: ImageListObject,
     signalGraph: SignalGraph,
-    shiftPosition = true
+    shiftPosition = true,
   ) {
     this.id = id;
     this.position = position;
@@ -59,21 +59,21 @@ class DefaultGate implements Node {
     this._images = getImageSublist(images, this.nodeType.imgPath);
     this.imageSize = new Vector2i(
       this.image?.width ?? 100,
-      this.image?.height ?? 100
+      this.image?.height ?? 100,
     );
     this.halfImageSize = Vector2i.div(this.imageSize, 2);
     if (shiftPosition) {
       this.imageMode = 'CENTER';
       this.position.sub(this.halfImageSize);
       const canvasBound = new Vector2i(canvasWidth, canvasHeight).sub(
-        this.imageSize
+        this.imageSize,
       );
       this.position.min(canvasBound).max(Vector2i.ZERO);
     }
     this.collisionShape = new BoxCollision(
       this.position,
       this.imageSize.x,
-      this.imageSize.y
+      this.imageSize.y,
     );
     this.selected = false;
   }
@@ -103,9 +103,11 @@ class DefaultGate implements Node {
   move(v: Vector2i, useDelta = true): void {
     if (useDelta) {
       this.position.add(v);
-    } else if (this.imageMode === 'CENTER') {
+    }
+    else if (this.imageMode === 'CENTER') {
       Vector2i.sub(v, this.halfImageSize, this.position);
-    } else {
+    }
+    else {
       this.position.copy(v);
     }
     this.collisionShape.moveShape(this.position, false);

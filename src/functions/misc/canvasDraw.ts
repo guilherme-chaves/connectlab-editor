@@ -1,4 +1,4 @@
-import {FullComponentList} from '@connectlab-editor/types/common';
+import { FullComponentList } from '@connectlab-editor/types/common';
 
 // Ordem crescente em que os componentes serão desenhados (menor z-index para maior z-index)
 const drawOrder = ['connections', 'nodes', 'slots', 'texts'];
@@ -13,7 +13,7 @@ function clearFrame(ctx: CanvasRenderingContext2D): void {
 
 export function updateCanvas(
   ctx: CanvasRenderingContext2D,
-  elements: FullComponentList
+  elements: FullComponentList,
 ): void {
   clearFrame(ctx);
   for (const category of drawOrder) {
@@ -25,7 +25,7 @@ export function updateCanvas(
 
 export function updateBackground(
   ctx: CanvasRenderingContext2D,
-  bgPattern: CanvasPattern | null
+  bgPattern: CanvasPattern | null,
 ): void {
   clearFrame(ctx);
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);

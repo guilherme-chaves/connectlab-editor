@@ -1,10 +1,11 @@
-import {ImageListObject} from '@connectlab-editor/types/common';
+import { ImageListObject } from '@connectlab-editor/types/common';
 
 /**
  * Função que carrega um ou mais arrays contendo um par de chave da imagem e caminho para o arquivo,
  * retornando um objeto contendo uma lista de objetos, com a chave de nome especificado.
  * @argument list Array de strings com a localização das imagens
- * @returns Lista dos bitmaps das imagens carregadas, tendo como chave a localização da imagem, passada no array do parâmetro
+ * @returns Lista dos bitmaps das imagens carregadas,
+ *  tendo como chave a localização da imagem, passada no array do parâmetro
  */
 export default async function loadImage(src: string): Promise<ImageBitmap> {
   const image = new Image();
@@ -15,7 +16,7 @@ export default async function loadImage(src: string): Promise<ImageBitmap> {
 
 export function getImageSublist(
   imageList: ImageListObject,
-  imgPaths: string[]
+  imgPaths: string[],
 ): ImageListObject {
   const subArr: ImageListObject = {};
   let i = 0;

@@ -1,5 +1,4 @@
 {
-  "extends": "./node_modules/gts/tsconfig-google.json",
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./build",
@@ -29,6 +28,12 @@
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false,
     "removeComments": true,
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "forceConsistentCasingInFileNames": true,
+    "stripInternal": true,
+    "pretty": true,
+    "allowJs": true,
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -45,6 +50,11 @@
   },
   "include": [
     "src/**/*.ts",
-    "test/**/*.ts"
+    "test/**/*.ts",
+    "**/*.mjs"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
   ]
 }

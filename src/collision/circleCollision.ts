@@ -51,12 +51,12 @@ export default class CircleCollision implements Collision {
 
     const closestRectPoint = Vector2i.max(
       other.vertices.a,
-      Vector2i.min(other.vertices.c, this.position)
+      Vector2i.min(other.vertices.c, this.position),
     );
 
     const distSquared = Vector2i.sub(
       this.position,
-      closestRectPoint
+      closestRectPoint,
     ).lenSquared();
 
     return distSquared < this.radiusSquared;
@@ -64,8 +64,8 @@ export default class CircleCollision implements Collision {
 
   collisionWithCircle(other: CircleCollision): boolean {
     return (
-      Vector2i.sub(this.position, other.position).len() <
-      this.radius + other.radius
+      Vector2i.sub(this.position, other.position).len()
+      < this.radius + other.radius
     );
   }
 
