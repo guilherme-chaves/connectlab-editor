@@ -9,8 +9,8 @@ body {
 
 #app {
   margin: 0 0;
-  width: 100vw;
-  height: 85vh;
+  width: 100dvw;
+  height: 85dvh;
   text-align: center;
   position: relative;
   display: flex;
@@ -35,15 +35,28 @@ body {
 #app-component-list {
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 0 1rem 0 1rem;
   display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem 4px;
 }
 
 .app-component {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: center;
+  flex-direction: column;
   align-items: center;
   font-size: 1.2em;
+  cursor: grab;
+  border: 2px solid #289eab;
+  border-radius: 0.25rem;
+  padding: 4px 4px;
+  transition-duration: 200ms;
+}
+
+.app-component:hover {
+  background-color: #289eab80;
+  box-shadow: 2px 2px 8px 0 rgba(0,0,0,0.6);
 }
 
 .component-gate {
@@ -54,9 +67,8 @@ body {
 
 .component-io {
   max-width: 3.75em;
-  max-height: 3.75em;
+  max-height: 3.25em;
   object-fit: contain;
-  margin-bottom: .75em;
 }
 
 .app-canvas-container {
