@@ -1,0 +1,68 @@
+/* CSS responsável pela animação de carregamento da página */
+.animate-show {
+  position: relative;
+  -webkit-animation-name: animateshow;
+  -webkit-animation-duration: 1s;
+  animation-name: animateshow;
+  animation-duration: 1s;
+}
+
+@-webkit-keyframes animateshow {
+  from { opacity:0 } 
+  to { opacity:1 }
+}
+
+@keyframes animateshow { 
+  from { opacity:0 } 
+  to { opacity:1 }
+}
+
+#loading-div {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: whitesmoke;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  display: inline-block;
+  position: relative;
+}
+
+.loader::after,
+.loader::before {
+  content: '';  
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #80b7ff;
+  position: absolute;
+  left: 0;
+  top: 0;
+  animation: animloader 2s linear infinite;
+}
+
+.loader::after {
+  animation-delay: 500ms;
+}
+
+@keyframes animloader {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0;
+  }
+}

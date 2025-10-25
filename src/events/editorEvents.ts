@@ -47,9 +47,9 @@ export default function createEditorEvents(
 
   const items = document.getElementsByTagName('img');
   for (const imageItem of items) {
-    if (!imageItem.classList.contains('editor-component')
+    if (!imageItem.classList.contains('app-component-image')
       || !imageItem.parentElement
-      || !imageItem.parentElement.classList.contains('app-key-item')
+      || !imageItem.parentElement.classList.contains('app-component')
       || !imageItem.hasAttributes()
       || !imageItem.draggable
     )
