@@ -110,6 +110,23 @@ export default class Editor {
     this.mouse.position = new Vector2i(x - rect.left, y - rect.top);
   }
 
+  isMouseInsideEditor(): boolean {
+    const canvasSize = new Vector2i(
+      this.canvasCtx.canvas.width,
+      this.canvasCtx.canvas.height,
+    );
+    return !(
+      !Vector2i.min(
+        this.mouse.position,
+        Vector2i.ZERO,
+      ).equals(Vector2i.ZERO)
+      || !Vector2i.max(
+        this.mouse.position,
+        canvasSize,
+      ).equals(canvasSize)
+    );
+  }
+
   resize(): void {
     const editorArea = this.getEditorArea();
     this.canvasCtx.canvas.width = editorArea.x;
