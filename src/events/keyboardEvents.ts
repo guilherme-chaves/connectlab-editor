@@ -24,7 +24,10 @@ export default class KeyboardEvents {
       this._keyboard.keyPressed = true;
       this._keyboard.keyHold = false;
     }
-    if (!this._keyboard.keyHold) this.handleKeyPressed(editor);
+    if (
+      !this._keyboard.keyHold
+      && editor.isMouseInsideEditor()
+    ) this.handleKeyPressed(editor);
   }
 
   handleKeyPressed(editor: Editor): void {
