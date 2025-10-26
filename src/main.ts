@@ -1,4 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
 import './style.css';
 import Editor from '@connectlab-editor/editor';
 
-new Editor('teste', 'editor-canvas', 'background-canvas');
+new Editor(uuidv4(), 'Teste', 'editor-canvas', 'background-canvas');

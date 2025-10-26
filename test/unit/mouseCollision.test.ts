@@ -8,7 +8,7 @@ import slotEvents from '@connectlab-editor/events/slotEvents';
 import textEvents from '@connectlab-editor/events/textEvents';
 import { ConnectionEvents } from '@connectlab-editor/events/connectionEvents';
 
-const editorEnv = new EditorEnvironment('test-collision', 0, {});
+const editorEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-collision', 0, {});
 const canvas = document.createElement('canvas');
 canvas.width = 1920;
 canvas.height = 1080;

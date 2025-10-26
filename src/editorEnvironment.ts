@@ -19,6 +19,7 @@ import Vector2f from './types/vector2f';
 
 export type EditorEnvironmentObject = {
   id: string
+  title: string
   data: {
     nodes: NodeObject[]
     connections: ConnectionObject[]
@@ -29,7 +30,8 @@ export type EditorEnvironmentObject = {
 };
 
 class EditorEnvironment {
-  public documentId: string;
+  public readonly simulationId: string;
+  public simulationTitle: string;
   private _nextComponentId: number;
   public nodes: NodeList;
   public slots: SlotList;
@@ -39,7 +41,8 @@ class EditorEnvironment {
   public signalGraph: SignalGraph;
 
   constructor(
-    documentId: string,
+    simulationId: string,
+    simulationTitle: string,
     startId = 0,
     imageList: ImageListObject,
     signalGraph: SignalGraph = {},
@@ -48,7 +51,8 @@ class EditorEnvironment {
     connectionList = new Map() as ConnectionList,
     textList = new Map() as TextList,
   ) {
-    this.documentId = documentId;
+    this.simulationId = simulationId;
+    this.simulationTitle = simulationTitle;
     this._nextComponentId = startId;
     this.nodes = nodeList;
     this.slots = slotList;
@@ -56,10 +60,6 @@ class EditorEnvironment {
     this.texts = textList;
     this.signalGraph = signalGraph;
     this.nodeImageList = imageList;
-  }
-
-  getDocumentId(): string {
-    return this.documentId;
   }
 
   get components(): FullComponentList {
@@ -115,7 +115,8 @@ class EditorEnvironment {
 
   saveAsJson(): string {
     const env: EditorEnvironmentObject = {
-      id: this.documentId,
+      id: this.simulationId,
+      title: this.simulationTitle,
       data: {
         nodes: [],
         connections: [],
@@ -177,6 +178,7 @@ class EditorEnvironment {
     }
     const newEnv = new EditorEnvironment(
       data.id,
+      data.title,
       0,
       structuredClone(imageList),
       newSignalGraph,
