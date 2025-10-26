@@ -36,12 +36,18 @@ export default class Editor {
   public readonly tickRate: number;
 
   constructor(
-    documentId: string,
+    simulationId: string,
+    simulationTitle: string,
     canvasID: string,
     backgroundID: string,
     tickRate = 60.0,
   ) {
-    this.editorEnv = new EditorEnvironment(documentId, 0, preloadNodeImages());
+    this.editorEnv = new EditorEnvironment(
+      simulationId,
+      simulationTitle,
+      0,
+      preloadNodeImages(),
+    );
     this.mouse = new Mouse();
     this.keyboard = new Keyboard();
     this.mouseEvents = new MouseEvents(this.mouse);

@@ -134,7 +134,7 @@ let testEnv: EditorEnvironment;
 
 describe('Testes para verificar lista de nodes dentro da área de busca', () => {
   beforeAll(() => {
-    testEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
+    testEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, preloadNodeImages());
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 75, 70);
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 652, 210);
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 840, 180);
@@ -278,7 +278,7 @@ describe('Testes com o otimizador de caminhos', () => {
 
 describe('Testes para verificar se uma colisão existe no próximo passo', () => {
   beforeAll(() => {
-    testEnv = new EditorEnvironment('test-mode', 0, preloadNodeImages());
+    testEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, preloadNodeImages());
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 250, 70);
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 600, 284);
     addComponent.node(undefined, testEnv, 1920, 1080, NodeTypes.G_OR, 840, 180);

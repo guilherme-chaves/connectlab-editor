@@ -9,6 +9,7 @@ import { ConnectionEvents } from '@connectlab-editor/events/connectionEvents';
 import Vector2i from '@connectlab-editor/types/vector2i';
 
 const editorEnv: EditorEnvironment = new EditorEnvironment(
+  '7d918d4f-d937-4daa-af88-43712ecb6139',
   'test',
   undefined,
   preloadNodeImages(),

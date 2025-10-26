@@ -7,7 +7,7 @@ import { fileValidator } from '@connectlab-editor/types/file';
 import Vector2i from '@connectlab-editor/types/vector2i';
 
 const images = preloadNodeImages();
-let editorEnv = new EditorEnvironment('test-mode', 0, images);
+let editorEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, images);
 const canvas = document.createElement('canvas');
 canvas.width = 800;
 canvas.height = 600;
@@ -68,7 +68,7 @@ describe(
   'Conjunto de testes de criação de elementos a partir do ambiente do editor',
   () => {
     beforeEach(() => {
-      editorEnv = new EditorEnvironment('test-mode', 0, images);
+      editorEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, images);
     });
     test('Criar node', () => {
       const nodeId = newNode();
@@ -119,7 +119,8 @@ describe(
           editorEnv.nodeImageList,
         );
         expect(editorEnv2.signalGraph).toEqual(editorEnv.signalGraph);
-        expect(editorEnv2.documentId).toBe(editorEnv.documentId);
+        expect(editorEnv2.simulationId).toBe(editorEnv.simulationId);
+        expect(editorEnv2.simulationTitle).toBe(editorEnv.simulationTitle);
         expect(editorEnv2.nextComponentId).toBe(editorEnv.nextComponentId);
       }
       else {
@@ -128,7 +129,7 @@ describe(
       }
     });
     test('Obter o ID do ambiente do editor', () => {
-      expect(editorEnv.getDocumentId()).toBe('test-mode');
+      expect(editorEnv.simulationTitle).toBe('test-mode');
     });
     test('Remover conexão do editor', () => {
       newNode();

@@ -179,6 +179,7 @@ export const fileSchema: JSONSchemaType<EditorEnvironmentObject> = {
   type: 'object',
   properties: {
     id: { type: 'string' },
+    title: { type: 'string' },
     data: {
       type: 'object',
       properties: {

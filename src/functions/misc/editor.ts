@@ -44,7 +44,7 @@ export function loadFile(
 export function saveToFile(editorEnv: EditorEnvironment): void {
   const fileName = window.prompt(
     'Salvar projeto como:',
-    `${editorEnv.documentId}-${Date.now()}`,
+    `${editorEnv.simulationTitle}-${Date.now()}`,
   );
   if (fileName === null) return;
   const a = document.createElement('a');
@@ -66,7 +66,8 @@ export function clearEditor(
     ) === true
   ) {
     return new EditorEnvironment(
-      editorEnv.documentId,
+      editorEnv.simulationId,
+      editorEnv.simulationTitle,
       0,
       editorEnv.nodeImageList,
     );
