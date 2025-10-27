@@ -19,8 +19,8 @@ body {
 }
 
 #app-sidebar {
-  width: 15vw;
   border: 1px solid black;
+  border-radius: 0.5rem 0 0 0.5rem;
   overflow-y: auto;
   background-color: white;
 }
@@ -37,8 +37,24 @@ body {
   margin: 0;
   padding: 0 1rem 0 1rem;
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 0.5rem 4px;
+}
+
+@media screen and (min-width: 1367px) {
+  #app-sidebar {
+    width: 15vw;
+  }
+  #app-component-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 1367px) {
+  #app-sidebar {
+    width: 18vw;
+  }
+  #app-component-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 .app-component {
@@ -83,10 +99,12 @@ body {
   z-index: 1;
   grid-column: 1 / 1;
   grid-row: 1 / 1;
+  border-radius: 0 0.5rem 0.5rem 0;
 }
 
 #editor-canvas {
   border: 1px solid black;
+  border-radius: 0 0.5rem 0.5rem 0;
   z-index: 2;
   grid-column: 1 / 1;
   grid-row: 1 / 1;

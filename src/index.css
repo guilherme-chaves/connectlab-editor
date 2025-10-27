@@ -66,3 +66,102 @@
     opacity: 0;
   }
 }
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0,0,0); /* Fallback */
+  background-color: rgba(0,0,0,0.4);
+  font-family: monospace;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fefefe;
+  margin: 15dvh auto;
+  padding: 2rem;
+  width: 80dvw;
+  display: flex;
+  flex-direction: column;
+  vertical-align: middle;
+  gap: 0.75rem;
+  box-shadow: 0.25rem 0.25rem 0.6rem 0.4rem #00000036;
+  animation-name: animatetop;
+  animation-timing-function: ease-out;
+  animation-duration: 0.4s
+}
+
+@keyframes animatetop {
+  from {top: -300px; opacity: 0}
+  to {top: 0; opacity: 1}
+}
+
+.modal-close {
+  font-size: 24pt;
+  color: #aaa;
+  position: absolute;
+  right: 2rem;
+  font-weight: bold;
+}
+
+.modal-close:hover,
+.modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal-header {
+  font-size: 14pt;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-title {
+  margin: auto;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+}
+
+.button-list {
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.button-list > button {
+  margin: 0 0.25rem;
+}
+
+/* Carrosel */
+.carrousel {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+}
+
+.carrousel-item {
+  width: 80%;
+  word-break: normal;
+  text-indent: 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  display: none;
+}
+
+.carrousel-active {
+  display: block;
+}

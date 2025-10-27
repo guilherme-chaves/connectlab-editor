@@ -86,6 +86,68 @@
       <button id="load-editor">Carregar projeto</button>
       <button id="clear-editor">Limpar editor</button>
       <input type="file" id="load-editor-file" name="load-editor-file" hidden />
+      <button id="tutorial-button">Tutorial</button>
+    </div>
+    <div class="modal" id="app-modal-tutorial">
+      <div class="modal-content">
+        <div class="modal-header">
+          <span class="modal-title">Bem vindo(a) ao ConnectLab!</span>
+          <span class="modal-close" id="app-modal-close">&times;</span>
+        </div>
+        <div class="modal-body carrousel">
+          <div class="carrousel-item">
+            Este simulador é uma ferramenta interativa que permite a manipulação de circuitos lógicos, sendo possível projetar, construir e testar uma vasta gama de experimentos.
+            <br/>
+            A plataforma integra componentes essenciais, com uma biblioteca abrangente de portas lógicas fundamentais (AND, OR, NOT, NAND, NOR, XOR, XNOR), e saídas diversas, incluindo LEDs e displays de sete segmentos.
+            <br/>
+            Você pode arrastar e soltar componentes, conectar fios e observar o comportamento do circuito em tempo real.
+          </div>
+          <div class="carrousel-item">
+            Para adicionar um componente ao editor, clique com o botão esquerdo do mouse em um item na barra lateral ou utilize os atalhos indicados entre parênteses.
+          </div>
+          <div class="carrousel-item">
+            Para excluir um item, selecione-o com o botão esquerdo do mouse e pressione a tecla Delete.
+          </div>
+          <div class="carrousel-item">
+            Para mover um componente na simulação, clique e arraste-o com o botão esquerdo do mouse.
+          </div>
+          <div class="carrousel-item">
+            Entradas &mdash; Variável:
+            <br/>
+            Alternam seu valor entre 0 e 1 a cada clique.
+            <br/>
+            <img src="/src/assets/tutorial-variavel.gif" />
+          </div>
+          <div class="carrousel-item">
+            Entradas &mdash; Botão:
+            <br/>
+            Mantém o valor 1 enquanto pressionado.
+            <br/>
+            <img src="/src/assets/tutorial-botao.gif" />
+          </div>
+          <div class="carrousel-item">
+            Entradas &mdash; Oscilador:
+            <br/>
+            Altera seu valor automaticamente a cada 0,5 segundos.
+            <br/>
+            <img src="/src/assets/tutorial-oscilador.gif" />
+          </div>
+          <div class="carrousel-item">
+            Os botões na barra inferior permitem carregar, salvar ou limpar completamente a simulação do projeto atual.
+            <br/>
+            <strong>Importante:</strong> Não é possível recuperar alterações não salvas.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="carrousel-progress"></div>
+          <div class="button-list">
+            <button id="app-tutorial-skip">Pular tutorial</button>
+            <button id="app-tutorial-previous">Anterior</button>
+            <button id="app-tutorial-next">Próximo</button>
+            <button id="app-tutorial-close">Fechar tutorial</button>
+          </div>
+        </div>
+      </div>
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
