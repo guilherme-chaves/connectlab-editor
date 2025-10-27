@@ -58,11 +58,17 @@ export default class ModalController {
       this.modalDOM !== null
       && this.openButton !== null
     ) {
+      const hideTutorial = localStorage.getItem('connectlab-hide-tutorial');
+      if (hideTutorial !== '1')
+        window.addEventListener('load', () => {
+          this.modalDOM!.style.display = 'block';
+        });
       this.openButton.addEventListener('click', () => {
         this.modalDOM!.style.display = 'block';
       });
       if (this.closeButton) {
         this.closeButton.addEventListener('click', () => {
+          localStorage.setItem('connectlab-hide-tutorial', '1');
           this.modalDOM!.style.display = 'none';
         });
       }
@@ -78,6 +84,7 @@ export default class ModalController {
       this.tutorialEndButton.style.display = 'none';
       this.skipButton.addEventListener('click', () => {
         this.carrouselPrevious(0);
+        localStorage.setItem('connectlab-hide-tutorial', '1');
         this.modalDOM!.style.display = 'none';
       });
       this.previousButton.addEventListener('click', () => {
@@ -88,6 +95,7 @@ export default class ModalController {
       });
       this.tutorialEndButton.addEventListener('click', () => {
         this.carrouselPrevious(0);
+        localStorage.setItem('connectlab-hide-tutorial', '1');
         this.modalDOM!.style.display = 'none';
       });
     }
@@ -101,14 +109,14 @@ export default class ModalController {
       || this.tutorialEndButton === null
     )
       return;
-    this.carrouselItems[this.currentCarrouselId].classList.remove('carrousel-active');
+    this.carrouselItems[this.currentCarrouselId].classList.toggle('carrousel-active');
     this.currentCarrouselId = id;
     if (this.currentCarrouselId >= this.carrouselMaxId) {
       this.currentCarrouselId = this.carrouselMaxId;
       this.nextButton.style.display = 'none';
       this.tutorialEndButton.style.display = 'block';
     }
-    this.carrouselItems[this.currentCarrouselId].classList.add('carrousel-active');
+    this.carrouselItems[this.currentCarrouselId].classList.toggle('carrousel-active');
     this.previousButton.style.display = 'block';
     this.skipButton.style.display = 'none';
   }
@@ -121,7 +129,7 @@ export default class ModalController {
       || this.tutorialEndButton === null
     )
       return;
-    this.carrouselItems[this.currentCarrouselId].classList.remove('carrousel-active');
+    this.carrouselItems[this.currentCarrouselId].classList.toggle('carrousel-active');
     this.currentCarrouselId = id;
     if (this.currentCarrouselId <= 0) {
       this.currentCarrouselId = 0;
@@ -129,7 +137,7 @@ export default class ModalController {
       this.skipButton.style.display = 'block';
     }
     this.tutorialEndButton.style.display = 'none';
-    this.carrouselItems[this.currentCarrouselId].classList.add('carrousel-active');
+    this.carrouselItems[this.currentCarrouselId].classList.toggle('carrousel-active');
     this.nextButton.style.display = 'block';
   }
 }
