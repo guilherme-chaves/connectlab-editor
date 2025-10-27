@@ -26,8 +26,10 @@ export default function createEditorEvents(
       document.getElementById('app-toolbar')!.style.visibility = 'visible';
       document.getElementById('app')!.className = 'animate-show';
       document.getElementById('app-toolbar')!.className = 'animate-show';
+      if (document.getElementById('app-tutorial-content') !== null)
+        document.getElementById('app-tutorial-content')!.classList.add('modal-animate-show');
       document.getElementById('loading-div')!.style.visibility = 'hidden';
-    }, 1000);
+    }, 1200);
   };
 
   window.onresize = () => editor.resize();

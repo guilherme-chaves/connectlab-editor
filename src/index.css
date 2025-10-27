@@ -1,10 +1,9 @@
 /* CSS responsável pela animação de carregamento da página */
 .animate-show {
-  position: relative;
   -webkit-animation-name: animateshow;
-  -webkit-animation-duration: 1s;
+  -webkit-animation-duration: 1500ms;
   animation-name: animateshow;
-  animation-duration: 1s;
+  animation-duration: 1500ms;
 }
 
 @-webkit-keyframes animateshow {
@@ -93,9 +92,18 @@
   vertical-align: middle;
   gap: 0.75rem;
   box-shadow: 0.25rem 0.25rem 0.6rem 0.4rem #00000036;
-  animation-name: animatetop;
+}
+
+.modal-animate-show {
+  animation-name: animateshow;
   animation-timing-function: ease-out;
-  animation-duration: 0.4s
+  animation-duration: 0.6s
+}
+
+.modal-animate-top {
+  animation-name: animatetop;
+  animation-timing-function: ease-in-out;
+  animation-duration: 0.6s
 }
 
 @keyframes animatetop {
