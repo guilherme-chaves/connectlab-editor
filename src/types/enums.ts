@@ -88,5 +88,5 @@ export const enum EditorEvents {
   FOCUS_OUT = 21,
   CLOCK_TRIGGERED = 30,
   CLOCK_FINISHED = 31,
-  PHYSICS_ENGINE_CYCLE = 40,
+  ENGINE_UPDATE = 40,
 }

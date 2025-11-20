@@ -151,7 +151,7 @@ export default class Editor {
     this.mouseEvents.onMouseClick(this.editorEnv);
     this.mouseEvents.onMouseMove(this.editorEnv);
     this.mouseEvents.onMouseRelease(this.editorEnv);
-    nodeEvents.onPhysicsEngineUpdate(
+    nodeEvents.onTick(
       this.editorEnv.nodes,
       this.editorEnv.signalGraph,
     );

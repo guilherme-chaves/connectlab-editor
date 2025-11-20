@@ -48,12 +48,12 @@ export default {
       }
     }
   },
-  onPhysicsEngineUpdate(nodes: NodeList, signalGraph: SignalGraph): void {
+  onTick(nodes: NodeList, signalGraph: SignalGraph): void {
     const updateList: Array<number> = [];
     for (const node of nodes.values()) {
       if (
         node.nodeType.id === NodeTypes.I_CLOCK
-        && node.onEvent(EditorEvents.PHYSICS_ENGINE_CYCLE)
+        && node.onEvent(EditorEvents.ENGINE_UPDATE)
       )
         updateList.push(node.id);
     }

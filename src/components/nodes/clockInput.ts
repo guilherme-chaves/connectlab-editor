@@ -112,9 +112,8 @@ class ClockInput implements Node {
       case EditorEvents.CLOCK_FINISHED:
         this.state = !this.state;
         this.currentClockStep = 0;
-        // this.onEvent(EditorEvents.CLOCK_TRIGGERED);
         break;
-      case EditorEvents.PHYSICS_ENGINE_CYCLE:
+      case EditorEvents.ENGINE_UPDATE:
         this.currentClockStep++;
         if (this.currentClockStep > this.clockDelay) {
           this.onEvent(EditorEvents.CLOCK_FINISHED);
