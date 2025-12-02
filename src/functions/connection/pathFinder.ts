@@ -170,25 +170,25 @@ export default {
     nodePosition: Vector2i,
     nodeKey: string,
     nodeT: Vector2f,
-    from: Vector2i | undefined,
+    fromKey: string | undefined,
   ): NodeUpdateStatus {
-    let fromKey = undefined;
     const nodeScore = pathGraph.get(nodeKey)?.score ?? Infinity;
     if (isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
-    if (from !== undefined) {
-      fromKey = `${from.x}::${from.y}`;
-      const fromNode = pathGraph.get(fromKey);
-      if (nodePosition.equals(from)) return NodeUpdateStatus.SAME_POSITION;
-      if (fromNode?.from?.equals(from)) return NodeUpdateStatus.LOOP;
+    const fromNode = pathGraph.get(fromKey ?? '');
+    if (fromNode !== undefined) {
+      if (nodePosition.equals(fromNode.position))
+        return NodeUpdateStatus.SAME_POSITION;
+      if (fromNode.from !== undefined && nodePosition.equals(fromNode.from))
+        return NodeUpdateStatus.LOOP;
     }
-    const tmpScore = this.computeStepScore(start, nodePosition, end);
+    const newScore = this.computeStepScore(start, nodePosition, end);
 
-    if (tmpScore < nodeScore) {
+    if (newScore < nodeScore) {
       pathGraph.set(nodeKey, {
         position: nodePosition,
         t: nodeT,
-        from,
-        score: tmpScore,
+        from: fromNode?.position,
+        score: newScore,
       });
       return NodeUpdateStatus.CHANGE;
     }
@@ -288,6 +288,9 @@ export default {
       const currentNodeKey = `${current.key.x}::${current.key.y}`;
       const currentPosition = currentNode.position;
       const currentT = currentNode.t;
+      const currentNodeFromKey = currentNode.from !== undefined
+        ? `${currentNode.from.x}::${currentNode.from.y}`
+        : undefined;
       if (currentPosition.equals(end, 16)) {
         this.setNodeScore(
           pathGraph,
@@ -296,7 +299,7 @@ export default {
           end,
           currentNodeKey,
           new Vector2f(1, 1),
-          currentPosition,
+          currentNodeFromKey,
         );
         return [true, this.createPathFromScores(pathGraph, end)];
       }
@@ -325,21 +328,22 @@ export default {
         continue;
       }
       for (const next of nextSteps) {
+        const nextNodeKey = `${next[0].x}::${next[0].y}`;
         switch (
           this.setNodeScore(
             pathGraph,
             start,
             end,
             next[0],
-            currentNodeKey,
+            nextNodeKey,
             next[1],
-            currentPosition,
+            currentNodeKey,
           )
         ) {
           case NodeUpdateStatus.CHANGE:
             openSet.push({
               key: next[0],
-              score: pathGraph.get(`${next[0].x}::${next[0].y}`)!.score,
+              score: pathGraph.get(nextNodeKey)!.score,
             });
             break;
           case NodeUpdateStatus.SAME_POSITION:
@@ -348,7 +352,7 @@ export default {
               openSet.push({
                 key: currentNode.from,
                 score:
-                  pathGraph.get(currentNodeKey)?.score ?? Infinity,
+                  pathGraph.get(currentNodeFromKey ?? '')?.score ?? Infinity,
               });
             currentNode.score = NaN;
             break;
