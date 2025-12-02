@@ -23,6 +23,7 @@ enum NodeUpdateStatus {
 }
 
 export default {
+  collisionList: <NodeList>(new Map()),
   stepDirectionFromAtan2(atan2: number): Vector2f {
     const result = Vector2f.ZERO;
     if (atan2 <= angles.Rad45Deg && atan2 >= -angles.Rad45Deg) {
@@ -46,7 +47,7 @@ export default {
     const minPoint = Vector2i.min(p1, p2);
     const maxPoint = Vector2i.max(p1, p2);
     const center = Vector2f.add(minPoint, maxPoint).div(2);
-    minPoint.copy(Vector2f.sub(center, Vector2f.div(size, 2)));
+    Vector2i.sub(center, Vector2f.div(size, 2), minPoint);
     return new BoxCollision(minPoint, size.x, size.y);
   },
   // Filtra a lista de nodes e retorna apenas aqueles que existem dentro de uma área
@@ -167,12 +168,12 @@ export default {
     start: Vector2i,
     end: Vector2i,
     nodePosition: Vector2i,
+    nodeKey: string,
     nodeT: Vector2f,
     from: Vector2i | undefined,
   ): NodeUpdateStatus {
-    const key = `${nodePosition.x}::${nodePosition.y}`;
     let fromKey = undefined;
-    const nodeScore = pathGraph.get(key)?.score ?? Infinity;
+    const nodeScore = pathGraph.get(nodeKey)?.score ?? Infinity;
     if (isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
     if (from !== undefined) {
       fromKey = `${from.x}::${from.y}`;
@@ -183,7 +184,7 @@ export default {
     const tmpScore = this.computeStepScore(start, nodePosition, end);
 
     if (tmpScore < nodeScore) {
-      pathGraph.set(key, {
+      pathGraph.set(nodeKey, {
         position: nodePosition,
         t: nodeT,
         from,
@@ -258,6 +259,7 @@ export default {
       start,
       end,
       start,
+      `${start.x}::${start.y}`,
       new Vector2f(0, 0),
       undefined,
     );
@@ -283,6 +285,7 @@ export default {
       const current = openSet.pop()!;
 
       const currentNode = pathGraph.get(`${current.key.x}::${current.key.y}`)!;
+      const currentNodeKey = `${current.key.x}::${current.key.y}`;
       const currentPosition = currentNode.position;
       const currentT = currentNode.t;
       if (currentPosition.equals(end, 16)) {
@@ -291,6 +294,7 @@ export default {
           start,
           end,
           end,
+          currentNodeKey,
           new Vector2f(1, 1),
           currentPosition,
         );
@@ -306,7 +310,7 @@ export default {
         minStepSize,
       );
       if (nextSteps.length === 0) {
-        pathGraph.set(`${current.key.x}::${current.key.y}`, {
+        pathGraph.set(currentNodeKey, {
           position: currentPosition,
           t: currentT,
           from: currentNode.from,
@@ -315,9 +319,7 @@ export default {
         if (currentNode.from !== undefined) {
           openSet.push({
             key: currentNode.from,
-            score: pathGraph.get(
-              `${currentNode.from.x}::${currentNode.from.y}`,
-            )!.score,
+            score: pathGraph.get(currentNodeKey)!.score,
           });
         }
         continue;
@@ -329,6 +331,7 @@ export default {
             start,
             end,
             next[0],
+            currentNodeKey,
             next[1],
             currentPosition,
           )
@@ -345,8 +348,7 @@ export default {
               openSet.push({
                 key: currentNode.from,
                 score:
-                  pathGraph.get(`${currentNode.from.x}::${currentNode.from.y}`)
-                    ?.score ?? Infinity,
+                  pathGraph.get(currentNodeKey)?.score ?? Infinity,
               });
             currentNode.score = NaN;
             break;
@@ -359,14 +361,19 @@ export default {
   find(start: Vector2i, end: Vector2i, nodeList: NodeList) {
     if (start.equals(end, 8)) return [];
     const simpleSearchArea = this.getSearchArea(start, end, 1);
-    let collisions = this.getCollisionsInArea(nodeList, simpleSearchArea);
-    if (collisions.size === 0) {
+    this.collisionList = this.getCollisionsInArea(nodeList, simpleSearchArea);
+    if (this.collisionList.size === 0) {
       return this.simplePathFinder(start, end);
     }
     else {
       const complexSearchArea = this.getSearchArea(start, end, 3);
-      collisions = this.getCollisionsInArea(nodeList, complexSearchArea);
-      const [success, path] = this.complexPathFinder(start, end, collisions);
+      this.collisionList
+        = this.getCollisionsInArea(nodeList, complexSearchArea);
+      const [success, path] = this.complexPathFinder(
+        start,
+        end,
+        this.collisionList,
+      );
       return success ? path : this.simplePathFinder(start, end);
     }
   },
