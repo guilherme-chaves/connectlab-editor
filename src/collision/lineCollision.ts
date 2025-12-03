@@ -7,7 +7,7 @@ export default class LineCollision implements Collision {
   position: Vector2i;
   endPosition: Vector2i;
   borderColor: string;
-  private drawPath: Path2D;
+  private drawPath: Path2D | null;
   private regenPath: boolean;
   private lineLength: number;
 
@@ -15,13 +15,14 @@ export default class LineCollision implements Collision {
     position: Vector2i,
     endPosition: Vector2i,
     borderColor: string = '#FF8008DC',
+    render: boolean = true,
   ) {
     this.position = position;
     this.endPosition = endPosition;
     this.lineLength = this.computeLineLength();
     this.borderColor = borderColor;
     this.regenPath = true;
-    this.drawPath = this.generatePath();
+    this.drawPath = render ? this.generatePath() : null;
   }
 
   protected generatePath(): Path2D {

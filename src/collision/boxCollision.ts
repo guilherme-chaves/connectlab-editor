@@ -21,7 +21,7 @@ export default class BoxCollision implements Collision {
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
   public borderColor: string;
-
+  private lines: Array<LineCollision> = [];
   constructor(
     position: Vector2i,
     width = 2,
@@ -40,6 +40,16 @@ export default class BoxCollision implements Collision {
       c: Vector2i.add(this.position, this.localVertices.c),
       d: Vector2i.add(this.position, this.localVertices.d),
     };
+    this.lines.push(
+      new LineCollision(
+        this.vertices.a, this.vertices.d, undefined, false), // Esquerda
+      new LineCollision(
+        this.vertices.a, this.vertices.b, undefined, false), // Cima
+      new LineCollision(
+        this.vertices.b, this.vertices.c, undefined, false), // Direita
+      new LineCollision(
+        this.vertices.c, this.vertices.d, undefined, false), // Baixo
+    );
   }
 
   private setVertices(): void {
@@ -104,18 +114,13 @@ export default class BoxCollision implements Collision {
   }
 
   collisionWithLine(other: LineCollision): boolean {
-    const left = new LineCollision(this.vertices.a, this.vertices.d);
-    const top = new LineCollision(this.vertices.a, this.vertices.b);
-    const right = new LineCollision(this.vertices.b, this.vertices.c);
-    const bottom = new LineCollision(this.vertices.c, this.vertices.d);
-
     return (
       this.collisionWithPoint(other.position)
       || this.collisionWithPoint(other.endPosition)
-      || other.collisionWithLine(left)
-      || other.collisionWithLine(top)
-      || other.collisionWithLine(right)
-      || other.collisionWithLine(bottom)
+      || other.collisionWithLine(this.lines[0])
+      || other.collisionWithLine(this.lines[1])
+      || other.collisionWithLine(this.lines[2])
+      || other.collisionWithLine(this.lines[3])
     );
   }
 }
