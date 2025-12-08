@@ -51,277 +51,287 @@ export default class Vector2i implements Vector2 {
       this.x = xOrVector2;
       this.y = y;
     }
-    else if (Vector2i.isVector2(xOrVector2)) {
+    else {
       this.x = xOrVector2.x;
       this.y = xOrVector2.y;
     }
   }
 
-  static isVector2(obj: unknown): obj is Vector2 {
-    return (
-      typeof obj === 'object'
-      && obj !== null
-      && '_x' in obj
-      && '_y' in obj
-      && 'type' in obj
-      && (obj.type === 'int' || obj.type === 'float')
-    );
-  }
-
   add(other: Vector2 | number): Vector2i {
-    if (Vector2i.isVector2(other)) {
-      this.x += other.x;
-      this.y += other.y;
+    if (typeof other === 'number') {
+      this.x = this._x + other;
+      this.y = this._y + other;
     }
     else {
-      this.x += other;
-      this.y += other;
+      this.x = this._x + other.x;
+      this.y = this._y + other.y;
     }
     return this;
   }
 
-  static add(v1: Vector2, v2OrS: Vector2 | number, out?: Vector2i): Vector2i {
+  static add(a: Vector2, b: Vector2 | number, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
-    if (Vector2i.isVector2(v2OrS)) {
-      out.x = v1.x + v2OrS.x;
-      out.y = v1.y + v2OrS.y;
+    if (typeof b === 'number') {
+      out.x = a.x + b;
+      out.y = a.y + b;
     }
     else {
-      out.x = v1.x + v2OrS;
-      out.y = v1.y + v2OrS;
+      out.x = a.x + b.x;
+      out.y = a.y + b.y;
     }
     return out;
   }
 
   sub(other: Vector2 | number): Vector2i {
-    if (Vector2i.isVector2(other)) {
-      this.x -= other.x;
-      this.y -= other.y;
+    if (typeof other === 'number') {
+      this.x = this._x - other;
+      this.y = this._y - other;
     }
     else {
-      this.x -= other;
-      this.y -= other;
+      this.x = this._x - other.x;
+      this.y = this._y - other.y;
     }
     return this;
   }
 
-  static sub(v1: Vector2, v2OrS: Vector2 | number, out?: Vector2i): Vector2i {
+  static sub(a: Vector2, b: Vector2 | number, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
-    if (Vector2i.isVector2(v2OrS)) {
-      out.x = v1.x - v2OrS.x;
-      out.y = v1.y - v2OrS.y;
+    if (typeof b === 'number') {
+      out.x = a.x - b;
+      out.y = a.y - b;
     }
     else {
-      out.x = v1.x - v2OrS;
-      out.y = v1.y - v2OrS;
+      out.x = a.x - b.x;
+      out.y = a.y - b.y;
     }
     return out;
   }
 
   mul(other: number | Vector2): Vector2i {
-    if (Vector2i.isVector2(other)) {
-      this.x *= other.x;
-      this.y *= other.y;
+    if (typeof other === 'number') {
+      this.x = this._x * other;
+      this.y = this._y * other;
     }
     else {
-      this.x *= other;
-      this.y *= other;
+      this.x = this._x * other.x;
+      this.y = this._y * other.y;
     }
     return this;
   }
 
-  static mul(v1: Vector2, v2orS: number | Vector2, out?: Vector2i): Vector2i {
+  static mul(a: Vector2, b: number | Vector2, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
-    if (Vector2i.isVector2(v2orS)) {
-      out.x = v1.x * v2orS.x;
-      out.y = v1.y * v2orS.y;
+    if (typeof b === 'number') {
+      out.x = a.x * b;
+      out.y = a.y * b;
     }
     else {
-      out.x = v1.x * v2orS;
-      out.y = v1.y * v2orS;
+      out.x = a.x * b.x;
+      out.y = a.y * b.y;
     }
     return out;
   }
 
   div(other: number | Vector2): Vector2i {
-    if (Vector2i.isVector2(other)) {
-      this.x /= other.x;
-      this.y /= other.y;
+    if (typeof other === 'number') {
+      this.x = this._x / other;
+      this.y = this._y / other;
     }
     else {
-      this.x /= other;
-      this.y /= other;
+      this.x = this._x / other.x;
+      this.y = this._y / other.y;
     }
     return this;
   }
 
-  static div(v1: Vector2, v2orS: number | Vector2, out?: Vector2i): Vector2i {
+  static div(a: Vector2, b: number | Vector2, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
-    if (Vector2i.isVector2(v2orS)) {
-      out.x = v1.x / v2orS.x;
-      out.y = v1.y / v2orS.y;
+    if (typeof b === 'number') {
+      out.x = a.x / b;
+      out.y = a.y / b;
     }
     else {
-      out.x = v1.x / v2orS;
-      out.y = v1.y / v2orS;
+      out.x = a.x / b.x;
+      out.y = a.y / b.y;
     }
     return out;
   }
 
   dot(other: Vector2): number {
-    return this.x * other.x + this.y * other.y;
+    return this._x * other.x + this._y * other.y;
   }
 
-  static dot(v1: Vector2, v2: Vector2) {
-    return v1.x * v2.x + v1.y * v2.y;
+  static dot(a: Vector2, b: Vector2) {
+    return a.x * b.x + a.y * b.y;
   }
 
   cross(other: Vector2): number {
-    return this.x * other.y - this.y * other.x;
+    return this._x * other.y - this._y * other.x;
   }
 
-  static cross(v1: Vector2, v2: Vector2) {
-    return v1.x * v2.y - v1.y * v2.x;
+  static cross(a: Vector2, b: Vector2) {
+    return a.x * b.y - a.y * b.x;
   }
 
   len(): number {
     return Math.sqrt(this.lenSquared());
   }
 
-  static len(v1: Vector2) {
-    return Math.sqrt(Vector2i.lenSquared(v1));
+  static len(a: Vector2) {
+    return Math.sqrt(a.lenSquared());
   }
 
   lenSquared(): number {
-    return this.dot(this);
+    return this._x * this._x + this._y * this._y;
   }
 
-  static lenSquared(v1: Vector2) {
-    return Vector2i.dot(v1, v1);
+  static lenSquared(v: Vector2) {
+    return Vector2i.dot(v, v);
   }
 
   madd(other: Vector2, s: number): Vector2i {
-    this.x += other.x * s;
-    this.y += other.y * s;
+    this.x = this._x + other.x * s;
+    this.y = this._y + other.y * s;
     return this;
   }
 
-  static madd(v1: Vector2, v2: Vector2, s: number, out?: Vector2i) {
+  static madd(a: Vector2, b: Vector2, s: number, out?: Vector2i) {
     out ??= Vector2i.ZERO;
-    out.x = v1.x + v2.x * s;
-    out.y = v1.y + v2.y * s;
+    out.x = a.x + b.x * s;
+    out.y = a.y + b.y * s;
     return out;
   }
 
   // Interpolação linear
   lerp(other: Vector2, t: number): Vector2i {
-    return this.madd(Vector2i.sub(other, this), t);
+    const diffX = other.x - this._x;
+    const diffY = other.y - this._y;
+    this.x = this._x + diffX * t;
+    this.y = this._y + diffY * t;
+    return this;
   }
 
-  static lerp(v1: Vector2, v2: Vector2, t: number, out?: Vector2i) {
-    return Vector2i.madd(v1, Vector2i.sub(v2, v1), t, out);
+  static lerp(a: Vector2, b: Vector2, t: number, out?: Vector2i) {
+    out ??= Vector2i.ZERO;
+    const diffX = b.x - a.x;
+    const diffY = b.y - a.y;
+    out.x = a.x + diffX * t;
+    out.y = a.y + diffY * t;
+    return out;
   }
 
   // Interpolação bilinear
   bilinear(other: Vector2, bt: Vector2f): Vector2i {
-    this.x = Vector2i.lerp(this, other, bt.x).x;
-    this.y = Vector2i.lerp(this, other, bt.y).y;
+    const diffX = other.x - this._x;
+    const diffY = other.y - this._y;
+    this.x = this._x + diffX * bt.x;
+    this.y = this._y + diffY * bt.y;
     return this;
   }
 
-  static bilinear(v1: Vector2, v2: Vector2, bt: Vector2f, out?: Vector2i) {
+  static bilinear(a: Vector2, b: Vector2, bt: Vector2f, out?: Vector2i) {
     out ??= Vector2i.ZERO;
-    out.x = Vector2i.lerp(v1, v2, bt.x).x;
-    out.y = Vector2i.lerp(v1, v2, bt.y).y;
+    const diffX = b.x - a.x;
+    const diffY = b.y - a.y;
+    out.x = a.x + diffX * bt.x;
+    out.y = a.y + diffY * bt.y;
     return out;
   }
 
   equals(other: Vector2, precision = 0): boolean {
-    if (precision === 0) return this.x === other.x && this.y === other.y;
+    if (precision === 0) return this._x === other.x && this._y === other.y;
     else
       return (
-        Math.abs(this.x - other.x) < precision
-        && Math.abs(this.y - other.y) < precision
+        Math.abs(this._x - other.x) < precision
+        && Math.abs(this._y - other.y) < precision
       );
   }
 
-  static equals(v1: Vector2, v2: Vector2, precision = 0): boolean {
-    if (precision === 0) return v1.x === v2.x && v1.y === v2.y;
+  static equals(a: Vector2, b: Vector2, precision = 0): boolean {
+    if (precision === 0) return a.x === b.x && a.y === b.y;
     else
       return (
-        Math.abs(v1.x - v2.x) < precision && Math.abs(v1.y - v2.y) < precision
+        Math.abs(a.x - b.x) < precision && Math.abs(a.y - b.y) < precision
       );
   }
 
   min(other: Vector2): Vector2i {
-    this.x = Math.min(this.x, other.x);
-    this.y = Math.min(this.y, other.y);
+    this.x = Math.min(this._x, other.x);
+    this.y = Math.min(this._y, other.y);
     return this;
   }
 
-  static min(v1: Vector2, v2: Vector2, out?: Vector2i) {
+  static min(a: Vector2, b: Vector2, out?: Vector2i) {
     out ??= Vector2i.ZERO;
-    out.x = Math.min(v1.x, v2.x);
-    out.y = Math.min(v1.y, v2.y);
+    out.x = Math.min(a.x, b.x);
+    out.y = Math.min(a.y, b.y);
     return out;
   }
 
   max(other: Vector2): Vector2i {
-    this.x = Math.max(this.x, other.x);
-    this.y = Math.max(this.y, other.y);
+    this.x = Math.max(this._x, other.x);
+    this.y = Math.max(this._y, other.y);
     return this;
   }
 
-  static max(v1: Vector2, v2: Vector2, out?: Vector2i) {
+  static max(a: Vector2, b: Vector2, out?: Vector2i) {
     out ??= Vector2i.ZERO;
-    out.x = Math.max(v1.x, v2.x);
-    out.y = Math.max(v1.y, v2.y);
+    out.x = Math.max(a.x, b.x);
+    out.y = Math.max(a.y, b.y);
     return out;
   }
 
   rotate(angle: number): Vector2i {
     const sin = Math.sin(angle);
     const cos = Math.cos(angle);
-    this.x = this.x * cos - this.y * sin;
-    this.y = this.x * sin + this.y * cos;
+    this.x = this._x * cos - this._y * sin;
+    this.y = this._x * sin + this._y * cos;
     return this;
   }
 
-  static rotate(v1: Vector2, rad: number, out?: Vector2i): Vector2i {
+  static rotate(v: Vector2, rad: number, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
     const sin = Math.sin(rad);
     const cos = Math.cos(rad);
-    out.x = v1.x * cos - v1.y * sin;
-    out.y = v1.x * sin + v1.y * cos;
+    out.x = v.x * cos - v.y * sin;
+    out.y = v.x * sin + v.y * cos;
     return out;
   }
 
   atan2(other: Vector2): number {
-    return Math.atan2(other.y - this.y, other.x - this.x);
+    return Math.atan2(other.y - this._y, other.x - this._x);
   }
 
-  static atan2(v1: Vector2, v2: Vector2): number {
-    return Math.atan2(v2.y - v1.y, v2.x - v1.x);
+  static atan2(a: Vector2, b: Vector2): number {
+    return Math.atan2(b.y - a.y, b.x - a.x);
   }
 
   normalize(): Vector2f {
-    return Vector2f.div(this, this.len());
+    const out = Vector2f.ZERO;
+    const len = this.len();
+    out.x = this._x / len;
+    out.y = this._y / len;
+    return out;
   }
 
-  static normalize(v1: Vector2, out?: Vector2f) {
-    return Vector2f.div(v1, v1.len(), out);
+  static normalize(v: Vector2, out?: Vector2f) {
+    out ??= Vector2f.ZERO;
+    const len = v.len();
+    out.x = v.x / len;
+    out.y = v.y / len;
+    return out;
   }
 
   abs(): Vector2i {
-    this.x = Math.abs(this.x);
-    this.y = Math.abs(this.y);
+    this.x = Math.abs(this._x);
+    this.y = Math.abs(this._y);
     return this;
   }
 
-  static abs(v1: Vector2, out?: Vector2i): Vector2i {
+  static abs(v: Vector2, out?: Vector2i): Vector2i {
     out ??= Vector2i.ZERO;
-    out.x = Math.abs(v1.x);
-    out.y = Math.abs(v1.y);
+    out.x = Math.abs(v.x);
+    out.y = Math.abs(v.y);
     return out;
   }
 
@@ -341,14 +351,14 @@ export default class Vector2i implements Vector2 {
     return new Vector2i(this);
   }
 
-  static clone(v1: Vector2i): Vector2i {
-    return new Vector2i(v1);
+  static clone(v: Vector2i): Vector2i {
+    return new Vector2i(v);
   }
 
   toPlainObject(): VectorObject {
     return {
-      x: this.x,
-      y: this.y,
+      x: this._x,
+      y: this._y,
     };
   }
 }
