@@ -28,6 +28,8 @@ export function updateBackground(
   bgPattern: CanvasPattern | null,
 ): void {
   clearFrame(ctx);
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.fillStyle = bgPattern ?? '#ff0000';
   ctx.fill();
