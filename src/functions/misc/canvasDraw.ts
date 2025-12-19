@@ -30,7 +30,7 @@ export function updateBackground(
   clearFrame(ctx);
   ctx.fillStyle = '#ffffff';
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.fillStyle = bgPattern ?? '#ff0000';
   ctx.rect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.fillStyle = bgPattern ?? '#ff0000';
   ctx.fill();
 }
