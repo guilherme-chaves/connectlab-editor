@@ -5,6 +5,7 @@ import addComponent from '@connectlab-editor/functions/addComponent';
 import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
 import { fileValidator } from '@connectlab-editor/types/file';
 import Vector2i from '@connectlab-editor/types/vector2i';
+import { clearEditor } from '@connectlab-editor/functions/editor';
 
 const images = preloadNodeImages();
 let editorEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, images);
@@ -32,6 +33,18 @@ const newInput = () => {
     canvas.width,
     canvas.height,
     NodeTypes.I_SWITCH,
+    25,
+    80,
+  );
+};
+
+const newOutput = () => {
+  return addComponent.output(
+    undefined,
+    editorEnv,
+    canvas.width,
+    canvas.height,
+    NodeTypes.O_LED_RED,
     25,
     80,
   );
@@ -108,6 +121,7 @@ describe(
       vi.spyOn(window, 'structuredClone').mockImplementation(() => 'mocked');
       newNode();
       newInput();
+      newOutput();
       newConnection();
       newText();
       const envObject = editorEnv.saveAsJson();
@@ -144,6 +158,16 @@ describe(
       expect(editorEnv.removeComponent(0, ComponentType.NODE)).toBe(true);
       expect(editorEnv.removeComponent(50, ComponentType.NODE)).toBe(false);
     });
+    test('Remover nó de entrada do editor', () => {
+      newInput();
+      expect(editorEnv.removeComponent(0, ComponentType.INPUT)).toBe(true);
+      expect(editorEnv.removeComponent(50, ComponentType.INPUT)).toBe(false);
+    });
+    test('Remover nó de saída do editor', () => {
+      newOutput();
+      expect(editorEnv.removeComponent(0, ComponentType.OUTPUT)).toBe(true);
+      expect(editorEnv.removeComponent(50, ComponentType.OUTPUT)).toBe(false);
+    });
     test('Remover caixa de texto do editor', () => {
       newNode();
       newInput();
@@ -158,6 +182,20 @@ describe(
       newText();
       expect(editorEnv.removeComponent(7)).toBe(true);
       expect(editorEnv.removeComponent(70)).toBe(false);
+    });
+    test('Limpar o editor', () => {
+      newNode();
+      newInput();
+      newOutput();
+      newConnection();
+      newText();
+      expect(editorEnv.nextComponentId).toBeGreaterThan(0);
+      clearEditor(editorEnv, true);
+      expect(editorEnv.nextComponentId).toBe(0);
+      expect(editorEnv.nodes.size).toBe(0);
+      expect(editorEnv.slots.size).toBe(0);
+      expect(editorEnv.connections.size).toBe(0);
+      expect(editorEnv.texts.size).toBe(0);
     });
   },
 );

@@ -11,6 +11,14 @@ const box = new BoxCollision(new Vector2(475, 475), 50, 50);
 const line = new LineCollision(new Vector2(475, 475), new Vector2(525, 525));
 
 describe('Testes com a área de colisão circular', () => {
+  test('Mover o círculo', () => {
+    const circle2 = new CircleCollision(new Vector2(500, 500), 100);
+    expect(circle2.position).toEqual({ _x: 500, _y: 500, type: 'int' });
+    circle2.moveShape(Vector2.ONE, true);
+    expect(circle2.position).toEqual({ _x: 501, _y: 501, type: 'int' });
+    circle2.moveShape(Vector2.ZERO, false);
+    expect(circle2.position).toEqual({ _x: 0, _y: 0, type: 'int' });
+  });
   test('Colisão com outro círculo', () => {
     const circle2 = new CircleCollision(new Vector2(530, 530), 40);
     expect(circle.collisionWithCircle(circle2)).toBe(true);
@@ -26,6 +34,7 @@ describe('Testes com a área de colisão circular', () => {
   test('Colisão com uma caixa', () => {
     const box2 = new BoxCollision(new Vector2(450, 500), 100, 30);
     expect(circle.collisionWithBox(box2)).toBe(true);
+    expect(box2.collisionWithCircle(circle)).toBe(true);
   });
   test('Colisão com uma caixa (esquerda)', () => {
     const box2 = new BoxCollision(new Vector2(420, 485), 100, 30);
@@ -70,6 +79,7 @@ describe('Testes com a área de colisão circular', () => {
   test('Sem colisão com uma caixa', () => {
     const box2 = new BoxCollision(new Vector2(100, 200), 100, 30);
     expect(circle.collisionWithBox(box2)).toBe(false);
+    expect(box2.collisionWithCircle(circle)).toBe(false);
   });
   test('Colisão com uma linha', () => {
     const line2 = new LineCollision(
@@ -77,6 +87,7 @@ describe('Testes com a área de colisão circular', () => {
       new Vector2(510, 510),
     );
     expect(circle.collisionWithLine(line2)).toBe(true);
+    expect(line2.collisionWithCircle(circle)).toBe(true);
   });
   test('Colisão com uma linha (limítrofe - início)', () => {
     const line2 = new LineCollision(
@@ -120,6 +131,7 @@ describe('Testes com a área de colisão circular', () => {
       new Vector2(388, 500),
     );
     expect(circle.collisionWithLine(line2)).toBe(false);
+    expect(line2.collisionWithCircle(circle)).toBe(false);
   });
   test('Colisão com um ponto', () => {
     const point = new Vector2(510, 496);
@@ -141,6 +153,23 @@ describe('Testes com a área de colisão circular', () => {
 });
 
 describe('Testes com a área de colisão retangular', () => {
+  test('Alterar valor dos vértices ao mover caixa', () => {
+    const box2 = new BoxCollision(new Vector2(500, 500), 100, 100);
+    expect(box2.vertices.a).toEqual({ _x: 500, _y: 500, type: 'int' });
+    expect(box2.vertices.b).toEqual({ _x: 600, _y: 500, type: 'int' });
+    expect(box2.vertices.c).toEqual({ _x: 600, _y: 600, type: 'int' });
+    expect(box2.vertices.d).toEqual({ _x: 500, _y: 600, type: 'int' });
+    box2.moveShape(Vector2.ONE, true);
+    expect(box2.vertices.a).toEqual({ _x: 501, _y: 501, type: 'int' });
+    expect(box2.vertices.b).toEqual({ _x: 601, _y: 501, type: 'int' });
+    expect(box2.vertices.c).toEqual({ _x: 601, _y: 601, type: 'int' });
+    expect(box2.vertices.d).toEqual({ _x: 501, _y: 601, type: 'int' });
+    box2.moveShape(Vector2.ZERO, false);
+    expect(box2.vertices.a).toEqual({ _x: 0, _y: 0, type: 'int' });
+    expect(box2.vertices.b).toEqual({ _x: 100, _y: 0, type: 'int' });
+    expect(box2.vertices.c).toEqual({ _x: 100, _y: 100, type: 'int' });
+    expect(box2.vertices.d).toEqual({ _x: 0, _y: 100, type: 'int' });
+  });
   test('Colisão com outra caixa', () => {
     const box2 = new BoxCollision(new Vector2(450, 500), 100, 30);
     expect(box.collisionWithBox(box2)).toBe(true);
@@ -187,6 +216,7 @@ describe('Testes com a área de colisão retangular', () => {
       new Vector2(510, 520),
     );
     expect(box.collisionWithLine(line2)).toBe(true);
+    expect(line2.collisionWithBox(box)).toBe(true);
   });
   test('Colisão com uma linha (esquerda)', () => {
     const line2 = new LineCollision(
@@ -242,6 +272,7 @@ describe('Testes com a área de colisão retangular', () => {
       new Vector2(850, 510),
     );
     expect(box.collisionWithLine(line2)).toBe(false);
+    expect(line2.collisionWithBox(box)).toBe(false);
   });
   test('Colisão com um ponto', () => {
     const point = new Vector2(480, 505);
@@ -260,6 +291,18 @@ describe('Testes com a área de colisão retangular', () => {
 });
 
 describe('Testes com uma linha', () => {
+  test('Mover uma linha', () => {
+    const line2 = new LineCollision(
+      new Vector2(475, 500),
+      new Vector2(525, 500),
+    );
+    line2.moveShape(Vector2.ONE, true);
+    expect(line2.position).toEqual({ _x: 476, _y: 501, type: 'int' });
+    expect(line2.endPosition).toEqual({ _x: 526, _y: 501, type: 'int' });
+    line2.moveShape(Vector2.ZERO, false);
+    expect(line2.position).toEqual({ _x: 0, _y: 0, type: 'int' });
+    expect(line2.endPosition).toEqual({ _x: 50, _y: 0, type: 'int' });
+  });
   test('Colisão com outra linha', () => {
     const line2 = new LineCollision(
       new Vector2(475, 500),

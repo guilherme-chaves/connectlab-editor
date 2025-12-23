@@ -7,6 +7,7 @@ import Mouse from '@connectlab-editor/types/mouse';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import { ConnectionEvents } from '@connectlab-editor/events/connectionEvents';
 import Vector2i from '@connectlab-editor/types/vector2i';
+import { MovePointEnum } from '@connectlab-editor/components/connectionComponent';
 
 const editorEnv: EditorEnvironment = new EditorEnvironment(
   '7d918d4f-d937-4daa-af88-43712ecb6139',
@@ -88,6 +89,22 @@ describe('Testes dos eventos relacionados à conexões', () => {
     expect(ConnectionEvents.newConnection(editorEnv, 1)).toBe(true);
     expect(editorEnv.connections.size).toBe(3);
   });
+  test('Adicionar uma nova conexão (slot final)', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(3)!.globalPosition.clone();
+    expect(ConnectionEvents.newConnection(editorEnv, 3)).toBe(true);
+    expect(editorEnv.connections.size).toBe(4);
+  });
+  test('Mover uma conexão', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    expect(ConnectionEvents.newConnection(editorEnv, 1)).toBe(true);
+    ConnectionEvents.movePoint = MovePointEnum.END;
+    ConnectionEvents.move(editorEnv, new Vector2i(100, 100));
+    expect(ConnectionEvents.editingLine!.endPosition).toEqual(
+      { _x: 100, _y: 100, type: 'int' },
+    );
+  });
   test('Não adicionar uma nova conexão caso o ID do slot seja inválido', () => {
     MouseEvents.movingObject = 'none';
     mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
@@ -121,5 +138,35 @@ describe('Testes dos eventos relacionados à conexões', () => {
         mouse.position,
       ),
     ).toEqual([]);
+  });
+  test('Fixar uma conexão a dois slots', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    ConnectionEvents.newConnection(editorEnv, 1);
+    ConnectionEvents.movePoint = MovePointEnum.END;
+    ConnectionEvents.move(editorEnv, editorEnv.slots.get(3)!.globalPosition);
+    expect(
+      ConnectionEvents.bindLine(
+        editorEnv,
+        editorEnv.slots.get(3)!.globalPosition,
+      )).toBe(true);
+  });
+  test('Não fixar uma conexão a dois slots se forem do mesmo tipo', () => {
+    MouseEvents.movingObject = 'none';
+    mouse.position = editorEnv.slots.get(1)!.globalPosition.clone();
+    ConnectionEvents.newConnection(editorEnv, 1);
+    ConnectionEvents.movePoint = MovePointEnum.END;
+    ConnectionEvents.move(editorEnv, editorEnv.slots.get(5)!.globalPosition);
+    expect(
+      ConnectionEvents.bindLine(
+        editorEnv,
+        editorEnv.slots.get(5)!.globalPosition,
+      )).toBe(false);
+  });
+  test('Não fixar uma conexão se um dos slots não forem definidos', () => {
+    expect(ConnectionEvents.setConnectionProps(editorEnv)).toBe(false);
+    ConnectionEvents.startSlot = editorEnv.slots.get(1);
+    ConnectionEvents.endSlot = editorEnv.slots.get(3);
+    expect(ConnectionEvents.setConnectionProps(editorEnv)).toBe(false);
   });
 });
