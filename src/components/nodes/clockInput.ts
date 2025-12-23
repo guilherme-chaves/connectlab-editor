@@ -27,6 +27,7 @@ class ClockInput implements Node {
   public selected: boolean;
   public clockDelay: number;
   private currentClockStep = 0;
+  private updateState = false;
 
   get image(): ImageBitmap | null {
     if (Object.keys(this._images).length === 0) return null;
@@ -110,13 +111,17 @@ class ClockInput implements Node {
         this.selected = false;
         break;
       case EditorEvents.CLOCK_FINISHED:
-        this.state = !this.state;
-        this.currentClockStep = 0;
-        break;
+        if (this.updateState) {
+          this.state = !this.state;
+          this.currentClockStep = 0;
+          this.updateState = false;
+          break;
+        }
+        return false;
       case EditorEvents.ENGINE_UPDATE:
         this.currentClockStep++;
         if (this.currentClockStep > this.clockDelay) {
-          this.onEvent(EditorEvents.CLOCK_FINISHED);
+          this.updateState = true;
         }
         break;
       default:

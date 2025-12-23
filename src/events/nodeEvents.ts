@@ -4,7 +4,7 @@ import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';
 import { componentEvents } from '@connectlab-editor/events/componentEvents';
 import EditorEnvironment from '@connectlab-editor/environment';
-import { EditorEvents, NodeTypes } from '@connectlab-editor/types/enums';
+import { EditorEvents } from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 
 export default {
@@ -49,16 +49,12 @@ export default {
     }
   },
   onTick(nodes: NodeList, signalGraph: SignalGraph): void {
-    const updateList: Array<number> = [];
     for (const node of nodes.values()) {
       if (
-        node.nodeType.id === NodeTypes.I_CLOCK
-        && node.onEvent(EditorEvents.ENGINE_UPDATE)
+        node.onEvent(EditorEvents.ENGINE_UPDATE)
+        && node.onEvent(EditorEvents.CLOCK_FINISHED)
       )
-        updateList.push(node.id);
-    }
-    for (const id of updateList) {
-      signalUpdate.updateGraph(signalGraph, id);
+        signalUpdate.updateGraph(signalGraph, node.id);
     }
   },
 };
