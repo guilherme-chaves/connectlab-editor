@@ -52,8 +52,9 @@ export default class LineCollision implements Collision {
       this.endPosition.add(v);
     }
     else {
-      this.position.add(Vector2i.sub(this.position, v));
-      this.endPosition.add(Vector2i.sub(this.position, v));
+      const delta = Vector2i.sub(v, this.position);
+      this.position.copy(v);
+      this.endPosition.add(delta);
     }
   }
 
