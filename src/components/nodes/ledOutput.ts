@@ -55,7 +55,7 @@ class LedOutput implements Node {
     this.imageSize = new Vector2i(
       this.image?.width ?? 100,
       this.image?.height ?? 100,
-    );
+    ).max(new Vector2i(8, 8)); // Tamanho mínimo de uma imagem;
     this.halfImageSize = Vector2i.div(this.imageSize, 2);
     if (shiftPosition) {
       this.imageMode = 'CENTER';
