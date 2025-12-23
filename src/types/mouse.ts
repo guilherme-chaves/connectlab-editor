@@ -23,6 +23,7 @@ export default class Mouse {
   }
 
   get dragged(): boolean {
+    if (!this.mouseClicked && !this.stateChanged) return false;
     const mouseMovement = Vector2i.sub(this.position, this.clickStartPosition);
     this.mouseDragged
       = this.mouseDragged
