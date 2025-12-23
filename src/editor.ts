@@ -38,8 +38,8 @@ export default class Editor {
   constructor(
     simulationId: string,
     simulationTitle: string,
-    canvasID: string,
-    backgroundID: string,
+    editorCanvas: HTMLCanvasElement,
+    backgroundCanvas: HTMLCanvasElement,
     tickRate = 60.0,
   ) {
     this.editorEnv = new EditorEnvironment(
@@ -53,11 +53,9 @@ export default class Editor {
     this.mouseEvents = new MouseEvents(this.mouse);
     this.keyboardEvents = new KeyboardEvents(this.keyboard);
 
-    const canvasDOM = <HTMLCanvasElement>document.getElementById(canvasID);
-    const backgroundDOM = <HTMLCanvasElement>(
-      document.getElementById(backgroundID)
-    );
-    this.canvasId = canvasID;
+    const canvasDOM = editorCanvas;
+    const backgroundDOM = backgroundCanvas;
+    this.canvasId = editorCanvas.id;
     this.canvasCtx = this.createContext(canvasDOM);
     this.backgroundCtx = this.createContext(backgroundDOM, false, false);
     this.backgroundPattern = null;

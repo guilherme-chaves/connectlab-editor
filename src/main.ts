@@ -12,4 +12,6 @@ new ModalController(
   'app-tutorial-previous',
   'app-tutorial-close',
 );
-new Editor(uuidv4(), 'Teste', 'editor-canvas', 'background-canvas');
+const canvas = document.getElementById('editor-canvas')! as HTMLCanvasElement;
+const bg = document.getElementById('background-canvas')! as HTMLCanvasElement;
+new Editor(uuidv4(), 'Teste', canvas, bg);
