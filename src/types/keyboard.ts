@@ -3,20 +3,11 @@ export default class Keyboard {
   public keyPressed = false;
   public keyHold = false;
   public stateChange = false;
-  private _nKeysPressed = 0;
-
-  get nKeysPressed(): number {
-    return this._nKeysPressed;
-  }
-
-  set nKeysPressed(nVal: number) {
-    if (nVal < 0) console.warn('Número de teclas pressionadas é menor que 0!');
-    this._nKeysPressed = Math.max(0, nVal);
-  }
+  public nKeysPressed = 0;
 
   public setKeyPressed(key: string, state: boolean): void {
+    this.nKeysPressed += state ? 1 : this.keys[key] ? -1 : 0;
     this.keys[key] = state;
-    this.nKeysPressed += state ? 1 : -1;
   }
 
   public getKeysPressed(): Record<string, boolean> {
