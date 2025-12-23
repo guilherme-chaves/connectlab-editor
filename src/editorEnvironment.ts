@@ -276,5 +276,14 @@ class EditorEnvironment {
     }
     return newEnv;
   }
+
+  resetEnvironment(): void {
+    this._nextComponentId = 0;
+    this.nodes.clear();
+    this.slots.clear();
+    this.connections.clear();
+    this.texts.clear();
+    this.signalGraph = {};
+  }
 }
 export default EditorEnvironment;
