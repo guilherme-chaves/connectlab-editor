@@ -67,24 +67,13 @@ export default class Editor {
 
   private createContext(
     domElement: HTMLCanvasElement,
-    desynchronized = !this.isMobileDevice(),
+    desynchronized = false,
     alpha = true,
   ): CanvasRenderingContext2D {
     const ctx = domElement.getContext('2d', { desynchronized, alpha });
     if (ctx === null)
       throw new Error('Não foi possível criar o contexo do canvas!');
     return ctx;
-  }
-
-  private isMobileDevice(): boolean {
-    /* Teste simples como workaround para um bug na utilização do canvas
-     * dessincronizado em dispositivos mobile, em que o canvas não é renderizado
-     * corretamente.
-     * Laptops e desktops também serão detectados neste teste, mas o uso dessa
-     * opção do CanvasRenderingContext2D não é crítica.
-     */
-    const test = window.navigator.maxTouchPoints > 0;
-    return test;
   }
 
   private loadBackgroundPattern(bgPath: string): void {
