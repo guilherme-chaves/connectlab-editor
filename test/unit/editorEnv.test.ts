@@ -1,11 +1,12 @@
 import { expect, test, beforeEach, describe, vi } from 'vitest';
 import preloadNodeImages from '@connectlab-editor/functions/preloadNodeImages';
-import EditorEnvironment from '@connectlab-editor/environment';
+import EditorEnvironment, { EditorEnvironmentObject } from '@connectlab-editor/environment';
 import addComponent from '@connectlab-editor/functions/addComponent';
 import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
-import { fileValidator } from '@connectlab-editor/types/file';
+import { ajv } from '@connectlab-editor/types/file';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import { clearEditor } from '@connectlab-editor/functions/editor';
+import { ValidateFunction } from 'ajv';
 
 const images = preloadNodeImages();
 let editorEnv = new EditorEnvironment('7d918d4f-d937-4daa-af88-43712ecb6139', 'test-mode', 0, images);
@@ -126,6 +127,10 @@ describe(
       newText();
       const envObject = editorEnv.saveAsJson();
       const envJSON: unknown = JSON.parse(envObject);
+      const fileValidator: ValidateFunction<EditorEnvironmentObject> | undefined
+        = ajv.getSchema('simulation-file');
+      expect(fileValidator).toBeDefined();
+      if (fileValidator === undefined) return;
       if (fileValidator(envJSON)) {
         const editorEnv2 = EditorEnvironment.createFromJson(
           envJSON,

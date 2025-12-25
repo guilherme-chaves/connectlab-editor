@@ -2,6 +2,7 @@ import { gzipSync, gunzipSync } from 'fflate';
 import EditorEnvironment, { EditorEnvironmentObject } from '@connectlab-editor/environment';
 import Editor from '@connectlab-editor/editor';
 import { ajv } from '@connectlab-editor/types/file';
+import { ValidateFunction } from 'ajv';
 
 export function loadFile(
   editor: Editor,
@@ -20,7 +21,8 @@ export function loadFile(
     if (!reader.result || typeof reader.result === 'string') return;
     const unzipped = gunzipSync(new Uint8Array(reader.result));
     const jsonData: unknown = JSON.parse(new TextDecoder().decode(unzipped));
-    const fileValidator = ajv.getSchema<EditorEnvironmentObject>('simulation-file');
+    const fileValidator: ValidateFunction<EditorEnvironmentObject> | undefined
+      = ajv.getSchema('simulation-file');
     if (fileValidator === undefined) {
       console.error('Falha ao carregar o schema do arquivo!');
       return;
@@ -36,7 +38,7 @@ export function loadFile(
       return;
     }
     editor.editorEnv = EditorEnvironment.createFromJson(
-      jsonData as EditorEnvironmentObject,
+      jsonData,
       ctx,
       editor.editorEnv.nodeImageList,
     );
