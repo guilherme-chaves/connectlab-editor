@@ -17,19 +17,12 @@ export default function createEditorEvents(
   }
 
   window.onload = () => {
-    editor.resize();
-    setInterval(editor.compute, 1000.0 / editor.tickRate);
-    editor.update();
-
     setTimeout(() => {
-      document.getElementById('app')!.style.visibility = 'visible';
-      document.getElementById('app-toolbar')!.style.visibility = 'visible';
       document.getElementById('app')!.className = 'animate-show';
       document.getElementById('app-toolbar')!.className = 'animate-show';
       if (document.getElementById('app-tutorial-content') !== null)
         document.getElementById('app-tutorial-content')!.classList.add('modal-animate-show');
       document.getElementById('loading-div')!.style.visibility = 'hidden';
-    }, 1200);
       setInterval(editor.compute, 1000.0 / editor.tickRate);
       editor.update();
     }, 1500);

@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import './style.css';
 import Editor from '@connectlab-editor/editor';
 import ModalController from './modal';
 

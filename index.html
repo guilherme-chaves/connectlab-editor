@@ -12,87 +12,87 @@
       <span class="loader"></span>
       <p style="font-family: monospace; font-size: 1rem;">Carregando editor...</p>
     </div>
-    <div id="app" style="visibility: hidden;">
-      <div id="app-sidebar">
-        <h3>Portas lógicas</h3>
-        <ul id="app-component-list">
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="and-gate" src="/src/assets/gates/AND_ANSI.svg"/>
+    <div id="app">
+      <section role="complementary" id="app-sidebar">
+        <h3 role="presentation">Portas lógicas</h3>
+        <ul role="menu" id="app-component-list">
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica AND - Atalho na tecla A" fetchpriority="high" class="app-component-image component-gate" id="and-gate" src="/src/assets/gates/AND_ANSI.svg"/>
             <span>AND (A)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="or-gate" src="/src/assets/gates/OR_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica OR - Atalho na tecla O" fetchpriority="high" class="app-component-image component-gate" id="or-gate" src="/src/assets/gates/OR_ANSI.svg"/>
             <span>OR (O)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="not-gate" src="/src/assets/gates/NOT_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica NOT - Atalho na tecla N" fetchpriority="high" class="app-component-image component-gate" id="not-gate" src="/src/assets/gates/NOT_ANSI.svg"/>
             <span>NOT (N)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="nand-gate" src="/src/assets/gates/NAND_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica NAND - Atalho na tecla D" fetchpriority="high" class="app-component-image component-gate" id="nand-gate" src="/src/assets/gates/NAND_ANSI.svg"/>
             <span>NAND (D)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="nor-gate" src="/src/assets/gates/NOR_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica NOR - Atalho na tecla R" fetchpriority="high" class="app-component-image component-gate" id="nor-gate" src="/src/assets/gates/NOR_ANSI.svg"/>
             <span>NOR (R)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="xor-gate" src="/src/assets/gates/XOR_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica XOR - Atalho na tecla X" fetchpriority="high" class="app-component-image component-gate" id="xor-gate" src="/src/assets/gates/XOR_ANSI.svg"/>
             <span>XOR (X)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-gate" id="xnor-gate" src="/src/assets/gates/XNOR_ANSI.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta lógica XNOR - Atalho na tecla V" fetchpriority="high" class="app-component-image component-gate" id="xnor-gate" src="/src/assets/gates/XNOR_ANSI.svg"/>
             <span>XNOR (V)</span>
           </li>
         </ul>
-        <h3>Entradas</h3>
-        <ul id="app-component-list">
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-io" id="switch-input" src="/src/assets/gates/INPUT_OFF.svg"/>
+        <h3 role="presentation">Entradas</h3>
+        <ul role="menu" id="app-component-list">
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta de entrada - Variável - Atalho na tecla S" fetchpriority="high" class="app-component-image component-io" id="switch-input" src="/src/assets/gates/INPUT_OFF.svg"/>
             <span>Variável (S)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-io" id="button-input" src="/src/assets/gates/BUTTON_OFF.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta de entrada - Botão - Atalho na tecla B" fetchpriority="high" class="app-component-image component-io" id="button-input" src="/src/assets/gates/BUTTON_OFF.svg"/>
             <span>Botão (B)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-io" id="clock-input" src="/src/assets/gates/CLOCK.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta de entrada - Oscilador - Atalho na tecla K" fetchpriority="high" class="app-component-image component-io" id="clock-input" src="/src/assets/gates/CLOCK.svg"/>
             <span>Oscilador (K)</span>
           </li>
         </ul>
-        <h3>Saídas</h3>
-        <ul id="app-component-list">
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-io" id="led-red-output" src="/src/assets/gates/LED_RED_ON.svg"/>
+        <h3 role="presentation">Saídas</h3>
+        <ul role="menu" id="app-component-list">
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta de entrada - LED vermelho - Atalho na tecla L" fetchpriority="high" class="app-component-image component-io" id="led-red-output" src="/src/assets/gates/LED_RED_ON.svg"/>
             <span>LED (L)</span>
           </li>
-          <li class="app-component" draggable="true">
-            <img class="app-component-image component-io" id="seven-segments-output" src="/src/assets/gates/7segment/7segment-off.svg"/>
+          <li role="menuitem" class="app-component" draggable="true">
+            <img alt="Porta de entrada - Display de sete segmentos - Atalho na tecla E" fetchpriority="high" class="app-component-image component-io" id="seven-segments-output" src="/src/assets/gates/7segment/7segment-off.svg"/>
             <span>Display de<br/>7 Segmentos (E)</span>
           </li>
         </ul>
-      </div>
-      <div class="app-canvas-container">
-        <canvas id="background-canvas" width="2400" height="1080">
+      </section>
+      <main id="app-canvas-container">
+        <canvas id="background-canvas" width="1920" height="1080">
           Parece que seu navegador não suporta a utilização de canvas.
         </canvas>
-        <canvas id="editor-canvas" width="2400" height="1080">
+        <canvas id="editor-canvas" width="1920" height="1080">
           Parece que seu navegador não suporta a utilização de canvas.
         </canvas>
-      </div>
+      </main>
     </div>
-    <div id="app-toolbar" style="visibility: hidden;">
-      <button id="save-editor">Salvar projeto</button>
-      <button id="load-editor">Carregar projeto</button>
-      <button id="clear-editor">Limpar editor</button>
+    <footer role="presentation" id="app-toolbar">
+      <button role="button" id="save-editor" aria-label="Salvar simulação atual em um arquivo">Salvar projeto</button>
+      <button role="button" id="load-editor" aria-label="Carregar uma simulação a partir de um arquivo">Carregar projeto</button>
+      <button role="button" id="clear-editor" aria-label="Remover todos os componentes adicionados ao editor. Não é possível reverter esta operação">Limpar editor</button>
       <input type="file" id="load-editor-file" name="load-editor-file" hidden />
-      <button id="tutorial-button">Ajuda</button>
-    </div>
-    <div class="modal" id="app-modal-tutorial">
+      <button role="button" id="tutorial-button" aria-label="Abrir tutorial de utilização da aplicação ConnectLab Editor">Ajuda</button>
+    </footer>
+    <div role="dialog" class="modal" id="app-modal-tutorial">
       <div class="modal-content" id="app-tutorial-content">
         <div class="modal-header">
           <span class="modal-title">Bem vindo(a) ao ConnectLab!</span>
-          <span class="modal-close" id="app-modal-close">&times;</span>
+          <span class="modal-close" aria-label="Fechar tutorial" id="app-modal-close">&times;</span>
         </div>
         <div class="modal-body carrousel">
           <div class="carrousel-item">
@@ -105,38 +105,38 @@
           <div class="carrousel-item">
             Para adicionar um componente ao editor, clique com o botão esquerdo do mouse em um item na barra lateral ou utilize os atalhos indicados entre parênteses.
             <div class="image-grid-2">
-              <img src="/src/assets/tutorial-arrastar-e-soltar.gif" draggable="false" />
-              <img src="/src/assets/tutorial-atalho.gif" draggable="false" />
+              <img alt="Animação mostrando como clicar em um elemento na barra lateral e arrastá-lo para o editor" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-arrastar-e-soltar.gif" draggable="false" />
+              <img alt="Animação mostrando como adicionar um elemento através de atalhos do teclado" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-atalho.gif" draggable="false" />
             </div>
           </div>
           <div class="carrousel-item">
             Para excluir um item, selecione-o com o botão esquerdo do mouse e pressione a tecla Delete.
-            <img src="/src/assets/tutorial-remover.gif" draggable="false" />
+            <img alt="Animação mostrando como remover um componente adicionado pressionando a tecla Delete" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-remover.gif" draggable="false" />
           </div>
           <div class="carrousel-item">
             Para mover um componente na simulação, clique e arraste-o com o botão esquerdo do mouse.
-            <img src="/src/assets/tutorial-mover.gif" draggable="false" />
+            <img alt="Animação mostrando como mover um componente dentro do editor, por clicar em cima dele e arrastá-lo" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-mover.gif" draggable="false" />
           </div>
           <div class="carrousel-item">
             Entradas &mdash; Variável:
             <br/>
             Alternam seu valor entre 0 e 1 a cada clique.
             <br/>
-            <img src="/src/assets/tutorial-variavel.gif" draggable="false" />
+            <img alt="Animação mostrando o comportamento da porta de entrada Variável, que muda de valor ao clicar nela" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-variavel.gif" draggable="false" />
           </div>
           <div class="carrousel-item">
             Entradas &mdash; Botão:
             <br/>
             Mantém o valor 1 enquanto pressionado.
             <br/>
-            <img src="/src/assets/tutorial-botao.gif" draggable="false" />
+            <img alt="Animação mostrando o comportamento da porta de entrada Botão, que fica ativa enquanto se clica nela" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-botao.gif" draggable="false" />
           </div>
           <div class="carrousel-item">
             Entradas &mdash; Oscilador:
             <br/>
             Altera seu valor automaticamente a cada 0,5 segundos.
             <br/>
-            <img src="/src/assets/tutorial-oscilador.gif" draggable="false" />
+            <img alt="Animação mostrando o comportamento da porta de entrada Oscilador, que muda de valor após um período de tempo" loading="lazy" fetchpriority="low" src="/src/assets/tutorial-oscilador.gif" draggable="false" />
           </div>
           <div class="carrousel-item">
             Os botões na barra inferior permitem carregar, salvar ou limpar completamente a simulação do projeto atual.
@@ -147,14 +147,14 @@
         <div class="modal-footer">
           <div class="carrousel-progress"></div>
           <div class="button-list">
-            <button id="app-tutorial-skip">Pular tutorial</button>
-            <button id="app-tutorial-previous">Anterior</button>
-            <button id="app-tutorial-next">Próximo</button>
-            <button id="app-tutorial-close">Fechar tutorial</button>
+            <button id="app-tutorial-skip" aria-label="Fechar tutorial e não mostrá-lo novamente ao iniciar">Pular tutorial</button>
+            <button id="app-tutorial-previous" aria-label="Ir para o slide anterior">Anterior</button>
+            <button id="app-tutorial-next" aria-label="Ir para o slide seguinte">Próximo</button>
+            <button id="app-tutorial-close" aria-label="Fechar tutorial">Fechar tutorial</button>
           </div>
         </div>
       </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
+    <script rel="modulepreload" type="module" src="/src/main.ts"></script>
   </body>
 </html>

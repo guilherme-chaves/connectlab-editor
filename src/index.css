@@ -1,4 +1,4 @@
-/* CSS responsável pela animação de carregamento da página */
+ /* CSS responsável pela animação de carregamento da página */
 .animate-show {
   -webkit-animation-name: animateshow;
   -webkit-animation-duration: 1500ms;
@@ -35,6 +35,7 @@
   height: 48px;
   display: inline-block;
   position: relative;
+  z-index: 10001;
 }
 
 .loader::after,
@@ -64,6 +65,125 @@
     transform: scale(1);
     opacity: 0;
   }
+}
+
+/* Main */
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: whitesmoke;
+}
+
+#app {
+  margin: 0 0;
+  width: 100dvw;
+  height: 85dvh;
+  text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  font-family: monospace;
+}
+
+#app-sidebar {
+  border: 1px solid black;
+  border-radius: 0.5rem 0 0 0.5rem;
+  overflow-y: auto;
+  background-color: white;
+}
+
+#app-toolbar {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#app-component-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0 1rem 0 1rem;
+  display: grid;
+  gap: 0.5rem 4px;
+}
+
+@media screen and (min-width: 1367px) {
+  #app-sidebar {
+    width: 15vw;
+  }
+  #app-component-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media screen and (max-width: 1367px) {
+  #app-sidebar {
+    width: 18vw;
+  }
+  #app-component-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.app-component {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.2em;
+  cursor: grab;
+  border: 2px solid #289eab;
+  border-radius: 0.25rem;
+  padding: 4px 4px;
+  transition-duration: 200ms;
+}
+
+.app-component:hover {
+  background-color: #289eab80;
+  box-shadow: 2px 2px 8px 0 rgba(0, 0, 0, 0.6);
+}
+
+.component-gate {
+  width: 100px;
+  height: 50px;
+  max-width: 5em;
+  max-height: 5em;
+  object-fit: contain;
+}
+
+.component-io {
+  width: 100px;
+  height: 50px;
+  max-width: 3.75em;
+  max-height: 3.25em;
+  object-fit: contain;
+}
+
+#app-canvas-container {
+  display: grid;
+  grid-template: 1fr / 1fr;
+  place-items: center;
+  width: 80vw;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 0 0.5rem 0.5rem 0;
+  z-index: 3;
+}
+
+#app-canvas-container > * {
+  grid-column: 1 / 1;
+  grid-row: 1 / 1;
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+#background-canvas {
+  z-index: 4;
+}
+
+#editor-canvas {
+  z-index: 5;
 }
 
 /* Modal */

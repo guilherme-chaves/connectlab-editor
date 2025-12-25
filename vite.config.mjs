@@ -1,10 +1,22 @@
 /// <reference types="vitest" />
+import browserslist from 'browserslist';
+import { browserslistToTargets } from 'lightningcss';
 import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   base: './',
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      targets: browserslistToTargets(browserslist('>= 0.25%')),
+    },
+  },
+  build: {
+    cssMinify: 'lightningcss',
+  },
   test: {
     setupFiles: ['./vitest.setup.mjs'],
     environment: 'happy-dom',

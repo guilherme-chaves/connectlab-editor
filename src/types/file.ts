@@ -5,7 +5,7 @@ import Ajv, { JSONSchemaType } from 'ajv';
 import { ConnectionVertices, SignalGraphObject, VectorObject } from './common';
 import { SlotObject } from '@connectlab-editor/components/slotComponent';
 import { TextObject } from '@connectlab-editor/components/textComponent';
-const ajv = new Ajv();
+export const ajv = new Ajv();
 
 const vectorSchema: JSONSchemaType<VectorObject> = {
   type: 'object',
@@ -215,4 +215,4 @@ export const fileSchema: JSONSchemaType<EditorEnvironmentObject> = {
   required: ['id', 'data', 'signal'],
 };
 
-export const fileValidator = ajv.compile(fileSchema);
+ajv.addSchema(fileSchema, 'simulation-file');
