@@ -10,6 +10,8 @@ import { ImageListObject } from '@connectlab-editor/types/common';
 export default async function loadImage(src: string): Promise<ImageBitmap> {
   const image = new Image();
   image.src = src;
+  image.fetchPriority = 'low';
+  image.loading = 'eager';
   await image.decode();
   return window.createImageBitmap(image);
 }
