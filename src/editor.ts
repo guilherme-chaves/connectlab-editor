@@ -32,7 +32,7 @@ export default class Editor {
   public readonly backgroundCtx: CanvasRenderingContext2D;
   // Propriedades dos canvas
   private backgroundPattern: CanvasPattern | null;
-  private windowResized: boolean;
+  public windowResized: boolean;
   public readonly tickRate: number;
 
   constructor(
@@ -136,15 +136,15 @@ export default class Editor {
     this.canvasCtx.canvas.height = editorArea.y;
     this.backgroundCtx.canvas.width = editorArea.x;
     this.backgroundCtx.canvas.height = editorArea.y;
-    this.windowResized = true;
   }
 
   update = (): void => {
-    updateCanvas(this.canvasCtx, this.editorEnv.components);
     if (this.windowResized) {
+      this.resize();
       updateBackground(this.backgroundCtx, this.backgroundPattern);
       this.windowResized = false;
     }
+    updateCanvas(this.canvasCtx, this.editorEnv.components);
     requestAnimationFrame(this.update);
   };
 

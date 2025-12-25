@@ -30,9 +30,12 @@ export default function createEditorEvents(
         document.getElementById('app-tutorial-content')!.classList.add('modal-animate-show');
       document.getElementById('loading-div')!.style.visibility = 'hidden';
     }, 1200);
+      setInterval(editor.compute, 1000.0 / editor.tickRate);
+      editor.update();
+    }, 1500);
   };
 
-  window.onresize = () => editor.resize();
+  window.onresize = () => editor.windowResized = true;
 
   canvasDOM.onmousedown = () => editor.mouse.clicked = true;
 
