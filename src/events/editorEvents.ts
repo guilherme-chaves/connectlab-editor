@@ -37,11 +37,13 @@ export default function createEditorEvents(
 
   window.onmousemove = ({ x, y }) => editor.setLocalMousePosition(x, y);
 
-  window.onkeydown = (ev: KeyboardEvent) =>
-    editor.keyboard.setKeyPressed(ev.key, true);
+  window.onkeydown = (ev: KeyboardEvent) => {
+    ev.preventDefault();
+    editor.keyboard.setKeyState(ev.key, true);
+  };
 
   window.onkeyup = (ev: KeyboardEvent) =>
-    editor.keyboard.setKeyPressed(ev.key, false);
+    editor.keyboard.setKeyState(ev.key, false);
 
   const items = document.getElementsByTagName('img');
   for (const imageItem of items) {

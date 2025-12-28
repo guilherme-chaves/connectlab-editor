@@ -43,7 +43,7 @@ class TextComponent implements Component {
     this.parent = parent;
     this.canvasContext = ctx;
     this.textSize = this.measureText(text, style);
-    this.position.sub(Vector2i.div(this.textSize, 2));
+    Vector2i.sub(this.position, Vector2i.div(this.textSize, 2), this.position);
     this.collisionShape = new BoxCollision(
       this.position,
       this.textSize.x,
@@ -61,7 +61,8 @@ class TextComponent implements Component {
       textDimensions.width,
       textDimensions.actualBoundingBoxDescent
       - textDimensions.actualBoundingBoxAscent,
-    ).max(new Vector2i(16, 16));
+    );
+    Vector2i.max(textSize, new Vector2i(16, 16), textSize);
     return textSize;
   }
 
@@ -70,13 +71,13 @@ class TextComponent implements Component {
     ctx.font = this.style;
     ctx.textBaseline = 'top';
     ctx.textAlign = 'left';
-    ctx.fillText(this.text, this.position.x, this.position.y);
+    ctx.fillText(this.text, this.position._x, this.position._y);
     ctx.restore();
     this.collisionShape.draw(ctx, this.selected);
   }
 
   move(v: Vector2i, useDelta = true): void {
-    if (useDelta) this.position.add(v);
+    if (useDelta) Vector2i.add(this.position, v, this.position);
     else Vector2i.sub(v, Vector2i.div(this.textSize, 2), this.position);
     this.collisionShape.moveShape(this.position, false);
   }

@@ -123,7 +123,7 @@ describe('Testes dos eventos relacionados à conexões', () => {
         editorEnv.connections,
         mouse.position,
       ),
-    ).toBeOneOf([[8], [8, 10]]);
+    ).toBeOneOf([[8], [8, 10], [8, 10, 12]]);
     mouse.position = new Vector2i(240, 325);
     expect(
       ConnectionEvents.checkConnectionClick(

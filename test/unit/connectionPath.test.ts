@@ -17,7 +17,7 @@ describe('Testes com a geração da conexão entre componentes', () => {
       6,
       nPos.y - pPos.y,
     );
-    expect(size).toEqual(new Vector2f(290, 6));
+    expect(size).toEqual(new Vector2i(290, 6));
   });
   test('Definir o tamanho de uma caixa de colisão a partir de dois vetores (floats)', () => {
     const pPos = new Vector2f(100, 245);
@@ -30,7 +30,7 @@ describe('Testes com a geração da conexão entre componentes', () => {
       6,
       nPos.y - pPos.y,
     );
-    expect(size).toEqual(new Vector2f(290, 6));
+    expect(size).toEqual(new Vector2i(290, 6));
   });
   test('Definir o tamanho de uma caixa de colisão a partir de dois vetores (floats - falhar)', () => {
     const pPos = new Vector2f(100, 245);

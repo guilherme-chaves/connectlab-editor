@@ -1,6 +1,5 @@
 import Vector2i from '@connectlab-editor/types/vector2i';
 import { ConnectionList } from '@connectlab-editor/types/common';
-// import {ComponentType} from '@connectlab-editor/types/enums';
 import slotEvents from '@connectlab-editor/events/slotEvents';
 import SlotComponent from '@connectlab-editor/components/slotComponent';
 import SignalEvents from '@connectlab-editor/events/signalEvents';
@@ -76,10 +75,10 @@ export const ConnectionEvents: ConnectionEventsType = {
     const editingLineId = addComponent.connection(
       undefined,
       editorEnv,
-      slot.globalPosition.x,
-      slot.globalPosition.y,
-      slot.globalPosition.x,
-      slot.globalPosition.y,
+      slot.globalPosition._x,
+      slot.globalPosition._y,
+      slot.globalPosition._x,
+      slot.globalPosition._y,
       slot.inSlot ? undefined : { nodeId: slot.parent.id, slotId: slot.id },
       slot.inSlot ? { nodeId: slot.parent.id, slotId: slot.id } : undefined,
     );

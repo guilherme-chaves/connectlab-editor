@@ -1,4 +1,5 @@
-import { NodeList, SignalGraph } from '@connectlab-editor/types/common';
+import { NodeList } from '@connectlab-editor/types/common';
+import { SignalGraph } from '@connectlab-editor/types/signal';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import MouseEvents from '@connectlab-editor/events/mouseEvents';
 import NodeInterface from '@connectlab-editor/interfaces/nodeInterface';

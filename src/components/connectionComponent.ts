@@ -42,6 +42,8 @@ class ConnectionComponent implements Component {
   private regenPath: boolean;
   public collisionShape: Array<BoxCollision>;
   public selected: boolean;
+  private nodeList: NodeList = new Map();
+  private updateCollisionShapes = true;
 
   constructor(
     id: number,
@@ -70,7 +72,7 @@ class ConnectionComponent implements Component {
   // Gera um objeto Path2D contendo a figura a ser desenhada, armazenando-a em uma variável
   generatePath() {
     const path = new Path2D();
-    path.moveTo(this.position.x, this.position.y);
+    path.moveTo(this.position._x, this.position._y);
     const globalPos = new Vector2i();
     for (let i = 0; i < this.anchors.length; i++) {
       Vector2i.bilinear(
@@ -79,9 +81,9 @@ class ConnectionComponent implements Component {
         this.anchors[i],
         globalPos,
       );
-      path.lineTo(globalPos.x, globalPos.y);
+      path.lineTo(globalPos._x, globalPos._y);
     }
-    path.lineTo(this.endPosition.x, this.endPosition.y);
+    path.lineTo(this.endPosition._x, this.endPosition._y);
     this.regenPath = false;
     return path;
   }
@@ -100,7 +102,12 @@ class ConnectionComponent implements Component {
 
   draw(ctx: CanvasRenderingContext2D): void {
     if (this.endPosition === this.position) return;
-    if (this.regenPath || !this.drawPath) this.drawPath = this.generatePath();
+    if (this.regenPath || !this.drawPath) {
+      this.anchors = this.generateAnchors(this.nodeList);
+      if (this.updateCollisionShapes)
+        this.collisionShape = this.generateCollisionShapes();
+      this.drawPath = this.generatePath();
+    }
     ctx.save();
     ctx.strokeStyle = '#101010';
     ctx.lineWidth = 2;
@@ -137,16 +144,23 @@ class ConnectionComponent implements Component {
     nodeList: NodeList = new Map(),
   ) {
     if (useDelta) {
-      if (movePoint !== MovePointEnum.END) this.position.add(v);
-      if (movePoint !== MovePointEnum.START) this.endPosition.add(v);
+      if (movePoint !== MovePointEnum.END)
+        Vector2i.add(this.position, v, this.position);
+      if (movePoint !== MovePointEnum.START)
+        Vector2i.add(this.endPosition, v, this.endPosition);
     }
     else {
-      if (movePoint !== MovePointEnum.END) this.position.copy(v);
-      if (movePoint !== MovePointEnum.START) this.endPosition.copy(v);
+      if (movePoint === MovePointEnum.START) Vector2i.copy(v, this.position);
+      else if (movePoint === MovePointEnum.END)
+        Vector2i.copy(v, this.endPosition);
+      else {
+        const delta = Vector2i.sub(this.position, v);
+        Vector2i.copy(v, this.position);
+        Vector2i.add(this.endPosition, delta, this.endPosition);
+      }
     }
-    this.anchors = this.generateAnchors(nodeList);
-    if (updateCollisionShapes)
-      this.collisionShape = this.generateCollisionShapes();
+    this.nodeList = nodeList;
+    this.updateCollisionShapes = updateCollisionShapes;
     this.regenPath = true;
   }
 
@@ -160,7 +174,8 @@ class ConnectionComponent implements Component {
       );
       return;
     }
-    this.anchors[index] = Vector2f.sub(position, this.position).div(
+    this.anchors[index] = Vector2f.div(
+      Vector2f.sub(position, this.position),
       Vector2f.sub(this.endPosition, this.position),
     );
     this.regenPath = true;

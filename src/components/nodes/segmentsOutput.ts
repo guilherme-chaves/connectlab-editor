@@ -1,8 +1,10 @@
 import {
   ImageListObject,
+} from '@connectlab-editor/types/common';
+import {
   SignalGraph,
   SignalGraphData,
-} from '@connectlab-editor/types/common';
+} from '@connectlab-editor/types/signal';
 import { ComponentType, EditorEvents } from '@connectlab-editor/types/enums';
 import { NodeModel } from '@connectlab-editor/types/common';
 import Vector2i from '@connectlab-editor/types/vector2i';
@@ -54,43 +56,51 @@ class SegmentsOutput implements Node {
     this._signalData = signalGraph[this.id];
     this.slots = slots;
     this._images = getImageSublist(images, this.nodeType.imgPath);
-    this.imageSize = new Vector2i(
-      this.image?.width ?? 100,
-      this.image?.height ?? 100,
-    ).max(new Vector2i(8, 8)); // Tamanho mínimo de uma imagem;
+    this.imageSize = Vector2i.max(
+      new Vector2i(
+        this.image?.width,
+        this.image?.height,
+      ),
+      new Vector2i(8, 8),
+    ); // Tamanho mínimo de uma imagem;
     this.halfImageSize = Vector2i.div(this.imageSize, 2);
+    const canvasBoundaries = new Vector2i(canvasWidth, canvasHeight);
     if (shiftPosition) {
       this.imageMode = 'CENTER';
-      this.position.sub(this.halfImageSize);
-      const canvasBound = new Vector2i(canvasWidth, canvasHeight).sub(
+      Vector2i.sub(this.position, this.halfImageSize, this.position);
+      Vector2i.sub(
+        canvasBoundaries,
         this.imageSize,
+        canvasBoundaries,
       );
-      this.position.min(canvasBound).max(Vector2i.ZERO);
     }
+    // Limitar posição ao tamanho do canvas
+    Vector2i.min(this.position, canvasBoundaries, this.position);
+    Vector2i.max(this.position, Vector2i.ZERO, this.position);
     this.collisionShape = new BoxCollision(
       this.position,
-      this.imageSize.x,
-      this.imageSize.y,
+      this.imageSize._x,
+      this.imageSize._y,
     );
     this.selected = false;
   }
 
   move(v: Vector2i, useDelta = true): void {
     if (useDelta) {
-      this.position.add(v);
+      Vector2i.add(this.position, v, this.position);
     }
     else if (this.imageMode === 'CENTER') {
       Vector2i.sub(v, this.halfImageSize, this.position);
     }
     else {
-      this.position.copy(v);
+      Vector2i.copy(v, this.position);
     }
     this.collisionShape.moveShape(this.position, false);
   }
 
   draw(ctx: CanvasRenderingContext2D): void {
     if (!this.image) return;
-    ctx.drawImage(this.image, this.position.x, this.position.y);
+    ctx.drawImage(this.image, this.position._x, this.position._y);
     if (Object.keys(this._images).length >= 8)
       for (const [slotId, connectedNodeId] of this._signalData.signalFrom) {
         if (
@@ -99,8 +109,8 @@ class SegmentsOutput implements Node {
         )
           ctx.drawImage(
             this._images[slotId + 1],
-            this.position.x,
-            this.position.y,
+            this.position._x,
+            this.position._y,
           );
       }
     if (this.collisionShape !== undefined)

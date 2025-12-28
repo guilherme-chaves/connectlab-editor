@@ -5,9 +5,11 @@ import {
   ConnectionList,
   SlotList,
   TextList,
+} from '@connectlab-editor/types/common';
+import {
   SignalGraph,
   SignalGraphObject,
-} from '@connectlab-editor/types/common';
+} from './types/signal';
 import { ComponentType, NodeTypes } from '@connectlab-editor/types/enums';
 import removeComponent from '@connectlab-editor/functions/removeComponent';
 import { ConnectionObject } from '@connectlab-editor/components/connectionComponent';

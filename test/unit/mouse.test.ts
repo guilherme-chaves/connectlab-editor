@@ -21,31 +21,31 @@ describe('Testes da classe Mouse', () => {
     expect(mouse.stateChanged).toBe(true);
   });
   test('Arrastar o mouse enquanto pressionado (SE)', () => {
-    mouse.position.copy(new Vector2i(100, 100));
+    Vector2i.copy(new Vector2i(100, 100), mouse.position);
     expect(mouse.dragged).toBe(false);
     mouse.clicked = true;
-    mouse.position.add(new Vector2i(7, 6));
+    Vector2i.add(mouse.position, new Vector2i(7, 6), mouse.position);
     expect(mouse.dragged).toBe(true);
   });
   test('Arrastar o mouse enquanto pressionado (NE)', () => {
-    mouse.position.copy(new Vector2i(100, 100));
+    Vector2i.copy(new Vector2i(100, 100), mouse.position);
     expect(mouse.dragged).toBe(false);
     mouse.clicked = true;
-    mouse.position.add(new Vector2i(6, -7));
+    Vector2i.add(mouse.position, new Vector2i(6, -7), mouse.position);
     expect(mouse.dragged).toBe(true);
   });
   test('Arrastar o mouse enquanto pressionado (NO)', () => {
-    mouse.position.copy(new Vector2i(100, 100));
+    Vector2i.copy(new Vector2i(100, 100), mouse.position);
     expect(mouse.dragged).toBe(false);
     mouse.clicked = true;
-    mouse.position.add(new Vector2i(-7, -6));
+    Vector2i.add(mouse.position, new Vector2i(-7, -6), mouse.position);
     expect(mouse.dragged).toBe(true);
   });
   test('Arrastar o mouse enquanto pressionado (SO)', () => {
-    mouse.position.copy(new Vector2i(100, 100));
+    Vector2i.copy(new Vector2i(100, 100), mouse.position);
     expect(mouse.dragged).toBe(false);
     mouse.clicked = true;
-    mouse.position.add(new Vector2i(-6, 7));
+    Vector2i.add(mouse.position, new Vector2i(-6, 7), mouse.position);
     expect(mouse.dragged).toBe(true);
   });
 });

@@ -5,23 +5,24 @@ const kbd = new Keyboard();
 
 describe('Testes da classe Keyboard', () => {
   test('Pressionar tecla', () => {
-    kbd.setKeyPressed('a', true);
-    expect(kbd.getKeysPressed()['a']).toBe(true);
-    expect(kbd.nKeysPressed).toBe(1);
+    kbd.setKeyState('a', true);
+    expect(kbd.activeKeys.has('a')).toBe(true);
+    expect(kbd.activeKeys.size).toBe(1);
   });
   test('Liberar tecla', () => {
-    kbd.setKeyPressed('a', false);
-    expect(kbd.getKeysPressed()['a']).toBe(false);
-    expect(kbd.nKeysPressed).toBe(0);
+    kbd.setKeyState('a', false);
+    expect(kbd.activeKeys.has('a')).toBe(false);
+    expect(kbd.activeKeys.size).toBe(0);
   });
   test('Liberar tecla não pressionada anteriormente', () => {
     /* Em alguns casos o navegador pode não registrar corretamente
      * um botão pressionado ou liberado, podendo gerar comportamentos
      * não esperados
      */
-    expect(kbd.getKeysPressed()['b']).toBeUndefined();
-    kbd.setKeyPressed('b', false);
-    expect(kbd.getKeysPressed()['b']).toBe(false);
-    expect(kbd.nKeysPressed).toBe(0);
+    expect(kbd.activeKeys.has('b')).toBe(false);
+    expect(kbd.activeKeys.size).toBe(0);
+    kbd.setKeyState('b', true);
+    expect(kbd.activeKeys.has('b')).toBe(true);
+    expect(kbd.activeKeys.size).toBe(1);
   });
 });

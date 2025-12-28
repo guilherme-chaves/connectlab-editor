@@ -18,7 +18,7 @@ export default class Mouse {
   set clicked(value: boolean) {
     this.mouseClicked = value;
     this.mouseStateChanged = true;
-    if (value) this.clickStartPosition.copy(this.position);
+    if (value) Vector2i.copy(this.position, this.clickStartPosition);
     else this.mouseDragged = false;
   }
 

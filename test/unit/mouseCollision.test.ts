@@ -53,11 +53,11 @@ describe('Testes de detecção de colisão entre o mouse e componentes', () => {
     );
     const collisions2 = nodeEvents.checkNodeClick(
       editorEnv.nodes,
-      new Vector2(685, 340),
+      new Vector2(674, 328),
     );
     const collisions3 = nodeEvents.checkNodeClick(
       editorEnv.nodes,
-      new Vector2(230, 460),
+      new Vector2(203, 437),
     );
     expect(collisions).toEqual([]);
     expect(collisions2).toEqual([0]);
@@ -70,7 +70,7 @@ describe('Testes de detecção de colisão entre o mouse e componentes', () => {
     );
     const collisions2 = slotEvents.checkSlotClick(
       editorEnv.slots,
-      new Vector2(220, 414),
+      new Vector2(274, 462),
     );
     expect(collisions).toEqual([]);
     expect(collisions2).toEqual([5]);

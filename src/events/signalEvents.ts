@@ -1,8 +1,8 @@
 import ConnectionComponent from '@connectlab-editor/components/connectionComponent';
 import {
-  SignalGraph,
   NodeModel,
 } from '@connectlab-editor/types/common';
+import { SignalGraph } from '@connectlab-editor/types/signal';
 import { NodeTypes } from '@connectlab-editor/types/enums';
 import signalUpdate from '@connectlab-editor/signal/signalUpdate';
 import SlotComponent from '@connectlab-editor/components/slotComponent';

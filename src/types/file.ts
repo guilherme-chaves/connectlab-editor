@@ -2,7 +2,8 @@ import { ConnectionObject } from '@connectlab-editor/components/connectionCompon
 import { EditorEnvironmentObject } from '@connectlab-editor/environment';
 import { NodeObject } from '@connectlab-editor/interfaces/nodeInterface';
 import Ajv, { JSONSchemaType } from 'ajv';
-import { ConnectionVertices, SignalGraphObject, VectorObject } from './common';
+import { ConnectionVertices, VectorObject } from './common';
+import { SignalGraphObject } from './signal';
 import { SlotObject } from '@connectlab-editor/components/slotComponent';
 import { TextObject } from '@connectlab-editor/components/textComponent';
 export const ajv = new Ajv();

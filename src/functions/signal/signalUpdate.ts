@@ -2,7 +2,7 @@ import {
   SignalGraph,
   SignalGraphData,
   signalOperation,
-} from '@connectlab-editor/types/common';
+} from '@connectlab-editor/types/signal';
 import { NodeTypes } from '@connectlab-editor/types/enums';
 import { signalOperations } from '@connectlab-editor/signal/signalOperations';
 

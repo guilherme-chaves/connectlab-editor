@@ -33,6 +33,7 @@ export default class Editor {
   // Propriedades dos canvas
   private backgroundPattern: CanvasPattern | null;
   public windowResized: boolean;
+  public canvasSize: Vector2i;
   public readonly tickRate: number;
 
   constructor(
@@ -61,6 +62,7 @@ export default class Editor {
     this.backgroundPattern = null;
     this.loadBackgroundPattern(bgTexturePath);
     this.windowResized = true;
+    this.canvasSize = this.getEditorArea();
     this.tickRate = tickRate;
     createEditorEvents(this, canvasDOM, backgroundDOM);
   }
@@ -91,7 +93,7 @@ export default class Editor {
     const canvasParentEl = document.getElementById(
       this.canvasId,
     )?.parentElement;
-    const v = new Vector2i(0, 0);
+    const v = new Vector2i();
     if (canvasParentEl) {
       const computedStyle = window.getComputedStyle(canvasParentEl);
       v.x = parseFloat(
@@ -114,28 +116,20 @@ export default class Editor {
   }
 
   isMouseInsideEditor(): boolean {
-    const canvasSize = new Vector2i(
-      this.canvasCtx.canvas.width,
-      this.canvasCtx.canvas.height,
-    );
     return !(
-      !Vector2i.min(
-        this.mouse.position,
-        Vector2i.ZERO,
-      ).equals(Vector2i.ZERO)
-      || !Vector2i.max(
-        this.mouse.position,
-        canvasSize,
-      ).equals(canvasSize)
+      this.mouse.position._x < 0
+      || this.mouse.position._x > this.canvasSize._x
+      || this.mouse.position._y < 0
+      || this.mouse.position._y > this.canvasSize._y
     );
   }
 
   resize(): void {
-    const editorArea = this.getEditorArea();
-    this.canvasCtx.canvas.width = editorArea.x;
-    this.canvasCtx.canvas.height = editorArea.y;
-    this.backgroundCtx.canvas.width = editorArea.x;
-    this.backgroundCtx.canvas.height = editorArea.y;
+    Vector2i.copy(this.getEditorArea(), this.canvasSize);
+    this.canvasCtx.canvas.width = this.canvasSize.x;
+    this.canvasCtx.canvas.height = this.canvasSize.y;
+    this.backgroundCtx.canvas.width = this.canvasSize.x;
+    this.backgroundCtx.canvas.height = this.canvasSize.y;
   }
 
   update = (): void => {
@@ -150,7 +144,6 @@ export default class Editor {
 
   compute = (): void => {
     this.keyboardEvents.onKeyDown(this);
-    this.keyboardEvents.onKeyUp();
     this.mouseEvents.onMouseClick(this.editorEnv);
     this.mouseEvents.onMouseMove(this.editorEnv);
     this.mouseEvents.onMouseRelease(this.editorEnv);

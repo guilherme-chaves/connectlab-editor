@@ -1,16 +1,19 @@
 export default class Keyboard {
-  private keys: Record<string, boolean> = {};
-  public keyPressed = false;
-  public keyHold = false;
-  public stateChange = false;
-  public nKeysPressed = 0;
+  public activeKeys: Set<string> = new Set();
+  public holdedKeys: Set<string> = new Set();
+  public stateChangedKeys: Set<string> = new Set();
 
-  public setKeyPressed(key: string, state: boolean): void {
-    this.nKeysPressed += state ? 1 : this.keys[key] ? -1 : 0;
-    this.keys[key] = state;
-  }
-
-  public getKeysPressed(): Record<string, boolean> {
-    return this.keys;
+  public setKeyState(key: string, active: boolean): void {
+    if (active) {
+      if (!this.holdedKeys.has(key)) {
+        this.activeKeys.add(key);
+        this.stateChangedKeys.add(key);
+      }
+    }
+    else {
+      this.activeKeys.delete(key);
+      this.holdedKeys.delete(key);
+      this.stateChangedKeys.delete(key);
+    }
   }
 }

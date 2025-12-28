@@ -1,108 +1,140 @@
 import BoxCollision from '@connectlab-editor/collisionShapes/boxCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
+import Collision from '@connectlab-editor/interfaces/collisionInterface';
 import { NodeList } from '@connectlab-editor/types/common';
 import * as angles from '@connectlab-editor/types/consts';
-import Vector2 from '@connectlab-editor/interfaces/vector2Interface';
 import Vector2f from '@connectlab-editor/types/vector2f';
 import Vector2i from '@connectlab-editor/types/vector2i';
 import Heap from 'heap';
 
+type CollisionMap = Map<number, Collision>;
 type PathNode = {
+  id: string
   position: Vector2i
   t: Vector2f
-  from: Vector2i | undefined // tx::ty
   score: number
+  from: Array<PathNode>
+  to: Array<PathNode>
 };
 type PathGraph = Map<string, PathNode>; // x::y
-enum NodeUpdateStatus {
-  NO_CHANGE = 0,
-  CHANGE = 1,
+const enum NodeUpdateStatus {
+  NO_SCORE_CHANGE = 0,
+  SCORE_CHANGE = 1,
   SAME_POSITION = 2,
   INVALID = 3,
   LOOP = 4,
 }
 
+const enum PathDirections {
+  DOWN,
+  UP,
+  LEFT,
+  RIGHT,
+  SAME_POSITION,
+  UNKNOWN,
+}
+
 export default {
-  collisionList: <NodeList>(new Map()),
-  currentLineCollisions: <NodeList>(new Map()),
-  stepDirectionFromAtan2(atan2: number): Vector2f {
-    const result = new Vector2f();
+  collisionList: new Map() as CollisionMap,
+  currentLineCollisions: new Map() as CollisionMap,
+  searchArea: new BoxCollision(Vector2i.ZERO, 100, 100),
+  stepDirectionFromAtan2(atan2: number): Vector2f[] {
     if (atan2 <= angles.Rad45Deg && atan2 >= -angles.Rad45Deg) {
-      result.x = 1;
+      return [Vector2f.RIGHT, Vector2f.UP, Vector2f.DOWN, Vector2f.LEFT];
     }
     if (atan2 > angles.Rad45Deg && atan2 < angles.Rad135Deg) {
-      result.y = 1;
+      return [Vector2f.DOWN, Vector2f.RIGHT, Vector2f.LEFT, Vector2f.UP];
     }
     if (atan2 >= angles.Rad135Deg || atan2 <= -angles.Rad135Deg) {
-      result.x = -1;
+      return [Vector2f.LEFT, Vector2f.DOWN, Vector2f.UP, Vector2f.RIGHT];
     }
     if (atan2 < -angles.Rad45Deg && atan2 > -angles.Rad135Deg) {
-      result.y = -1;
+      return [Vector2f.UP, Vector2f.LEFT, Vector2f.RIGHT, Vector2f.DOWN];
     }
-    return result;
+    return [Vector2f.ZERO];
   },
   // Aumenta a área de busca para caminhos
-  getSearchArea(p1: Vector2, p2: Vector2, multiplier = 3): BoxCollision {
-    const dist = Vector2f.sub(p1, p2).abs();
-    const size: Vector2f = dist.mul(multiplier);
+  getSearchArea(p1: Vector2i, p2: Vector2i, multiplier = 3): BoxCollision {
+    const dist = Vector2f.abs(Vector2f.sub(p1, p2));
+    const size = Vector2f.mul(dist, multiplier);
     const minPoint = Vector2i.min(p1, p2);
     const maxPoint = Vector2i.max(p1, p2);
-    const center = Vector2f.add(minPoint, maxPoint).div(2);
+    const center = Vector2f.div(Vector2f.add(minPoint, maxPoint), 2);
     Vector2i.sub(center, Vector2f.div(size, 2), minPoint);
     return new BoxCollision(minPoint, size.x, size.y);
   },
   // Filtra a lista de nodes e retorna apenas aqueles que existem dentro de uma área
-  getCollisionsInArea(nodeList: NodeList, box: BoxCollision): NodeList {
+  getCollisionsInArea(nodeList: NodeList, box: BoxCollision): CollisionMap {
     this.currentLineCollisions.clear();
     for (const node of nodeList.values()) {
       if (node.collisionShape.collisionWithBox(box))
-        this.currentLineCollisions.set(node.id, node);
+        this.currentLineCollisions.set(node.id, node.collisionShape);
     }
     return this.currentLineCollisions;
   },
-  floatEquals(a: number, b: number, precision: number) {
-    return Math.abs(a - b) < precision;
-  },
   currentDirection(
-    previous: Vector2,
-    next: Vector2,
+    previous: Vector2f,
+    next: Vector2f,
     precision: number,
-  ): 'x' | 'y' | 'e' | 'c' {
+  ): PathDirections {
     const diff = Vector2f.sub(next, previous);
-    const len = diff.len();
-    if (diff.equals(Vector2f.ZERO) && len === 0) return 'e';
-    const atan2 = previous.atan2(next);
-    if (this.floatEquals(atan2, angles.Rad90Deg, precision)) return 'y';
-    if (this.floatEquals(atan2, 0, precision)) return 'x';
-    return 'c';
+    if (Vector2f.equals(diff, Vector2f.ZERO, precision))
+      return PathDirections.SAME_POSITION;
+    const direction = this.stepDirectionFromAtan2(
+      Vector2f.atan2(previous, next),
+    )[0];
+    if (Vector2i.equals(direction, Vector2i.RIGHT))
+      return PathDirections.RIGHT;
+    if (Vector2i.equals(direction, Vector2i.DOWN))
+      return PathDirections.DOWN;
+    if (Vector2i.equals(direction, Vector2i.LEFT))
+      return PathDirections.LEFT;
+    if (Vector2i.equals(direction, Vector2i.UP))
+      return PathDirections.UP;
+
+    return PathDirections.UNKNOWN;
   },
-  optimizePath(pathList: Array<Vector2f>, precision = 1e-5): Array<Vector2f> {
+  optimizePath(pathList: Array<Vector2f>, precision = 1e-6): Array<Vector2f> {
     const result: Array<Vector2f> = [];
-    let lastDirection: 'x' | 'y' | 'e' | 'c' = 'c';
+    let lastDirection = PathDirections.UNKNOWN;
     for (let i = 0; i < pathList.length; i++) {
+      if (i === 0) {
+        lastDirection = this.currentDirection(
+          Vector2f.ZERO,
+          pathList[i],
+          precision,
+        );
+        result.push(pathList[i]);
+        continue;
+      }
       const direction = this.currentDirection(
-        pathList[Math.max(0, i - 1)],
-        pathList[Math.min(i, pathList.length - 1)],
+        pathList[i - 1],
+        pathList[i],
         precision,
       );
 
-      if (
-        direction === 'c'
-        || (direction !== lastDirection && lastDirection !== 'e')
+      if (direction !== lastDirection
+        && direction !== PathDirections.SAME_POSITION
       ) {
         result.push(pathList[i]);
       }
       else {
-        if (direction === 'x') {
-          result[result.length - 1].x = pathList[i].x;
+        if (
+          direction === PathDirections.RIGHT
+          || direction === PathDirections.LEFT
+        ) {
+          result[result.length - 1].x = pathList[i]._x;
         }
-        else if (direction === 'y') {
-          result[result.length - 1].y = pathList[i].y;
+        if (
+          direction === PathDirections.UP
+          || direction === PathDirections.DOWN
+        ) {
+          result[result.length - 1].y = pathList[i]._y;
         }
       }
       lastDirection = direction;
     }
-    return result.filter(v => !v.equals(Vector2f.ONE));
+    return result;
   },
   simplePathFinder(
     start: Vector2i,
@@ -111,19 +143,22 @@ export default {
   ): Array<Vector2f> {
     const list: Array<Vector2f> = [];
     // Não calcular se os vetores forem iguais
-    if (start.equals(end)) return list;
+    if (Vector2i.equals(start, end)) return list;
     const current = start.clone();
-    const currentT = Vector2f.ZERO;
+    const currentT = new Vector2f();
     let runs = 0;
-    while (!current.equals(end)) {
+    while (!Vector2i.equals(current, end, 4)) {
       if (runs > 15) break;
       runs++;
-      const atan2 = end.atan2(current);
-      const step = this.stepDirectionFromAtan2(atan2);
-      const nextT = step.abs().mul(stepSize).add(currentT);
+      const atan2 = Vector2i.atan2(end, current);
+      const step = this.stepDirectionFromAtan2(atan2)[0];
+      const nextT = Vector2f.add(
+        Vector2f.mul(Vector2f.abs(step), stepSize),
+        currentT,
+      );
       list.push(nextT);
       Vector2i.bilinear(start, end, nextT, current);
-      currentT.copy(nextT);
+      Vector2f.copy(nextT, currentT);
     }
     return list;
   },
@@ -132,74 +167,128 @@ export default {
     end: Vector2i,
     current: Vector2i,
     nextT: Vector2f,
-    nodeList: NodeList,
+    cList: CollisionMap,
   ): boolean {
     const next = Vector2i.bilinear(start, end, nextT);
     const line = new LineCollision(current, next, undefined, false);
-    for (const node of nodeList.values()) {
+    for (const c of cList.values()) {
       if (
-        node.collisionShape.collisionWithLine(line)
+        c.collisionWithLine(line)
       )
         return true;
     }
     return false;
   },
-  manhattanDistance(p1: Vector2, p2: Vector2): number {
-    return Math.abs(p1.x - p2.x) + Math.abs(p1.y - p2.y);
-  },
   computeStepScore(start: Vector2i, current: Vector2i, end: Vector2i): number {
     return (
-      this.manhattanDistance(start, current)
-      + this.manhattanDistance(current, end)
+      Math.abs(start._x - current._x) + Math.abs(start._y - current._y)
+      + Math.abs(current._x - end._x) + Math.abs(current._y - end._y)
     );
   },
-  createPathFromScores(scores: PathGraph, end: Vector2i): Array<Vector2f> {
-    let current: PathNode | undefined = scores.get(`${end.x}::${end.y}`);
-    const path: Array<Vector2f> = [];
-    while (current !== undefined) {
-      path.push(current.t.clone());
-      current
-        = current.from !== undefined
-          ? scores.get(`${current.from.x}::${current.from.y}`)
-          : undefined;
+  createPathFromScores(
+    scores: PathGraph, start: Vector2i, end: Vector2i): Array<Vector2f> {
+    let previous: PathNode | undefined;
+    const startNode = scores.get(`${start._x}::${start.y}`);
+    const endNode = scores.get(`${end._x}::${end.y}`);
+    if (startNode === undefined || endNode === undefined) return [];
+    let current: PathNode | undefined = startNode;
+    const result: Array<Vector2f> = [];
+    let runs = 0;
+    while (current !== undefined && runs < 512) {
+      runs++;
+      const next = this.getSmallestPathNode(current.to);
+      if (next === undefined) {
+        current.score = NaN;
+        previous = this.getSmallestPathNode(previous?.from ?? []);
+        current = previous;
+        continue;
+      }
+      if (next === endNode) {
+        result.push(next.t);
+        break;
+      }
+      const index = result.indexOf(next.t);
+      if (index !== -1) {
+        current.score = NaN;
+        previous = this.getSmallestPathNode(previous?.from ?? []);
+        current = previous;
+        continue;
+      }
+      result.push(next.t);
+      previous = current;
+      current = next;
     }
-    scores.clear();
-    return path.reverse();
+    if (result[result.length - 1] !== endNode.t) {
+      console.log(result);
+      result.splice(0);
+    }
+    return result;
+  },
+  getSmallestPathNode(pNext: PathNode[]): PathNode | undefined {
+    let next: PathNode | undefined;
+    for (const node of pNext) {
+      if (next === undefined) {
+        next = node;
+        continue;
+      }
+      if (!Number.isNaN(node.score) && node.score < next.score) next = node;
+    }
+    return next;
   },
   setNodeScore(
     pathGraph: PathGraph,
-    start: Vector2i,
-    end: Vector2i,
     nodePosition: Vector2i,
     nodeKey: string,
+    nodeScore: number = Infinity,
     nodeT: Vector2f,
-    fromKey: string | undefined,
+    fromNode: PathNode | undefined,
   ): NodeUpdateStatus {
-    const nodeScore = pathGraph.get(nodeKey)?.score ?? Infinity;
-    if (isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
-    const fromNode = pathGraph.get(fromKey ?? '');
+    if (Number.isNaN(nodeScore)) return NodeUpdateStatus.INVALID;
+    const cn = pathGraph.get(nodeKey);
+    const nFrom = cn?.from ?? [];
     if (fromNode !== undefined) {
-      if (nodePosition.x === fromNode.position.x
-        && nodePosition.y === fromNode.position.y)
+      nFrom.push(fromNode);
+    }
+
+    if (cn === undefined || (
+      !Number.isNaN(cn.score) && nodeScore < cn.score
+    )) {
+      pathGraph.set(nodeKey, {
+        id: nodeKey,
+        position: nodePosition.clone(),
+        t: nodeT.clone(),
+        from: nFrom,
+        to: cn?.to ?? [],
+        score: nodeScore,
+      });
+      if (fromNode !== undefined) {
+        fromNode.to.push(pathGraph.get(nodeKey)!);
+      }
+      return NodeUpdateStatus.SCORE_CHANGE;
+    }
+    else if (Number.isNaN(cn.score)) {
+      if (fromNode === undefined)
+        return NodeUpdateStatus.INVALID;
+      if (cn.from.includes(fromNode))
+        return NodeUpdateStatus.LOOP;
+      pathGraph.set(nodeKey, {
+        id: nodeKey,
+        position: nodePosition.clone(),
+        t: nodeT.clone(),
+        score: nodeScore,
+        from: nFrom,
+        to: cn.to,
+      });
+      fromNode.to.push(cn);
+      return NodeUpdateStatus.SCORE_CHANGE;
+    }
+    else if (fromNode !== undefined) {
+      if (Vector2f.equals(nodePosition, fromNode.position))
         return NodeUpdateStatus.SAME_POSITION;
-      if (fromNode.from !== undefined
-        && nodePosition.x === fromNode.from.x
-        && nodePosition.y === fromNode.from.y
-      )
+      if (cn !== undefined && fromNode.from.includes(cn))
         return NodeUpdateStatus.LOOP;
     }
-    const newScore = this.computeStepScore(start, nodePosition, end);
-
-    if (newScore < nodeScore) {
-      pathGraph.set(nodeKey, {
-        position: nodePosition,
-        t: nodeT,
-        from: fromNode?.position,
-        score: newScore,
-      });
-      return NodeUpdateStatus.CHANGE;
-    }
-    return NodeUpdateStatus.NO_CHANGE;
+    return NodeUpdateStatus.NO_SCORE_CHANGE;
   },
   testStep(
     start: Vector2i,
@@ -207,16 +296,16 @@ export default {
     current: Vector2i,
     currentT: Vector2f,
     step: Vector2f,
-    nodeList: NodeList,
+    cList: CollisionMap,
     minStepSize: Vector2f,
     currentStepSize: Vector2f,
   ): [boolean, Vector2i, Vector2f] {
-    const nextT = Vector2f.mul(step, currentStepSize).add(currentT);
+    const nextT = Vector2f.add(Vector2f.mul(step, currentStepSize), currentT);
     const next = Vector2i.bilinear(start, end, nextT);
-    while (currentStepSize.x >= minStepSize.x
-      && currentStepSize.y >= minStepSize.y) {
-      if (this.stepCollisionExists(start, end, current, nextT, nodeList)) {
-        currentStepSize.sub(0.075);
+    while (currentStepSize._x >= minStepSize._x
+      && currentStepSize._y >= minStepSize._y) {
+      if (this.stepCollisionExists(start, end, current, nextT, cList)) {
+        Vector2f.sub(currentStepSize, 0.015, currentStepSize);
         continue;
       }
       return [true, next, nextT];
@@ -228,139 +317,117 @@ export default {
     end: Vector2i,
     current: Vector2i,
     currentT: Vector2f,
-    nodeList: NodeList,
+    cList: CollisionMap,
     maxStepSize: Vector2f,
     minStepSize: Vector2f,
   ): Array<[Vector2i, Vector2f]> {
     const nextSteps: Array<[Vector2i, Vector2f]> = [];
-    const preferredStep = this.stepDirectionFromAtan2(current.atan2(end));
+    const directions = this.stepDirectionFromAtan2(
+      Vector2i.atan2(current, end),
+    );
     const stepSize = maxStepSize.clone();
-    const directions: Array<Vector2f> = [
-      preferredStep,
-      Vector2f.rotate(preferredStep, angles.Rad90Deg),
-      Vector2f.rotate(preferredStep, angles.Rad270Deg),
-    ];
-    for (const direction of directions) {
+    const halfStepSize = Vector2f.div(maxStepSize.clone(), 2);
+    for (let i = 0; i < directions.length; i++) {
       const [stepFound, position, t] = this.testStep(
         start,
         end,
         current,
         currentT,
-        direction,
-        nodeList,
+        directions[i],
+        cList,
         minStepSize,
         stepSize,
       );
       if (stepFound) {
         nextSteps.push([position, t]);
+        continue;
       }
-      stepSize.copy(maxStepSize);
+      Vector2f.copy(halfStepSize, stepSize);
     }
     return nextSteps;
   },
   complexPathFinder(
     start: Vector2i,
     end: Vector2i,
-    nodeList: NodeList,
   ): [boolean, Array<Vector2f>] {
     const pathGraph: PathGraph = new Map();
     this.setNodeScore(
       pathGraph,
       start,
-      end,
-      start,
-      `${start.x}::${start.y}`,
-      new Vector2f(0, 0),
+      `${start._x}::${start._y}`,
+      this.computeStepScore(start, start, end),
+      Vector2f.ZERO,
       undefined,
     );
+    const startNode = pathGraph.get(`${start._x}::${start._y}`)!;
     const openSet: Heap<{ key: Vector2i, score: number }> = new Heap(
       (a, b) => a.score - b.score,
     );
     openSet.push({
       key: start,
-      score: pathGraph.get(`${start.x}::${start.y}`)!.score,
+      score: startNode.score,
     });
 
     // Maior passo que um trecho da conexão pode realizar (porcentagem)
     const maxStepSize = new Vector2f(0.5, 0.5);
     // Menor passo que um trecho da conexão pode realizar (porcentagem)
     const minStepSize: Vector2f = new Vector2f(1e-3, 1e-3);
+    let current: PathNode | undefined = startNode;
+    let next: PathNode | undefined;
 
     let runCount = 0;
     while (runCount <= 512 && openSet.size() > 0) {
       runCount++;
-      const current = openSet.pop()!;
-      const currentNodeKey = `${current.key.x}::${current.key.y}`;
-      const currentNode = pathGraph.get(currentNodeKey)!;
-      const currentPosition = currentNode.position;
-      const currentT = currentNode.t;
-      const currentNodeFromKey = currentNode.from !== undefined
-        ? `${currentNode.from.x}::${currentNode.from.y}`
-        : undefined;
-      if (currentPosition.equals(end, 16)) {
+      const heapKey = openSet.pop()!.key;
+      const currentNodeKey = `${heapKey._x}::${heapKey._y}`;
+      current = pathGraph.get(currentNodeKey);
+      if (current === undefined) continue;
+      if (Vector2i.equals(current.position, end, 16)) {
         this.setNodeScore(
           pathGraph,
-          start,
           end,
-          end,
-          currentNodeKey,
-          new Vector2f(1, 1),
-          currentNodeFromKey,
+          `${end._x}::${end._y}`,
+          this.computeStepScore(start, end, end),
+          Vector2f.ONE,
+          current,
         );
-        return [true, this.createPathFromScores(pathGraph, end)];
+        return [true, this.createPathFromScores(pathGraph, start, end)];
       }
       const nextSteps = this.getPossibleNextSteps(
         start,
         end,
-        currentPosition,
-        currentT,
-        nodeList,
+        current.position,
+        current.t,
+        this.collisionList,
         maxStepSize,
         minStepSize,
       );
       if (nextSteps.length === 0) {
-        pathGraph.set(currentNodeKey, {
-          position: currentPosition,
-          t: currentT,
-          from: currentNode.from,
-          score: NaN,
-        });
-        if (currentNode.from !== undefined) {
-          openSet.push({
-            key: currentNode.from,
-            score: pathGraph.get(currentNodeKey)!.score,
-          });
-        }
+        current.score = NaN;
         continue;
       }
-      for (const next of nextSteps) {
-        const nextNodeKey = `${next[0].x}::${next[0].y}`;
-        switch (
-          this.setNodeScore(
-            pathGraph,
-            start,
-            end,
-            next[0],
-            nextNodeKey,
-            next[1],
-            currentNodeKey,
-          )
-        ) {
-          case NodeUpdateStatus.CHANGE:
+      for (let i = 0; i < nextSteps.length; i++) {
+        const nNodeKey = `${nextSteps[i][0]._x}::${nextSteps[i][0]._y}`;
+        const status = this.setNodeScore(
+          pathGraph,
+          nextSteps[i][0],
+          nNodeKey,
+          this.computeStepScore(start, nextSteps[i][0], end),
+          nextSteps[i][1],
+          current,
+        );
+        next = pathGraph.get(nNodeKey);
+        switch (status) {
+          case NodeUpdateStatus.SCORE_CHANGE:
             openSet.push({
-              key: next[0],
-              score: pathGraph.get(nextNodeKey)!.score,
+              key: nextSteps[i][0],
+              score: next!.score,
             });
+            current.to.push(next!);
             break;
           case NodeUpdateStatus.SAME_POSITION:
           case NodeUpdateStatus.LOOP:
-            if (currentNode.from !== undefined)
-              openSet.push({
-                key: currentNode.from,
-                score:
-                  pathGraph.get(currentNodeFromKey ?? '')?.score ?? Infinity,
-              });
-            currentNode.score = NaN;
+            current.score = NaN;
             break;
         }
       }
@@ -369,22 +436,25 @@ export default {
   },
   // Função principal
   find(start: Vector2i, end: Vector2i, nodeList: NodeList) {
-    if (start.equals(end, 8)) return [];
-    const simpleSearchArea = this.getSearchArea(start, end, 1);
-    this.collisionList = this.getCollisionsInArea(nodeList, simpleSearchArea);
+    if (Vector2i.equals(start, end, 8)) return [];
+    let path = [] as Vector2f[];
+    this.searchArea = this.getSearchArea(start, end, 1);
+    this.collisionList = this.getCollisionsInArea(nodeList, this.searchArea);
     if (this.collisionList.size === 0) {
-      return this.simplePathFinder(start, end);
+      path = this.simplePathFinder(start, end);
     }
     else {
-      const complexSearchArea = this.getSearchArea(start, end, 3);
+      this.searchArea = this.getSearchArea(start, end, 3);
       this.collisionList
-        = this.getCollisionsInArea(nodeList, complexSearchArea);
-      const [success, path] = this.complexPathFinder(
+        = this.getCollisionsInArea(nodeList, this.searchArea);
+      const [success, pathC] = this.complexPathFinder(
         start,
         end,
-        this.collisionList,
       );
-      return success ? path : this.simplePathFinder(start, end);
+      path = success && pathC.length !== 0
+        ? pathC
+        : this.simplePathFinder(start, end);
     }
+    return this.optimizePath(path);
   },
 };

@@ -6,7 +6,7 @@ import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
 export default class CircleCollision implements Collision {
   public position: Vector2i;
   public readonly radius: number;
-  private readonly radiusSquared: number;
+  public readonly radiusSquared: number;
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
   public borderColor: string;
@@ -16,19 +16,19 @@ export default class CircleCollision implements Collision {
     this.radius = radius;
     this.radiusSquared = radius * radius;
     this.borderColor = borderColor;
-    this.regenPath = false;
+    this.regenPath = true;
   }
 
   protected generatePath(): Path2D {
     const path = new Path2D();
-    path.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    path.arc(this.position._x, this.position._y, this.radius, 0, Math.PI * 2);
     this.regenPath = false;
     return path;
   }
 
   draw(ctx: CanvasRenderingContext2D, selected: boolean): void {
     if (!selected) return;
-    if (!this.drawPath || this.regenPath) this.drawPath = this.generatePath();
+    if (this.regenPath || !this.drawPath) this.drawPath = this.generatePath();
     ctx.save();
     ctx.strokeStyle = this.borderColor;
     ctx.stroke(this.drawPath);
@@ -36,13 +36,15 @@ export default class CircleCollision implements Collision {
   }
 
   moveShape(v: Vector2i, useDelta = true): void {
-    if (useDelta) this.position.add(v);
-    else this.position.copy(v);
-    this.drawPath = this.generatePath();
+    if (useDelta) Vector2i.add(this.position, v, this.position);
+    else Vector2i.copy(v, this.position);
+    this.regenPath = true;
   }
 
   collisionWithPoint(point: Vector2i): boolean {
-    return Vector2i.sub(this.position, point).lenSquared() < this.radiusSquared;
+    return Vector2i.lenSquared(
+      Vector2i.sub(this.position, point),
+    ) < this.radiusSquared;
   }
 
   collisionWithBox(other: BoxCollision): boolean {
@@ -54,17 +56,19 @@ export default class CircleCollision implements Collision {
       Vector2i.min(other.vertices.c, this.position),
     );
 
-    const distSquared = Vector2i.sub(
-      this.position,
-      closestRectPoint,
-    ).lenSquared();
+    const distSquared = Vector2i.lenSquared(
+      Vector2i.sub(
+        this.position,
+        closestRectPoint,
+      ),
+    );
 
     return distSquared < this.radiusSquared;
   }
 
   collisionWithCircle(other: CircleCollision): boolean {
     return (
-      Vector2i.sub(this.position, other.position).len()
+      Vector2i.len(Vector2i.sub(this.position, other.position))
       < this.radius + other.radius
     );
   }

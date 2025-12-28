@@ -71,14 +71,14 @@ describe('Testes de eventos do mouse', () => {
     mouse.stateChanged = false;
   });
   test('Clique do mouse em uma área sem colisões', () => {
-    mouse.position.copy(new Vector2i(150, 150));
+    Vector2i.copy(new Vector2i(150, 150), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
     expect(mouseEvents.getCollisionList().nodes).toEqual([]);
     expect(mouse.stateChanged).toBe(false);
   });
   test('Clique do mouse em cima de um nó', () => {
-    mouse.position.copy(new Vector2i(505, 605));
+    Vector2i.copy(new Vector2i(505, 605), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
     expect(mouseEvents.getCollisionList().nodes).toEqual([3]);
@@ -86,7 +86,7 @@ describe('Testes de eventos do mouse', () => {
     expect(mouse.stateChanged).toBe(false);
   });
   test('Clique do mouse em cima de um slot', () => {
-    mouse.position.copy(new Vector2i(295, 326));
+    Vector2i.copy(new Vector2i(295, 326), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
     expect(mouseEvents.getCollisionList().slots).toEqual([1]);
@@ -94,7 +94,7 @@ describe('Testes de eventos do mouse', () => {
     expect(mouse.stateChanged).toBe(false);
   });
   test('Clique do mouse em cima de uma caixa de texto', () => {
-    mouse.position.copy(new Vector2i(1000, 1000));
+    Vector2i.copy(new Vector2i(1000, 1000), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
     expect(mouseEvents.getCollisionList().texts).toEqual([12]);
@@ -109,18 +109,18 @@ describe('Testes de eventos do mouse', () => {
   test('Movimentar o mouse dentro do limite de detecção de arrasto', () => {
     ConnectionEvents.reset();
     MouseEvents.movingObject = 'none';
-    mouse.position.copy(new Vector2i(505, 605));
+    Vector2i.copy(new Vector2i(505, 605), mouse.position);
     mouse.clicked = true;
-    mouse.position.add(Vector2i.ONE);
+    Vector2i.add(mouse.position, Vector2i.ONE);
     expect(mouseEvents.onMouseMove(editorEnv)).toBe(false);
   });
   test('Movimentar o mouse além do limite de detecção de arrasto', () => {
     ConnectionEvents.reset();
     MouseEvents.movingObject = 'none';
-    mouse.position.copy(new Vector2i(505, 605));
+    Vector2i.copy(new Vector2i(505, 605), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
-    mouse.position.add(100);
+    Vector2i.add(mouse.position, 100, mouse.position);
     expect(mouseEvents.onMouseMove(editorEnv)).toBe(true);
     expect(editorEnv.nodes.get(3)?.position).toEqual(
       { _x: 605, _y: 705, type: 'int' },
@@ -129,10 +129,10 @@ describe('Testes de eventos do mouse', () => {
   test('Movimentar uma caixa de texto', () => {
     ConnectionEvents.reset();
     MouseEvents.movingObject = 'none';
-    mouse.position.copy(new Vector2i(1000, 1000));
+    Vector2i.copy(new Vector2i(1000, 1000), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
-    mouse.position.add(100);
+    Vector2i.add(mouse.position, 100, mouse.position);
     expect(mouseEvents.onMouseMove(editorEnv)).toBe(true);
     expect(editorEnv.texts.get(12)!.position).toEqual(
       { _x: 1092, _y: 1092, type: 'int' },
@@ -142,10 +142,10 @@ describe('Testes de eventos do mouse', () => {
   test('Liberar o botão do mouse', () => {
     ConnectionEvents.reset();
     MouseEvents.movingObject = 'none';
-    mouse.position.copy(new Vector2i(302, 302));
+    Vector2i.copy(new Vector2i(302, 302), mouse.position);
     mouse.clicked = true;
     mouseEvents.onMouseClick(editorEnv);
-    mouse.position.copy(new Vector2i(400, 400));
+    Vector2i.copy(new Vector2i(400, 400), mouse.position);
     expect(mouseEvents.onMouseMove(editorEnv)).toBe(true);
     expect(MouseEvents.movingObject).toBe('node');
     mouse.clicked = false;

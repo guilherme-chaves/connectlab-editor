@@ -11,27 +11,26 @@ const editor = new Editor('test-env', 'Teste', canvas, canvasBg, 60);
 
 describe('Testes da classe KeyboardEvents', () => {
   test('Adicionar nó ao pressionar uma tecla', () => {
-    editor.keyboard.setKeyPressed('a', true);
+    Vector2i.copy(new Vector2i(40, 50), editor.mouse.position);
+    editor.keyboard.setKeyState('a', true);
+    expect(editor.keyboard.activeKeys.has('a')).toBe(true);
     editor.keyboardEvents.onKeyDown(editor);
-    expect(editor.keyboard.keyPressed).toBe(true);
-    expect(editor.keyboard.getKeysPressed()['a']).toBe(true);
     const andNode = editor.editorEnv.nodes.get(0);
     expect(andNode).toBeDefined();
     expect(andNode!.nodeType.id).toBe(NodeTypes.G_AND);
-    editor.keyboard.setKeyPressed('a', false);
-    editor.keyboardEvents.onKeyUp();
+    editor.keyboard.setKeyState('a', false);
+    expect(editor.keyboard.activeKeys.has('a')).toBe(false);
   });
   test('Remover nó ao pressionar a tecla Delete', () => {
+    Vector2i.add(editor.mouse.position, Vector2i.ONE, editor.mouse.position);
     editor.mouse.clicked = true;
-    editor.mouse.position.add(Vector2i.ONE);
     editor.mouseEvents.onMouseClick(editor.editorEnv);
-    editor.keyboard.setKeyPressed('Delete', true);
+    editor.keyboard.setKeyState('Delete', true);
     editor.keyboardEvents.onKeyDown(editor);
-    expect(editor.keyboard.keyPressed).toBe(true);
-    expect(editor.keyboard.getKeysPressed()['Delete']).toBe(true);
+    expect(editor.keyboard.activeKeys.size).toBe(1);
+    expect(editor.keyboard.activeKeys.has('Delete')).toBe(true);
     const andNode = editor.editorEnv.nodes.get(0);
     expect(andNode).toBeUndefined();
-    editor.keyboard.setKeyPressed('Delete', false);
-    editor.keyboardEvents.onKeyUp();
+    editor.keyboard.setKeyState('Delete', false);
   });
 });

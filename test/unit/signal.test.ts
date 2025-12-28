@@ -1,5 +1,5 @@
 import { expect, test, beforeEach, describe } from 'vitest';
-import { SignalGraph } from '../../src/types/common';
+import { SignalGraph } from '@connectlab-editor/types/signal';
 import { NodeTypes } from '@connectlab-editor/types/enums';
 import * as InputModels from '@connectlab-editor/models/input';
 import * as NodeModels from '@connectlab-editor/models/node';

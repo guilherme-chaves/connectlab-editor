@@ -3,6 +3,7 @@ import Vector2i from '@connectlab-editor/types/vector2i';
 import CircleCollision
   from '@connectlab-editor/collisionShapes/circleCollision';
 import LineCollision from '@connectlab-editor/collisionShapes/lineCollision';
+import Vector2f from '@connectlab-editor/types/vector2f';
 
 // Sentido anti-horário, começando do ponto superior esquerdo
 interface BoxVertices {
@@ -21,7 +22,7 @@ export default class BoxCollision implements Collision {
   private drawPath: Path2D | undefined;
   private regenPath: boolean;
   public borderColor: string;
-  private lines: Array<LineCollision> = [];
+  private center: Vector2i;
   constructor(
     position: Vector2i,
     width = 2,
@@ -40,15 +41,9 @@ export default class BoxCollision implements Collision {
       c: Vector2i.add(this.position, this.localVertices.c),
       d: Vector2i.add(this.position, this.localVertices.d),
     };
-    this.lines.push(
-      new LineCollision(
-        this.vertices.a, this.vertices.d, undefined, false), // Esquerda
-      new LineCollision(
-        this.vertices.a, this.vertices.b, undefined, false), // Cima
-      new LineCollision(
-        this.vertices.b, this.vertices.c, undefined, false), // Direita
-      new LineCollision(
-        this.vertices.c, this.vertices.d, undefined, false), // Baixo
+    this.center = Vector2f.div(
+      Vector2f.add(this.vertices.a, this.vertices.c),
+      2,
     );
   }
 
@@ -70,7 +65,7 @@ export default class BoxCollision implements Collision {
 
   private generatePath(): Path2D {
     const path = new Path2D();
-    path.rect(this.vertices.a.x, this.vertices.a.y, this.width, this.height);
+    path.rect(this.vertices.a._x, this.vertices.a._y, this.width, this.height);
     this.regenPath = false;
     return path;
   }
@@ -85,27 +80,27 @@ export default class BoxCollision implements Collision {
   }
 
   moveShape(v: Vector2i, useDelta = true): void {
-    if (useDelta) this.position.add(v);
-    else this.position.copy(v);
+    if (useDelta) Vector2i.add(this.position, v, this.position);
+    else Vector2i.copy(v, this.position);
     this.setVertices();
     this.regenPath = true;
   }
 
   collisionWithPoint(point: Vector2i): boolean {
-    return (
-      point.x > this.vertices.a.x
-      && point.x < this.vertices.c.x
-      && point.y > this.vertices.a.y
-      && point.y < this.vertices.c.y
+    return !(
+      point._x <= this.vertices.a._x
+      || point._x >= this.vertices.c._x
+      || point._y <= this.vertices.a._y
+      || point._y >= this.vertices.c._y
     );
   }
 
   collisionWithBox(other: BoxCollision): boolean {
     return !(
-      this.vertices.c.x < other.vertices.a.x
-      || this.vertices.c.y < other.vertices.a.y
-      || this.vertices.a.x > other.vertices.c.x
-      || this.vertices.a.y > other.vertices.c.y
+      this.vertices.c._x < other.vertices.a._x
+      || this.vertices.c._y < other.vertices.a._y
+      || this.vertices.a._x > other.vertices.c._x
+      || this.vertices.a._y > other.vertices.c._y
     );
   }
 
@@ -114,13 +109,29 @@ export default class BoxCollision implements Collision {
   }
 
   collisionWithLine(other: LineCollision): boolean {
-    return (
-      this.collisionWithPoint(other.position)
-      || this.collisionWithPoint(other.endPosition)
-      || other.collisionWithLine(this.lines[0])
-      || other.collisionWithLine(this.lines[1])
-      || other.collisionWithLine(this.lines[2])
-      || other.collisionWithLine(this.lines[3])
-    );
+    const e = [
+      this.vertices.c._x - this.center._x,
+      this.vertices.c._y - this.center._y,
+    ];
+    const m = [
+      (other.position._x + other.endPosition._x) / 2,
+      (other.position._y + other.endPosition._y) / 2,
+    ];
+    const d = [
+      other.endPosition._x - m[0],
+      other.endPosition._y - m[1],
+    ];
+    m[0] -= this.center._x;
+    m[1] -= this.center._y;
+    const am = [Math.abs(m[0]), Math.abs(m[1])];
+    const ad = [Math.abs(d[0]), Math.abs(d[1])];
+    if (am[0] > e[0] + ad[0]) return false;
+    if (am[1] > e[1] + ad[1]) return false;
+
+    ad[0] += 1e-3;
+    ad[1] += 1e-3;
+    if (Math.abs(m[0] * d[1] - m[1] * d[0]) > e[0] * ad[1] + e[1] * ad[0])
+      return false;
+    return true;
   }
 }

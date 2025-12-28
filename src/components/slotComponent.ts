@@ -98,8 +98,8 @@ export default class SlotComponent implements Component {
   private generatePath(): Path2D {
     const path = new Path2D();
     path.arc(
-      this.globalPosition.x,
-      this.globalPosition.y,
+      this.globalPosition._x,
+      this.globalPosition._y,
       this.radius,
       0,
       Math.PI * 2,
