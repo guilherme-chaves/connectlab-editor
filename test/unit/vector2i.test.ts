@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect, test, beforeEach, describe } from 'vitest';
 
 import Vector2i from '@connectlab-editor/types/vector2i';

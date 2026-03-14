@@ -53,7 +53,7 @@ export type NodeModel = Readonly<{
 
 export type signalOperation = (
   inputStates: number,
-  numSlots: number
+  numSlots: number,
 ) => boolean;
 
 export interface SignalGraphData {
