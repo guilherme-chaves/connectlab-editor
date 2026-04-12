@@ -3,14 +3,12 @@ import browserslist from 'browserslist';
 import { browserslistToTargets } from 'lightningcss';
 import path from 'path';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   base: './',
   css: {
     transformer: 'lightningcss',
     lightningcss: {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       targets: browserslistToTargets(browserslist('>= 0.25%')),
     },
   },
@@ -22,14 +20,14 @@ export default defineConfig({
     environment: 'happy-dom',
     deps: {
       optimizer: {
-        web: {
+        client: {
           inline: ['vitest-canvas-mock'],
         },
       },
     },
     coverage: {
       provider: 'v8',
-      include: ['src/**'],
+      include: ['src/**/*.{js,mjs,ts}'],
     },
   },
   resolve: {
@@ -69,6 +67,7 @@ export default defineConfig({
         './src/functions/signal',
       ),
     },
+    tsconfigPaths: true,
   },
-  plugins: [tsconfigPaths()],
+  plugins: [],
 });
