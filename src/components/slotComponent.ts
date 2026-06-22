@@ -18,10 +18,6 @@ export interface SlotObject extends ComponentObject {
   slotIdAtParent: number
   connectionIds: number[]
   inSlot: boolean
-  color: string
-  colorActive: string
-  radius: number
-  attractionRadius: number
 }
 
 export default class SlotComponent implements Component {
@@ -139,10 +135,6 @@ export default class SlotComponent implements Component {
       slotIdAtParent: this.slotIdAtParent,
       connectionIds: this.slotConnections.map(value => value.id),
       inSlot: this.inSlot,
-      color: this.color,
-      colorActive: this.colorActive,
-      radius: this.radius,
-      attractionRadius: this.attractionRadius,
     };
     return slotObj;
   }

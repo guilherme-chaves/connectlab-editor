@@ -19,7 +19,7 @@ export interface ConnectionObject extends ComponentObject {
   componentType: ComponentType
   position: VectorObject
   endPosition: VectorObject
-  anchors: Array<VectorObject>
+  anchors: number[][]
   connectedTo: ConnectionVertices
 }
 
@@ -204,7 +204,7 @@ class ConnectionComponent implements Component {
       anchors: [],
       connectedTo: this.connectedTo,
     };
-    this.anchors.forEach(a => connectionObj.anchors.push(a.toPlainObject()));
+    this.anchors.forEach(a => connectionObj.anchors.push([a.x, a.y]));
 
     return connectionObj;
   }

@@ -72,7 +72,10 @@ const connectionSchema: JSONSchemaType<ConnectionObject> = {
     endPosition: vectorSchema,
     anchors: {
       type: 'array',
-      items: vectorSchema,
+      items: {
+        type: 'array',
+        items: { type: 'number' },
+      },
     },
     connectedTo: connectionVerticesSchema,
   },
@@ -99,10 +102,6 @@ const slotSchema: JSONSchemaType<SlotObject> = {
       items: { type: 'integer' },
     },
     inSlot: { type: 'boolean' },
-    color: { type: 'string' },
-    colorActive: { type: 'string' },
-    radius: { type: 'number', minimum: 0 },
-    attractionRadius: { type: 'number', minimum: 0 },
   },
   required: [
     'id',
@@ -112,10 +111,6 @@ const slotSchema: JSONSchemaType<SlotObject> = {
     'slotIdAtParent',
     'connectionIds',
     'inSlot',
-    'color',
-    'colorActive',
-    'radius',
-    'attractionRadius',
   ],
 };
 
@@ -178,8 +173,8 @@ const signalSchema: JSONSchemaType<SignalGraphObject> = {
 export const fileSchema: JSONSchemaType<EditorEnvironmentObject> = {
   type: 'object',
   properties: {
-    id: { type: 'string' },
-    title: { type: 'string' },
+    documentId: { type: 'string' },
+    documentTitle: { type: 'string' },
     data: {
       type: 'object',
       properties: {
@@ -212,7 +207,7 @@ export const fileSchema: JSONSchemaType<EditorEnvironmentObject> = {
       items: signalSchema,
     },
   },
-  required: ['id', 'data', 'signal'],
+  required: ['documentId', 'documentTitle', 'data', 'signal'],
 };
 
 ajv.addSchema(fileSchema, 'simulation-file');

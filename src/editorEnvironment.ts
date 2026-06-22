@@ -18,8 +18,8 @@ import { TextObject } from '@connectlab-editor/components/textComponent';
 import Vector2f from './types/vector2f';
 
 export type EditorEnvironmentObject = {
-  id: string
-  title: string
+  documentId: string
+  documentTitle: string
   data: {
     nodes: NodeObject[]
     connections: ConnectionObject[]
@@ -115,8 +115,8 @@ class EditorEnvironment {
 
   saveAsJson(): string {
     const env: EditorEnvironmentObject = {
-      id: this.simulationId,
-      title: this.simulationTitle,
+      documentId: this.simulationId,
+      documentTitle: this.simulationTitle,
       data: {
         nodes: [],
         connections: [],
@@ -177,8 +177,8 @@ class EditorEnvironment {
       };
     }
     const newEnv = new EditorEnvironment(
-      data.id,
-      data.title,
+      data.documentId,
+      data.documentTitle,
       0,
       structuredClone(imageList),
       newSignalGraph,
@@ -235,10 +235,6 @@ class EditorEnvironment {
         newEnv.nodes.get(slotObj.parentId)!,
         slotObj.slotIdAtParent,
         slotObj.inSlot,
-        slotObj.radius,
-        slotObj.attractionRadius,
-        slotObj.color,
-        slotObj.colorActive,
       );
     }
     for (const lineObj of data.data.connections) {
@@ -251,7 +247,7 @@ class EditorEnvironment {
         lineObj.endPosition.y,
         lineObj.connectedTo.start,
         lineObj.connectedTo.end,
-        lineObj.anchors.map(vo => new Vector2f(vo.x, vo.y)),
+        lineObj.anchors.map(vo => new Vector2f(vo[0], vo[1])),
       );
       if (lineObj.connectedTo.start)
         newEnv.slots
