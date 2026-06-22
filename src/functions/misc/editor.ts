@@ -53,11 +53,11 @@ export function saveToFile(editorEnv: EditorEnvironment): void {
   if (fileName === null) return;
   const a = document.createElement('a');
   const file = new TextEncoder().encode(editorEnv.saveAsJson());
-  const compressed = gzipSync(file, { level: 6 });
+  const compressed = gzipSync(file, { filename: `${fileName}.json`, level: 6 });
   a.href = URL.createObjectURL(
     new Blob([compressed as BlobPart], { type: 'application/gzip' }),
   );
-  a.download = `${fileName}.simulation`;
+  a.download = `${fileName}.json.gz`;
   a.click();
 }
 
