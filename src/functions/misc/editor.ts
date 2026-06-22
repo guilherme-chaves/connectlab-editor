@@ -51,6 +51,7 @@ export function saveToFile(editorEnv: EditorEnvironment): void {
     `${editorEnv.simulationTitle}-${Date.now()}`,
   );
   if (fileName === null) return;
+  editorEnv.simulationTitle = fileName;
   const a = document.createElement('a');
   const file = new TextEncoder().encode(editorEnv.saveAsJson());
   const compressed = gzipSync(file, { filename: `${fileName}.json`, level: 6 });
